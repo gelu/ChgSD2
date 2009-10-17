@@ -110,7 +110,7 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         // Unbalancing Strike
         if (m_uiUnbalancingStrikeTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(),SPELL_UNBALANCING_STRIKE);
+            DoCast(m_creature->getVictim(), SPELL_UNBALANCING_STRIKE);
             m_uiUnbalancingStrikeTimer = 30000;
         }
         else
@@ -119,7 +119,7 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         // Disrupting Shout
         if (m_uiDisruptingShoutTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), m_bIsHeroicMode?SPELL_DISRUPTING_SHOUT_H:SPELL_DISRUPTING_SHOUT);
+            DoCast(m_creature->getVictim(), m_bIsHeroicMode ? SPELL_DISRUPTING_SHOUT_H : SPELL_DISRUPTING_SHOUT);
             m_uiDisruptingShoutTimer = 25000;
         }
         else
