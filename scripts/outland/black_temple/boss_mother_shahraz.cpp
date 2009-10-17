@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_shahrazAI : public ScriptedAI
             if (pUnit && pUnit->isAlive() && (pUnit->GetTypeId() == TYPEID_PLAYER))
             {
                 TargetGUID[i] = pUnit->GetGUID();
-                pUnit->CastSpell(pUnit, SPELL_TELEPORT_VISUAL, true);
+//                pUnit->CastSpell(pUnit, SPELL_TELEPORT_VISUAL, true);
                 DoTeleportPlayer(pUnit, X, Y, Z, pUnit->GetOrientation());
             }
         }
