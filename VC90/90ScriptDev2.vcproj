@@ -1922,6 +1922,26 @@
 				<Filter
 					Name="vault_of_archavon"
 					>
+					<File
+						RelativePath="..\scripts\northrend\vault_of_archavon\boss_archavon.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\northrend\vault_of_archavon\boss_emalon.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\northrend\vault_of_archavon\boss_koralon.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\northrend\vault_of_archavon\instance_vault_of_archavon.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\northrend\vault_of_archavon\vault_of_archavon.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="violet_hold"
