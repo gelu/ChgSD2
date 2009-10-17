@@ -403,6 +403,10 @@
 			<Filter
 				Name="custom"
 				>
+ 				<File
+					RelativePath="..\scripts\custom\teleguy.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="eastern_kingdoms"
