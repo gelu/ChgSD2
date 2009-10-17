@@ -121,7 +121,7 @@ struct MANGOS_DLL_DECL npc_volcanoAI : public ScriptedAI
         CheckTimer = 1000;
         SupremusGUID = 0;
         FireballTimer = 500;
-        GeyserTimer = 0;
+        GeyserTimer = 2000;
     }
 
     void AttackStart(Unit* who) {}
@@ -321,15 +321,7 @@ struct MANGOS_DLL_DECL boss_supremusAI : public ScriptedAI
 
                 if (target)
                 {
-                    Creature* Volcano = NULL;
-                    Volcano = SummonCreature(CREATURE_VOLCANO, target);
-
-                    if (Volcano)
-                    {
-                        DoCast(target, SPELL_VOLCANIC_ERUPTION);
-                        ((npc_volcanoAI*)Volcano->AI())->SetSupremusGUID(m_creature->GetGUID());
-                    }
-
+                    DoCast(target, SPELL_VOLCANIC_ERUPTION);
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
                     SummonVolcanoTimer = 10000;
                 }
