@@ -8,6 +8,7 @@
 extern void AddSC_battleground();
 
 //custom
+extern void AddSC_npc_arena_honor();
 extern void AddSC_teleguy();
 
 //examples
@@ -400,6 +401,7 @@ void AddScripts()
     AddSC_battleground();
 
     //custom
+    AddSC_npc_arena_honor();
 	AddSC_teleguy();
 
     //examples
