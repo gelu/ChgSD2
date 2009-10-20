@@ -43,7 +43,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
     {
         BurningBreathTimer = 25000;
         MeteorFistsTimer = 47000;
-        FlamesTimer = 12000;
+        FlamesTimer = 15000;
 
         BB = false;
 
@@ -92,9 +92,14 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
         if(FlamesTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if(target) DoCast(target, Heroic ? H_SP_CINDER : SP_CINDER);
-            FlamesTimer = 8000;
+			int flames = Heroic ? 5 : 3;
+			int i;
+			for(i=0; i< flames; ++i)
+			{
+				Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+				if(target) DoCast(target, Heroic ? H_SP_CINDER : SP_CINDER);
+			}
+            FlamesTimer = 20000;
         }
         else FlamesTimer -= diff;
 
