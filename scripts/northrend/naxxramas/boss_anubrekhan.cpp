@@ -187,7 +187,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         guidCryptGuards[CryptGuard_count++] = temp->GetGUID();
         if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
         {
-            temp->AddThreat(target,0.0f);
+            temp->AddThreat(target);
             m_creature->SetInCombatWithZone();
         }
 

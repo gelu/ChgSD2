@@ -157,7 +157,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
             if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000))
             {
                 if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    pZombie->AddThreat(pTarget,0.0f);
+                    pZombie->AddThreat(pTarget);
                 addsGuid.push_back(pZombie->GetGUID());
             }
 
@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
                 if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000))
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                        pZombie->AddThreat(pTarget,0.0f);
+                        pZombie->AddThreat(pTarget);
                     addsGuid.push_back(pZombie->GetGUID());
                 }
             }
