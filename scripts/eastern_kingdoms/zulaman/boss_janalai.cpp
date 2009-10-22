@@ -531,7 +531,9 @@ struct MANGOS_DLL_DECL boss_janalaiAI : public ScriptedAI
         {
             if (hatchertime < diff)
             {
-                if (m_pInstance->GetData(DATA_J_EGGS_LEFT) > 0 || m_pInstance->GetData(DATA_J_EGGS_RIGHT) > 0)
+                if (!m_pInstance || (m_pInstance->GetData(DATA_J_EGGS_LEFT) == 0 && m_pInstance->GetData(DATA_J_EGGS_RIGHT) == 0))
+                    m_bIsEggRemaining = false;
+                else
                 {
                     DoScriptText(SAY_SUMMON_HATCHER, m_creature);
 
@@ -552,8 +554,6 @@ struct MANGOS_DLL_DECL boss_janalaiAI : public ScriptedAI
 
                     hatchertime = 90000;
                 }
-                else
-                    m_bIsEggRemaining = false;
 
             }else hatchertime -=diff;
         }
@@ -631,7 +631,7 @@ struct MANGOS_DLL_DECL mob_amanishi_hatcherAI : public ScriptedAI
 
         if (m_creature->Attack(pWho, false))
         {
-            m_creature->AddThreat(pWho, 0.0f);
+            m_creature->AddThreat(pWho);
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
         }
