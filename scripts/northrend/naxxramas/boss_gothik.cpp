@@ -14,13 +14,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-/* ScriptData
-SDName: Boss_Gothik
-SD%Complete: 0
-SDComment: Placeholder
-SDCategory: Naxxramas
-EndScriptData */
-
 #include "precompiled.h"
 #include "naxxramas.h"
 
@@ -94,7 +87,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     boss_gothikAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->IsHeroic();
         
         trainees = Heroic ? 3 : 2;
 
@@ -286,7 +279,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
 {
     mob_gothik_trainee_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 
@@ -357,7 +350,6 @@ struct MANGOS_DLL_DECL mob_gothik_dk_addAI : public ScriptedAI
 {
     mob_gothik_dk_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        //Heroic = m_creature->GetMap()->IsHeroic();
         Reset();      
     }
 
@@ -418,7 +410,7 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
 {
     mob_gothik_rider_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 

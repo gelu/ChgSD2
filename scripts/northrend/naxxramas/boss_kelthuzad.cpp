@@ -51,7 +51,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     boss_kelthuzadAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = m_creature->GetMap()->GetSpawnMode() > 0;
         MaxGuardians = Heroic ? 4 : 2;
         Reset();
     }

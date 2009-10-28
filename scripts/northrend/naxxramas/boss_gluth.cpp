@@ -78,7 +78,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
     boss_gluthAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->IsHeroic();
+        Heroic = m_creature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 
