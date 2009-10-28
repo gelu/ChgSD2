@@ -28,14 +28,11 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     boss_freyaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
-
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         bp = 8;
-        sp = GetSpellStore()->LookupEntry(SP_ATTUNED_TO_NATURE);
-        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, 0))
-            m_creature->AddAura(new AttunedToNatureAura(sp, 0, &bp, m_creature, m_creature));
-        m_creature->GetAura(SP_ATTUNED_TO_NATURE, 0)->SetStackAmount(150);
-
+        if(!pCreature->HasAura(SP_ATTUNED_TO_NATURE, 0))
+            pCreature->AddAura(new AttunedToNatureAura(sp, 0, &bp, pCreature, pCreature));
+        pCreature->GetAura(SP_ATTUNED_TO_NATURE, 0)->SetStackAmount(150);
         Reset();
     }
 

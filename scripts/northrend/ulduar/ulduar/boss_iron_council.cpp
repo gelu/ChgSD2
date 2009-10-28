@@ -32,7 +32,7 @@ struct MANGOS_DLL_DECL iron_councilAI : public ScriptedAI
     iron_councilAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
     

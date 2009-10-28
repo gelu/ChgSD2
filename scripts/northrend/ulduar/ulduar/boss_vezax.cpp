@@ -16,7 +16,7 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
     boss_vezaxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 

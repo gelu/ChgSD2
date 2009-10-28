@@ -14,7 +14,7 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
     boss_algalonAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 

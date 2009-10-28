@@ -8,11 +8,6 @@
 //Ice door after Hodir      (194441)
 //Runed Stone Door after vezax (194750)
 
-/*
-TODO: Save "reached" variables with encounters for correct teleporter work.
-*/
-
-
 struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
 {
     instance_ulduar(Map* pMap) : ScriptedInstance(pMap) 

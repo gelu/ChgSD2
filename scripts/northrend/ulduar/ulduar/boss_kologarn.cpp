@@ -29,7 +29,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
     boss_kologarnAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 
@@ -147,7 +147,7 @@ struct MANGOS_DLL_DECL boss_kologarn_left_armAI : public Scripted_NoMovementAI
     boss_kologarn_left_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 
@@ -191,7 +191,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
     boss_kologarn_right_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 

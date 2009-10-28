@@ -42,7 +42,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
     boss_xt002(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsHeroic();
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         //PummelerCount = Heroic ? 2 : 1;
         ScrapbotCount = Heroic ? 6 : 4;
         BoombotCount = Heroic ? 4 : 2;
