@@ -206,7 +206,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
     boss_emalonAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->IsHeroic();
+        m_bIsHeroicMode = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
 
