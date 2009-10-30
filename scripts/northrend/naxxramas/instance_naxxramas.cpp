@@ -24,7 +24,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 {
     instance_naxxramas(Map *Map) : ScriptedInstance(Map)
     {
-        Heroic = Map->IsHeroic();
+        Heroic = Map->GetSpawnMode() > 0;
         Initialize();
     };
 

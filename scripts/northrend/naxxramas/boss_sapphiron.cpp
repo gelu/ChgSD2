@@ -29,16 +29,25 @@ EndScriptData */
 #define SPELL_ICEBOLT           28522
 #define SPELL_FROST_BREATH      29318 //should be 28524
 #define SPELL_FROST_AURA        28531
+#define H_SPELL_FROST_AURA      55799
 #define SPELL_LIFE_DRAIN        28542
+#define H_SPELL_LIFE_DRAIN      55665
 #define SPELL_BLIZZARD          28547
-#define SPELL_BERSERK            26662
+#define H_SPELL_BLIZZARD        55699
+#define SPELL_TAIL_SWEEP        55697
+#define H_SPELL_TAIL_SWEEP      55696
+#define SPELL_CLEAVE            19983
+#define SPELL_BERSERK           26662
 
 struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 {
     boss_sapphironAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
         Reset();
     }
+
+    bool Heroic;
 
     uint32 Icebolt_Count;
     uint32 Icebolt_Timer;
@@ -46,6 +55,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     uint32 FrostAura_Timer;
     uint32 LifeDrain_Timer;
     uint32 Blizzard_Timer;
+    uint32 TailSweep_Timer;
+    uint32 Cleave_Timer;
     uint32 Fly_Timer;
     uint32 Berserk_Timer;
     uint32 phase;
@@ -59,6 +70,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         LifeDrain_Timer = 24000;
         Blizzard_Timer = 20000;
         Fly_Timer = 45000;
+        TailSweep_Timer = 10000 + rand()%10000;
+        Cleave_Timer = 10000 + rand()%10000;
         Icebolt_Timer = 4000;
         land_Timer = 2000;
         Berserk_Timer = 900000;
@@ -78,25 +91,42 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         {
             if (FrostAura_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_FROST_AURA);
+                DoCast(m_creature->getVictim(), Heroic ? H_SPELL_FROST_AURA : SPELL_FROST_AURA);
                 FrostAura_Timer = 5000;
-            }else FrostAura_Timer -= diff;
+            }
+            else FrostAura_Timer -= diff;
 
             if (LifeDrain_Timer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_LIFE_DRAIN);
+                    DoCast(target, Heroic ? H_SPELL_LIFE_DRAIN : SPELL_LIFE_DRAIN);
 
                 LifeDrain_Timer = 24000;
-            }else LifeDrain_Timer -= diff;
+            }
+            else LifeDrain_Timer -= diff;
 
             if (Blizzard_Timer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_BLIZZARD);
+                    DoCast(target, Heroic ? H_SPELL_BLIZZARD : SPELL_BLIZZARD);
 
                 Blizzard_Timer = 20000;
-            }else Blizzard_Timer -= diff;
+            }
+            else Blizzard_Timer -= diff;
+
+            if(TailSweep_Timer < diff)
+            {
+                DoCast(m_creature->getVictim(), Heroic ? H_SPELL_TAIL_SWEEP : SPELL_TAIL_SWEEP);
+                TailSweep_Timer = 10000 + rand()%10000;
+            }
+            else TailSweep_Timer -= diff;
+
+            if(Cleave_Timer < diff)
+            {
+                DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+                Cleave_Timer = 10000 + rand()%10000;
+            }
+            else Cleave_Timer -= diff;
 
             if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > 10)
             {
@@ -113,7 +143,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     Icebolt_Timer = 4000;
                     Icebolt_Count = 0;
                     landoff = false;
-                }else Fly_Timer -= diff;
+                }
+                else Fly_Timer -= diff;
             }
         }
 
@@ -122,11 +153,12 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             if (Icebolt_Timer < diff && Icebolt_Count < 5)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_ICEBOLT);
+                    DoCast(target, SPELL_ICEBOLT);
 
                 ++Icebolt_Count;
                 Icebolt_Timer = 4000;
-            }else Icebolt_Timer -= diff;
+            }
+            else Icebolt_Timer -= diff;
 
             if (Icebolt_Count == 5 && !landoff)
             {
@@ -137,7 +169,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     land_Timer = 2000;
                     landoff = true;
                     FrostBreath_Timer = 6000;
-                }else FrostBreath_Timer -= diff;
+                }
+                else FrostBreath_Timer -= diff;
             }
 
             if (landoff)
@@ -150,16 +183,18 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     m_creature->GetMotionMaster()->Clear(false);
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                     Fly_Timer = 67000;
-                }else land_Timer -= diff;
+                }
+                else land_Timer -= diff;
             }
         }
 
         if (Berserk_Timer < diff)
         {
             DoScriptText(EMOTE_ENRAGE, m_creature);
-            DoCast(m_creature,SPELL_BERSERK);
+            DoCast(m_creature, SPELL_BERSERK);
             Berserk_Timer = 300000;
-        }else Berserk_Timer -= diff;
+        }
+        else Berserk_Timer -= diff;
 
         if (phase!=2)
             DoMeleeAttackIfReady();

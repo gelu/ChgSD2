@@ -42,7 +42,9 @@ enum
 {
 //Anub'Rekhan spels
     SPELL_IMPALE       = 28783,                           //May be wrong spell id. Causes more dmg than I expect
-    SPELL_LOCUSTSWARM  = 54021,                           //This is a self buff that triggers the dmg debuff
+    H_SPELL_IMPALE     = 56090,
+    SPELL_LOCUSTSWARM  = 28785,                           //This is a self buff that triggers the dmg debuff
+    H_SPELL_LOCUSTSWARM = 54021,
     SPELL_BERSERK      = 46587,                           
     SPELL_SELF_SPAWN_5 = 29105,                           //This spawns 5 corpse scarabs ontop of us (most likely the player casts this on death)
 
@@ -65,6 +67,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     boss_anubrekhanAI(Creature *c) : ScriptedAI(c) 
     {
         pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        Heroic = c->GetMap()->GetSpawnMode() > 0;
         
         for (int i = 0; i < MAX_CRYPT_GUARDS; i++)
             guidCryptGuards[i] = 0;
@@ -73,6 +76,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     }
 
     ScriptedInstance *pInstance;
+    bool Heroic;
 
     uint32 Impale_Timer;
     uint32 LocustSwarm_Timer;
@@ -256,9 +260,9 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             {
                 //Cast Impale on a random target
                 //Do NOT cast it when we are afflicted by locust swarm
-                if (!m_creature->HasAura(SPELL_LOCUSTSWARM,1))
+                if (!m_creature->HasAura(Heroic ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM, 1))
                     if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                        DoCast(target,SPELL_IMPALE);
+                        DoCast(target,Heroic ? H_SPELL_IMPALE : SPELL_IMPALE);
                 Impale_Timer = 15000;
             }else Impale_Timer -= diff;
 
@@ -266,7 +270,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             if (LocustSwarm_Timer < diff)
             {
                 //Cast Locust Swarm buff on ourselves
-                DoCast(m_creature, SPELL_LOCUSTSWARM);
+                DoCast(m_creature, Heroic ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM);
                 swarm = true;
                 //Summon Crypt Guard immidietly after Locust Swarm
                 if (CryptGuard_count < MAX_CRYPT_GUARDS)
