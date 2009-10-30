@@ -2509,10 +2509,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\scripts\world\npc_innkeeper.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\scripts\world\npc_professions.cpp"
 					>
 				</File>
