@@ -131,7 +131,7 @@ struct MANGOS_DLL_DECL boss_nadoxAI : public ScriptedAI
         if (!lCreatureList.size())
             return NULL;
 
-        uint32 uiCount = urand(0, lCreatureList.size()-1);
+        uint32 uiCount = urand(1, lCreatureList.size());
         std::list<Creature* >::iterator iter = lCreatureList.begin();
         for(; uiCount != 0; --uiCount)
              ++iter;
