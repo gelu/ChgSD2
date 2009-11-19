@@ -1676,7 +1676,7 @@ struct MANGOS_DLL_DECL npc_rune_blade : public ScriptedAI
             m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, item->GetProto()->ItemId);
 
         // Add stats scaling
-        int32 damageDone=owner->CalculateDamage(BASE_ATTACK, true); // might be average damage instead ?
+        int32 damageDone=owner->CalculateDamage(BASE_ATTACK, true, true); // might be average damage instead ?
         int32 meleeSpeed=owner->m_modAttackSpeedPct[BASE_ATTACK];
         m_creature->CastCustomSpell(m_creature, 51906, &damageDone, &meleeSpeed, NULL, true);
 

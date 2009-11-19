@@ -12,7 +12,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
 {
     instance_ulduar(Map* pMap) : ScriptedInstance(pMap) 
     {
-        Heroic = pMap->IsHeroic();
+        Heroic = pMap->IsRaidOrHeroicDungeon();
         Initialize();
     }
 
