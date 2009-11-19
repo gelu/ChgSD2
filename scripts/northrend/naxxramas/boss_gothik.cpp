@@ -87,7 +87,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     boss_gothikAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         
         trainees = Heroic ? 3 : 2;
 
@@ -279,7 +279,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
 {
     mob_gothik_trainee_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
     }
 
@@ -410,7 +410,7 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
 {
     mob_gothik_rider_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
     }
 

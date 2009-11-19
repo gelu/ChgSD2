@@ -43,7 +43,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 {
     boss_sapphironAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
     }
 

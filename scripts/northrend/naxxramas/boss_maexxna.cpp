@@ -93,7 +93,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
     boss_maexxnaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
     }
 

@@ -41,7 +41,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
 {
     boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         Reset();
     }
 

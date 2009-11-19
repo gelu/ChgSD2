@@ -58,7 +58,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
     boss_nothAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
         AddsCount = Heroic ? 3 : 2; //normal phase
         BalconyAddsCount = Heroic ? 4 : 2; //balcony phase
         Reset();
