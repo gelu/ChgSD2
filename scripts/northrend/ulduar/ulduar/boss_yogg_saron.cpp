@@ -36,6 +36,8 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        DoMeleeAttackIfReady();
     }
 };
 
