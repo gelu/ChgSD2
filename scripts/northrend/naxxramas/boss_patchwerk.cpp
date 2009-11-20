@@ -41,11 +41,11 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
 {
     boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     uint32 HatefullStrike_Timer;
     uint32 Enrage_Timer;
     uint32 Slimebolt_Timer;
@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             }
 
             if (pMostHPTarget)
-                DoCast(pMostHPTarget, Heroic ? H_SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE);
+                DoCast(pMostHPTarget, Regular ? H_SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE);
 
             HatefullStrike_Timer = 1200;
         }else HatefullStrike_Timer -= diff;

@@ -32,12 +32,12 @@ struct MANGOS_DLL_DECL iron_councilAI : public ScriptedAI
     iron_councilAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
     
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     int CouncilAlive;
     
     void Reset()
@@ -122,7 +122,7 @@ struct MANGOS_DLL_DECL boss_steelbreakerAI : public iron_councilAI
 
     void Aggro(Unit *who) 
     {
-        DoCast(m_creature, Heroic ? H_SP_HIGH_VOLTAGE : SP_HIGH_VOLTAGE);
+        DoCast(m_creature, Regular ? H_SP_HIGH_VOLTAGE : SP_HIGH_VOLTAGE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -132,7 +132,7 @@ struct MANGOS_DLL_DECL boss_steelbreakerAI : public iron_councilAI
 
         if(PunchTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_FUSION_PUNCH : SP_FUSION_PUNCH);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_FUSION_PUNCH : SP_FUSION_PUNCH);
             PunchTimer = 30000;
         }
         else PunchTimer -= diff;
@@ -172,7 +172,7 @@ struct MANGOS_DLL_DECL boss_brundirAI : public iron_councilAI
 
         if(OverloadTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_OVERLOAD : SP_OVERLOAD);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_OVERLOAD : SP_OVERLOAD);
             OverloadTimer = 60000;
         }
         else OverloadTimer -= diff;
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL boss_brundirAI : public iron_councilAI
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target && target->isAlive())
-                DoCast(target, Heroic ? H_SP_CHAIN_LIGHTNING : SP_CHAIN_LIGHTNING);
+                DoCast(target, Regular ? H_SP_CHAIN_LIGHTNING : SP_CHAIN_LIGHTNING);
             LightningTimer = 5000 + rand()%5000;
         }
         else LightningTimer -= diff;
@@ -235,7 +235,7 @@ struct MANGOS_DLL_DECL boss_molgeimAI : public iron_councilAI
             if(DeathRuneTimer < diff)
             {
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if(target) DoCast(target, Heroic ? H_SP_RUNE_OF_DEATH : SP_RUNE_OF_DEATH);
+                if(target) DoCast(target, Regular ? H_SP_RUNE_OF_DEATH : SP_RUNE_OF_DEATH);
             }
         }
 

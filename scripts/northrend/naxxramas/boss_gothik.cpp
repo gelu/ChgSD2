@@ -87,9 +87,9 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     boss_gothikAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         
-        trainees = Heroic ? 3 : 2;
+        trainees = Regular ? 3 : 2;
 
         LiveX[0]=2669.430176; LiveY[0]=-3430.828613; LiveZ[0]=268.563049;
         LiveX[1]=2692.187988; LiveY[1]=-3431.384277; LiveZ[1]=268.563538;
@@ -103,7 +103,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     float LiveY[3];
     float LiveZ[3];
     
-    bool Heroic;
+    bool Regular;
     uint32 phase;
     uint32 Phase_Timer;
     uint32 Shadowbolt_Timer;
@@ -244,7 +244,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
             //cast shadowbolts
             if(Shadowbolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
                 Shadowbolt_Timer = 1200;
             }
             else Shadowbolt_Timer -= diff;
@@ -262,7 +262,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
         {
             if(Shadowbolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
                 Shadowbolt_Timer = 1200;
             }
             else Shadowbolt_Timer -= diff;
@@ -279,11 +279,11 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
 {
     mob_gothik_trainee_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     float UndeadX[5];
     float UndeadY[5];
     float UndeadZ[5];
@@ -306,7 +306,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         //if unrelenting trainee then spawn spectral trainee
-        if(m_creature->GetEntry()==CR_UN_TRAINEE) //maybe need check heroic entry too
+        if(m_creature->GetEntry()==CR_UN_TRAINEE) //maybe need check Regular entry too
         {
             int i = irand(0,5);
             Unit *mob = m_creature->SummonCreature(CR_SP_TRAINEE, UndeadX[i], UndeadY[i], UndeadZ[i], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
@@ -323,7 +323,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
         {
             if(PlagueTimer < diff)
             {
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_DEATH_PLAGUE : SP_DEATH_PLAGUE);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_DEATH_PLAGUE : SP_DEATH_PLAGUE);
                 PlagueTimer = 3500;
             }
             PlagueTimer -= diff;
@@ -332,7 +332,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
         {
             if(ExplosionTimer < diff)
             {
-                DoCast(m_creature, Heroic ? H_SP_EXPLOSION : SP_EXPLOSION);
+                DoCast(m_creature, Regular ? H_SP_EXPLOSION : SP_EXPLOSION);
                 ExplosionTimer = 5000+rand()%10000;
             }
             ExplosionTimer -= diff;
@@ -410,11 +410,11 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
 {
     mob_gothik_rider_addAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->IsRaidOrHeroicDungeon();
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     uint32 VolleyTimer;
     uint32 DrainTimer;
     //uint32 FrenzyTimer;
@@ -442,7 +442,7 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         //if unrelenting rider then spawn spectral rider
-        if(m_creature->GetEntry()==CR_UN_RIDER) //maybe need check heroic entry too
+        if(m_creature->GetEntry()==CR_UN_RIDER) //maybe need check Regular entry too
         {
             int i = irand(0,5);
             Unit *mob = m_creature->SummonCreature(CR_SP_RIDER, UndeadX[i], UndeadY[i], UndeadZ[i], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
@@ -466,9 +466,9 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
                 {
                     target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
                     if(target && target->isAlive() && target->HasAura(SP_SHADOW_MARK))
-                        DoCast(target, Heroic ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
+                        DoCast(target, Regular ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
                 }*/
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
                 VolleyTimer = 10000+rand()%10000;
             }
             else VolleyTimer -= diff;
@@ -478,7 +478,7 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
             if(DrainTimer < diff)
             {
                 Unit *target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
-                if(target) DoCast(target, Heroic ? H_SP_DRAIN_LIFE : SP_DRAIN_LIFE);
+                if(target) DoCast(target, Regular ? H_SP_DRAIN_LIFE : SP_DRAIN_LIFE);
                 DrainTimer = 10000+rand()%10000;
             }
             else DrainTimer -= diff;

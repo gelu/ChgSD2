@@ -51,14 +51,14 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
     boss_kelthuzadAI(Creature* c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
-        Heroic = m_creature->GetMap()->IsRaidOrHeroicDungeon();
-        MaxGuardians = Heroic ? 4 : 2;
+        Regular = m_creature->GetMap()->IsRegularDifficulty();
+        MaxGuardians = Regular ? 4 : 2;
         Reset();
     }
 
     //Variables
     ScriptedInstance* pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 phase;
     uint32 Phase1_Timer;
     //
@@ -182,7 +182,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0);
                 mob->AddThreat(target, 1.0f);
                 mob->GetMotionMaster()->MoveChase(target);
-                Abomination_Timer = Heroic ? (30000+rand()%15000) : (40000+rand()%15000);
+                Abomination_Timer = Regular ? (30000+rand()%15000) : (40000+rand()%15000);
             }
             else Abomination_Timer -= diff;
 
@@ -193,7 +193,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM,0);
                 mob->AddThreat(target, 1.0f);
                 mob->GetMotionMaster()->MoveChase(target);
-                Banshee_Timer = Heroic ? (17000+rand()%10000) : (20000+rand()%15000);
+                Banshee_Timer = Regular ? (17000+rand()%10000) : (20000+rand()%15000);
             }
             else Banshee_Timer -= diff;
         }
@@ -203,7 +203,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             //Frostbolt Volley
             if(FrostboltV_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_FROSTBOLT_VOLLEY : SP_FROSTBOLT_VOLLEY);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_FROSTBOLT_VOLLEY : SP_FROSTBOLT_VOLLEY);
                 FrostboltV_Timer = 15000 + rand()%5000;
             }
             else FrostboltV_Timer -= diff;
@@ -237,7 +237,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             //Frostbolt
             if(Frostbolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_FROSTBOLT : SP_FROSTBOLT);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_FROSTBOLT : SP_FROSTBOLT);
                 Frostbolt_Timer = 5000 + rand()%10000;
             }
             else Frostbolt_Timer -= diff;

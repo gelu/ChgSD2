@@ -14,11 +14,11 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
     boss_algalonAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     uint32 QuantumStrikeTimer;
     uint32 EnrageTimer;
@@ -47,7 +47,7 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
 
         if(QuantumStrikeTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_QUANTUM_STRIKE : SP_QUANTUM_STRIKE);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_QUANTUM_STRIKE : SP_QUANTUM_STRIKE);
             QuantumStrikeTimer = 4000 + rand()%10000;
         }
         else QuantumStrikeTimer -= diff;

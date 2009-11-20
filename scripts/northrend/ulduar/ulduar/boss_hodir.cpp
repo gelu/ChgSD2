@@ -21,11 +21,11 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
     boss_hodirAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     
     uint64 SpeedKillTimer;
@@ -89,7 +89,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
         if(FrozenBlowsTimer < diff)
         {
             DoPlaySoundToSet(m_creature, SOUND_FROZEN_BLOWS);
-            DoCast(m_creature, Heroic ? H_SP_FROZEN_BLOWS : SP_FROZEN_BLOWS);
+            DoCast(m_creature, Regular ? H_SP_FROZEN_BLOWS : SP_FROZEN_BLOWS);
             FrozenBlowsTimer = 60000;
         }
         else FrozenBlowsTimer -= diff;

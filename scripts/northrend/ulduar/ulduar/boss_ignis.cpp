@@ -19,12 +19,12 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
     boss_ignisAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     //Timers
     uint32 ScorchTimer;
     uint32 SlagPotTimer;
@@ -58,14 +58,14 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
 
         if (ScorchTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_SCORCH : SP_SCORCH);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_SCORCH : SP_SCORCH);
             ScorchTimer = 25000;
         }
         else ScorchTimer -= diff;
 
         if (FlameJetsTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_FLAME_JETS : SP_FLAME_JETS);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_FLAME_JETS : SP_FLAME_JETS);
             FlameJetsTimer = 20000+rand()%10000;
         }
         else FlameJetsTimer -= diff;
@@ -74,7 +74,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target && target->isAlive())
-                DoCast(target, Heroic ? H_SP_SLAG_POT : SP_SLAG_POT);
+                DoCast(target, Regular ? H_SP_SLAG_POT : SP_SLAG_POT);
             SlagPotTimer = 15000;
         }
         else SlagPotTimer -= diff;*/

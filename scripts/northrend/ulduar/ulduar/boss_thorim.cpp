@@ -7,11 +7,11 @@ struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
     boss_thorimAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
 
     void Reset()

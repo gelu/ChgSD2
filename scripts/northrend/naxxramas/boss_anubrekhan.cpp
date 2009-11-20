@@ -67,7 +67,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     boss_anubrekhanAI(Creature *c) : ScriptedAI(c) 
     {
         pInstance = ((ScriptedInstance*)c->GetInstanceData());
-        Heroic = c->GetMap()->IsRaidOrHeroicDungeon();
+        Regular = c->GetMap()->IsRegularDifficulty();
         
         for (int i = 0; i < MAX_CRYPT_GUARDS; i++)
             guidCryptGuards[i] = 0;
@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
 
     uint32 Impale_Timer;
     uint32 LocustSwarm_Timer;
@@ -260,9 +260,9 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             {
                 //Cast Impale on a random target
                 //Do NOT cast it when we are afflicted by locust swarm
-                if (!m_creature->HasAura(Heroic ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM, 1))
+                if (!m_creature->HasAura(Regular ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM, 1))
                     if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-                        DoCast(target,Heroic ? H_SPELL_IMPALE : SPELL_IMPALE);
+                        DoCast(target,Regular ? H_SPELL_IMPALE : SPELL_IMPALE);
                 Impale_Timer = 15000;
             }else Impale_Timer -= diff;
 
@@ -270,7 +270,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             if (LocustSwarm_Timer < diff)
             {
                 //Cast Locust Swarm buff on ourselves
-                DoCast(m_creature, Heroic ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM);
+                DoCast(m_creature, Regular ? H_SPELL_LOCUSTSWARM : SPELL_LOCUSTSWARM);
                 swarm = true;
                 //Summon Crypt Guard immidietly after Locust Swarm
                 if (CryptGuard_count < MAX_CRYPT_GUARDS)

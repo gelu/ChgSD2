@@ -29,12 +29,12 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
     boss_kologarnAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 BreathTimer;
     uint32 SmashTimer;
     uint32 EnrageTimer;
@@ -92,7 +92,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
         if(BreathTimer < diff)
         {
             if(!m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
-                DoCast(m_creature->getVictim(), Heroic ? H_SP_PETRIFYING_BREATH : SP_PETRIFYING_BREATH);
+                DoCast(m_creature->getVictim(), Regular ? H_SP_PETRIFYING_BREATH : SP_PETRIFYING_BREATH);
             BreathTimer = 5000;
         }
         else BreathTimer -= diff;
@@ -147,12 +147,12 @@ struct MANGOS_DLL_DECL boss_kologarn_left_armAI : public Scripted_NoMovementAI
     boss_kologarn_left_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 ShockwaveTimer;
 
     void Reset()
@@ -191,12 +191,12 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
     boss_kologarn_right_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 GripThreshold;
     uint32 GripTimer;
     Unit *GrippedPlayer;
@@ -207,7 +207,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
         GrippedPlayer = NULL;
         Gripped = false;
         GripTimer = 10000 + rand()%10000;
-        GripThreshold = Heroic ? 480000 : 100000;
+        GripThreshold = Regular ? 480000 : 100000;
     }
 
     void Aggro(Unit *who) {}
@@ -252,7 +252,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
                 GrippedPlayer = NULL;
                 GripTimer = 10000 + rand()%10000;
                 Gripped = false;
-                GripThreshold = Heroic ? 400000 : 100000;
+                GripThreshold = Regular ? 400000 : 100000;
             }
         }
         else

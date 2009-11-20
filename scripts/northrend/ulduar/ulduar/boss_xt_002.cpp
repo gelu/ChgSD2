@@ -42,10 +42,10 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
     boss_xt002(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
-        //PummelerCount = Heroic ? 2 : 1;
-        ScrapbotCount = Heroic ? 6 : 4;
-        BoombotCount = Heroic ? 4 : 2;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        //PummelerCount = Regular ? 2 : 1;
+        ScrapbotCount = Regular ? 6 : 4;
+        BoombotCount = Regular ? 4 : 2;
         AddX[0] = 792.706; AddY[0] = 64.033; AddZ[0] = 413.632;
         AddX[1] = 879.750; AddY[1] = 64.815; AddZ[1] = 409.804;
         AddX[2] = 896.488; AddY[2] = -93.018; AddZ[2] = 411.731;
@@ -54,7 +54,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
 
     uint32 AddsPhaseTimer;
     bool addsPhase;
@@ -142,7 +142,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
                 int i;
                 Creature *add;
                 Unit *target;
-                if(Heroic || (AddsPhaseTimer > 15000))
+                if(Regular || (AddsPhaseTimer > 15000))
                 {
                     add = m_creature->SummonCreature(CR_PUMMELER, AddX[rnd], AddY[rnd], AddZ[rnd], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     add->SetActiveObjectState(true);
@@ -198,7 +198,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
             {
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if(target && target->isAlive())
-                    DoCast(target, Heroic ? H_SP_SEARING_LIGHT : SP_SEARING_LIGHT);
+                    DoCast(target, Regular ? H_SP_SEARING_LIGHT : SP_SEARING_LIGHT);
                 LightTimer = 10000;
             }
             else LightTimer -= diff;
@@ -207,7 +207,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
             {
                 Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
                 if(target && target->isAlive())
-                    DoCast(target, Heroic ? H_SP_GRAVITY : SP_GRAVITY);
+                    DoCast(target, Regular ? H_SP_GRAVITY : SP_GRAVITY);
                 GravityTimer = 15000 + rand()%5000;
             }
             else GravityTimer -= diff;

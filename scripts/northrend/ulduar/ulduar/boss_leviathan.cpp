@@ -21,12 +21,12 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
     boss_flame_leviathan(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
 
     uint32 BatteringRamTimer;
     uint32 FlameVentsTimer;
@@ -88,7 +88,7 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
         if(RocketTimer < diff)
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            int32 dmg = Heroic ? (3000 + rand()%2000) : (2000 + rand()%1200);
+            int32 dmg = Regular ? (3000 + rand()%2000) : (2000 + rand()%1200);
             if(target && target->isAlive())
                 m_creature->CastCustomSpell(target, SP_ROCKET, &dmg, 0, 0, false);
             RocketTimer = 3000 + rand()%2000;

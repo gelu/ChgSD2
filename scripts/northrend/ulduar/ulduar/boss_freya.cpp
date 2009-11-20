@@ -28,7 +28,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     boss_freyaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         sp = (SpellEntry *)GetSpellStore()->LookupEntry(SP_ATTUNED_TO_NATURE);
         bp = 8;
         if(!pCreature->HasAura(SP_ATTUNED_TO_NATURE, 0))
@@ -44,7 +44,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
     uint32 SunbeamTimer;
     uint32 EnrageTimer;
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     SpellEntry const *sp;
     int32 bp;
@@ -71,7 +71,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
             m_creature->AddAura(new AttunedToNatureAura(sp, 0, &bp, m_creature, m_creature));
         m_creature->GetAura(SP_ATTUNED_TO_NATURE, 0)->SetStackAmount(150);
 
-        DoCast(m_creature, Heroic ? H_SP_TOUCH_OF_EONAR : SP_TOUCH_OF_EONAR);
+        DoCast(m_creature, Regular ? H_SP_TOUCH_OF_EONAR : SP_TOUCH_OF_EONAR);
 
         if(pInstance) pInstance->SetData(TYPE_FREYA, IN_PROGRESS);
     }
@@ -177,7 +177,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         if(SunbeamTimer < diff)
         {
             if( Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(target, Heroic ? H_SP_SUNBEAM : SP_SUNBEAM);
+                DoCast(target, Regular ? H_SP_SUNBEAM : SP_SUNBEAM);
             SunbeamTimer = 6000 + rand()%10000;
         }
         else SunbeamTimer -= diff;
