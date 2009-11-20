@@ -50,12 +50,12 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
 {
     boss_lady_blaumeuxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     uint32 Mark_Timer;
     uint32 VoidZone_Timer;
@@ -126,14 +126,14 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         if(VoidZone_Timer < diff)
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if(target) DoCast(target, Heroic ? H_SPELL_VOIDZONE : SPELL_VOIDZONE);
+            if(target) DoCast(target, Regular ? H_SPELL_VOIDZONE : SPELL_VOIDZONE);
             VoidZone_Timer = 12000;
         }
         else VoidZone_Timer -= diff;
 
         if(ShadowboltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT);
             ShadowboltTimer = 3000;
         }
         else ShadowboltTimer -= diff;
@@ -169,12 +169,12 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
 {
     boss_rivendare_naxxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
     
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     uint32 UnholyShadowTimer;
     uint32 Mark_Timer;
@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL boss_rivendare_naxxAI : public ScriptedAI
         //Unholy Shadow
         if(UnholyShadowTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_UNHOLY_SHADOW : SPELL_UNHOLY_SHADOW);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_UNHOLY_SHADOW : SPELL_UNHOLY_SHADOW);
             UnholyShadowTimer = 15000;
         }
         else UnholyShadowTimer -= diff;
@@ -279,12 +279,12 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
 {
     boss_thane_korthazzAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     uint32 Mark_Timer;
     uint32 Meteor_Timer;
@@ -351,7 +351,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         // Meteor
         if (Meteor_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_METEOR : SPELL_METEOR);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_METEOR : SPELL_METEOR);
             Meteor_Timer = 25000;
         }
         else Meteor_Timer -= diff;
@@ -386,12 +386,12 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
 {
     boss_sir_zeliekAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
     uint32 Mark_Timer;
     uint32 HolyWrath_Timer;
@@ -461,14 +461,14 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         // Holy Wrath
         if(HolyWrath_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),Heroic ? H_SPELL_HOLY_WRATH : SPELL_HOLY_WRATH);
+            DoCast(m_creature->getVictim(),Regular ? H_SPELL_HOLY_WRATH : SPELL_HOLY_WRATH);
             HolyWrath_Timer = 12000;
         }
         else HolyWrath_Timer -= diff;
 
         if(HolyBoltTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_HOLY_BOLT : SPELL_HOLY_BOLT);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_HOLY_BOLT : SPELL_HOLY_BOLT);
             HolyBoltTimer = 3000;
         }
         else HolyBoltTimer -= diff;

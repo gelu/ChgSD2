@@ -93,12 +93,12 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
     boss_maexxnaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 WebTrap_Timer;
     uint32 WebSpray_Timer;
     uint32 PoisonShock_Timer;
@@ -196,21 +196,21 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //WebSpray_Timer
         if (WebSpray_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_WEBSPRAY : SPELL_WEBSPRAY);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_WEBSPRAY : SPELL_WEBSPRAY);
             WebSpray_Timer = 40000;
         }else WebSpray_Timer -= diff;
 
         //PoisonShock_Timer
         if (PoisonShock_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_POISONSHOCK : SPELL_POISONSHOCK);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_POISONSHOCK : SPELL_POISONSHOCK);
             PoisonShock_Timer = 20000;
         }else PoisonShock_Timer -= diff;
 
         //NecroticPoison_Timer
         if (NecroticPoison_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SPELL_NECROTICPOISON : SPELL_NECROTICPOISON);
+            DoCast(m_creature->getVictim(), Regular ? H_SPELL_NECROTICPOISON : SPELL_NECROTICPOISON);
             NecroticPoison_Timer = 30000;
         }else NecroticPoison_Timer -= diff;
 
@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //Enrage if not already enraged and below 30%
         if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 30)
         {
-            DoCast(m_creature, Heroic ? H_SPELL_FRENZY : SPELL_FRENZY);
+            DoCast(m_creature, Regular ? H_SPELL_FRENZY : SPELL_FRENZY);
             Enraged = true;
         }
 

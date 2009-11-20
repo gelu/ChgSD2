@@ -25,12 +25,12 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
     boss_razorscaleAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     //Timers
     uint32 BerserkTimer;
     uint32 DevouringFlameTimer;
@@ -87,21 +87,21 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target && target->isAlive())
-                DoCast(target, Heroic ? H_SP_DEVOURING_FLAME : SP_DEVOURING_FLAME);
+                DoCast(target, Regular ? H_SP_DEVOURING_FLAME : SP_DEVOURING_FLAME);
             DevouringFlameTimer = 9000+rand()%3000;
         }
         else DevouringFlameTimer -= diff;
 
         if (FlameBreathTimer < diff)
         {
-            DoCast(m_creature->getVictim(), Heroic ? H_SP_FLAME_BREATH : SP_FLAME_BREATH);
+            DoCast(m_creature->getVictim(), Regular ? H_SP_FLAME_BREATH : SP_FLAME_BREATH);
             FlameBreathTimer = 15000 + rand()%5000;
         }
         else FlameBreathTimer -= diff;
 
         if (FlameBuffetTimer < diff)
         {
-            DoCast(m_creature, Heroic ? H_SP_FLAME_BUFFET : SP_FLAME_BUFFET, true);
+            DoCast(m_creature, Regular ? H_SP_FLAME_BUFFET : SP_FLAME_BUFFET, true);
             FlameBuffetTimer = 20000 + rand()%15000;
         }
         else FlameBuffetTimer -= diff;
@@ -110,7 +110,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target && target->isAlive())
-                DoCast(target, Heroic ? H_SP_FIREBALL : SP_FIREBALL);
+                DoCast(target, Regular ? H_SP_FIREBALL : SP_FIREBALL);
             FireballTimer = 4000 + rand()%4000;
         }
         else FireballTimer -= diff;

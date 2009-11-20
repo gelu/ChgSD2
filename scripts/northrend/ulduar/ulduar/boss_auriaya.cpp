@@ -19,12 +19,12 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
     boss_auriayaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 EnrageTimer;
     uint32 ScreechTimer;
     uint32 TerrifyTimer;
@@ -69,7 +69,7 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
 
         if (ScreechTimer < diff)
         {
-            DoCast(m_creature, Heroic ? H_SP_SONIC_SCREECH : SP_SONIC_SCREECH);
+            DoCast(m_creature, Regular ? H_SP_SONIC_SCREECH : SP_SONIC_SCREECH);
             ScreechTimer = 25000 + rand()%15000;
         }
         else ScreechTimer -= diff;

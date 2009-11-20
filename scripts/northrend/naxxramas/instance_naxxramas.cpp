@@ -24,7 +24,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 {
     instance_naxxramas(Map *Map) : ScriptedInstance(Map)
     {
-        Heroic = Map->GetSpawnMode() > 0;
+        Regular = Map->IsRegularDifficulty();
         Initialize();
     };
 
@@ -33,7 +33,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
     uint32 mEncounter[ENCOUNTERS];
     uint32 mHorsemen[4];
 
-    bool Heroic;
+    bool Regular;
     //Bosses and other NPC's
     uint64 mFaerlinaGUID;
     //Doors and other GO's
@@ -117,8 +117,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             case GO_MILI_GOTH_EXIT_GATE: mGothikExitDoorGUID = pGo->GetGUID(); break;
             case GO_MILI_GOTH_COMBAT_GATE: mGothikCombatDoorGUID = pGo->GetGUID(); break;
             case GO_CONS_GLUT_EXIT_DOOR: mGluthDoorGUID = pGo->GetGUID(); break;
-            case GO_CHEST_HORSEMEN_NORM: if(!Heroic) mHorsemenChestGUID = pGo->GetGUID(); break;
-            case GO_CHEST_HORSEMEN_HERO: if(Heroic) mHorsemenChestGUID = pGo->GetGUID(); break;
+            case GO_CHEST_HORSEMEN_NORM: if(!Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
+            case GO_CHEST_HORSEMEN_HERO: if(Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
             case GO_MILI_HORSEMEN_DOOR: mHorsemenDoorGUID = pGo->GetGUID(); break;
         }
     }

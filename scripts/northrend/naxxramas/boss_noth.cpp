@@ -58,14 +58,14 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
     boss_nothAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
-        AddsCount = Heroic ? 3 : 2; //normal phase
-        BalconyAddsCount = Heroic ? 4 : 2; //balcony phase
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        AddsCount = Regular ? 3 : 2; //normal phase
+        BalconyAddsCount = Regular ? 4 : 2; //balcony phase
         Reset();
     }
 
     ScriptedInstance* pInstance;
-    bool Heroic;
+    bool Regular;
 
     uint32 BlinkTimer;
     uint32 CurseTimer;
@@ -170,7 +170,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             if (BlinkTimer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_CRIPPLE);
-                if(Heroic)
+                if(Regular)
                 {
                     DoCast(m_creature, SPELL_BLINK);
                     DoResetThreat();

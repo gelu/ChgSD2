@@ -78,14 +78,14 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
     boss_gluthAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = m_creature->GetMap()->GetSpawnMode() > 0;
+        Regular = m_creature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     std::vector<uint64> addsGuid;
 
     ScriptedInstance* pInstance;
-    bool Heroic;
+    bool Regular;
 
     uint32 MortalWound_Timer;
     uint32 Decimate_Timer;
@@ -147,7 +147,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
-            DoCast(m_creature, Heroic ? SPELL_ENRAGE_H : SPELL_ENRAGE);
+            DoCast(m_creature, Regular ? SPELL_ENRAGE_H : SPELL_ENRAGE);
             Enrage_Timer = 60000;
         }else Enrage_Timer -= diff;
 
@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
                 addsGuid.push_back(pZombie->GetGUID());
             }
 
-            if (Heroic)
+            if (Regular)
             {
                 if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 15000))
                 {

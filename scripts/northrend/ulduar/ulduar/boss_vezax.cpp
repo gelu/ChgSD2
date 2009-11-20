@@ -16,11 +16,11 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
     boss_vezaxAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Heroic;
+    bool Regular;
     ScriptedInstance *pInstance;
 
     uint32 EnrageTimer;
