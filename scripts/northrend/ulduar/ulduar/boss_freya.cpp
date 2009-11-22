@@ -71,7 +71,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
             m_creature->AddAura(new AttunedToNatureAura(sp, 0, &bp, m_creature, m_creature));
         m_creature->GetAura(SP_ATTUNED_TO_NATURE, 0)->SetStackAmount(150);
 
-        DoCast(m_creature, Regular ? H_SP_TOUCH_OF_EONAR : SP_TOUCH_OF_EONAR);
+        DoCast(m_creature, Regular ? SP_TOUCH_OF_EONAR : H_SP_TOUCH_OF_EONAR);
 
         if(pInstance) pInstance->SetData(TYPE_FREYA, IN_PROGRESS);
     }
@@ -177,7 +177,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         if(SunbeamTimer < diff)
         {
             if( Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(target, Regular ? H_SP_SUNBEAM : SP_SUNBEAM);
+                DoCast(target, Regular ? SP_SUNBEAM : H_SP_SUNBEAM);
             SunbeamTimer = 6000 + rand()%10000;
         }
         else SunbeamTimer -= diff;

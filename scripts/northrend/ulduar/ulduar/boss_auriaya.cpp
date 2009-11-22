@@ -69,7 +69,7 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
 
         if (ScreechTimer < diff)
         {
-            DoCast(m_creature, Regular ? H_SP_SONIC_SCREECH : SP_SONIC_SCREECH);
+            DoCast(m_creature, Regular ? SP_SONIC_SCREECH : H_SP_SONIC_SCREECH);
             ScreechTimer = 25000 + rand()%15000;
         }
         else ScreechTimer -= diff;

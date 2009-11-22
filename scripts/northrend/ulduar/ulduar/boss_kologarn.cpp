@@ -92,7 +92,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
         if(BreathTimer < diff)
         {
             if(!m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
-                DoCast(m_creature->getVictim(), Regular ? H_SP_PETRIFYING_BREATH : SP_PETRIFYING_BREATH);
+                DoCast(m_creature->getVictim(), Regular ? SP_PETRIFYING_BREATH : H_SP_PETRIFYING_BREATH);
             BreathTimer = 5000;
         }
         else BreathTimer -= diff;
@@ -207,7 +207,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
         GrippedPlayer = NULL;
         Gripped = false;
         GripTimer = 10000 + rand()%10000;
-        GripThreshold = Regular ? 480000 : 100000;
+        GripThreshold = Regular ? 100000 : 480000;
     }
 
     void Aggro(Unit *who) {}
@@ -252,7 +252,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
                 GrippedPlayer = NULL;
                 GripTimer = 10000 + rand()%10000;
                 Gripped = false;
-                GripThreshold = Regular ? 400000 : 100000;
+                GripThreshold = Regular ? 100000 : 400000;
             }
         }
         else
