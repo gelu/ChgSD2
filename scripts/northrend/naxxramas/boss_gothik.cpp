@@ -89,7 +89,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Regular = pCreature->GetMap()->IsRegularDifficulty();
         
-        trainees = Regular ? 3 : 2;
+        trainees = Regular ? 2 : 3;
 
         LiveX[0]=2669.430176; LiveY[0]=-3430.828613; LiveZ[0]=268.563049;
         LiveX[1]=2692.187988; LiveY[1]=-3431.384277; LiveZ[1]=268.563538;
@@ -244,7 +244,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
             //cast shadowbolts
             if(Shadowbolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
+                DoCast(m_creature->getVictim(), Regular ? SP_SHADOWBOLT : H_SP_SHADOWBOLT);
                 Shadowbolt_Timer = 1200;
             }
             else Shadowbolt_Timer -= diff;
@@ -262,7 +262,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
         {
             if(Shadowbolt_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOWBOLT : SP_SHADOWBOLT);
+                DoCast(m_creature->getVictim(), Regular ? SP_SHADOWBOLT : H_SP_SHADOWBOLT);
                 Shadowbolt_Timer = 1200;
             }
             else Shadowbolt_Timer -= diff;
@@ -323,7 +323,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
         {
             if(PlagueTimer < diff)
             {
-                DoCast(m_creature->getVictim(), Regular ? H_SP_DEATH_PLAGUE : SP_DEATH_PLAGUE);
+                DoCast(m_creature->getVictim(), Regular ? SP_DEATH_PLAGUE : H_SP_DEATH_PLAGUE);
                 PlagueTimer = 3500;
             }
             PlagueTimer -= diff;
@@ -332,7 +332,7 @@ struct MANGOS_DLL_DECL mob_gothik_trainee_addAI : public ScriptedAI
         {
             if(ExplosionTimer < diff)
             {
-                DoCast(m_creature, Regular ? H_SP_EXPLOSION : SP_EXPLOSION);
+                DoCast(m_creature, Regular ? SP_EXPLOSION : H_SP_EXPLOSION);
                 ExplosionTimer = 5000+rand()%10000;
             }
             ExplosionTimer -= diff;
@@ -466,9 +466,9 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
                 {
                     target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
                     if(target && target->isAlive() && target->HasAura(SP_SHADOW_MARK))
-                        DoCast(target, Regular ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
+                        DoCast(target, Regular ? SP_SHADOW_VOLLEY : H_SP_SHADOW_VOLLEY);
                 }*/
-                DoCast(m_creature->getVictim(), Regular ? H_SP_SHADOW_VOLLEY : SP_SHADOW_VOLLEY);
+                DoCast(m_creature->getVictim(), Regular ? SP_SHADOW_VOLLEY : H_SP_SHADOW_VOLLEY);
                 VolleyTimer = 10000+rand()%10000;
             }
             else VolleyTimer -= diff;
@@ -478,7 +478,7 @@ struct MANGOS_DLL_DECL mob_gothik_rider_addAI : public ScriptedAI
             if(DrainTimer < diff)
             {
                 Unit *target = SelectUnit(SELECT_TARGET_TOPAGGRO, 0);
-                if(target) DoCast(target, Regular ? H_SP_DRAIN_LIFE : SP_DRAIN_LIFE);
+                if(target) DoCast(target, Regular ? SP_DRAIN_LIFE : H_SP_DRAIN_LIFE);
                 DrainTimer = 10000+rand()%10000;
             }
             else DrainTimer -= diff;

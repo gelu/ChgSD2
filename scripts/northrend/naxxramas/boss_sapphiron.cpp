@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         {
             if (FrostAura_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Regular ? H_SPELL_FROST_AURA : SPELL_FROST_AURA);
+                DoCast(m_creature->getVictim(), Regular ? SPELL_FROST_AURA : H_SPELL_FROST_AURA);
                 FrostAura_Timer = 5000;
             }
             else FrostAura_Timer -= diff;
@@ -99,7 +99,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             if (LifeDrain_Timer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, Regular ? H_SPELL_LIFE_DRAIN : SPELL_LIFE_DRAIN);
+                    DoCast(target, Regular ? SPELL_LIFE_DRAIN : H_SPELL_LIFE_DRAIN);
 
                 LifeDrain_Timer = 24000;
             }
@@ -108,7 +108,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             if (Blizzard_Timer < diff)
             {
                 if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, Regular ? H_SPELL_BLIZZARD : SPELL_BLIZZARD);
+                    DoCast(target, Regular ? SPELL_BLIZZARD : H_SPELL_BLIZZARD);
 
                 Blizzard_Timer = 20000;
             }
@@ -116,7 +116,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 
             if(TailSweep_Timer < diff)
             {
-                DoCast(m_creature->getVictim(), Regular ? H_SPELL_TAIL_SWEEP : SPELL_TAIL_SWEEP);
+                DoCast(m_creature->getVictim(), Regular ? SPELL_TAIL_SWEEP : H_SPELL_TAIL_SWEEP);
                 TailSweep_Timer = 10000 + rand()%10000;
             }
             else TailSweep_Timer -= diff;

@@ -43,21 +43,21 @@ enum
     SPELL_ENRAGE              =  28798,
     SPELL_RAINOFFIRE          =  39024,                   //Not sure if targeted AoEs work if casted directly upon a player
 
-    SPELL_WIDOWS_EMBRACE      =  28732,					//We will use it, but the real thing will be another
+    SPELL_WIDOWS_EMBRACE      =  28732,                    //We will use it, but the real thing will be another
     SPELL_FIREBALL            =  54095
 };
 
 struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
 {
     boss_faerlinaAI(Creature *c) : ScriptedAI(c)
-	{
-		pInstance = ((ScriptedInstance*)c->GetInstanceData());
-		Reset();
-	}
+    {
+        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        Reset();
+    }
 
-	ScriptedInstance *pInstance;
+    ScriptedInstance *pInstance;
 
-	uint32 PoisonBoltVolley_Timer;
+    uint32 PoisonBoltVolley_Timer;
     uint32 RainOfFire_Timer;
     uint32 Enrage_Timer;
     bool HasTaunted;
@@ -70,15 +70,15 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         HasTaunted = false;
         
         if(pInstance && m_creature->isAlive())
-			pInstance->SetData(TYPE_FAERLINA, NOT_STARTED);
+            pInstance->SetData(TYPE_FAERLINA, NOT_STARTED);
     }
 
     void Aggro(Unit *who)
     {
-		//Close the room for boss fight
-		if(pInstance) pInstance->SetData(TYPE_FAERLINA, IN_PROGRESS);
+        //Close the room for boss fight
+        if(pInstance) pInstance->SetData(TYPE_FAERLINA, IN_PROGRESS);
 
-		DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO, m_creature);
     }
 
     void MoveInLineOfSight(Unit *who)
@@ -99,9 +99,9 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-		if(pInstance) pInstance->SetData(TYPE_FAERLINA, DONE);
+        if(pInstance) pInstance->SetData(TYPE_FAERLINA, DONE);
 
-		DoScriptText(SAY_DEATH, m_creature);
+        DoScriptText(SAY_DEATH, m_creature);
     }
 
     void UpdateAI(const uint32 diff)
@@ -127,12 +127,12 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
         //Enrage_Timer
         if (Enrage_Timer < diff)
         {
-			switch (rand()%3)
-			{
-				case 0: DoScriptText(SAY_ENRAGE1, m_creature); break;
-				case 1: DoScriptText(SAY_ENRAGE2, m_creature); break;
-				case 2: DoScriptText(SAY_ENRAGE3, m_creature); break;
-			}
+            switch (rand()%3)
+            {
+                case 0: DoScriptText(SAY_ENRAGE1, m_creature); break;
+                case 1: DoScriptText(SAY_ENRAGE2, m_creature); break;
+                case 2: DoScriptText(SAY_ENRAGE3, m_creature); break;
+            }
             DoCast(m_creature,SPELL_ENRAGE);
             Enrage_Timer = 61000;
         }else Enrage_Timer -= diff;
@@ -149,18 +149,18 @@ CreatureAI* GetAI_boss_faerlina(Creature *_Creature)
 struct MANGOS_DLL_DECL mob_faerlina_worshipperAI : public ScriptedAI
 {
     mob_faerlina_worshipperAI(Creature *c) : ScriptedAI(c)
-	{
-		pInstance = ((ScriptedInstance*)c->GetInstanceData());
-		Reset();
-	}
+    {
+        pInstance = ((ScriptedInstance*)c->GetInstanceData());
+        Reset();
+    }
 
-	ScriptedInstance *pInstance;
-	uint32 fireball_timer;
+    ScriptedInstance *pInstance;
+    uint32 fireball_timer;
 
-	void Reset()
-	{
-		fireball_timer = 0;
-	}
+    void Reset()
+    {
+        fireball_timer = 0;
+    }
 
     void Aggro(Unit *who){}
     
@@ -169,9 +169,9 @@ struct MANGOS_DLL_DECL mob_faerlina_worshipperAI : public ScriptedAI
 #ifndef SPELL_28732_NOT_YET_IMPLEMENTED
         DoCast(m_creature,SPELL_WIDOWS_EMBRACE,true);
 #else
-		Unit* Faerlina = Unit::GetUnit((*m_creature), pInstance->GetData64(GUID_FAERLINA));
-		if(Faerlina && m_creature->GetDistance2d(Faerlina) < 15.0f)
-			Faerlina->RemoveAurasByCasterSpell(SPELL_ENRAGE,pInstance->GetData64(GUID_FAERLINA));
+        Unit* Faerlina = Unit::GetUnit((*m_creature), pInstance->GetData64(GUID_FAERLINA));
+        if(Faerlina && m_creature->GetDistance2d(Faerlina) < 15.0f)
+            Faerlina->RemoveAurasByCasterSpell(SPELL_ENRAGE,pInstance->GetData64(GUID_FAERLINA));
 #endif
     }
 
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL mob_faerlina_worshipperAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-		//PoisonBoltVolley_Timer
+        //PoisonBoltVolley_Timer
         if (fireball_timer < diff)
         {
             DoCast(m_creature->getVictim(),SPELL_FIREBALL);
@@ -204,7 +204,7 @@ void AddSC_boss_faerlina()
     newscript->GetAI = &GetAI_boss_faerlina;
     newscript->RegisterSelf();
 
-	newscript = new Script;
+    newscript = new Script;
     newscript->Name = "mob_faerlina_worshipper";
     newscript->GetAI = &GetAI_mob_faerlina_worshipper;
     newscript->RegisterSelf();

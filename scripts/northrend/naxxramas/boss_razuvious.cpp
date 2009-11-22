@@ -119,7 +119,7 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         // Disrupting Shout
         if (m_uiDisruptingShoutTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_DISRUPTING_SHOUT_H : SPELL_DISRUPTING_SHOUT);
+            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_DISRUPTING_SHOUT : SPELL_DISRUPTING_SHOUT_H);
             m_uiDisruptingShoutTimer = 25000;
         }
         else

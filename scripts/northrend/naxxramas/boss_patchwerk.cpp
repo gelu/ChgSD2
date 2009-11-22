@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             }
 
             if (pMostHPTarget)
-                DoCast(pMostHPTarget, Regular ? H_SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE);
+                DoCast(pMostHPTarget, Regular ? SPELL_HATEFULSTRIKE : H_SPELL_HATEFULSTRIKE);
 
             HatefullStrike_Timer = 1200;
         }else HatefullStrike_Timer -= diff;

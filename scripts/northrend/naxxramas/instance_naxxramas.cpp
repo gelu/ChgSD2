@@ -117,8 +117,8 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
             case GO_MILI_GOTH_EXIT_GATE: mGothikExitDoorGUID = pGo->GetGUID(); break;
             case GO_MILI_GOTH_COMBAT_GATE: mGothikCombatDoorGUID = pGo->GetGUID(); break;
             case GO_CONS_GLUT_EXIT_DOOR: mGluthDoorGUID = pGo->GetGUID(); break;
-            case GO_CHEST_HORSEMEN_NORM: if(!Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
-            case GO_CHEST_HORSEMEN_HERO: if(Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
+            case GO_CHEST_HORSEMEN_NORM: if(Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
+            case GO_CHEST_HORSEMEN_HERO: if(!Regular) mHorsemenChestGUID = pGo->GetGUID(); break;
             case GO_MILI_HORSEMEN_DOOR: mHorsemenDoorGUID = pGo->GetGUID(); break;
         }
     }

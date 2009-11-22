@@ -59,8 +59,8 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Regular = pCreature->GetMap()->IsRegularDifficulty();
-        AddsCount = Regular ? 3 : 2; //normal phase
-        BalconyAddsCount = Regular ? 4 : 2; //balcony phase
+        AddsCount = Regular ? 2 : 3; //normal phase
+        BalconyAddsCount = Regular ? 2 : 4; //balcony phase
         Reset();
     }
 
@@ -170,7 +170,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             if (BlinkTimer < diff)
             {
                 DoCast(m_creature->getVictim(),SPELL_CRIPPLE);
-                if(Regular)
+                if(!Regular)
                 {
                     DoCast(m_creature, SPELL_BLINK);
                     DoResetThreat();
