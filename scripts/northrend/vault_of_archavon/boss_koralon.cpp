@@ -25,12 +25,12 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
     boss_koralonAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Heroic = pCreature->GetMap()->GetSpawnMode() > 0;
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* pInstance;
-    bool Heroic;
+    bool Regular;
     uint32 BurningBreathTimer;
     uint32 MeteorFistsTimer;
     uint32 FlamesTimer;
@@ -69,7 +69,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
         if(BurningBreathTimer < diff)
         {
-            DoCast(m_creature, Heroic ? H_SP_BURNING_BREATH : SP_BURNING_BREATH);
+            DoCast(m_creature, Regular ? SP_BURNING_BREATH : H_SP_BURNING_BREATH);
             BurningBreathTimer = 45000;
 
             BB = true;
@@ -82,7 +82,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
         {
             if(BBTickTimer < diff)
             {
-                DoCast(NULL, Heroic ? H_SP_BB_EFFECT : SP_BB_EFFECT, true);
+                DoCast(NULL, Regular ? SP_BB_EFFECT : H_SP_BB_EFFECT, true);
                 BBTickTimer = 1000;
                 ++BBTicks;
                 if(BBTicks > 2) BB = false;
@@ -92,13 +92,13 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
         if(FlamesTimer < diff)
         {
-			int flames = Heroic ? 5 : 3;
-			int i;
-			for(i=0; i< flames; ++i)
-			{
-				Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-				if(target) DoCast(target, Heroic ? H_SP_CINDER : SP_CINDER);
-			}
+            int flames = Regular ? 3 : 5;
+            int i;
+            for(i=0; i< flames; ++i)
+            {
+                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                if(target) DoCast(target, Regular ? SP_CINDER : H_SP_CINDER);
+            }
             FlamesTimer = 20000;
         }
         else FlamesTimer -= diff;

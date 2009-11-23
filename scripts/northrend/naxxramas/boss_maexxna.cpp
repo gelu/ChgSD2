@@ -130,19 +130,19 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
 
     void DoCastWebWrap()
     {
-        std::list<HostileReference *> t_list = m_creature->getThreatManager().getThreatList();
+        ThreatList const& tList = m_creature->getThreatManager().getThreatList();
         std::vector<Unit *> targets;
 
         //This spell doesn't work if we only have 1 player on threat list
-        if (t_list.size() < 2)
+        if (tList.size() < 2)
             return;
 
         //begin + 1 , so we don't target the one with the highest threat
-        std::list<HostileReference *>::iterator itr = t_list.begin();
+        ThreatList::const_iterator itr = tList.begin();
         std::advance(itr, 1);
 
         //store the threat list in a different container
-        for(; itr!= t_list.end(); ++itr)
+        for (;itr != tList.end(); ++itr)
         {
             Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
 
@@ -196,21 +196,21 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //WebSpray_Timer
         if (WebSpray_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Regular ? H_SPELL_WEBSPRAY : SPELL_WEBSPRAY);
+            DoCast(m_creature->getVictim(), Regular ? SPELL_WEBSPRAY : H_SPELL_WEBSPRAY);
             WebSpray_Timer = 40000;
         }else WebSpray_Timer -= diff;
 
         //PoisonShock_Timer
         if (PoisonShock_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Regular ? H_SPELL_POISONSHOCK : SPELL_POISONSHOCK);
+            DoCast(m_creature->getVictim(), Regular ? SPELL_POISONSHOCK : H_SPELL_POISONSHOCK);
             PoisonShock_Timer = 20000;
         }else PoisonShock_Timer -= diff;
 
         //NecroticPoison_Timer
         if (NecroticPoison_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), Regular ? H_SPELL_NECROTICPOISON : SPELL_NECROTICPOISON);
+            DoCast(m_creature->getVictim(), Regular ? SPELL_NECROTICPOISON : H_SPELL_NECROTICPOISON);
             NecroticPoison_Timer = 30000;
         }else NecroticPoison_Timer -= diff;
 
@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         //Enrage if not already enraged and below 30%
         if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 30)
         {
-            DoCast(m_creature, Regular ? H_SPELL_FRENZY : SPELL_FRENZY);
+            DoCast(m_creature, Regular ? SPELL_FRENZY : H_SPELL_FRENZY);
             Enraged = true;
         }
 

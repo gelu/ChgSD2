@@ -89,7 +89,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
         if(FrozenBlowsTimer < diff)
         {
             DoPlaySoundToSet(m_creature, SOUND_FROZEN_BLOWS);
-            DoCast(m_creature, Regular ? H_SP_FROZEN_BLOWS : SP_FROZEN_BLOWS);
+            DoCast(m_creature, Regular ? SP_FROZEN_BLOWS : H_SP_FROZEN_BLOWS);
             FrozenBlowsTimer = 60000;
         }
         else FrozenBlowsTimer -= diff;

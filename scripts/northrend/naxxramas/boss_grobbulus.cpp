@@ -29,15 +29,15 @@ Enrages 26527*/
 
 struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
 {
-	boss_grobbulusAI(Creature *pCreature) : ScriptedAI(pCreature)
+    boss_grobbulusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         Reset();
     }
 
     uint32 EnrageTimer;
-	uint32 MutatingInjectionTimer;
-	uint32 PoisonCloudTimer;
-	uint32 SlimeSprayTimer;
+    uint32 MutatingInjectionTimer;
+    uint32 PoisonCloudTimer;
+    uint32 SlimeSprayTimer;
 
     void Reset()
     {
@@ -49,8 +49,8 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
     void Aggro(Unit *who) {}
 
     void UpdateAI(const uint32 diff)
-	{
-		if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if(SlimeSprayTimer < diff)
@@ -69,13 +69,13 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
         else MutatingInjectionTimer -= diff;
 
         if(EnrageTimer < diff)
-		{
-			DoCast(m_creature, SP_ENRAGE);
-			EnrageTimer = 120000;
-		}
-		else EnrageTimer -= diff;
+        {
+            DoCast(m_creature, SP_ENRAGE);
+            EnrageTimer = 120000;
+        }
+        else EnrageTimer -= diff;
 
-		DoMeleeAttackIfReady();
+        DoMeleeAttackIfReady();
     }
 };
 

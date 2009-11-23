@@ -93,11 +93,11 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             uint32 MostHP = 0;
             Unit* pMostHPTarget = NULL;
             Unit* pTemp = NULL;
-            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            ThreatList const& tList = m_creature->getThreatManager().getThreatList();
 
-            for (i = m_creature->getThreatManager().getThreatList().begin(); i!=m_creature->getThreatManager().getThreatList().end(); ++i)
+            for (ThreatList::const_iterator i = tList.begin();i != tList.end(); ++i)
             {
-                pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
+                Unit* pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
                 if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && m_creature->IsWithinDist(pTemp, 5.0f, false))
                 {
                     MostHP = pTemp->GetHealth();
@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             }
 
             if (pMostHPTarget)
-                DoCast(pMostHPTarget, Regular ? H_SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE);
+                DoCast(pMostHPTarget, Regular ? SPELL_HATEFULSTRIKE : H_SPELL_HATEFULSTRIKE);
 
             HatefullStrike_Timer = 1200;
         }else HatefullStrike_Timer -= diff;

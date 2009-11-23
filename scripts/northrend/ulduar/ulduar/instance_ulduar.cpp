@@ -120,30 +120,30 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         {
             //LOOT CACHES:
             //Cache of Living Stone (Kologarn)
-            case 195046: if(!Regular) mKologarnCacheGUID = pGo->GetGUID(); break;
-            case 195047: if(Regular) mKologarnCacheGUID = pGo->GetGUID(); break;
+            case 195046: if(Regular) mKologarnCacheGUID = pGo->GetGUID(); break;
+            case 195047: if(!Regular) mKologarnCacheGUID = pGo->GetGUID(); break;
             //Cache of Winter (Hodir)
-            case 194307: if(!Regular) mHodirCacheGUID = pGo->GetGUID(); break;
-            case 194308: if(Regular) mHodirCacheGUID = pGo->GetGUID(); break;
+            case 194307: if(Regular) mHodirCacheGUID = pGo->GetGUID(); break;
+            case 194308: if(!Regular) mHodirCacheGUID = pGo->GetGUID(); break;
             //Rare Cache of Winter (Hodir hard)
-            case 194200: if(!Regular) mHodirRareCacheGUID = pGo->GetGUID(); break;
-            case 194201: if(Regular) mHodirRareCacheGUID = pGo->GetGUID(); break;
+            case 194200: if(Regular) mHodirRareCacheGUID = pGo->GetGUID(); break;
+            case 194201: if(!Regular) mHodirRareCacheGUID = pGo->GetGUID(); break;
             //Thorim's cache
-            case 194312: if(!Regular) mThorimCacheGUID = pGo->GetGUID(); break;
-            case 194314: if(Regular) mThorimCacheGUID = pGo->GetGUID(); break;
+            case 194312: if(Regular) mThorimCacheGUID = pGo->GetGUID(); break;
+            case 194314: if(!Regular) mThorimCacheGUID = pGo->GetGUID(); break;
             //Thorim's cache (hard)
-            case 194313: if(!Regular) mThorimHardCacheGUID = pGo->GetGUID(); break;
-            case 194315: if(Regular) mThorimHardCacheGUID = pGo->GetGUID(); break;
+            case 194313: if(Regular) mThorimHardCacheGUID = pGo->GetGUID(); break;
+            case 194315: if(!Regular) mThorimHardCacheGUID = pGo->GetGUID(); break;
             //Cache of Innovation (Mimiron)
-            case 194789: if(!Regular) mMimironCacheGUID = pGo->GetGUID(); break;
-            case 194956: if(Regular) mMimironCacheGUID = pGo->GetGUID(); break;
+            case 194789: if(Regular) mMimironCacheGUID = pGo->GetGUID(); break;
+            case 194956: if(!Regular) mMimironCacheGUID = pGo->GetGUID(); break;
             //Cache of Innovation (Mimiron hard)
             //Gift of Freya
-            case 194324: if(!Regular) mFreyaCacheGUID = pGo->GetGUID(); break;
-            case 194328: if(Regular) mFreyaCacheGUID = pGo->GetGUID(); break;
+            case 194324: if(Regular) mFreyaCacheGUID = pGo->GetGUID(); break;
+            case 194328: if(!Regular) mFreyaCacheGUID = pGo->GetGUID(); break;
             //Gift of the Observer
-            case 194822: if(!Regular) mAlgalonCacheGUID = pGo->GetGUID(); break;
-            case 194823: if(Regular) mAlgalonCacheGUID = pGo->GetGUID(); break;
+            case 194822: if(Regular) mAlgalonCacheGUID = pGo->GetGUID(); break;
+            case 194823: if(!Regular) mAlgalonCacheGUID = pGo->GetGUID(); break;
 
             //DOORS:
             case 194631: mXT002DoorGUID = pGo->GetGUID(); break;

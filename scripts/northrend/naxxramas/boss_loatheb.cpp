@@ -35,7 +35,7 @@ update creature_template set ScriptName="boss_loatheb" where entry=16011
 #define SPELL_INEVITABLE_DOOM       29204
 
 //Mob Loatheb Spore and his spell
-#define MOB_LOATHEB_SPORE			16286
+#define MOB_LOATHEB_SPORE            16286
 #define SPELL_FUNGAL_CREEP          29232
 
 //Loatheb Spore spawn places
@@ -53,7 +53,7 @@ update creature_template set ScriptName="boss_loatheb" where entry=16011
 
 struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
 {
-	boss_loathebAI(Creature *c) : ScriptedAI(c)
+    boss_loathebAI(Creature *c) : ScriptedAI(c)
     {
         pInstance = (ScriptedInstance*)c->GetInstanceData();
         Reset();
@@ -74,13 +74,13 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
         InevitableDoom_Cooldown = 40000;
         //This is cooldown for Doom spell. 40000 means 30sec
         //cooldown + 10sec spelltime, so next doom will be cast 30 sec
-		//after first ends. cooldown decreases by 5 sec after each doom
+        //after first ends. cooldown decreases by 5 sec after each doom
         Summon_Timer = 8000;
         
         if(pInstance) pInstance->SetData(TYPE_LOATHEB, NOT_STARTED);
-	}
+    }
 
-	void Aggro(Unit *who)
+    void Aggro(Unit *who)
     {
         if(pInstance) pInstance->SetData(TYPE_LOATHEB, IN_PROGRESS);
     }
@@ -114,8 +114,8 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(),SPELL_INEVITABLE_DOOM);
             InevitableDoom_Timer = InevitableDoom_Cooldown;
-			if (InevitableDoom_Cooldown > 15000)
-				InevitableDoom_Cooldown -= 5000;
+            if (InevitableDoom_Cooldown > 15000)
+                InevitableDoom_Cooldown -= 5000;
         }else InevitableDoom_Timer -= diff;
 
         //Summon_Timer
@@ -129,13 +129,13 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
                     break;
                 case 1:
                     SummonedSpores = m_creature->SummonCreature(16286,ADD_2X,ADD_2Y,ADD_2Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-					break;
+                    break;
                 case 2:
                     SummonedSpores = m_creature->SummonCreature(16286,ADD_3X,ADD_3Y,ADD_3Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-					break;
-			};
+                    break;
+            };
             if (SummonedSpores)
-				SummonedSpores->AddThreat(m_creature->getVictim(), 1.0f);
+                SummonedSpores->AddThreat(m_creature->getVictim(), 1.0f);
             Summon_Timer = 24000;
         } else Summon_Timer -= diff;
 
@@ -176,7 +176,7 @@ CreatureAI* GetAI_mob_loatheb_spores(Creature *_Creature)
 
 void AddSC_boss_loatheb()
 {
-	Script *newscript;
+    Script *newscript;
     newscript = new Script;
     newscript->Name = "boss_loatheb";
     newscript->GetAI = &GetAI_boss_loatheb;

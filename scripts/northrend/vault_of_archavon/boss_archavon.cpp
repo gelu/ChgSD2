@@ -45,13 +45,13 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
     boss_archavonAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsHeroicMode = pCreature->GetMap()->GetSpawnMode() > 0;
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         m_fDefaultMoveSpeed = pCreature->GetSpeedRate(MOVE_RUN);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsHeroicMode;
+    bool m_bIsRegularMode;
     float m_fDefaultMoveSpeed;
     uint32 m_uiEvadeCheckCooldown;
 
@@ -125,7 +125,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 if (Unit* pTarget = m_creature->getVictim())
                 {
-                    DoCast(pTarget, m_bIsHeroicMode ? SPELL_IMPALE_DMG_H : SPELL_IMPALE_DMG_N);
+                    DoCast(pTarget, m_bIsRegularMode ? SPELL_IMPALE_DMG_N : SPELL_IMPALE_DMG_H);
                     pTarget->CastSpell(pTarget, SPELL_IMPALE_STUN, true);
                 }
                 m_bImpaleInProgress = false;
@@ -156,7 +156,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 m_creature->getThreatManager().addThreat(m_pCrushingLeapTarget, -100000000.0f);
                 m_creature->SetSpeed(MOVE_RUN, m_fDefaultMoveSpeed);
-                DoCast(m_pCrushingLeapTarget, m_bIsHeroicMode ? SPELL_CRUSHING_LEAP_H : SPELL_CRUSHING_LEAP_N, true);
+                DoCast(m_pCrushingLeapTarget, m_bIsRegularMode ? SPELL_CRUSHING_LEAP_N : SPELL_CRUSHING_LEAP_H, true);
                 m_bCrushingLeapInProgress = false;
             }
             else
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 if (m_pRockShardsTarget)
                 {
-                    DoCast(m_pRockShardsTarget, m_bIsHeroicMode ? (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_H : SPELL_ROCK_SHARDS_RIGHT_H) : (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_N : SPELL_ROCK_SHARDS_RIGHT_N));
+                    DoCast(m_pRockShardsTarget, m_bIsRegularMode ? (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_N : SPELL_ROCK_SHARDS_RIGHT_N) : (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_H : SPELL_ROCK_SHARDS_RIGHT_H));
                     m_bRLRockShard = !m_bRLRockShard;
                 }
                 m_uiRockShardTimer = 100;
@@ -208,11 +208,11 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
         if (m_uiCrushingLeapTimer < uiDiff)
         {
-            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            ThreatList const& tList = m_creature->getThreatManager().getThreatList();
             std::list<Unit*> lTargets;
-            for (; i != m_creature->getThreatManager().getThreatList().end(); ++i)
+            for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
             {
-                Unit* pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
+                Unit *pTemp = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                 if (pTemp && pTemp->GetTypeId() == TYPEID_PLAYER && !m_creature->IsWithinDist(pTemp, 10.0f) && m_creature->IsWithinDist(pTemp, 80.0f))
                     lTargets.push_back(pTemp);
             }
@@ -239,7 +239,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
         if (m_uiStompTimer < uiDiff)
         {
-            DoCast(m_creature, m_bIsHeroicMode ? SPELL_STOMP_H : SPELL_STOMP_N);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP_N : SPELL_STOMP_H);
             m_uiImpaleAfterStompTimer = 1000;
             m_bImpaleInProgress = true;
             m_uiStompTimer = 45000+rand()%15000;
