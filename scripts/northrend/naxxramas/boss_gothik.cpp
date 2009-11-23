@@ -223,12 +223,12 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
             {
                 //cast Harvest Soul (-10% stats to the raid)
                 Unit* target = NULL;
-                std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
-                for (i = m_creature->getThreatManager().getThreatList().begin(); i!=m_creature->getThreatManager().getThreatList().end(); ++i)
+                ThreatList const& tList = m_creature->getThreatManager().getThreatList();
+                for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
                 {
-                    target = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
-                    if(target && target->isAlive())
-                        DoCast(target, SP_HARVEST_SOUL, true);
+                    if (Unit* target = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid()))
+                        if(target->isAlive())
+                            DoCast(target, SP_HARVEST_SOUL, true);
                 }
                 //teleport gothik to the other side
                 if(phase==3)
