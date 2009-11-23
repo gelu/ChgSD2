@@ -93,11 +93,11 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
             uint32 MostHP = 0;
             Unit* pMostHPTarget = NULL;
             Unit* pTemp = NULL;
-            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            ThreatList const& tList = m_creature->getThreatManager().getThreatList();
 
-            for (i = m_creature->getThreatManager().getThreatList().begin(); i!=m_creature->getThreatManager().getThreatList().end(); ++i)
+            for (ThreatList::const_iterator i = tList.begin();i != tList.end(); ++i)
             {
-                pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
+                Unit* pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
                 if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && m_creature->IsWithinDist(pTemp, 5.0f, false))
                 {
                     MostHP = pTemp->GetHealth();

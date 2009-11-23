@@ -208,11 +208,11 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
         if (m_uiCrushingLeapTimer < uiDiff)
         {
-            std::list<HostileReference*>::iterator i = m_creature->getThreatManager().getThreatList().begin();
+            ThreatList const& tList = m_creature->getThreatManager().getThreatList();
             std::list<Unit*> lTargets;
-            for (; i != m_creature->getThreatManager().getThreatList().end(); ++i)
+            for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
             {
-                Unit* pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
+                Unit *pTemp = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
                 if (pTemp && pTemp->GetTypeId() == TYPEID_PLAYER && !m_creature->IsWithinDist(pTemp, 10.0f) && m_creature->IsWithinDist(pTemp, 80.0f))
                     lTargets.push_back(pTemp);
             }
