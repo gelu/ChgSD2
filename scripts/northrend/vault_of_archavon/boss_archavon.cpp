@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
             if (m_uiRockShardTimer < uiDiff)
             {
-                if (m_pRockShardsTarget)
+                if (m_pRockShardsTarget && m_pRockShardsTarget->isAlive())
                 {
                     DoCast(m_pRockShardsTarget, m_bIsRegularMode ? (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_N : SPELL_ROCK_SHARDS_RIGHT_N) : (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_H : SPELL_ROCK_SHARDS_RIGHT_H));
                     m_bRLRockShard = !m_bRLRockShard;
