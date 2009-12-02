@@ -1174,7 +1174,7 @@ bool GossipHello_npc_experience_eliminator(Player* pPlayer, Creature* pCreature)
         false
     );
 
-    pPlayer->SEND_GOSSIP_MENU(pCreature->GetNpcTextId(), pCreature->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
 }
 
