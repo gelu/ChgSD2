@@ -30,7 +30,20 @@ enum
     SAY_SLAY_2                  = -1599002,
     SAY_SLAY_3                  = -1599003,
     SAY_DEATH                   = -1599004,
-    EMOTE_GENERIC_FRENZY        = -1000002
+    EMOTE_GENERIC_FRENZY        = -1000002,
+
+    SPELL_BERSERK                 = 28747,
+    SPELL_RING_LIGHTNING_H        = 59848,
+    SPELL_STATIC_OVERLOAD_H       = 59846,
+    SPELL_CHAIN_LIGHTING_H        = 59844,
+    
+    SPELL_RING_LIGHTNING_N        = 50840,
+    SPELL_STATIC_OVERLOAD_N       = 50834,
+    SPELL_CHAIN_LIGHTING_N        = 50830,
+    
+    BERSERK_TIME_H               = 180000,
+    BERSERK_TIME_N               = 300000
+
 };
 
 /*######
@@ -49,8 +62,17 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
+    uint32 m_uiStaticOverload_Timer;
+    uint32 m_uiRingLightning_Timer;
+    uint32 m_uiChainLightning_Timer;
+    uint32 m_uiBerserk_Timer;
+
     void Reset()
     {
+        m_uiStaticOverload_Timer = urand(5000, 6000);
+        m_uiRingLightning_Timer = urand(10000, 11000);
+        m_uiChainLightning_Timer = urand(15000, 17000);
+        m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
     }
 
     void Aggro(Unit* pWho)
@@ -77,7 +99,45 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+//////////
+        if (m_uiStaticOverload_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H );
 
+            m_uiStaticOverload_Timer = urand(50000, 75000);
+        }
+        else
+            m_uiStaticOverload_Timer -= uiDiff;
+
+if (m_uiRingLightning_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_RING_LIGHTNING_N : SPELL_RING_LIGHTNING_H);
+
+            m_uiRingLightning_Timer = urand(30000, 45000);
+        }
+        else
+            m_uiRingLightning_Timer -= uiDiff;
+
+if (m_uiChainLightning_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTING_N :SPELL_CHAIN_LIGHTING_H);
+
+            m_uiChainLightning_Timer = urand(11000, 15000);
+        }
+        else
+            m_uiChainLightning_Timer -= uiDiff;
+
+if (m_uiBerserk_Timer < uiDiff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
+        }
+        else
+            m_uiBerserk_Timer -= uiDiff;
+/////////////////
         DoMeleeAttackIfReady();
     }
 };

@@ -125,7 +125,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
         if (m_bIsAura)
         {
             // workaround for PULSING_SHOCKWAVE
-            /*if (m_uiPulsingShockwave_Timer < uiDiff)
+            if (m_uiPulsingShockwave_Timer < uiDiff)
             {
                 Map *map = m_creature->GetMap();
                 if (map->IsDungeon())
@@ -150,7 +150,7 @@ struct MANGOS_DLL_DECL boss_lokenAI : public ScriptedAI
                         }
                 }
                 m_uiPulsingShockwave_Timer = 2000;
-            }else m_uiPulsingShockwave_Timer -= uiDiff;*/
+            }else m_uiPulsingShockwave_Timer -= uiDiff;
         }
         else
         {
