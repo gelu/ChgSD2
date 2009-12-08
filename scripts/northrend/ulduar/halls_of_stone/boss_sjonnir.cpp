@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Sjonnir
-SD%Complete: 20%
-SDComment:
+SD%Complete: 50%
+SDComment: Need adding summons and correct casting time
 SDCategory: Halls of Stone
 EndScriptData */
 
@@ -70,7 +70,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
     void Reset()
     {
         m_uiStaticOverload_Timer = urand(5000, 6000);
-        m_uiRingLightning_Timer = urand(10000, 11000);
+        m_uiRingLightning_Timer = urand(30000, 45000);
         m_uiChainLightning_Timer = urand(15000, 17000);
         m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
     }
@@ -104,8 +104,8 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_STATIC_OVERLOAD_N : SPELL_STATIC_OVERLOAD_H );
-
-            m_uiStaticOverload_Timer = urand(50000, 75000);
+//	    DoScriptText(SAY_SLAY_1, m_creature); 
+            m_uiStaticOverload_Timer = urand(20000, 30000);
         }
         else
             m_uiStaticOverload_Timer -= uiDiff;
@@ -114,8 +114,8 @@ if (m_uiRingLightning_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_RING_LIGHTNING_N : SPELL_RING_LIGHTNING_H);
-
-            m_uiRingLightning_Timer = urand(30000, 45000);
+	    DoScriptText(SAY_SLAY_2, m_creature); 
+            m_uiRingLightning_Timer = urand(40000, 45000);
         }
         else
             m_uiRingLightning_Timer -= uiDiff;
@@ -124,7 +124,7 @@ if (m_uiChainLightning_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTING_N :SPELL_CHAIN_LIGHTING_H);
-
+	    DoScriptText(SAY_SLAY_3, m_creature); 
             m_uiChainLightning_Timer = urand(11000, 15000);
         }
         else

@@ -31,7 +31,22 @@ enum
     SAY_SLAY_3                  = -1599008,
     SAY_SLAY_4                  = -1599009,
     SAY_STUN                    = -1599010,
-    SAY_DEATH                   = -1599011
+    SAY_DEATH                   = -1599011,
+    
+    SPELL_BERSERK               = 28747,
+    SPELL_SHOCK_N               = 50760, // not worked
+    SPELL_STOLP_N               = 50761,
+    SPELL_STORM_N               = 50752, // not worked
+    SPELL_MANABURN_N            = 59723, // not worked
+    
+    SPELL_SHOCK_H               = 50726, // not worked
+//    SPELL_STOLP_H               = 50727, // not worked
+    SPELL_STOLP_H               = 50761, 
+    SPELL_STORM_H               = 50772, // not worked
+    SPELL_MANABURN_H            = 59723, // not worked
+    
+    BERSERK_TIME_H               = 180000,
+    BERSERK_TIME_N               = 300000
 };
 
 /*######
@@ -49,9 +64,20 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    uint32  m_uiStorm_Timer;
+    uint32 m_uiShock_Timer;
+    uint32 m_uiStolp_Timer;
+    uint32 m_uiManaburn_Timer;
+    uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
+        m_uiStorm_Timer = urand(25000, 40000);
+        m_uiShock_Timer = urand(10000, 15000);
+        m_uiStolp_Timer = urand(15000, 25000);
+        m_uiManaburn_Timer = urand(30000, 60000);
+        m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
+
     }
 
     void Aggro(Unit* pWho)
@@ -79,6 +105,55 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+////
+        if (m_uiStorm_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_STORM_N : SPELL_STORM_H );
+//	    DoScriptText(SAY_SLAY_1, m_creature);
+            m_uiStorm_Timer = urand(25000, 40000);
+        }
+        else
+            m_uiStorm_Timer -= uiDiff;
+
+        if (m_uiShock_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_SHOCK_N : SPELL_SHOCK_H );
+//	    DoScriptText(SAY_SLAY_2, m_creature);
+            m_uiShock_Timer = urand(10000, 15000);
+        }
+        else
+            m_uiShock_Timer -= uiDiff;
+
+        if (m_uiStolp_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_STOLP_N : SPELL_STOLP_H );
+	    DoScriptText(SAY_SLAY_3, m_creature);
+            m_uiStolp_Timer = urand(15000, 25000);
+        }
+        else
+            m_uiStolp_Timer -= uiDiff;
+
+        if (m_uiManaburn_Timer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_MANABURN_N : SPELL_MANABURN_H );
+	    DoScriptText(SAY_STUN, m_creature);
+            m_uiStorm_Timer = urand(30000, 60000);
+        }
+        else
+            m_uiStorm_Timer -= uiDiff;
+
+if (m_uiBerserk_Timer < uiDiff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
+            DoScriptText(SAY_SLAY_4, m_creature);
+        }
+        else
+            m_uiBerserk_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
