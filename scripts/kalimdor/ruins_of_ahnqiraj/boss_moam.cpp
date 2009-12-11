@@ -50,6 +50,7 @@ struct MANGOS_DLL_DECL boss_moamAI : public ScriptedAI
         pTarget = NULL;
         TRAMPLE_Timer = 30000;
         DRAINMANA_Timer = 30000;
+        SUMMONMANA_Timer = 10000;
     }
 
     void Aggro(Unit *who)
@@ -64,14 +65,14 @@ struct MANGOS_DLL_DECL boss_moamAI : public ScriptedAI
             return;
 
         //If we are 100%MANA cast Arcane Erruption
-        //if (j==1 && m_creature->GetMana()*100 / m_creature->GetMaxMana() == 100 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (j==1 && m_creature->GetPower(m_creature->getPowerType())*100 / m_creature->GetMaxPower(m_creature->getPowerType()) >= 75 && !m_creature->IsNonMeleeSpellCasted(false))
         {
             DoCast(m_creature->getVictim(),SPELL_ARCANEERUPTION);
             DoScriptText(EMOTE_MANA_FULL, m_creature);
         }
 
         //If we are <50%HP cast MANA FIEND (Summon Mana) and Sleep
-        //if (i==0 && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 50 && !m_creature->IsNonMeleeSpellCasted(false))
+        if (i==0 && m_creature->GetHealth()*100 / m_creature->GetMaxHealth() <= 50 && !m_creature->IsNonMeleeSpellCasted(false))
         {
             i=1;
             DoCast(m_creature->getVictim(),SPELL_SUMMONMANA);
