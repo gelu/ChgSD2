@@ -28,42 +28,57 @@ The teleporter appears to be active and stable.
 
 bool GossipHello_ulduar_teleporter(Player *player, Creature *creature)
 {
+
+uint16 i;
+i=0;
+
     ScriptedInstance *pInstance = (ScriptedInstance *) creature->GetInstanceData();
+
     if(!pInstance) return true;
 
-    player->ADD_GOSSIP_ITEM(0, "Teleport to the Expedition Base Camp", GOSSIP_SENDER_MAIN, BASE_CAMP);
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Expedition Base Camp", GOSSIP_SENDER_MAIN, BASE_CAMP);
+    i++;
     if(pInstance->GetData(TYPE_LEVIATHAN_TP))
     {
-        player->ADD_GOSSIP_ITEM(0, "Teleport to the Formation Grounds", GOSSIP_SENDER_MAIN, GROUNDS);
-        if(pInstance->GetData(TYPE_FLAME_LEVIATHAN) == DONE)
-        {
-            player->ADD_GOSSIP_ITEM(0, "Teleport to the Colossal Forge", GOSSIP_SENDER_MAIN, FORGE);
-            if(pInstance->GetData(TYPE_XT002_TP))
-            {
-                player->ADD_GOSSIP_ITEM(0, "Teleport to the Scrapyard", GOSSIP_SENDER_MAIN, SCRAPYARD);
-                if(pInstance->GetData(TYPE_XT002) == DONE)
-                {
-                    player->ADD_GOSSIP_ITEM(0, "Teleport to the Antechamber of Ulduar", GOSSIP_SENDER_MAIN, ANTECHAMBER);
-                    if(pInstance->GetData(TYPE_KOLOGARN) == DONE)
-                    {
-                        player->ADD_GOSSIP_ITEM(0, "Teleport to the Shattered Walkway", GOSSIP_SENDER_MAIN, WALKWAY);
-                        if(pInstance->GetData(TYPE_AURIAYA) == DONE)
-                        {
-                            player->ADD_GOSSIP_ITEM(0, "Teleport to the Conservatory of Life", GOSSIP_SENDER_MAIN, CONSERVATORY);
-                            if(pInstance->GetData(TYPE_MIMIRON_TP))
-                            {
-                                player->ADD_GOSSIP_ITEM(0, "Teleport to the Spark of Imagination", GOSSIP_SENDER_MAIN, SPARK);
-                                if(pInstance->GetData(TYPE_VEZAX) == DONE)
-                                    player->ADD_GOSSIP_ITEM(0, "Teleport to the Prison of Yogg-Saron", GOSSIP_SENDER_MAIN, PRISON);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+        player->ADD_GOSSIP_ITEM(i, "Teleport to the Formation Grounds", GOSSIP_SENDER_MAIN, GROUNDS);
+        i++;
+    };
+    if(pInstance->GetData(TYPE_FLAME_LEVIATHAN) == DONE)
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Colossal Forge", GOSSIP_SENDER_MAIN, FORGE);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_XT002_TP))
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Scrapyard", GOSSIP_SENDER_MAIN, SCRAPYARD);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_XT002) == DONE)
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Antechamber of Ulduar", GOSSIP_SENDER_MAIN, ANTECHAMBER);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_KOLOGARN) == DONE)
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Shattered Walkway", GOSSIP_SENDER_MAIN, WALKWAY);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_AURIAYA) == DONE)
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Conservatory of Life", GOSSIP_SENDER_MAIN, CONSERVATORY);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_MIMIRON_TP))
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Spark of Imagination", GOSSIP_SENDER_MAIN, SPARK);
+    i++;
+    };
+    if(pInstance->GetData(TYPE_VEZAX) == DONE)
+    {
+    player->ADD_GOSSIP_ITEM(i, "Teleport to the Prison of Yogg-Saron", GOSSIP_SENDER_MAIN, PRISON);
+    i++;
+    };
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
-
     return true;
 }
 
@@ -99,7 +114,7 @@ bool GossipSelect_ulduar_teleporter(Player *player, Creature *creature, uint32 s
         player->TeleportTo(603, 2536.87, 2569.15, 412.304, 0);
         player->CLOSE_GOSSIP_MENU(); break;
     case PRISON:
-        //player->TeleportTo(603, 2536.87, 2569.15, 412.304, 0);
+        player->TeleportTo(603, 2536.87, 2569.15, 412.304, 0);
         player->CLOSE_GOSSIP_MENU(); break;
     }
 
