@@ -267,6 +267,7 @@ extern void AddSC_instance_gundrak();
 extern void AddSC_boss_anubrekhan();                        //naxxramas
 extern void AddSC_boss_four_horsemen();
 extern void AddSC_boss_faerlina();
+extern void AddSC_boss_grobbulus();
 extern void AddSC_boss_gluth();
 extern void AddSC_boss_gothik();
 extern void AddSC_boss_kelthuzad();
@@ -295,6 +296,7 @@ extern void AddSC_boss_volkhan();
 extern void AddSC_instance_halls_of_lightning();
 extern void AddSC_boss_maiden_of_grief();                   //Ulduar, halls_of_stone
 extern void AddSC_boss_sjonnir();
+extern void AddSC_boss_krystallus();
 extern void AddSC_halls_of_stone();
 extern void AddSC_boss_leviathan();                         //ulduar
 extern void AddSC_boss_ignis();
@@ -399,6 +401,7 @@ extern void AddSC_boss_gatewatcher_iron_hand();             //TK, the_mechanar
 extern void AddSC_boss_nethermancer_sepethrea();
 extern void AddSC_boss_pathaleon_the_calculator();
 extern void AddSC_instance_mechanar();
+
 
 extern void AddSC_blades_edge_mountains();
 extern void AddSC_boss_doomlordkazzak();
@@ -682,6 +685,7 @@ void AddScripts()
     AddSC_boss_loatheb();
     AddSC_boss_maexxna();
     AddSC_boss_noth();
+    AddSC_boss_grobbulus();
     AddSC_boss_patchwerk();
     AddSC_boss_razuvious();
     AddSC_boss_sapphiron();
@@ -704,6 +708,7 @@ void AddScripts()
     AddSC_instance_halls_of_lightning();
     AddSC_boss_maiden_of_grief();                           //Ulduar, halls_of_stone
     AddSC_boss_sjonnir();
+    AddSC_boss_krystallus();
     AddSC_halls_of_stone();
     AddSC_boss_leviathan();                                 //ulduar
     AddSC_boss_ignis();

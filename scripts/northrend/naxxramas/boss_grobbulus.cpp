@@ -22,29 +22,38 @@ Mutating Injection 28169
 Enrages 26527*/
 
 #include "precompiled.h"
+#include "naxxramas.h"
 
 #define SP_ENRAGE       26662
 #define SP_SLIME_SPRAY  28157
 #define SP_INJECTION    28169
+#define SP_FSPLIME      28218
+#define SP_PCLOUD       26590
 
 struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
 {
-    boss_grobbulusAI(Creature *pCreature) : ScriptedAI(pCreature)
+    boss_grobbulusAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
+    bool Regular;
+
     uint32 EnrageTimer;
     uint32 MutatingInjectionTimer;
-    uint32 PoisonCloudTimer;
+//    uint32 PoisonCloudTimer;          - not worked
     uint32 SlimeSprayTimer;
+    uint32 FalloutSplimeTimer;
 
     void Reset()
     {
         EnrageTimer = 720000;
         SlimeSprayTimer = 15000 + rand()%10000;
-        MutatingInjectionTimer = 10000;
-    };
+        MutatingInjectionTimer = 10000 + rand()%10000;
+//        PoisonCloudTimer = 60000;
+        FalloutSplimeTimer = 45000 + rand()%5000;
+    }
 
     void Aggro(Unit *who) {}
 
@@ -64,9 +73,25 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target) DoCast(target, SP_INJECTION);
-            MutatingInjectionTimer = 10000;
+            MutatingInjectionTimer = 10000 + rand()%10000;
         }
         else MutatingInjectionTimer -= diff;
+
+//        if(PoisonCloudTimer < diff)
+//        {
+//            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+//            if(target) DoCast(target, SP_PCLOUD);
+//            PoisonCloudTimer = 60000;
+//        }
+//        else PoisonCloudTimer -= diff;
+
+        if(FalloutSplimeTimer < diff)
+        {
+            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            if(target) DoCast(target, SP_FSPLIME);
+            FalloutSplimeTimer = 45000 + rand()%5000;
+        }
+        else FalloutSplimeTimer -= diff;
 
         if(EnrageTimer < diff)
         {
@@ -79,7 +104,7 @@ struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
     }
 };
 
-CreatureAI* GetAI_boss_grobbulus(Creature* pCreature)
+CreatureAI* GetAI_boss_grobbulus(Creature *pCreature)
 {
     return new boss_grobbulusAI(pCreature);
 }
@@ -91,4 +116,4 @@ void AddSC_boss_grobbulus()
     newscript->Name = "boss_grobbulus";
     newscript->GetAI = &GetAI_boss_grobbulus;
     newscript->RegisterSelf();
-};
+}
