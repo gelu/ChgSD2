@@ -18,7 +18,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_yogg_saron' WHERE `entry`=3328
 UPDATE `creature_template` SET `ScriptName`='boss_algalon' WHERE `entry`=32871;
 UPDATE `instance_template` SET `script`='instance_ulduar' WHERE `map`=603;
 
-replace into `creature_template` values ('99005','0','0','0','0','0','22448','0','22448','0','Ulduar teleporter','',NULL,'80','80','64200','64200','12300','12300','31200','35','35','1','1.48','0.5','0','3170','6182','0','33235','1','1400','1900','0','0','0','0','0','0','0','0','0','0','100','7','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','','1','3','1','1','0','0','0','0','0','0','0','0','1','0','0','0','ulduar_teleporter');
+insert into `creature_template` values ('99005','0','0','0','0','0','22448','0','22448','0','Ulduar teleporter','',NULL,'0','80','80','64200','64200','12300','12300','31200','35','35','1','1.48','0.5','0','3170','6182','0','33235','1','1400','1900','0','0','0','0','0','0','0','0','0','0','100','7','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','','1','3','1','1','0','0','0','0','0','0','0','0','1','99003','0','0','ulduar_teleporter');
 replace into `creature_template_addon` values ('99005','0','0','0','0','0','48143 0');
 replace into `locales_creature` values ('99005','','','','','','','','Ульдуарский телепорт',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'');
 /*replace into `creature` values
