@@ -490,6 +490,16 @@ scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_grand_champions.
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/instance_trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.h \
+scripts/northrend/violet_hold/def_violet_hold.h \
+scripts/northrend/violet_hold/violet_hold.cpp \
+scripts/northrend/violet_hold/boss_cyanigosa.cpp \
+scripts/northrend/violet_hold/boss_moragg.cpp \
+scripts/northrend/violet_hold/instance_violet_hold.cpp \
+scripts/northrend/violet_hold/boss_erekem.cpp \
+scripts/northrend/violet_hold/boss_xevozz.cpp \
+scripts/northrend/violet_hold/boss_ichoron.cpp \
+scripts/northrend/violet_hold/boss_zuramat.cpp \
+scripts/northrend/violet_hold/boss_lavanthor.cpp \
 scripts/world/areatrigger_scripts.cpp \
 scripts/world/boss_emeriss.cpp \
 scripts/world/boss_lethon.cpp \

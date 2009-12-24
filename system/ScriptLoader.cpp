@@ -341,6 +341,16 @@ extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
 extern void AddSC_zuldrak();
 
+extern void AddSC_instance_violet_hold();
+extern void AddSC_violet_hold();
+extern void AddSC_boss_cyanigosa();
+extern void AddSC_boss_moragg();
+extern void AddSC_boss_erekem();
+extern void AddSC_boss_xevozz();
+extern void AddSC_boss_ichoron();
+extern void AddSC_boss_zuramat();
+extern void AddSC_boss_lavanthor();
+
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
 extern void AddSC_boss_nexusprince_shaffar();               //auchindoun, mana_tombs
@@ -758,6 +768,16 @@ void AddScripts()
     AddSC_sholazar_basin();
     AddSC_storm_peaks();
     AddSC_zuldrak();
+
+    AddSC_instance_violet_hold();
+    AddSC_boss_cyanigosa();
+    AddSC_boss_moragg();
+    AddSC_boss_erekem();
+    AddSC_boss_xevozz();
+    AddSC_boss_ichoron();
+    AddSC_boss_zuramat();
+    AddSC_boss_lavanthor();
+    AddSC_violet_hold();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
