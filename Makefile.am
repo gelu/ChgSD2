@@ -484,6 +484,12 @@ scripts/outland/tempest_keep/the_mechanar/boss_nethermancer_sepethrea.cpp \
 scripts/outland/tempest_keep/the_mechanar/boss_pathaleon_the_calculator.cpp \
 scripts/outland/tempest_keep/the_mechanar/instance_mechanar.cpp \
 scripts/outland/tempest_keep/the_mechanar/mechanar.h \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_argent_challenge.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_black_knight.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_grand_champions.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/instance_trial_of_the_champion.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.h \
 scripts/world/areatrigger_scripts.cpp \
 scripts/world/boss_emeriss.cpp \
 scripts/world/boss_lethon.cpp \
