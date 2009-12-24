@@ -223,6 +223,13 @@ extern void AddSC_boss_twinemperors();
 extern void AddSC_mob_anubisath_sentinel();
 extern void AddSC_instance_temple_of_ahnqiraj();
 extern void AddSC_zulfarrak();                              //zulfarrak
+// culling of stratholme
+extern void AddSC_boss_lord_epoch();
+extern void AddSC_culling_of_stratholme();
+extern void AddSC_boss_malganis();
+extern void AddSC_boss_meathook();
+extern void AddSC_instance_culling_of_stratholme();
+extern void AddSC_boss_salramm();
 
 extern void AddSC_ashenvale();
 extern void AddSC_azshara();
@@ -417,7 +424,6 @@ extern void AddSC_boss_gatewatcher_iron_hand();             //TK, the_mechanar
 extern void AddSC_boss_nethermancer_sepethrea();
 extern void AddSC_boss_pathaleon_the_calculator();
 extern void AddSC_instance_mechanar();
-
 
 extern void AddSC_blades_edge_mountains();
 extern void AddSC_boss_doomlordkazzak();
@@ -845,6 +851,13 @@ void AddScripts()
     AddSC_boss_nethermancer_sepethrea();
     AddSC_boss_pathaleon_the_calculator();
     AddSC_instance_mechanar();
+							    //culling of stratholme
+    AddSC_boss_lord_epoch();
+    AddSC_culling_of_stratholme();
+    AddSC_boss_malganis();
+    AddSC_boss_meathook();
+    AddSC_instance_culling_of_stratholme();
+    AddSC_boss_salramm();
 
     AddSC_blades_edge_mountains();
     AddSC_boss_doomlordkazzak();

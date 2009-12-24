@@ -500,6 +500,13 @@ scripts/northrend/violet_hold/boss_xevozz.cpp \
 scripts/northrend/violet_hold/boss_ichoron.cpp \
 scripts/northrend/violet_hold/boss_zuramat.cpp \
 scripts/northrend/violet_hold/boss_lavanthor.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/def_culling_of_stratholme.h \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_lord_epoch.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/culling_of_stratholme.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_malganis.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_meathook.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/instance_culling_of_stratholme.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_salramm.cpp \
 scripts/world/areatrigger_scripts.cpp \
 scripts/world/boss_emeriss.cpp \
 scripts/world/boss_lethon.cpp \
