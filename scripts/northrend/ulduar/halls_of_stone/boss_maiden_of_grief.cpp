@@ -32,21 +32,32 @@ enum
     SAY_SLAY_4                  = -1599009,
     SAY_STUN                    = -1599010,
     SAY_DEATH                   = -1599011,
-    
+
     SPELL_BERSERK               = 28747,
     SPELL_SHOCK_N               = 50760, // not worked
     SPELL_STOLP_N               = 50761,
     SPELL_STORM_N               = 50752, // not worked
     SPELL_MANABURN_N            = 59723, // not worked
-    
+
     SPELL_SHOCK_H               = 50726, // not worked
 //    SPELL_STOLP_H               = 50727, // not worked
     SPELL_STOLP_H               = 50761, 
     SPELL_STORM_H               = 50772, // not worked
     SPELL_MANABURN_H            = 59723, // not worked
-    
+
     BERSERK_TIME_H               = 180000,
-    BERSERK_TIME_N               = 300000
+    BERSERK_TIME_N               = 300000,
+
+    SPELL_STORM_OF_GRIEF        = 50752,
+    SPELL_STORM_OF_GRIEF_H      = 59772,
+
+    SPELL_SHOCK_OF_SORROW       = 50760,
+    SPELL_SHOCK_OF_SORROW_H     = 59726,
+
+    SPELL_PILLAR_OF_WOE         = 50761,
+    SPELL_PILLAR_OF_WOE_H       = 59727,
+
+    SPELL_PARTING_SORROW        = 59723
 };
 
 /*######
