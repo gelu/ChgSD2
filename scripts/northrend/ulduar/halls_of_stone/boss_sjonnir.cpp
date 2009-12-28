@@ -25,7 +25,6 @@ EndScriptData */
 
 enum
 {
-<<<<<<< HEAD:scripts/northrend/ulduar/halls_of_stone/boss_sjonnir.cpp
     SAY_AGGRO                   = -1599000,
     SAY_SLAY_1                  = -1599001,
     SAY_SLAY_2                  = -1599002,
