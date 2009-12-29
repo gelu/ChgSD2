@@ -13,19 +13,20 @@ enum
     TYPE_ARGENT_CHALLENGE       = 1,
     TYPE_BLACK_KNIGHT           = 2,
 
-	DATA_CHAMPION_1             = 3,
+    DATA_CHAMPION_1             = 3,
     DATA_CHAMPION_2             = 4,
     DATA_CHAMPION_3             = 5,
     DATA_BLACK_KNIGHT           = 6,
     DATA_BLACK_KNIGHT_MINION    = 7,
-	DATA_TOC5_ANNOUNCER         = 8,
-	DATA_JAEREN                 = 9,
-	DATA_ARELAS                 = 10,
-	DATA_CHAMPIONID_1           = 11,
+    DATA_TOC5_ANNOUNCER         = 8,
+    DATA_JAEREN                 = 9,
+    DATA_ARELAS                 = 10,
+    DATA_CHAMPIONID_1           = 11,
     DATA_CHAMPIONID_2           = 12,
     DATA_CHAMPIONID_3           = 13,
-	DATA_MEMORY					= 14,
-	DATA_ARGENT_CHALLENGER	    = 15,
+    DATA_MEMORY                 = 14,
+    DATA_ARGENT_CHALLENGER      = 15,
+    DATA_CHAMPIONS_COUNT        = 16,
 
     NPC_JACOB                   = 34705,
     NPC_AMBROSE                 = 34702,
@@ -43,13 +44,14 @@ enum
     NPC_RISEN_JAEREN            = 35545,
     NPC_RISEN_ARELAS            = 35564,
     NPC_JAEREN                  = 35004,
+
 	NPC_ARELAS                  = 35005,
 	MEMORY_ALGALON				= 35052,
 	MEMORY_ARCHIMONDE			= 35041,
 	MEMORY_CHROMAGGUS			= 35033,
 	MEMORY_CYANIGOSA			= 35046,
 	MEMORY_DELRISSA				= 35043,
-	MEMORY_ECK					= 35047,
+	MEMORY_ECK				= 35047,
 	MEMORY_ENTROPIUS			= 35044,
 	MEMORY_GRUUL				= 35039,
 	MEMORY_HAKKAR				= 35034,
@@ -71,11 +73,11 @@ enum
 	MEMORY_VEZAX				= 35051,
 
 	GO_CHAMPIONS_LOOT           = 195709,
-	GO_CHAMPIONS_LOOT_H			= 195710,
+	GO_CHAMPIONS_LOOT_H         = 195710,
 	GO_EADRIC_LOOT              = 195374,
-	GO_EADRIC_LOOT_H			= 195375,
+	GO_EADRIC_LOOT_H            = 195375,
 	GO_PALETRESS_LOOT           = 195323,
-	GO_PALETRESS_LOOT_H			= 195324
+	GO_PALETRESS_LOOT_H         = 195324
 };
 
 #endif

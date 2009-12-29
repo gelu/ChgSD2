@@ -30,7 +30,7 @@ enum
 
 	//warrior
 	SPELL_MORTAL_STRIKE			= 68783,
-	SPELL_MORTAL_STRIKE_H		= 68784,
+	SPELL_MORTAL_STRIKE_H			= 68784,
 	SPELL_BLADESTORM			= 63784,
 	SPELL_INTERCEPT				= 67540,
 	SPELL_ROLLING_THROW			= 47115, //need core support for spell 67546, using 47115 instead
@@ -39,21 +39,21 @@ enum
 	SPELL_FIREBALL_H			= 68310,
 	SPELL_BLAST_WAVE			= 66044,
 	SPELL_BLAST_WAVE_H			= 68312,
-	SPELL_HASTE					= 66045,
+	SPELL_HASTE				= 66045,
 	SPELL_POLYMORPH				= 66043,
 	SPELL_POLYMORPH_H			= 68311,
 	//shaman
-	SPELL_CHAIN_LIGHTNING		= 67529,
-	SPELL_CHAIN_LIGHTNING_H		= 68319,
+	SPELL_CHAIN_LIGHTNING			= 67529,
+	SPELL_CHAIN_LIGHTNING_H			= 68319,
 	SPELL_EARTH_SHIELD			= 67530,
 	SPELL_HEALING_WAVE			= 67528,
-	SPELL_HEALING_WAVE_H		= 68318,
-	SPELL_HEX_OF_MENDING		= 67534,
+	SPELL_HEALING_WAVE_H			= 68318,
+	SPELL_HEX_OF_MENDING			= 67534,
 	//hunter
 	SPELL_DISENGAGE				= 68340,
-	SPELL_LIGHTNING_ARROWS		= 66083,
+	SPELL_LIGHTNING_ARROWS			= 66083,
 	SPELL_MULTI_SHOT			= 66081,
-	SPELL_SHOOT					= 66079,
+	SPELL_SHOOT				= 66079,
 	//rogue
 	SPELL_EVISCERATE			= 67709,
 	SPELL_EVISCERATE_H			= 68317,
@@ -68,6 +68,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
@@ -82,16 +83,16 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
-		Mortal_Strike_Timer = 6000;
-		Bladestorm_Timer = 20000;
-		Rolling_Throw_Timer = 30000;
+		Mortal_Strike_Timer = m_bIsRegularMode ? 9000 : 6000;
+		Bladestorm_Timer = m_bIsRegularMode ? 30000 : 20000;
+		Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
 		Intercept_Cooldown = 0;
 		intercept_check = 1000;
     }
 
 	void EnterEvadeMode()
 	{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -132,7 +133,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
+			}*/
 	}
 
 	void Aggro(Unit* pWho)
@@ -157,26 +158,14 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
     }
 
 	void JustDied(Unit* pKiller)
-    {
+	{
 		if (!m_pInstance)
 			return;
-		if (Creature* pTemp0 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                if (!pTemp0->isAlive())
-					if (Creature* pTemp1 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-						if (!pTemp1->isAlive())
-							if (Creature* pTemp2 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-								if (!pTemp2->isAlive())
-								{
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData(DATA_TOC5_ANNOUNCER))))
-										pTemp->SetVisibility(VISIBILITY_ON);
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-										pTemp->ForcedDespawn();
-									m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-								}
+
+	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+
+	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
+		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -187,19 +176,19 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		if (Mortal_Strike_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_MORTAL_STRIKE : SPELL_MORTAL_STRIKE_H);
-            Mortal_Strike_Timer = 6000;
+            Mortal_Strike_Timer = m_bIsRegularMode ? 9000 : 6000;
         }else Mortal_Strike_Timer -= diff;  
 
 		if (Rolling_Throw_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), SPELL_ROLLING_THROW);
-            Rolling_Throw_Timer = 30000;
+            Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
         }else Rolling_Throw_Timer -= diff;
 
 		if (Bladestorm_Timer < diff)
         {
 			DoCast(m_creature, SPELL_BLADESTORM);
-            Bladestorm_Timer = 90000;
+            Bladestorm_Timer = m_bIsRegularMode ? 90000 : 60000;
         }else Bladestorm_Timer -= diff;
 
 		if (intercept_check < diff)
@@ -233,6 +222,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
@@ -247,14 +237,14 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
     {
 		m_creature->SetRespawnDelay(999999999);
 		Fireball_Timer = 0;
-		Blast_Wave_Timer = 20000;
-		Haste_Timer = 9000;
-		Polymorph_Timer = 15000;
+		Blast_Wave_Timer = m_bIsRegularMode ? 30000 : 20000;
+		Haste_Timer = m_bIsRegularMode ? 12000 : 9000;
+		Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
     }
 
 	void EnterEvadeMode()
 	{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -295,7 +285,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
+			}*/
 	}
 
 	void Aggro(Unit* pWho)
@@ -320,26 +310,14 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
     }
 
 	void JustDied(Unit* pKiller)
-    {
+	{
 		if (!m_pInstance)
 			return;
-		if (Creature* pTemp0 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                if (!pTemp0->isAlive())
-					if (Creature* pTemp1 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-						if (!pTemp1->isAlive())
-							if (Creature* pTemp2 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-								if (!pTemp2->isAlive())
-								{
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData(DATA_TOC5_ANNOUNCER))))
-										pTemp->SetVisibility(VISIBILITY_ON);
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-										pTemp->ForcedDespawn();
-									m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-								}
+
+	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+
+	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
+		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -350,26 +328,26 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 		if (Fireball_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FIREBALL : SPELL_FIREBALL_H);
-            Fireball_Timer = 3000;
+            Fireball_Timer = m_bIsRegularMode ? 5000 : 3000;
         }else Fireball_Timer -= diff;  
 
 		if (Blast_Wave_Timer < diff)
         {
 			DoCast(m_creature, m_bIsRegularMode ? SPELL_BLAST_WAVE : SPELL_BLAST_WAVE_H);
-            Blast_Wave_Timer = 20000;
+            Blast_Wave_Timer = m_bIsRegularMode ? 30000 : 20000;
         }else Blast_Wave_Timer -= diff;
 
 		if (Haste_Timer < diff)
         {
 			DoCast(m_creature, SPELL_HASTE);
-            Haste_Timer = 10000;
+            Haste_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Haste_Timer -= diff;
 
 		if (Polymorph_Timer < diff)
         {
 			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
 				DoCast(target, m_bIsRegularMode ? SPELL_POLYMORPH : SPELL_POLYMORPH_H);
-            Polymorph_Timer = 15000;
+            Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
         }else Polymorph_Timer -= diff;
 		
 		DoMeleeAttackIfReady();
@@ -388,10 +366,11 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Chain_Lightning_Timer;
 	uint32 Earth_Shield_Timer;
@@ -405,15 +384,15 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
-		Chain_Lightning_Timer = 1000;
-		Earth_Shield_Timer = 5000;
-		Healing_Wave_Timer = 13000;
-		Hex_Timer = 10000;
+		Chain_Lightning_Timer = m_bIsRegularMode ? 2000 : 1000;
+		Earth_Shield_Timer = m_bIsRegularMode ? 10000 : 5000;
+		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 13000;
+		Hex_Timer = m_bIsRegularMode ? 15000 : 10000;
     }
 
 	void EnterEvadeMode()
 	{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -454,7 +433,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
+			}*/
 	}
 
 	void Aggro(Unit* pWho)
@@ -479,26 +458,14 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
     }
 
 	void JustDied(Unit* pKiller)
-    {
+	{
 		if (!m_pInstance)
 			return;
-		if (Creature* pTemp0 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                if (!pTemp0->isAlive())
-					if (Creature* pTemp1 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-						if (!pTemp1->isAlive())
-							if (Creature* pTemp2 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-								if (!pTemp2->isAlive())
-								{
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData(DATA_TOC5_ANNOUNCER))))
-										pTemp->SetVisibility(VISIBILITY_ON);
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-										pTemp->ForcedDespawn();
-									m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-								}
+
+	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+
+	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
+		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -509,13 +476,13 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		if (Chain_Lightning_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_CHAIN_LIGHTNING : SPELL_CHAIN_LIGHTNING_H);
-            Chain_Lightning_Timer = 10000;
+            Chain_Lightning_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Chain_Lightning_Timer -= diff;  
 
 		if (Hex_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), SPELL_HEX_OF_MENDING);
-            Hex_Timer = 20000;
+            Hex_Timer = m_bIsRegularMode ? 30000 : 20000;
         }else Hex_Timer -= diff;
 
 		if (Healing_Wave_Timer < diff)
@@ -558,14 +525,14 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 						else
 							DoCast(m_creature, SPELL_EARTH_SHIELD);
                 break;
-				case 1:
+		case 1:
 					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, SPELL_EARTH_SHIELD);
 						else
 							DoCast(m_creature, SPELL_EARTH_SHIELD);
                 break;
-				case 2:
+		case 2:
 					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, SPELL_EARTH_SHIELD);
@@ -573,7 +540,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 							DoCast(m_creature, SPELL_EARTH_SHIELD);
                 break;
 			}
-            Earth_Shield_Timer = 25000;
+            Earth_Shield_Timer = m_bIsRegularMode ? 35000 : 25000;
         }else Earth_Shield_Timer -= diff;
 		
 		DoMeleeAttackIfReady();
@@ -592,10 +559,11 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Shoot_Timer;
 	uint32 Lightning_Arrows_Timer;
@@ -608,8 +576,8 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
     {
 		m_creature->SetRespawnDelay(999999999);
 		Shoot_Timer = 0;
-		Lightning_Arrows_Timer = 13000;
-		Multi_Shot_Timer = 10000;
+		Lightning_Arrows_Timer = m_bIsRegularMode ? 18000 : 13000;
+		Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 10000;
 		Disengage_Cooldown = 0;
 		enemy_check = 1000;
 		disengage_check;
@@ -617,7 +585,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
 	void EnterEvadeMode()
 	{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -658,7 +626,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
+			}*/
 	}
 
 	void Aggro(Unit* pWho)
@@ -683,26 +651,14 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
     }
 
 	void JustDied(Unit* pKiller)
-    {
+	{
 		if (!m_pInstance)
 			return;
-		if (Creature* pTemp0 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                if (!pTemp0->isAlive())
-					if (Creature* pTemp1 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-						if (!pTemp1->isAlive())
-							if (Creature* pTemp2 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-								if (!pTemp2->isAlive())
-								{
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData(DATA_TOC5_ANNOUNCER))))
-										pTemp->SetVisibility(VISIBILITY_ON);
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-										pTemp->ForcedDespawn();
-									m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-								}
+
+	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+
+	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
+		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -729,21 +685,21 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 		if (Shoot_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), SPELL_SHOOT);
-            Shoot_Timer = 3000;
+            Shoot_Timer = m_bIsRegularMode ? 5000 : 3000;
         }else Shoot_Timer -= diff;  
 
 		if (Multi_Shot_Timer < diff)
         {
 			m_creature->CastStop(SPELL_SHOOT);
 			DoCast(m_creature->getVictim(), SPELL_MULTI_SHOT);
-            Multi_Shot_Timer = 10000;
+            Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Multi_Shot_Timer -= diff;
 
 		if (Lightning_Arrows_Timer < diff)
         {
 			m_creature->CastStop(SPELL_SHOOT);
 			DoCast(m_creature, SPELL_LIGHTNING_ARROWS);
-            Lightning_Arrows_Timer = 25000;
+            Lightning_Arrows_Timer = m_bIsRegularMode ? 30000 : 25000;
         }else Lightning_Arrows_Timer -= diff;
 
 		if (disengage_check < diff)
@@ -772,10 +728,11 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Eviscerate_Timer;
 	uint32 FoK_Timer;
@@ -784,14 +741,14 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
-		Eviscerate_Timer = 15000;
-		FoK_Timer = 10000;
-		Poison_Timer = 7000;
+		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 15000;
+		FoK_Timer = m_bIsRegularMode ? 15000 : 10000;
+		Poison_Timer = m_bIsRegularMode ? 12000 : 7000;
     }
 
 	void EnterEvadeMode()
 	{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -832,7 +789,7 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
+			}*/
 	}
 
 	void Aggro(Unit* pWho)
@@ -857,26 +814,14 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
     }
 
 	void JustDied(Unit* pKiller)
-    {
+	{
 		if (!m_pInstance)
 			return;
-		if (Creature* pTemp0 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                if (!pTemp0->isAlive())
-					if (Creature* pTemp1 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-						if (!pTemp1->isAlive())
-							if (Creature* pTemp2 = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-								if (!pTemp2->isAlive())
-								{
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData(DATA_TOC5_ANNOUNCER))))
-										pTemp->SetVisibility(VISIBILITY_ON);
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-										pTemp->ForcedDespawn();
-									if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-										pTemp->ForcedDespawn();
-									m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-								}
+
+	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+
+	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
+		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -887,20 +832,20 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 		if (Eviscerate_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_EVISCERATE : SPELL_EVISCERATE_H);
-            Eviscerate_Timer = 10000;
+            Eviscerate_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Eviscerate_Timer -= diff;  
 
 		if (FoK_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), SPELL_FAN_OF_KNIVES);
-			FoK_Timer = 7000;
+			FoK_Timer = m_bIsRegularMode ? 12000 : 7000;
         }else FoK_Timer -= diff;
 
 		if (Poison_Timer < diff)
         {
 			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
 				DoCast(m_creature, SPELL_POISON_BOTTLE);
-            Poison_Timer = 6000;
+            Poison_Timer = m_bIsRegularMode ? 9000 : 6000;
         }else Poison_Timer -= diff;
 		
 		DoMeleeAttackIfReady();

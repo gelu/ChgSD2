@@ -53,6 +53,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 	uint32 m_uiChampionId1;
 	uint32 m_uiChampionId2;
 	uint32 m_uiChampionId3;
+	uint32 m_uiChampionsCount;
 	uint64 m_uiChampion1;
 	uint64 m_uiChampion2;
 	uint64 m_uiChampion3;
@@ -89,9 +90,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 		m_uiChampion1			= 0;
 		m_uiChampion2			= 0;
 		m_uiChampion3			= 0;
-		m_uiArgentChallenger	= 0;
+		m_uiChampionsCount		= 3;
+		m_uiArgentChallenger		= 0;
 		m_uiMemoryGUID			= 0;
-		m_uiArgentChallengerID  = 0;
+		m_uiArgentChallengerID		= 0;
 
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
     }
@@ -374,13 +376,16 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 			case DATA_CHAMPIONID_3:
 				m_uiChampionId3 = uiData;
 			break;
+			case DATA_CHAMPIONS_COUNT:
+				m_uiChampionsCount = uiData;
+			break;
 			case DATA_ARGENT_CHALLENGER:
 				m_uiArgentChallengerID = uiData;
 			break;
 			case DATA_BLACK_KNIGHT_MINION:
 				m_uiBlackKnightMinionGUID = uiData;
 			break;
-            case TYPE_GRAND_CHAMPIONS:
+			case TYPE_GRAND_CHAMPIONS:
 				m_auiEncounter[0] = uiData;
 				if (uiData == DONE)
                 {
@@ -428,7 +433,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
     {
         switch(uiData)
         {
-            case DATA_CHAMPION_1:
+			case DATA_CHAMPION_1:
 				return m_uiChampion1;
 			case DATA_CHAMPION_2:
 				return m_uiChampion2;
@@ -437,7 +442,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 			case DATA_MEMORY:
 				return m_uiMemoryGUID;
 			case DATA_BLACK_KNIGHT:
-                return m_uiBlackKnightGUID;
+			return m_uiBlackKnightGUID;
         }
 
         return 0;
@@ -453,6 +458,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 				return m_uiChampionId2;
 			case DATA_CHAMPIONID_3:
 				return m_uiChampionId3;
+			case DATA_CHAMPIONS_COUNT:
+				return m_uiChampionsCount;
 			case DATA_ARGENT_CHALLENGER:
 				return m_uiArgentChallengerID;
 			case DATA_BLACK_KNIGHT_MINION:

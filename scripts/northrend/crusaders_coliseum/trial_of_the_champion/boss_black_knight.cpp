@@ -61,10 +61,11 @@ struct MANGOS_DLL_DECL mob_toc5_risen_ghoulAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Attack;
 
@@ -99,7 +100,7 @@ struct MANGOS_DLL_DECL mob_toc5_risen_ghoulAI : public ScriptedAI
         }else Attack -= diff;
 
 		if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 25)
-			DoCast(m_creature, m_bIsRegularMode ? SPELL_EXPLODE : SPELL_EXPLODE_H);
+		DoCast(m_creature, m_bIsRegularMode ? SPELL_EXPLODE : SPELL_EXPLODE_H);
 		
 		DoMeleeAttackIfReady();
 	}
@@ -117,10 +118,11 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Plague_Strike_Timer;
 	uint32 Icy_Touch_Timer;
@@ -271,9 +273,9 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		if (Summon_Ghoul < diff && phase1 && !ghoul)
         {
 			if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_JAEREN))
-				 m_creature->SummonCreature(NPC_RISEN_JAEREN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+			 m_creature->SummonCreature(NPC_RISEN_JAEREN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
 			else
-				m_creature->SummonCreature(NPC_RISEN_ARELAS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+			m_creature->SummonCreature(NPC_RISEN_ARELAS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
 			ghoul = true;
         }else Summon_Ghoul -= diff;
 
@@ -305,11 +307,11 @@ void AddSC_boss_black_knight()
 
     NewScript = new Script;
     NewScript->Name = "mob_toc5_risen_ghoul";
-	NewScript->GetAI = &GetAI_mob_toc5_risen_ghoul;
+    NewScript->GetAI = &GetAI_mob_toc5_risen_ghoul;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "boss_black_knight";
-	NewScript->GetAI = &GetAI_boss_black_knight;
+    NewScript->GetAI = &GetAI_boss_black_knight;
     NewScript->RegisterSelf();
 }

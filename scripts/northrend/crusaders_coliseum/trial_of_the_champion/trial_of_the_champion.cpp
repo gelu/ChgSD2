@@ -211,11 +211,11 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
 			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
 			{
 				if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
-					m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 				else
 				{
-					m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
-					m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+				m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 				}
 			}
 		}
@@ -237,7 +237,7 @@ CreatureAI* GetAI_npc_toc5_announcer(Creature* pCreature)
 
 bool GossipHello_npc_toc5_announcer(Player* pPlayer, Creature* pCreature)
 {
-	pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_EVENT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_EVENT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
@@ -248,7 +248,7 @@ bool GossipSelect_npc_toc5_announcer(Player* pPlayer, Creature* pCreature, uint3
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-		((npc_toc5_announcerAI*)pCreature->AI())->StartEvent(pPlayer);
+    ((npc_toc5_announcerAI*)pCreature->AI())->StartEvent(pPlayer);
     }
 
     return true;
@@ -260,7 +260,7 @@ void AddSC_trial_of_the_champion()
 
     NewScript = new Script;
     NewScript->Name = "npc_toc5_announcer";
-	NewScript->GetAI = &GetAI_npc_toc5_announcer;
+    NewScript->GetAI = &GetAI_npc_toc5_announcer;
     NewScript->pGossipHello = &GossipHello_npc_toc5_announcer;
     NewScript->pGossipSelect = &GossipSelect_npc_toc5_announcer;
     NewScript->RegisterSelf();

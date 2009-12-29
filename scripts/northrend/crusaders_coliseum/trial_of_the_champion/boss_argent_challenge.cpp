@@ -60,10 +60,11 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Vengeance_Timer;
 	uint32 Radiance_Timer;
@@ -109,7 +110,7 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
     {
 		if (!m_pInstance)
 			return;
-		m_creature->ForcedDespawn();
+//		m_creature->ForcedDespawn();
 		m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, DONE);
 	}
 
@@ -164,10 +165,11 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Smite_Timer;
 	uint32 Holy_Fire_Timer;
@@ -189,6 +191,13 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 		Shield_Check = 1000;
 		summoned = false;
 		shielded = false;
+    }
+
+    void JustSummoned(Creature* _summoned)
+    {
+        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+            _summoned->AddThreat(target);
+            summoned = true;
     }
 
 	void EnterEvadeMode()
@@ -221,7 +230,6 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
     {
 		if (!m_pInstance)
 			return;
-		m_creature->ForcedDespawn();
 		m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, DONE);
 	}
 
@@ -250,225 +258,99 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_SMITE : SPELL_SMITE_H);
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_HOLY_FIRE : SPELL_HOLY_FIRE_H);
 			switch(urand(0, 1))
-            {
+                {
                 case 0:
 					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MEMORY))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, m_bIsRegularMode ? SPELL_RENEW : SPELL_RENEW_H);
 						else
-							DoCast(pTemp, m_bIsRegularMode ? SPELL_RENEW : SPELL_RENEW_H);
+							DoCast(m_creature, m_bIsRegularMode ? SPELL_RENEW : SPELL_RENEW_H);
                 break;
-				case 1:
+		case 1:
 					DoCast(m_creature, m_bIsRegularMode ? SPELL_RENEW : SPELL_RENEW_H);
                 break;
 			}
             Renew_Timer = 25000;
         }else Renew_Timer -= diff;
 
-		if ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 35 && !summoned)
-		{
+	if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 35 ) && !summoned )
+	{
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_SMITE : SPELL_SMITE_H);
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_HOLY_FIRE : SPELL_HOLY_FIRE_H);
 			DoCast(m_creature, SPELL_HOLY_NOVA);
 			switch(urand(0, 24))
-            {
-                case 0:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ALGALON, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+        {
+	case 0: m_creature->SummonCreature(MEMORY_ALGALON, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
+		break;
+	case 1: m_creature->SummonCreature(MEMORY_CHROMAGGUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 1:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_CHROMAGGUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 2: m_creature->SummonCreature(MEMORY_CYANIGOSA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 2:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_CYANIGOSA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 3: m_creature->SummonCreature(MEMORY_DELRISSA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 3:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_DELRISSA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 4: m_creature->SummonCreature(MEMORY_ECK, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 4:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ECK, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 5: m_creature->SummonCreature(MEMORY_ENTROPIUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 5:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ENTROPIUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 6: m_creature->SummonCreature(MEMORY_GRUUL, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 6:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_GRUUL, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 7: m_creature->SummonCreature(MEMORY_HAKKAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 7:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_HAKKAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 8: m_creature->SummonCreature(MEMORY_HEIGAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 8:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_HEIGAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 9: m_creature->SummonCreature(MEMORY_HEROD, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 9:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_HEROD, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 10: m_creature->SummonCreature(MEMORY_HOGGER, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 10:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_HOGGER, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 11: m_creature->SummonCreature(MEMORY_IGNIS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 11:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_IGNIS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 12: m_creature->SummonCreature(MEMORY_ILLIDAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 12:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ILLIDAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 13: m_creature->SummonCreature(MEMORY_INGVAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 13:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_INGVAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 14: m_creature->SummonCreature(MEMORY_KALITHRESH, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 14:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_KALITHRESH, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 15: m_creature->SummonCreature(MEMORY_LUCIFRON, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 15:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_LUCIFRON, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 16: m_creature->SummonCreature(MEMORY_MALCHEZAAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 16:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_MALCHEZAAR, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 17: m_creature->SummonCreature(MEMORY_MUTANUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 17:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_MUTANUS, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 18: m_creature->SummonCreature(MEMORY_ONYXIA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 18:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ONYXIA, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 19: m_creature->SummonCreature(MEMORY_THUNDERAAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 19:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_THUNDERAAN, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 20: m_creature->SummonCreature(MEMORY_VANCLEEF, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 20:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_VANCLEEF, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 21: m_creature->SummonCreature(MEMORY_VASHJ, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 21:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_VASHJ, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 22: m_creature->SummonCreature(MEMORY_VEKNILASH, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 22:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_VEKNILASH, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 23: m_creature->SummonCreature(MEMORY_VEZAX, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 23:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_VEZAX, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
+	case 24: m_creature->SummonCreature(MEMORY_ARCHIMONDE, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000);
                 break;
-				case 24:
-					if (Creature* pTemp = m_creature->SummonCreature(MEMORY_ARCHIMONDE, 0.0f, 0.0f, 0.0f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
-					{
-						pTemp->AddThreat(m_creature->getVictim(),1000.0f);
-						pTemp->AI()->AttackStart(m_creature->getVictim());
-					}
-                break;
-			}
-			summoned = true;
-			Shield_Delay = 1000;
-		}
-
+	
+	}
+	Shield_Delay = 1000;
+	};
 		if (Shield_Delay < diff && !shielded && summoned)
         {
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_SMITE : SPELL_SMITE_H);
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_HOLY_FIRE : SPELL_HOLY_FIRE_H);
 			DoCast(m_creature, SPELL_SHIELD);
-            shielded = true;
-			Shield_Check = 1000;
+			shielded = true;
+			Shield_Check = m_bIsRegularMode ? 3000 : 5000;
         }else Shield_Delay -= diff;
 
 		if (Shield_Check < diff && shielded)
         {
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MEMORY))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MEMORY))))
 				if (!pTemp->isAlive())
 				{
 					m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
 					shielded = false;
-				}else Shield_Check = 1000;
+				} else Shield_Check = 1000;
         }else Shield_Check -= diff;
 		
 		DoMeleeAttackIfReady();
@@ -487,10 +369,11 @@ struct MANGOS_DLL_DECL mob_toc5_memoryAI : public ScriptedAI
 	{
 		Reset();
 		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 	}
 
 	ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
+	bool m_bIsRegularMode;
 
 	uint32 Old_Wounds_Timer;
 	uint32 Shadows_Timer;
@@ -502,6 +385,12 @@ struct MANGOS_DLL_DECL mob_toc5_memoryAI : public ScriptedAI
 		Shadows_Timer = 8000;
 		Fear_Timer = 13000;
     }
+
+	void JustDied(Unit* pKiller)
+    {
+		if (!m_pInstance)
+			return;
+	}
 
 	void UpdateAI(const uint32 diff)
     {
@@ -543,16 +432,16 @@ void AddSC_boss_argent_challenge()
 
     NewScript = new Script;
     NewScript->Name = "boss_eadric";
-	NewScript->GetAI = &GetAI_boss_eadric;
+    NewScript->GetAI = &GetAI_boss_eadric;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "boss_paletress";
-	NewScript->GetAI = &GetAI_boss_paletress;
+    NewScript->GetAI = &GetAI_boss_paletress;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_toc5_memory";
-	NewScript->GetAI = &GetAI_mob_toc5_memory;
+    NewScript->GetAI = &GetAI_mob_toc5_memory;
     NewScript->RegisterSelf();
 }
