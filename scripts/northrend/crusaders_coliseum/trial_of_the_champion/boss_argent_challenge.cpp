@@ -85,6 +85,7 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 
 	void EnterEvadeMode()
 	{
+		if (m_creature->isAlive()) {
 		Vengeance_Timer = 1000;
 		Radiance_Timer = 15000;
 		Hammer_Timer = 40000;
@@ -94,15 +95,14 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 		m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
 		m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
 		m_creature->SetHealth(m_creature->GetMaxHealth());
+		}
 	}
 
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
-			m_creature->ForcedDespawn();
-		else
+		if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) != DONE)
 			m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
     }
 
@@ -110,7 +110,6 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
     {
 		if (!m_pInstance)
 			return;
-//		m_creature->ForcedDespawn();
 		m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, DONE);
 	}
 
@@ -202,6 +201,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 
 	void EnterEvadeMode()
 	{
+	if (m_creature->isAlive()) {
 		m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
 		Smite_Timer = 5000;
 		Holy_Fire_Timer = 10000;
@@ -214,15 +214,14 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 		m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
 		m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
 		m_creature->SetHealth(m_creature->GetMaxHealth());
+		}
 	}
 
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
-			m_creature->ForcedDespawn();
-		else
+		if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) != DONE)
 			m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
     }
 

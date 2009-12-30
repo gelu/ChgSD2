@@ -183,9 +183,9 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
 		}
 		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == FAIL)
 		{
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
 			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
 		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
@@ -205,16 +205,35 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
 			}
 			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == FAIL)
 			{
-				m_creature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+			
+			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_1)))) {
+				pTemp->RemoveCorpse();
+				pTemp->RemoveFromWorld();
+				}
+			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_2)))) {
+				pTemp->RemoveCorpse();
+				pTemp->RemoveFromWorld();
+				}
+			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_3)))) {
+				pTemp->RemoveCorpse();
+				pTemp->RemoveFromWorld();
+				}
+
+				m_creature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
 				m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
 			}
 			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
 			{
+			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ARGENT_CHALLENGER)))) {
+				pTemp->RemoveCorpse();
+				pTemp->RemoveFromWorld();
+				}
+
 				if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
 				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 				else
 				{
-				m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+				m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
 				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 				}
 			}

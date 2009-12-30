@@ -176,9 +176,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
-			m_creature->ForcedDespawn();
-		else
+		if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) != DONE)
 			m_pInstance->SetData(TYPE_BLACK_KNIGHT, IN_PROGRESS);
     }
 
