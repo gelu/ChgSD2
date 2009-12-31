@@ -362,6 +362,8 @@ scripts/northrend/ulduar/halls_of_stone/boss_maiden_of_grief.cpp \
 scripts/northrend/ulduar/halls_of_stone/boss_sjonnir.cpp \
 scripts/northrend/ulduar/halls_of_stone/boss_krystallus.cpp \
 scripts/northrend/ulduar/halls_of_stone/halls_of_stone.cpp \
+scripts/northrend/ulduar/halls_of_stone/halls_of_stone.h \
+scripts/northrend/ulduar/halls_of_stone/instance_halls_of_stone.cpp \
 scripts/northrend/ulduar/ulduar/boss_algalon.cpp \
 scripts/northrend/ulduar/ulduar/boss_auriaya.cpp \
 scripts/northrend/ulduar/ulduar/boss_freya.cpp \

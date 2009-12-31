@@ -16,12 +16,13 @@
 
 /* ScriptData
 SDName: Boss_Maiden_of_Grief
-SD%Complete: 20%
+SD%Complete: 60%
 SDComment:
 SDCategory: Halls of Stone
 EndScriptData */
 
 #include "precompiled.h"
+#include "halls_of_stone.h"
 
 enum
 {
@@ -75,20 +76,20 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    uint32  m_uiStorm_Timer;
-    uint32 m_uiShock_Timer;
-    uint32 m_uiStolp_Timer;
     uint32 m_uiManaburn_Timer;
     uint32 m_uiBerserk_Timer;
 
+    uint32 m_uiStormTimer;
+    uint32 m_uiShockTimer;
+    uint32 m_uiPillarTimer;
+
     void Reset()
     {
-        m_uiStorm_Timer = urand(25000, 40000);
-        m_uiShock_Timer = urand(10000, 15000);
-        m_uiStolp_Timer = urand(15000, 25000);
         m_uiManaburn_Timer = urand(30000, 60000);
         m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
-
+        m_uiStormTimer = 5000;
+        m_uiShockTimer = 10000;
+        m_uiPillarTimer = 15000;
     }
 
     void Aggro(Unit* pWho)
@@ -110,6 +111,9 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_MAIDEN, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -117,45 +121,45 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 ////
-        if (m_uiStorm_Timer < uiDiff)
+        if (m_uiStormTimer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_STORM_N : SPELL_STORM_H );
 //	    DoScriptText(SAY_SLAY_1, m_creature);
-            m_uiStorm_Timer = urand(25000, 40000);
+            m_uiStormTimer = urand(25000, 40000);
         }
         else
-            m_uiStorm_Timer -= uiDiff;
+            m_uiStormTimer -= uiDiff;
 
-        if (m_uiShock_Timer < uiDiff)
+        if (m_uiShockTimer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_SHOCK_N : SPELL_SHOCK_H );
 //	    DoScriptText(SAY_SLAY_2, m_creature);
-            m_uiShock_Timer = urand(10000, 15000);
+            m_uiShockTimer = urand(10000, 15000);
         }
         else
-            m_uiShock_Timer -= uiDiff;
+            m_uiShockTimer -= uiDiff;
 
-        if (m_uiStolp_Timer < uiDiff)
+        if (m_uiPillarTimer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_STOLP_N : SPELL_STOLP_H );
 	    DoScriptText(SAY_SLAY_3, m_creature);
-            m_uiStolp_Timer = urand(15000, 25000);
+            m_uiPillarTimer = urand(15000, 25000);
         }
         else
-            m_uiStolp_Timer -= uiDiff;
+            m_uiPillarTimer -= uiDiff;
 
         if (m_uiManaburn_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_MANABURN_N : SPELL_MANABURN_H );
 	    DoScriptText(SAY_STUN, m_creature);
-            m_uiStorm_Timer = urand(30000, 60000);
+            m_uiManaburn_Timer = urand(30000, 60000);
         }
         else
-            m_uiStorm_Timer -= uiDiff;
+            m_uiManaburn_Timer -= uiDiff;
 
 if (m_uiBerserk_Timer < uiDiff)
         {
@@ -165,6 +169,36 @@ if (m_uiBerserk_Timer < uiDiff)
         }
         else
             m_uiBerserk_Timer -= uiDiff;
+
+        if (m_uiStormTimer < uiDiff)
+        {
+            if (DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_STORM_OF_GRIEF : SPELL_STORM_OF_GRIEF_H) == CAST_OK)
+                m_uiStormTimer = 20000;
+        }
+        else
+            m_uiStormTimer -= uiDiff;
+
+        if (m_uiPillarTimer < uiDiff)
+        {
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            {
+                if (DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_PILLAR_OF_WOE : SPELL_PILLAR_OF_WOE_H) == CAST_OK)
+                    m_uiPillarTimer = 10000;
+            }
+        }
+        else
+            m_uiPillarTimer -= uiDiff;
+
+        if (m_uiShockTimer < uiDiff)
+        {
+            if (DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_SHOCK_OF_SORROW : SPELL_SHOCK_OF_SORROW_H) == CAST_OK)
+            {
+                DoScriptText(SAY_STUN, m_creature);
+                m_uiShockTimer = 35000;
+            }
+        }
+        else
+            m_uiShockTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
