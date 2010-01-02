@@ -33,6 +33,7 @@ struct MANGOS_DLL_DECL instance_ahnkahet : public ScriptedInstance
 
     uint64 m_uiElderNadoxGUID;
     uint64 m_uiJedogaShadowseekerGUID;
+    uint64 m_uiTaldaramGUID;
     uint64 m_uiTaldaramDoorGUID;
     uint64 m_uiTaldaramVortexGUID;
     uint8 m_uiDevicesActivated;
@@ -43,6 +44,7 @@ struct MANGOS_DLL_DECL instance_ahnkahet : public ScriptedInstance
 
         m_uiElderNadoxGUID = 0;
         m_uiJedogaShadowseekerGUID = 0;
+        m_uiTaldaramGUID = 0;
         m_uiTaldaramDoorGUID = 0;
         m_uiTaldaramVortexGUID = 0;
         m_uiDevicesActivated = 0;
@@ -54,6 +56,7 @@ struct MANGOS_DLL_DECL instance_ahnkahet : public ScriptedInstance
         {
             case NPC_ELDER_NADOX:         m_uiElderNadoxGUID = pCreature->GetGUID();         break;
             case NPC_JEDOGA_SHADOWSEEKER: m_uiJedogaShadowseekerGUID = pCreature->GetGUID(); break;
+            case NPC_TALDARAM:            m_uiTaldaramGUID = pCreature->GetGUID(); break;
         }
     }
 

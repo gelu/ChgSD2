@@ -37,9 +37,9 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
 {
     boss_moraggAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-    	Reset();
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
     }
     ScriptedInstance *m_pInstance;
 

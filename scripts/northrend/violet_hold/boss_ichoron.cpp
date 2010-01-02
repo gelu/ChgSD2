@@ -71,9 +71,9 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 {
     boss_ichoronAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-    	Reset();
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
     }
     ScriptedInstance *m_pInstance;
     std::list<uint64> m_lWaterElementsGUIDList;
@@ -265,8 +265,8 @@ struct MANGOS_DLL_DECL mob_ichor_globuleAI : public ScriptedAI
 {
     mob_ichor_globuleAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	Reset();
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
     }
     ScriptedInstance *m_pInstance;
 

@@ -55,9 +55,9 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
 {
     boss_erekemAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-    	Reset();
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
     }
     ScriptedInstance *m_pInstance;
 
@@ -219,8 +219,8 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
 {
     mob_erekem_guardAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-    	m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-    	Reset();
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
     }
     ScriptedInstance *m_pInstance;
 
@@ -322,4 +322,4 @@ void AddSC_boss_erekem()
     newscript->Name = "mob_erekem_guard";
     newscript->GetAI = &GetAI_mob_erekem_guard;
     newscript->RegisterSelf();
-}
+}

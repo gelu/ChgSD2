@@ -27,7 +27,8 @@ enum
     GO_VORTEX               = 193564,
 
     NPC_ELDER_NADOX         = 29309,
-    NPC_JEDOGA_SHADOWSEEKER = 29310
+    NPC_TALDARAM            = 29308,
+    NPC_JEDOGA_SHADOWSEEKER = 29310,
 };
 
 #endif

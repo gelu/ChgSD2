@@ -1,6 +1,6 @@
 /* VIOLET HOLD */
 UPDATE `instance_template` SET `script`='instance_violet_hold' WHERE `map`=608;
-UPDATE `creature_template` SET `ScriptName`='npc_sinclari', `npcflag`='1',`minhealth`='403200', `maxhealth`='403200', `attackpower`='1460' WHERE `entry`='30658'; -- 64
+UPDATE `creature_template` SET `ScriptName`='npc_sinclari', npcflag='1',`minhealth`=ROUND(`minhealth`*4), `maxhealth`=ROUND(`maxhealth`*4) WHERE `entry`='30658'; -- 64
 UPDATE `creature_template` SET `ScriptName`='npc_azure_saboteur' WHERE `entry`='31079';
 UPDATE `creature_template` SET `ScriptName`='boss_cyanigosa' WHERE `entry`='31134';
 UPDATE `creature_template` SET `ScriptName`='boss_erekem' WHERE `entry`='29315';
@@ -16,14 +16,12 @@ UPDATE `creature_template` SET `ScriptName`='boss_zuramat' WHERE `entry`='29314'
 UPDATE `creature_template` SET `ScriptName`='mob_zuramat_sentry' WHERE `entry`='29364';
 UPDATE `creature_template` SET `ScriptName`='npc_violet_portal' WHERE `entry`='31011';
 
-# UPDATE `creature_template` SET `npcflag`='1' WHERE `entry`='30659';
-
 DELETE FROM `creature` WHERE map = 608 AND `id`='31011';
 DELETE FROM `creature` WHERE map = 608 AND `id`='31134'; -- cyanigosa should not spawn
 UPDATE `gameobject_template` SET `flags`=`flags`|4 WHERE `entry` IN (191723,191564,191563,191562,191606,191722,191556,191566,191565); -- door untargetable
 
 UPDATE `creature_template` SET AIName='EventAI',`ScriptName`='' WHERE `entry` IN ('30660','30695','30666','30668','30667','32191');
-DELETE FROM `creature_ai_scripts` WHERE creature_id IN ('30660','30695','30666','30668','30667','32191');
+DELETE FROM creature_ai_scripts WHERE creature_id IN ('30660','30695','30666','30668','30667','32191');
 INSERT INTO `creature_ai_scripts` VALUES
 ('3066001', '30660', '0', '0', '100', '1', '5000', '10000', '30000', '32000', '11', '58504', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Agonizing Strike'),
 ('3066002', '30660', '0', '0', '100', '1', '12000', '15000', '24000', '30000', '11', '58508', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Side Swipe'),
@@ -43,6 +41,10 @@ INSERT INTO `creature_ai_scripts` VALUES
 ('3066704', '30667', '0', '0', '100', '5', '12000', '15000', '24000', '30000', '11', '60205', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Mana Detonation'),
 ('3219101', '32191', '0', '0', '100', '1', '11000', '11000', '15000', '15000', '11', '58471', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Backstab'),
 ('3219102', '32191', '0', '0', '100', '1', '10000', '10000', '15000', '15000', '11', '58470', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'Tactical Blink');
-DELETE FROM `spell_script_target` WHERE `entry` in (54160,59474);
-insert into `spell_script_target` values (54160, 1, 29266);
-insert into `spell_script_target` values (59474, 1, 29266);
+DELETE FROM `spell_script_target` WHERE `entry` IN (54160,59474);
+INSERT INTO spell_script_target VALUES (54160, 1, 29266);
+INSERT INTO spell_script_target VALUES (59474, 1, 29266);
+
+UPDATE creature_template SET ScriptName="npc_door_seal_vh", unit_flags=33816580 WHERE entry=30896;
+UPDATE creature_template SET faction_A=35, faction_H=35 WHERE entry=30658;
+UPDATE creature_template SET faction_A=1720, faction_H=1720, ScriptName="mob_vh_dragons", minlevel=70,maxlevel=70,minhealth=7000,maxhealth=8000  WHERE entry IN (30660, 30661, 30662, 30663, 30664, 30666, 30667, 30668, 32191, 30695);
