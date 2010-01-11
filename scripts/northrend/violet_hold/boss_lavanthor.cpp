@@ -66,6 +66,9 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_LAVANTHOR, IN_PROGRESS);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void AttackStart(Unit* pWho)

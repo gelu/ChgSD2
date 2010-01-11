@@ -93,6 +93,9 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_EREKEM, NOT_STARTED);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void Aggro(Unit* pWho)
@@ -101,6 +104,9 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_EREKEM, IN_PROGRESS);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void AttackStart(Unit* pWho)
@@ -233,6 +239,9 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
         m_uiGushingWound_Timer = urand(5000, 10000);
         m_uiHowlingScreech_Timer = urand(12000, 15000);
         m_uiStrike_Timer = urand(10000, 11000);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void AttackStart(Unit* pWho)
@@ -242,6 +251,9 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
 
         if (m_pInstance->GetData(TYPE_EREKEM) != SPECIAL)
             return;
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
 
         if (!pWho || pWho == m_creature)
             return;

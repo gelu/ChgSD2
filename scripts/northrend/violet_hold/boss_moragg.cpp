@@ -56,12 +56,18 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MORAGG, NOT_STARTED);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void Aggro(Unit* pWho)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MORAGG, IN_PROGRESS);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void AttackStart(Unit* pWho)
