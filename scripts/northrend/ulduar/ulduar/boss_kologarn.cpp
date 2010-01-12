@@ -1,87 +1,178 @@
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+* This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* ScriptData
+SDName: boss_kologarn
+SD%Complete: 85%
+SDComment: missing yells and stone grip
+SDCategory: Ulduar
+EndScriptData */
 
 #include "precompiled.h"
 #include "def_ulduar.h"
+#define DATA_LEFT_ARM NPC_KOLOGARN_LEFT_ARM
+#define DATA_RIGHT_ARM NPC_KOLOGARN_RIGHT_ARM
+#define DATA_KOLOGARN NPC_KOLOGARN
 
-#define SP_OVERHEAD_SMASH_2H    63356 //64710
-#define SP_OVERHEAD_SMASH_1H    63573 //64715
-#define SP_STONE_SHOUT          64004
-#define SP_PETRIFYING_BREATH    62030
-#define H_SP_PETRIFYING_BREATH  63980
-#define SP_FOCUSED_EYEBEAM      63346
-#define H_SP_FOCUSED_EYEBEAM    63976
-
-#define SP_BERSERK              64238
-
-#define SP_SHOCKWAVE            63783
-#define H_SP_SHOCKWAVE          63982
-
-#define SP_STONE_GRIP           62056
-#define H_SP_STONE_GRIP         63985
-
-#define CR_RUBBLE               33768
-
-#define LEFT    0x01 //01
-#define RIGHT   0x02 //10
-
-
-struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
+enum
 {
-    boss_kologarnAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+    //yells
+
+    //kologarn
+    SPELL_OVERHEAD_SMASH        = 63356,
+    SPELL_OVERHEAD_SMASH_H        = 64003,
+    SPELL_ONE_ARMED_SMASH        = 63573,
+    SPELL_ONE_ARMED_SMASH_H        = 64006,
+    SPELL_STONE_SHOUT            = 63716,
+    SPELL_STONE_SHOUT_H            = 64005,
+    SPELL_PETRIFYING_BREATH        = 62030,
+    SPELL_PETRIFYING_BREATH_H    = 63980,
+    //left arm
+    SPELL_SHOCKWAVE                = 63783,
+    SPELL_SHOCKWAVE_H            = 63982,
+    //right arm
+    SPELL_STONE_GRIP            = 62166,
+    SPELL_STONE_GRIP_H            = 63981,
+    //both
+    SPELL_ARM_VISUAL            = 64753,
+    //rubble
+    SPELL_RUMBLE                = 63818,
+    SPELL_STONE_NOVA            = 63978,
+    //NPC ids
+    MOB_RUBBLE                    = 33768
+};
+
+float LeftArmX;
+float LeftArmY;
+float LeftArmZ;
+float RightArmX;
+float RightArmY;
+float RightArmZ;
+
+// Rubble
+struct MANGOS_DLL_DECL mob_ulduar_rubbleAI : public ScriptedAI
+{
+    mob_ulduar_rubbleAI(Creature* pCreature) : ScriptedAI(pCreature) 
     {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     }
 
-    ScriptedInstance *pInstance;
-    bool Regular;
-    uint32 BreathTimer;
-    uint32 SmashTimer;
-    uint32 EnrageTimer;
-    uint8 arms;
-    uint32 LeftArmRespawn;
-    uint32 RightArmRespawn;
+    ScriptedInstance* m_pInstance;
+
+    uint32 Stone_Nova_Timer;
+    uint32 Death_Timer;
+
+    bool die;
 
     void Reset()
     {
-        BreathTimer = 5000;
-        SmashTimer = 10000+rand()%5000;
-        EnrageTimer = 600000;
-        arms = LEFT & RIGHT;
-        if(pInstance)
+        die = false;
+        Stone_Nova_Timer = urand(8000, 12000);
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+            if (!die)
+            {
+                uiDamage = 0;
+                DoCast(m_creature, SPELL_RUMBLE);
+                Death_Timer = 500;
+                die = true;
+            }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (Death_Timer < diff && die)
         {
-            pInstance->SetData(TYPE_KOLOGARN, NOT_STARTED);
-            Creature *arm = NULL;
-            arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_LEFT_ARM));
-            if(arm) arm->Respawn();
-            arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_RIGHT_ARM));
-            if(arm) arm->Respawn();
-        }
-        LeftArmRespawn = 30000;
-        RightArmRespawn = 30000;
-    }
+            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        }else Death_Timer -= diff;
 
-    void ArmDied(int arm)
-    {
-        arms = arms & !arm;
-    }
-
-    void Aggro(Unit *who) 
-    {
-        if(pInstance)
+        if (Stone_Nova_Timer < diff && !die)
         {
-            pInstance->SetData(TYPE_KOLOGARN, IN_PROGRESS);
-            /*Creature *arm = NULL;
-            arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_LEFT_ARM));
-            if(arm) arm->Respawn();
-            arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_RIGHT_ARM));
-            if(arm) arm->Respawn();*/
+            DoCast(m_creature, SPELL_STONE_NOVA);
+            Stone_Nova_Timer = urand(7000, 9000);
+        }else Stone_Nova_Timer -= diff;
+
+        if (!die)
+            DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_ulduar_rubble(Creature* pCreature)
+{
+    return new mob_ulduar_rubbleAI(pCreature);
+}
+
+// Left Arm
+struct MANGOS_DLL_DECL boss_kologarn_left_armAI : public ScriptedAI
+{
+    boss_kologarn_left_armAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+        SetCombatMovement(false);
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        LeftArmX = 1777.636841; LeftArmY = -47.970596; LeftArmZ = 448.805908;
+    }
+
+    bool m_bIsRegularMode;
+    ScriptedInstance* m_pInstance;
+
+    uint32 Shockwave_Timer;
+    uint32 Addcount;
+
+    void Reset()
+    {
+        Shockwave_Timer = 30000;
+        Addcount = 0;
+        DoCast(m_creature, SPELL_ARM_VISUAL);
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        if (m_pInstance)
+        {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KOLOGARN))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
         }
     }
 
-    void JustDied(Unit *killer)
+    void JustDied(Unit* pKiller)
     {
-        if(pInstance) pInstance->SetData(TYPE_KOLOGARN, DONE);
+        if (!m_pInstance)
+            return;
+        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KOLOGARN))))
+            if (pTemp->isAlive())
+                pTemp->DealDamage(pTemp, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        do{
+            if (Creature* pTemp = m_creature->SummonCreature(MOB_RUBBLE, LeftArmX, LeftArmY, LeftArmZ, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    {
+                        pTemp->AddThreat(pTarget,0.0f);
+                        pTemp->AI()->AttackStart(pTarget);
+                    }
+            Addcount++;
+        } while(Addcount<5);
     }
 
     void UpdateAI(const uint32 diff)
@@ -89,187 +180,256 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public Scripted_NoMovementAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if(BreathTimer < diff)
+        if (Shockwave_Timer < diff)
         {
-            if(!m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
-                DoCast(m_creature->getVictim(), Regular ? SP_PETRIFYING_BREATH : H_SP_PETRIFYING_BREATH);
-            BreathTimer = 5000;
-        }
-        else BreathTimer -= diff;
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_SHOCKWAVE : SPELL_SHOCKWAVE_H);
+            Shockwave_Timer = 30000;
+        }else Shockwave_Timer -= diff;
+    }
+};
 
-        if(pInstance)
+CreatureAI* GetAI_boss_kologarn_left_arm(Creature* pCreature)
+{
+    return new boss_kologarn_left_armAI(pCreature);
+}
+
+// Right Arm
+struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public ScriptedAI
+{
+    boss_kologarn_right_armAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+        SetCombatMovement(false);
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        RightArmX = 1779.671753; RightArmY = 1.514701; RightArmZ = 448.810577;
+    }
+
+    bool m_bIsRegularMode;
+    ScriptedInstance* m_pInstance;
+
+    uint32 Stone_Grip_Timer;
+    uint32 Addcount;
+    uint32 gripdmg;
+    uint32 freedmg;
+    uint64 GripTarget;
+
+    bool grip;
+
+    void Reset()
+    {
+        Stone_Grip_Timer = 20000;
+        Addcount = 0;
+        GripTarget = 0;
+        gripdmg = 0;
+        freedmg = 0;
+        grip = false;
+        DoCast(m_creature, SPELL_ARM_VISUAL);
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        if (m_pInstance)
         {
-            if((arms & LEFT) != LEFT)
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KOLOGARN))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
+        }
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
+    {
+        if (grip)
+        {
+            gripdmg += uiDamage;
+            freedmg = m_bIsRegularMode ? 100000 : 480000;
+            if (gripdmg > freedmg || uiDamage > m_creature->GetHealth())
             {
-                if(LeftArmRespawn < diff)
-                {
-                    Creature *arm = NULL;
-                    arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_LEFT_ARM));
-                    if(arm) arm->Respawn();
+                if (Unit* pGripTarget = Unit::GetUnit(*m_creature, GripTarget)){
+                    if (pGripTarget->HasAura(SPELL_STONE_GRIP))
+                        pGripTarget->RemoveAurasDueToSpell(SPELL_STONE_GRIP);
+                    if (pGripTarget->HasAura(SPELL_STONE_GRIP_H))
+                        pGripTarget->RemoveAurasDueToSpell(SPELL_STONE_GRIP_H);
                 }
-                else LeftArmRespawn -= diff;
-            }
-
-            if((arms & RIGHT) != RIGHT)
-            {
-                if(RightArmRespawn < diff)
-                {
-                    Creature *arm = NULL;
-                    arm = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN_RIGHT_ARM));
-                    if(arm) arm->Respawn();
-                }
-                else RightArmRespawn -= diff;
+                grip = false;
+                gripdmg = 0;
             }
         }
+    }
 
-        if(SmashTimer < diff)
-        {
-            if(arms== (LEFT & RIGHT)) DoCast(m_creature->getVictim(), SP_OVERHEAD_SMASH_2H);
-            if(arms==LEFT || arms==RIGHT) DoCast(m_creature->getVictim(), SP_OVERHEAD_SMASH_1H);
-            //if(arms==0) DoCast(m_creature->getVictim(), SP_STONE_SHOUT);
-            SmashTimer = 10000 + rand()%5000;
-        }
-        else SmashTimer -= diff;
+    void JustDied(Unit* pKiller)
+    {
+        if (!m_pInstance)
+            return;
+        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_KOLOGARN))))
+            if (pTemp->isAlive())
+                pTemp->DealDamage(pTemp, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        do{
+            if (Creature* pTemp = m_creature->SummonCreature(MOB_RUBBLE, RightArmX, RightArmY, RightArmZ, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    {
+                        pTemp->AddThreat(pTarget,0.0f);
+                        pTemp->AI()->AttackStart(pTarget);
+                    }
+            Addcount++;
+        } while(Addcount<5);
+    }
 
-        if(EnrageTimer < diff)
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (Stone_Grip_Timer < diff)
         {
-            DoCast(m_creature, SP_BERSERK);
-            EnrageTimer = 30000;
+            //stone grip emote
+            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0)){
+                //DoCast(target, m_bIsRegularMode ? SPELL_STONE_GRIP : SPELL_STONE_GRIP_H);
+                GripTarget = target->GetGUID();
+                grip = true;
+                gripdmg = 0;
+            }
+            Stone_Grip_Timer = 30000;
+        }else Stone_Grip_Timer -= diff;
+    }
+};
+
+CreatureAI* GetAI_boss_kologarn_right_arm(Creature* pCreature)
+{
+    return new boss_kologarn_right_armAI(pCreature);
+}
+
+// Kologarn
+struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
+{
+    boss_kologarnAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        SetCombatMovement(false);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    uint32 Spell_Timer;
+    uint32 Check_Timer;
+    uint32 respawnright;
+    uint32 respawnleft;
+
+    bool right;
+    bool left;
+
+    void Reset()
+    {
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+        Spell_Timer = 10000;
+        Check_Timer = 6300;
+        right = true;
+        left = true;
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+        //death yell
+        if (m_pInstance)
+        {
+            m_pInstance->SetData(TYPE_KOLOGARN, DONE);
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
-        else EnrageTimer -= diff;
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        if (m_pInstance)
+        {
+            m_pInstance->SetData(TYPE_KOLOGARN, IN_PROGRESS);
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (pTemp->isAlive())
+                    pTemp->SetInCombatWithZone();
+        }
+        //aggro yell
+    }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+        {
+            m_pInstance->SetData(TYPE_KOLOGARN, FAIL);
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (!pTemp->isAlive())
+                    pTemp->Respawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (!pTemp->isAlive())
+                    pTemp->Respawn();
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (Spell_Timer < diff)
+        {
+            if (right && left)
+                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_OVERHEAD_SMASH : SPELL_OVERHEAD_SMASH_H);
+            else
+                if (!right && !left)
+                    DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_STONE_SHOUT : SPELL_STONE_SHOUT_H);
+                else
+                    DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_ONE_ARMED_SMASH : SPELL_ONE_ARMED_SMASH_H);
+            Spell_Timer = 20000;
+        }else Spell_Timer -= diff;   
+
+        if (respawnleft < diff && !left)
+        {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (!pTemp->isAlive())
+                    pTemp->Respawn();
+            left = true;
+        }else respawnleft -= diff;  
+
+        if (respawnright < diff && !right)
+        {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (!pTemp->isAlive())
+                    pTemp->Respawn();
+            right = true;
+        }else respawnright -= diff; 
+
+        if (Check_Timer < diff)
+        {
+            if (Creature* lArm = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LEFT_ARM))))
+                if (!lArm->isAlive() && left)
+                {
+                    left = false;
+                    respawnleft = 60000;
+                }
+            if (Creature* rArm = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_RIGHT_ARM))))
+                if (!rArm->isAlive() && right)
+                {
+                    right = false;
+                    respawnright = 60000;
+                }
+            if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), 10))
+                DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_PETRIFYING_BREATH : SPELL_PETRIFYING_BREATH_H);
+            Check_Timer = 500;
+        }else Check_Timer -= diff;
 
         DoMeleeAttackIfReady();
-    }
-};
-
-struct MANGOS_DLL_DECL boss_kologarn_left_armAI : public Scripted_NoMovementAI
-{
-    boss_kologarn_left_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
-    {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
-        Reset();
-    }
-
-    ScriptedInstance *pInstance;
-    bool Regular;
-    uint32 ShockwaveTimer;
-
-    void Reset()
-    {
-        ShockwaveTimer = 20000 + rand()%10000;
-    }
-
-    void Aggro(Unit *who) {}
-
-    void JustDied(Unit *killer)
-    {
-        Creature *kologarn = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN));
-        if(kologarn && kologarn->isAlive())
-        {
-            kologarn->DealDamage(kologarn, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            ((boss_kologarnAI *)kologarn->AI())->ArmDied(LEFT);
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        if(ShockwaveTimer < diff)
-        {
-            DoCast(m_creature->getVictim(), SP_SHOCKWAVE);
-            ShockwaveTimer = 20000 + rand()%10000;
-        }
-        else ShockwaveTimer -= diff;
-    }
-};
-
-struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public Scripted_NoMovementAI
-{
-    boss_kologarn_right_armAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
-    {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
-        Reset();
-    }
-
-    ScriptedInstance *pInstance;
-    bool Regular;
-    uint32 GripThreshold;
-    uint32 GripTimer;
-    Unit *GrippedPlayer;
-    bool Gripped;
-
-    void Reset()
-    {
-        GrippedPlayer = NULL;
-        Gripped = false;
-        GripTimer = 10000 + rand()%10000;
-        GripThreshold = Regular ? 100000 : 480000;
-    }
-
-    void Aggro(Unit *who) {}
-
-    void JustDied(Unit *killer)
-    {
-        Creature *kologarn = (Creature *) Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_KOLOGARN));
-        if(kologarn && kologarn->isAlive())
-        {
-            kologarn->DealDamage(kologarn, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            ((boss_kologarnAI *)kologarn->AI())->ArmDied(RIGHT);
-        }
-
-        //summon rubbles
-        Creature *rubble;
-        Unit *target;
-        for(int i=0; i<5; i++)
-        {
-            rubble = DoSpawnCreature(CR_RUBBLE, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-            target = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if(rubble && target && target->isAlive())
-                rubble->AddThreat(target, 1.0f);
-        }
-    }
-
-    void DamageTaken(Unit *done_by, uint32 &dmg)
-    {
-        if(Gripped) GripThreshold -= dmg;
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        if(Gripped)
-        {
-            if(!GrippedPlayer || GrippedPlayer->isDead() || GripThreshold < 0) 
-            {
-                //release gripped player
-                //GrippedPlayer->RemoveAurasDueToSpell(SP_STONE_GRIP);
-                GrippedPlayer = NULL;
-                GripTimer = 10000 + rand()%10000;
-                Gripped = false;
-                GripThreshold = Regular ? 100000 : 400000;
-            }
-        }
-        else
-        {
-            if(GripTimer < diff)
-            {
-                GrippedPlayer = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                if(GrippedPlayer && GrippedPlayer->isAlive())
-                {
-                    //grip player
-                    //DoCast(GrippedPlayer, SP_STONE_GRIP);
-                    Gripped = true;
-                }
-                else GripTimer = 5000;
-            }
-            else GripTimer -= diff;
-        }
     }
 };
 
@@ -278,32 +438,27 @@ CreatureAI* GetAI_boss_kologarn(Creature* pCreature)
     return new boss_kologarnAI(pCreature);
 }
 
-CreatureAI* GetAI_boss_kologarn_left_arm(Creature* pCreature)
-{
-    return new boss_kologarn_left_armAI(pCreature);
-}
-
-CreatureAI* GetAI_boss_kologarn_right_arm(Creature* pCreature)
-{
-    return new boss_kologarn_right_armAI(pCreature);
-}
-
 void AddSC_boss_kologarn()
 {
-    Script *newscript;
+    Script* NewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_kologarn";
-    newscript->GetAI = &GetAI_boss_kologarn;
-    newscript->RegisterSelf();
+    NewScript = new Script;
+    NewScript->Name = "boss_kologarn";
+    NewScript->GetAI = GetAI_boss_kologarn;
+    NewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "boss_kologarn_left_arm";
-    newscript->GetAI = &GetAI_boss_kologarn_left_arm;
-    newscript->RegisterSelf();
+    NewScript = new Script;
+    NewScript->Name = "mob_ulduar_rubble";
+    NewScript->GetAI = &GetAI_mob_ulduar_rubble;
+    NewScript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "boss_kologarn_right_arm";
-    newscript->GetAI = &GetAI_boss_kologarn_right_arm;
-    newscript->RegisterSelf();
+    NewScript = new Script;
+    NewScript->Name = "boss_kologarn_left_arm";
+    NewScript->GetAI = &GetAI_boss_kologarn_left_arm;
+    NewScript->RegisterSelf();
+
+    NewScript = new Script;
+    NewScript->Name = "boss_kologarn_right_arm";
+    NewScript->GetAI = &GetAI_boss_kologarn_right_arm;
+    NewScript->RegisterSelf();
 }

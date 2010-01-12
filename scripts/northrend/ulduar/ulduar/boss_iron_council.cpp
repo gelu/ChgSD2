@@ -39,7 +39,7 @@ struct MANGOS_DLL_DECL iron_councilAI : public ScriptedAI
     ScriptedInstance *pInstance;
     bool Regular;
     int CouncilAlive;
-    
+
     void Reset()
     {
         if(pInstance)
@@ -49,15 +49,15 @@ struct MANGOS_DLL_DECL iron_councilAI : public ScriptedAI
             pInstance->SetData(TYPE_IRON_COUNCIL, NOT_STARTED);
         }
     }
-    
+
     void EnterCombat(Unit *who)
     {
         if(!who) return;
         if(!pInstance) return;
-        
+
         uint32 entry = m_creature->GetEntry();
         Creature *council;
-        
+
         if(entry!=CR_STEELBREAKER)
         {
             council = pInstance->instance->GetCreature(pInstance->GetData64(NPC_STEELBREAKER));
