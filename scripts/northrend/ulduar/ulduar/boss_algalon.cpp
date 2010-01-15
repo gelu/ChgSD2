@@ -60,6 +60,9 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
         else EnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
+        
+        EnterEvadeIfOutOfCombatArea(diff);
+
     }
 };
 

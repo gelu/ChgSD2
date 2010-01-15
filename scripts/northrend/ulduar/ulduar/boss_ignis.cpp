@@ -70,14 +70,14 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
         }
         else FlameJetsTimer -= diff;
 
-        /*if (SlagPotTimer < diff)
+        if (SlagPotTimer < diff)
         {
             Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
             if(target && target->isAlive())
                 DoCast(target, Regular ? SP_SLAG_POT : H_SP_SLAG_POT);
             SlagPotTimer = 15000;
         }
-        else SlagPotTimer -= diff;*/
+        else SlagPotTimer -= diff;
 
         if (SummonTimer < diff)
         {
