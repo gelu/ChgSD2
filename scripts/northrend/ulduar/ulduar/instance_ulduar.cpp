@@ -222,8 +222,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
 
                     //Unlock Ancient Gate of the Keepers
                     //TODO: onscreen notification
-                    KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
-                    if(KeepersKilled) OpenDoor(mAncientGateGUID);
+                    ++KeepersKilled;
+                    if(KeepersKilled > 3) OpenDoor(mAncientGateGUID);
                     mEncounter[7] = uiData; 
                 }
                 break;
@@ -233,8 +233,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     DoRespawnGameObject(mFreyaCacheGUID, DAY);
                     //Unlock Ancient Gate of the Keepers
                     //TODO: onscreen notification
-                    KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
-                    if(KeepersKilled) OpenDoor(mAncientGateGUID);;
+                    ++KeepersKilled;
+                    if (KeepersKilled > 3 ) OpenDoor(mAncientGateGUID);;
                     mEncounter[8] = uiData; 
                     }
                 break;
@@ -244,8 +244,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     DoRespawnGameObject(mThorimCacheGUID, DAY);
                     //Unlock Ancient Gate of the Keepers
                     //TODO: onscreen notification
-                    KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
-                    if(KeepersKilled) OpenDoor(mAncientGateGUID);
+                    ++KeepersKilled;
+                    if(KeepersKilled >3 ) OpenDoor(mAncientGateGUID);
                 mEncounter[9] = uiData; 
                 }
                 break;
@@ -260,8 +260,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     DoRespawnGameObject(mMimironCacheGUID, DAY);
                     //Unlock Ancient Gate of the Keepers
                     //TODO: onscreen notification
-                    KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
-                    if(KeepersKilled) OpenDoor(mAncientGateGUID);
+                    ++KeepersKilled;
+                    if(KeepersKilled > 3) OpenDoor(mAncientGateGUID);
                     mEncounter[10] = uiData; 
                 }
                 break;
@@ -281,11 +281,15 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     DoRespawnGameObject(mHodirRareCacheGUID, DAY);
                     DoRespawnGameObject(mHodirCacheGUID, DAY);
                     OpenDoor(mHodirFrozenDoorGUID);
+                    ++KeepersKilled;
+                    if(KeepersKilled > 3) OpenDoor(mAncientGateGUID);
                     mEncounter[7] = uiData;
                 }
                 break;
             case TYPE_THORIM_HARD:
                 if(uiData == DONE) { DoRespawnGameObject(mThorimHardCacheGUID, DAY);
+                ++KeepersKilled;
+                if(KeepersKilled > 3) OpenDoor(mAncientGateGUID);
                 mEncounter[9] = uiData;}
                 break;
         }
@@ -300,7 +304,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 << mEncounter[6] << " " << mEncounter[7] << " " << mEncounter[8] << " "
                 << mEncounter[9] << " " << mEncounter[10] << " " << mEncounter[11] << " "
                 << mEncounter[12] << " " << mEncounter[13] << " " << mEncounter[14] << " "
-                << mLeviathanReached << " " << mXT002Reached << " " << mMimironReached;
+                << mLeviathanReached << " " << mXT002Reached << " " << mMimironReached << " " 
+                << KeepersKilled;
 
             strSaveData = saveStream.str();
 
@@ -337,7 +342,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             case TYPE_XT002_TP:         return mXT002Reached;
             case TYPE_MIMIRON_TP:       return mMimironReached;
 
-            case TYPE_KEEPERS:          return KeepersKilled ? 1 : 0;
+            case TYPE_KEEPERS:          return KeepersKilled;
         }
         return 0;
     }
@@ -372,7 +377,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             >> mEncounter[4] >> mEncounter[5] >> mEncounter[6] >> mEncounter[7]
             >> mEncounter[8] >> mEncounter[9] >> mEncounter[10] >> mEncounter[11]
             >> mEncounter[12] >> mEncounter[13] >> mEncounter[14] >> mLeviathanReached
-            >> mXT002Reached >> mMimironReached;
+            >> mXT002Reached >> mMimironReached >> KeepersKilled;
 
         for(uint8 i = 0; i < ENCOUNTERS; ++i)
             if (mEncounter[i] == IN_PROGRESS)
