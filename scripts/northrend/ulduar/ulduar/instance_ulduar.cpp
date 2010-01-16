@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             case 194441: mHodirFrozenDoorGUID = pGo->GetGUID(); break;
             case 194255: mAncientGateGUID = pGo->GetGUID(); break;
             case GO_KOLOGARN_BRIDGE:  m_uiKologarnBridgeGUID = pGo->GetGUID();
-                pGo->SetGoState(GO_STATE_ACTIVE);
+                pGo->SetGoState(GO_STATE_READY);
                 break;
         }
     }
@@ -184,12 +184,12 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     mLeviathanReached = 1;
                     needSave = true;
                 }
-                mEncounter[0] = uiData; 
+                if(uiData == DONE) mEncounter[0] = uiData; 
                 break;
             case TYPE_IGNIS:
-                mEncounter[1] = uiData; break;
+                if(uiData == DONE) mEncounter[1] = uiData; break;
             case TYPE_RAZORSCALE:
-                mEncounter[2] = uiData; break;
+                if(uiData == DONE) mEncounter[2] = uiData; break;
             case TYPE_XT002: 
                 if(uiData == IN_PROGRESS)
                 {
@@ -200,19 +200,20 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 else
                 {
                     OpenDoor(mXT002DoorGUID);
-                }
-                mEncounter[3] = uiData; 
+                    mEncounter[3] = uiData; 
+                    }
                 break;
             case TYPE_IRON_COUNCIL:
-                mEncounter[4] = uiData; break;
+                if(uiData == DONE) mEncounter[4] = uiData; break;
             case TYPE_KOLOGARN:
-                if(uiData == DONE) DoRespawnGameObject(mKologarnCacheGUID, DAY);
+                if(uiData == DONE) { DoRespawnGameObject(mKologarnCacheGUID, DAY);
                 if (GameObject* pBridge = instance->GetGameObject(m_uiKologarnBridgeGUID))
-                        pBridge->SetGoState(GO_STATE_READY);
+                        pBridge->SetGoState(GO_STATE_ACTIVE);
                 mEncounter[5] = uiData;
+                }
                 break;
             case TYPE_AURIAYA:          
-                mEncounter[6] = uiData; break;
+                if(uiData == DONE) mEncounter[6] = uiData; break;
             case TYPE_HODIR:
                 if(uiData == DONE) 
                 {
@@ -223,8 +224,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     //TODO: onscreen notification
                     KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
                     if(KeepersKilled) OpenDoor(mAncientGateGUID);
+                    mEncounter[7] = uiData; 
                 }
-                mEncounter[7] = uiData; 
                 break;
             case TYPE_FREYA:
                 if(uiData == DONE) 
@@ -234,8 +235,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     //TODO: onscreen notification
                     KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
                     if(KeepersKilled) OpenDoor(mAncientGateGUID);;
-                }
-                mEncounter[8] = uiData; 
+                    mEncounter[8] = uiData; 
+                    }
                 break;
             case TYPE_THORIM:
                 if(uiData == DONE)
@@ -245,8 +246,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     //TODO: onscreen notification
                     KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
                     if(KeepersKilled) OpenDoor(mAncientGateGUID);
-                }
                 mEncounter[9] = uiData; 
+                }
                 break;
             case TYPE_MIMIRON:
                 if(uiData == IN_PROGRESS)
@@ -261,16 +262,16 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     //TODO: onscreen notification
                     KeepersKilled = mEncounter[7]==DONE && mEncounter[8]==DONE && mEncounter[9]==DONE && mEncounter[10]==DONE;
                     if(KeepersKilled) OpenDoor(mAncientGateGUID);
+                    mEncounter[10] = uiData; 
                 }
-                mEncounter[10] = uiData; 
                 break;
             case TYPE_VEZAX:            
-                mEncounter[11] = uiData; break;
+                if(uiData == DONE) mEncounter[11] = uiData; break;
             case TYPE_YOGG_SARON:       
-                mEncounter[12] = uiData; break;
+                if(uiData == DONE) mEncounter[12] = uiData; break;
             case TYPE_ALGALON:
-                if(uiData == DONE) DoRespawnGameObject(mAlgalonCacheGUID, DAY);
-                mEncounter[13] = uiData; 
+                if(uiData == DONE) {DoRespawnGameObject(mAlgalonCacheGUID, DAY);
+                mEncounter[13] = uiData;} 
                 break;
 
             //Hard Modes
@@ -284,8 +285,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 }
                 break;
             case TYPE_THORIM_HARD:
-                if(uiData == DONE) DoRespawnGameObject(mThorimHardCacheGUID, DAY);
-                mEncounter[9] = uiData;
+                if(uiData == DONE) { DoRespawnGameObject(mThorimHardCacheGUID, DAY);
+                mEncounter[9] = uiData;}
                 break;
         }
 
