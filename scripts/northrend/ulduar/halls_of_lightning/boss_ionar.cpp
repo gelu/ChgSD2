@@ -49,7 +49,7 @@ enum
 
     NPC_SPARK_OF_IONAR                      = 28926,
 
-    MAX_SPARKS                              = 6,
+    MAX_SPARKS                              = 5,
     POINT_CALLBACK                          = 0
 };
 

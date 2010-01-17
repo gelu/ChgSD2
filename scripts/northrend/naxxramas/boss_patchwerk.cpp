@@ -16,50 +16,61 @@
 
 /* ScriptData
 SDName: Boss_Patchwerk
-SD%Complete: 80
-SDComment: Some issues with hateful strike inturrupting the melee swing timer.
+SD%Complete: 100
+SDComment:
 SDCategory: Naxxramas
 EndScriptData */
 
 #include "precompiled.h"
+#include "naxxramas.h"
 
-#define SAY_AGGRO1              -1533017
-#define SAY_AGGRO2              -1533018
-#define SAY_SLAY                -1533019
-#define SAY_DEATH               -1533020
+enum
+{
+    SAY_AGGRO1            = -1533017,
+    SAY_AGGRO2            = -1533018,
+    SAY_SLAY              = -1533019,
+    SAY_DEATH             = -1533020,
 
-#define EMOTE_BERSERK           -1533021
-#define EMOTE_ENRAGE            -1533022
+    EMOTE_BERSERK         = -1533021,
+    EMOTE_ENRAGE          = -1533022,
 
-#define SPELL_HATEFULSTRIKE     28308
-#define H_SPELL_HATEFULSTRIKE   59192
-#define SPELL_ENRAGE            28131
-#define SPELL_BERSERK           26662
-#define SPELL_SLIMEBOLT         32309
+    SPELL_HATEFULSTRIKE   = 28308,
+    SPELL_HATEFULSTRIKE_H = 59192,
+    SPELL_ENRAGE          = 28131,
+    SPELL_BERSERK         = 26662,
+    SPELL_SLIMEBOLT       = 32309
+};
+
+const float MELEE_DISTANCE = 5.0;
 
 struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
 {
     boss_patchwerkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Regular;
-    uint32 HatefullStrike_Timer;
-    uint32 Enrage_Timer;
-    uint32 Slimebolt_Timer;
-    bool Enraged;
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    uint32 m_uiHatefulStrikeTimer;
+    uint32 m_uiBerserkTimer;
+    uint32 m_uiSlimeboltTimer;
+    bool   m_bEnraged;
+    bool   m_bBerserk;
 
     void Reset()
     {
-        HatefullStrike_Timer = 1200;                        //1.2 seconds
-        Enrage_Timer = 420000;                              //7 minutes 420,000
-        Slimebolt_Timer = 450000;                           //7.5 minutes 450,000
-        Enraged = false;
+        m_uiHatefulStrikeTimer = 1000;                      //1 second
+        m_uiBerserkTimer = MINUTE*6*IN_MILISECONDS;         //6 minutes
+        m_uiSlimeboltTimer = 10000;
+        m_bEnraged = false;
+        m_bBerserk = false;
     }
 
-    void KilledUnit(Unit* Victim)
+    void KilledUnit(Unit* pVictim)
     {
         if (urand(0, 4))
             return;
@@ -67,71 +78,104 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
         DoScriptText(SAY_SLAY, m_creature);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_PATCHWERK, DONE);
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* pWho)
     {
-        if (urand(0, 1))
-            DoScriptText(SAY_AGGRO1, m_creature);
-        else
-            DoScriptText(SAY_AGGRO2, m_creature);
+        DoScriptText(urand(0, 1)?SAY_AGGRO1:SAY_AGGRO2, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_PATCHWERK, IN_PROGRESS);
     }
 
-    void UpdateAI(const uint32 diff)
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_PATCHWERK, FAIL);
+    }
+
+    void DoHatefulStrike()
+    {
+        // The ability is used on highest HP target choosen of the top 2 (3 heroic) targets on threat list being in melee range
+        Unit* pTarget = NULL;
+        uint32 uiHighestHP = 0;
+        uint32 uiTargets = m_bIsRegularMode ? 2 : 3;
+
+        ThreatList const& tList = m_creature->getThreatManager().getThreatList();
+        for (ThreatList::const_iterator iter = tList.begin();iter != tList.end(); ++iter)
+        {
+            if (!uiTargets)
+                return;
+
+            if (Unit* pTempTarget = Unit::GetUnit((*m_creature), (*iter)->getUnitGuid()))
+            {
+                if (pTempTarget->GetHealth() > uiHighestHP && m_creature->IsWithinDistInMap(pTempTarget, MELEE_DISTANCE))
+                {
+                    uiHighestHP = pTempTarget->GetHealth();
+                    pTarget = pTempTarget;
+                }
+            }
+
+            --uiTargets;
+        }
+
+        if (pTarget)
+            DoCast(pTarget, m_bIsRegularMode ? SPELL_HATEFULSTRIKE : SPELL_HATEFULSTRIKE_H);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //HatefullStrike_Timer
-        if (HatefullStrike_Timer < diff)
+        // Hateful Strike
+        if (m_uiHatefulStrikeTimer < uiDiff)
         {
-            //Cast Hateful strike on the player with the highest
-            //amount of HP within melee distance
-            uint32 MostHP = 0;
-            Unit* pMostHPTarget = NULL;
-            Unit* pTemp = NULL;
-            ThreatList const& tList = m_creature->getThreatManager().getThreatList();
+            DoHatefulStrike();
+            m_uiHatefulStrikeTimer = 1000;
+        }
+        else
+            m_uiHatefulStrikeTimer -= uiDiff;
 
-            for (ThreatList::const_iterator i = tList.begin();i != tList.end(); ++i)
+        // Soft Enrage at 5%
+        if (!m_bEnraged)
+        {
+            if (m_creature->GetHealth()*20 < m_creature->GetMaxHealth())
             {
-                Unit* pTemp = Unit::GetUnit((*m_creature),(*i)->getUnitGuid());
-                if (pTemp && pTemp->isAlive() && pTemp->GetHealth() > MostHP && m_creature->IsWithinDist(pTemp, 5.0f, false))
-                {
-                    MostHP = pTemp->GetHealth();
-                    pMostHPTarget = pTemp;
-                }
+                DoCast(m_creature, SPELL_ENRAGE);
+                DoScriptText(EMOTE_ENRAGE, m_creature);
+                m_bEnraged = true;
             }
+        }
 
-            if (pMostHPTarget)
-                DoCast(pMostHPTarget, Regular ? SPELL_HATEFULSTRIKE : H_SPELL_HATEFULSTRIKE);
-
-            HatefullStrike_Timer = 1200;
-        }else HatefullStrike_Timer -= diff;
-
-        //Enrage_Timer
-        if (Enrage_Timer < diff)
+        // Berserk after 6 minutes
+        if (!m_bBerserk)
         {
-            DoCast(m_creature, SPELL_BERSERK);
-            DoScriptText(EMOTE_BERSERK, m_creature);
-            Enrage_Timer = 300000;
-        }else Enrage_Timer -= diff;
-
-        //Slimebolt_Timer
-        if (Slimebolt_Timer < diff)
+            if (m_uiBerserkTimer < uiDiff)
+            {
+                DoCast(m_creature, SPELL_BERSERK);
+                DoScriptText(EMOTE_BERSERK, m_creature);
+                m_bBerserk = true;
+            }
+            else
+                m_uiBerserkTimer -= uiDiff;
+        }
+        else
         {
-            DoCast(m_creature->getVictim(),SPELL_SLIMEBOLT);
-            Slimebolt_Timer = 5000;
-        }else Slimebolt_Timer -= diff;
-
-        //Enrage if not already enraged and below 5%
-        if (!Enraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 5)
-        {
-            DoCast(m_creature,SPELL_ENRAGE);
-            DoScriptText(EMOTE_ENRAGE,NULL);
-            Enraged = true;
+            // Slimebolt - casted only while Berserking to prevent kiting
+            if (m_uiSlimeboltTimer < uiDiff)
+            {
+                DoCast(m_creature->getVictim(), SPELL_SLIMEBOLT);
+                m_uiSlimeboltTimer = 5000;
+            }
+            else
+                m_uiSlimeboltTimer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();
@@ -145,9 +189,9 @@ CreatureAI* GetAI_boss_patchwerk(Creature* pCreature)
 
 void AddSC_boss_patchwerk()
 {
-    Script *newscript;
-    newscript = new Script;
-    newscript->Name = "boss_patchwerk";
-    newscript->GetAI = &GetAI_boss_patchwerk;
-    newscript->RegisterSelf();
+    Script* NewScript;
+    NewScript = new Script;
+    NewScript->Name = "boss_patchwerk";
+    NewScript->GetAI = &GetAI_boss_patchwerk;
+    NewScript->RegisterSelf();
 }

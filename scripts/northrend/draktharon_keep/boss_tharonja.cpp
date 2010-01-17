@@ -95,7 +95,6 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    
     uint32 PhaseChangeTimer;
     uint32 Phase;
     uint32 CurseOfLife_Timer;
@@ -145,7 +144,7 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-        
+
         if (Phase == PHASE_SKELETON)
         {
             if (CurseOfLife_Timer < uiDiff)

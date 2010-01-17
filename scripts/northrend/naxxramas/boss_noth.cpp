@@ -47,11 +47,30 @@ enum
     NPC_PLAGUED_CHAMPION                = 16983
 };
 
+uint32 m_auiSpellSummonPlaguedWarrior[]=
+{
+    29247, 29248, 29249
+};
+
+uint32 m_auiSpellSummonPlaguedChampion[]=
+{
+    29217, 29224, 29225, 29227, 29238, 29255, 29257, 29258, 29262, 29267
+};
+
+uint32 m_auiSpellSummonPlaguedGuardian[]=
+{
+    29226, 29239, 29256, 29268
+};
+
 // Teleport position of Noth on his balcony
 #define TELE_X 2631.370
 #define TELE_Y -3529.680
 #define TELE_Z 274.040
 #define TELE_O 6.277
+
+// IMPORTANT: BALCONY TELEPORT NOT ADDED YET! WILL BE ADDED SOON!
+// Dev note 26.12.2008: When is soon? :)
+// Dev note 12.10.2009: http://www.wowwiki.com/Soon
 
 struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
 {
@@ -99,7 +118,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
             case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
         }
-        
+
         if(pInstance) pInstance->SetData(TYPE_NOTH, IN_PROGRESS);
     }
 

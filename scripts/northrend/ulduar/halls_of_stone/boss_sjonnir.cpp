@@ -16,8 +16,13 @@
 
 /* ScriptData
 SDName: Boss_Sjonnir
+<<<<<<< HEAD:scripts/northrend/ulduar/halls_of_stone/boss_sjonnir.cpp
 SD%Complete: 50%
 SDComment: Need adding summons and correct casting time
+=======
+SD%Complete: 20%
+SDComment:
+>>>>>>> 330:scripts/northrend/ulduar/halls_of_stone/boss_sjonnir.cpp
 SDCategory: Halls of Stone
 EndScriptData */
 
@@ -48,7 +53,7 @@ enum
     SPELL_FRENZY                    = 28747,
 
     SPELL_CHAIN_LIGHTNING           = 50830,
-//    SPELL_CHAIN_LIGHTNING_H         = 59844,
+    SPELL_CHAIN_LIGHTNING_H         = 59844,
 
     SPELL_STATIC_CHARGE             = 50834,
     SPELL_STATIC_CHARGE_H           = 59846,

@@ -15,6 +15,12 @@
  */
 
 /* Originally based on BroodWyrm scripts. Modified by danbst. Rewrited by Lutik.*/
+/* ScriptData
+SDName: Instance_Naxxramas
+SD%Complete: 90%
+SDComment:
+SDCategory: Naxxramas
+EndScriptData */
 
 #include "precompiled.h"
 #include "naxxramas.h"

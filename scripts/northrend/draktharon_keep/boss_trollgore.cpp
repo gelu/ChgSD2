@@ -114,7 +114,7 @@ struct MANGOS_DLL_DECL boss_trollgoreAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-        
+
         // Crush
         if (Crush_Timer < uiDiff)
         {

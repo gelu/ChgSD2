@@ -77,7 +77,6 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
-
     bool Phase1;
     bool Phase2;
     uint32 Start_Check;

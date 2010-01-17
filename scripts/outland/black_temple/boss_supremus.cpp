@@ -320,7 +320,15 @@ struct MANGOS_DLL_DECL boss_supremusAI : public ScriptedAI
 
                 if (target)
                 {
-                    DoCast(target, SPELL_VOLCANIC_ERUPTION);
+                    Creature* Volcano = NULL;
+                    Volcano = SummonCreature(CREATURE_VOLCANO, target);
+
+                    if (Volcano)
+                    {
+                        DoCast(target, SPELL_VOLCANIC_ERUPTION);
+                        ((npc_volcanoAI*)Volcano->AI())->SetSupremusGUID(m_creature->GetGUID());
+                    }
+
                     DoScriptText(EMOTE_GROUND_CRACK, m_creature);
                     SummonVolcanoTimer = 10000;
                 }

@@ -30,20 +30,38 @@ enum
 
 
 
-    NPC_STEELBREAKER = 21,
-    NPC_MOLGEIM = 22,
-    NPC_BRUNDIR = 23,
+#    NPC_STEELBREAKER = 21,
+#    NPC_MOLGEIM = 22,
+#    NPC_BRUNDIR = 23,
 
     TYPE_KEEPERS = 24,
 
-    NPC_KOLOGARN = 25,
+#    NPC_KOLOGARN = 25,
     NPC_KOLOGARN_RIGHT_ARM = 26,
     NPC_KOLOGARN_LEFT_ARM = 27,
 
+    NPC_LEVIATHAN               = 33113,
+    NPC_IGNIS                   = 33118,
+    NPC_RAZORSCALE              = 33186,
+    NPC_XT002                   = 33293,
+    NPC_STEELBREAKER            = 32867,
+    NPC_MOLGEIM                 = 32927,
+    NPC_BRUNDIR                 = 32857,
+    NPC_KOLOGARN                = 32930,
+    NPC_AURIAYA                 = 33515,
+    NPC_MIMIRON                 = 33350,
+    NPC_HODIR                   = 32845,
+    NPC_THORIM                  = 32865,
+    NPC_FREYA                   = 32906,
+    NPC_VEZAX                   = 33271,
+    NPC_YOGGSARON               = 33288,
+    NPC_ALGALON                 = 32871,
+    
     GO_KOLOGARN_BRIDGE          = 194232,
     GO_KOLOGARN_LOOT            = 195046,
     GO_KOLOGARN_LOOT_H          = 195047,
     GO_LEVIATHAN_GATE           = 194630
+
 
 };
 

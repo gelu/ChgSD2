@@ -63,12 +63,6 @@ enum
     //NPC_TWISTED_VISAGE              = 20058, //Bloodmaul wolf, for testing
     
 
-    SAY_AGGRO                       = -1619033,
-    SAY_INSANITY                    = -1619034,
-    SAY_SLAY_1                      = -1619035,
-    SAY_SLAY_2                      = -1619036,
-    SAY_SLAY_3                      = -1619037,
-    SAY_DEATH_1                     = -1619038,
     SAY_DEATH_2                     = -1619039,
 
     PHASE_NOSTART                   = 0,

@@ -1982,7 +1982,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\def_ulduar.h"
+							RelativePath="..\scripts\northrend\ulduar\ulduar\ulduar.h"
 							>
 						</File>
 					</Filter>

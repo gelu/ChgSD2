@@ -65,7 +65,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     uint32 mMimironReached;
     std::string strSaveData;
     //misc
-    bool KeepersKilled;
+    uint32 KeepersKilled;
     bool KeepersKilledHM;
     
     void OpenDoor(uint64 guid)
@@ -116,7 +116,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         mXT002Reached = 0;
         mMimironReached = 0;
 
-        KeepersKilled = false;
+        KeepersKilled = 0;
     }
 
     void OnCreatureCreate(Creature* pCreature)

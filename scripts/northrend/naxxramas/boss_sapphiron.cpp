@@ -38,6 +38,8 @@ EndScriptData */
 #define H_SPELL_TAIL_SWEEP      55696
 #define SPELL_CLEAVE            19983
 #define SPELL_BERSERK           26662
+#include "naxxramas.h"
+
 
 struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 {
@@ -213,4 +215,9 @@ void AddSC_boss_sapphiron()
     newscript->Name = "boss_sapphiron";
     newscript->GetAI = &GetAI_boss_sapphiron;
     newscript->RegisterSelf();
+    Script* NewScript;
+    NewScript = new Script;
+    NewScript->Name = "boss_sapphiron";
+    NewScript->GetAI = &GetAI_boss_sapphiron;
+    NewScript->RegisterSelf();
 }
