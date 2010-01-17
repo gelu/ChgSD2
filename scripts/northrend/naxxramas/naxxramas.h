@@ -93,7 +93,7 @@ enum
     GO_ARAC_PORTAL              = 181575,
     GO_PLAG_PORTAL              = 181577,
     GO_MILI_PORTAL              = 181578,
-    GO_CONS_PORTAL              = 181576
+    GO_CONS_PORTAL              = 181576,
     AREATRIGGER_FROSTWYRM       = 4120                     //not needed here, but AT to be scripted
 };
 

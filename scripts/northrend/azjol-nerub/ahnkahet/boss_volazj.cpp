@@ -61,15 +61,20 @@ enum
 
     NPC_TWISTED_VISAGE              = 30621,
     //NPC_TWISTED_VISAGE              = 20058, //Bloodmaul wolf, for testing
-    
 
+    SAY_AGGRO                       = -1619033,
+    SAY_INSANITY                    = -1619034,
+    SAY_SLAY_1                      = -1619035,
+    SAY_SLAY_2                      = -1619036,
+    SAY_SLAY_3                      = -1619037,
+    SAY_DEATH_1                     = -1619038,
     SAY_DEATH_2                     = -1619039,
 
     PHASE_NOSTART                   = 0,
     PHASE_FIGHT                     = 1,
     PHASE_INSANITY_1                = 2,  // Wait five seconds until cast is complete, set unattackable
     PHASE_INSANITY_2                = 3, 
-    PHASE_INSANITY_3                = 4, 
+    PHASE_INSANITY_3                = 4
 };
 /*######
 ## mob_twisted_visage

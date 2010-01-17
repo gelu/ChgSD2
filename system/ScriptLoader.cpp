@@ -8,11 +8,8 @@
 extern void AddSC_battleground();
 
 //custom
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_npc_arena_honor();
 extern void AddSC_teleguy();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 
 //examples
 extern void AddSC_example_creature();
@@ -226,7 +223,6 @@ extern void AddSC_boss_twinemperors();
 extern void AddSC_mob_anubisath_sentinel();
 extern void AddSC_instance_temple_of_ahnqiraj();
 extern void AddSC_zulfarrak();                              //zulfarrak
-<<<<<<< HEAD:system/ScriptLoader.cpp
 // culling of stratholme
 extern void AddSC_boss_lord_epoch();
 extern void AddSC_culling_of_stratholme();
@@ -234,8 +230,6 @@ extern void AddSC_boss_malganis();
 extern void AddSC_boss_meathook();
 extern void AddSC_instance_culling_of_stratholme();
 extern void AddSC_boss_salramm();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 
 extern void AddSC_ashenvale();
 extern void AddSC_azshara();
@@ -261,14 +255,11 @@ extern void AddSC_ungoro_crater();
 extern void AddSC_winterspring();
 
 //northrend
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_trial_of_the_champion();                            //trial_of_the_champion
 extern void AddSC_boss_argent_challenge(); 
 extern void AddSC_boss_black_knight();
 extern void AddSC_boss_grand_champions();
 extern void AddSC_instance_trial_of_the_champion();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 extern void AddSC_boss_jedoga();                            //ahnkahet
 extern void AddSC_boss_nadox();
 extern void AddSC_boss_taldaram();
@@ -278,12 +269,8 @@ extern void AddSC_boss_anubarak();                          //azjol-nerub
 extern void AddSC_boss_hadronox();
 extern void AddSC_boss_krikthir();
 extern void AddSC_instance_azjol_nerub();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_boss_dred();                              //draktharon_keep
 extern void AddSC_boss_novos();
-=======
-extern void AddSC_boss_novos();                             //draktharon_keep
->>>>>>> 330:system/ScriptLoader.cpp
 extern void AddSC_boss_tharonja();
 extern void AddSC_boss_trollgore();
 extern void AddSC_boss_colossus();                          //gundrak
@@ -294,14 +281,9 @@ extern void AddSC_instance_gundrak();
 extern void AddSC_boss_anubrekhan();                        //naxxramas
 extern void AddSC_boss_four_horsemen();
 extern void AddSC_boss_faerlina();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_boss_grobbulus();
 extern void AddSC_boss_gluth();
 extern void AddSC_boss_gothik();
-=======
-extern void AddSC_boss_gluth();
-extern void AddSC_howling_fjord();
->>>>>>> 330:system/ScriptLoader.cpp
 extern void AddSC_boss_kelthuzad();
 extern void AddSC_boss_loatheb();
 extern void AddSC_boss_maexxna();
@@ -317,13 +299,10 @@ extern void AddSC_boss_telestra();
 extern void AddSC_instance_nexus();
 extern void AddSC_boss_sartharion();                        //obsidian_sanctum
 extern void AddSC_instance_obsidian_sanctum();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_instance_vault_of_archavon();             //vault_of_archavon
 extern void AddSC_boss_koralon();
 extern void AddSC_boss_emalon();
 extern void AddSC_boss_archavon();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 extern void AddSC_boss_bjarngrim();                         //Ulduar, halls_of_lightning
 extern void AddSC_boss_ionar();
 extern void AddSC_boss_loken();
@@ -331,7 +310,6 @@ extern void AddSC_boss_volkhan();
 extern void AddSC_instance_halls_of_lightning();
 extern void AddSC_boss_maiden_of_grief();                   //Ulduar, halls_of_stone
 extern void AddSC_boss_sjonnir();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_boss_krystallus();
 extern void AddSC_halls_of_stone();
 extern void AddSC_instance_halls_of_stone();
@@ -352,11 +330,7 @@ extern void AddSC_boss_yogg_saron();
 extern void AddSC_boss_algalon();
 extern void AddSC_ulduar_teleport();
 extern void AddSC_instance_ulduar();
-=======
-extern void AddSC_halls_of_stone();
-extern void AddSC_instance_halls_of_stone();
-extern void AddSC_instance_ulduar();                        //ulduar
->>>>>>> 330:system/ScriptLoader.cpp
+
 extern void AddSC_boss_ingvar();                            //utgarde_keep
 extern void AddSC_boss_keleseth();
 extern void AddSC_boss_skarvald_and_dalronn();
@@ -372,16 +346,14 @@ extern void AddSC_borean_tundra();
 extern void AddSC_dalaran();
 extern void AddSC_dragonblight();
 extern void AddSC_grizzly_hills();
-<<<<<<< HEAD:system/ScriptLoader.cpp
+
 extern void AddSC_howling_fjord();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
+
 extern void AddSC_icecrown();
 extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
 extern void AddSC_zuldrak();
 
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_instance_violet_hold();
 extern void AddSC_violet_hold();
 extern void AddSC_boss_cyanigosa();
@@ -392,8 +364,6 @@ extern void AddSC_boss_ichoron();
 extern void AddSC_boss_zuramat();
 extern void AddSC_boss_lavanthor();
 
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
 extern void AddSC_boss_nexusprince_shaffar();               //auchindoun, mana_tombs
@@ -478,11 +448,8 @@ void AddScripts()
     AddSC_battleground();
 
     //custom
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_npc_arena_honor();
-	AddSC_teleguy();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
+    AddSC_teleguy();
 
     //examples
     AddSC_example_creature();
@@ -721,16 +688,13 @@ void AddScripts()
     AddSC_winterspring();
 
     //northrend
-<<<<<<< HEAD:system/ScriptLoader.cpp
 	AddSC_trial_of_the_champion();							//trial_of_the_champion
 	AddSC_boss_argent_challenge();
 	AddSC_boss_black_knight();
 	AddSC_boss_grand_champions();
 	AddSC_instance_trial_of_the_champion();
-	AddSC_boss_jedoga();                                    //ahnkahet
-=======
+
     AddSC_boss_jedoga();                                    //ahnkahet
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_boss_nadox();
     AddSC_boss_taldaram();
     AddSC_boss_volazj();
@@ -740,10 +704,7 @@ void AddScripts()
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
     AddSC_boss_novos();                                     //draktharon_keep
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_boss_dred();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_boss_tharonja();
     AddSC_boss_trollgore();
     AddSC_boss_colossus();                                  //gundrak
@@ -755,19 +716,12 @@ void AddScripts()
     AddSC_boss_four_horsemen();
     AddSC_boss_faerlina();
     AddSC_boss_gluth();
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_boss_gothik();
-=======
-    AddSC_howling_fjord();
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_boss_kelthuzad();
     AddSC_boss_loatheb();
     AddSC_boss_maexxna();
     AddSC_boss_noth();
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_boss_grobbulus();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_boss_patchwerk();
     AddSC_boss_razuvious();
     AddSC_boss_sapphiron();
@@ -779,13 +733,10 @@ void AddScripts()
     AddSC_instance_nexus();
     AddSC_boss_sartharion();                                //obsidian_sanctum
     AddSC_instance_obsidian_sanctum();
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_instance_vault_of_archavon();                     //vault_of_archavon
     AddSC_boss_koralon();
     AddSC_boss_emalon();
     AddSC_boss_archavon();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_boss_bjarngrim();                                 //Ulduar, halls_of_lightning
     AddSC_boss_ionar();
     AddSC_boss_loken();
@@ -793,7 +744,7 @@ void AddScripts()
     AddSC_instance_halls_of_lightning();
     AddSC_boss_maiden_of_grief();                           //Ulduar, halls_of_stone
     AddSC_boss_sjonnir();
-<<<<<<< HEAD:system/ScriptLoader.cpp
+
     AddSC_boss_krystallus();
     AddSC_halls_of_stone();
     AddSC_instance_halls_of_stone();
@@ -814,11 +765,7 @@ void AddScripts()
     AddSC_boss_algalon();
     AddSC_ulduar_teleport();
     AddSC_instance_ulduar();
-=======
-    AddSC_halls_of_stone();
-    AddSC_instance_halls_of_stone();
-    AddSC_instance_ulduar();                                //ulduar
->>>>>>> 330:system/ScriptLoader.cpp
+
     AddSC_boss_ingvar();                                    //utgarde_keep
     AddSC_boss_keleseth();
     AddSC_boss_skarvald_and_dalronn();
@@ -834,16 +781,12 @@ void AddScripts()
     AddSC_dalaran();
     AddSC_dragonblight();
     AddSC_grizzly_hills();
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_howling_fjord();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
     AddSC_icecrown();
     AddSC_sholazar_basin();
     AddSC_storm_peaks();
     AddSC_zuldrak();
 
-<<<<<<< HEAD:system/ScriptLoader.cpp
     AddSC_instance_violet_hold();
     AddSC_boss_cyanigosa();
     AddSC_boss_moragg();
@@ -854,8 +797,6 @@ void AddScripts()
     AddSC_boss_lavanthor();
     AddSC_violet_hold();
 
-=======
->>>>>>> 330:system/ScriptLoader.cpp
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
     AddSC_boss_nexusprince_shaffar();                       //auchindoun, mana_tombs
@@ -922,7 +863,6 @@ void AddScripts()
     AddSC_boss_nethermancer_sepethrea();
     AddSC_boss_pathaleon_the_calculator();
     AddSC_instance_mechanar();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 							    //culling of stratholme
     AddSC_boss_lord_epoch();
     AddSC_culling_of_stratholme();
@@ -930,8 +870,6 @@ void AddScripts()
     AddSC_boss_meathook();
     AddSC_instance_culling_of_stratholme();
     AddSC_boss_salramm();
-=======
->>>>>>> 330:system/ScriptLoader.cpp
 
     AddSC_blades_edge_mountains();
     AddSC_boss_doomlordkazzak();
@@ -943,8 +881,4 @@ void AddScripts()
     AddSC_shattrath_city();
     AddSC_terokkar_forest();
     AddSC_zangarmarsh();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 }
-=======
-}
->>>>>>> 330:system/ScriptLoader.cpp
