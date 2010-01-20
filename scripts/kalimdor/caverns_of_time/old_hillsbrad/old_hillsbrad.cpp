@@ -97,12 +97,9 @@ bool GossipSelect_npc_erozion(Player* pPlayer, Creature* pCreature, uint32 uiSen
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
     {
-        ItemPosCountVec dest;
-        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_ENTRY_BOMBS, 1);
-        if (msg == EQUIP_ERR_OK)
-        {
-            pPlayer->StoreNewItem(dest, ITEM_ENTRY_BOMBS, true);
-        }
+        if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(ITEM_ENTRY_BOMBS, 1))
+            pPlayer->SendNewItem(pItem, 1, true, false);
+
         pPlayer->SEND_GOSSIP_MENU(9515, pCreature->GetGUID());
     }
     if (uiAction == GOSSIP_ACTION_INFO_DEF+2)
@@ -413,13 +410,13 @@ struct MANGOS_DLL_DECL npc_thrall_old_hillsbradAI : public npc_escortAI
     void DoMount()
     {
         m_creature->Mount(SKARLOC_MOUNT_MODEL);
-        m_creature->SetSpeed(MOVE_RUN,SPEED_MOUNT);
+        m_creature->SetSpeedRate(MOVE_RUN, SPEED_MOUNT);
     }
 
     void DoUnmount()
     {
         m_creature->Unmount();
-        m_creature->SetSpeed(MOVE_RUN,SPEED_RUN);
+        m_creature->SetSpeedRate(MOVE_RUN, SPEED_RUN);
     }
 
     void Aggro(Unit* who)
