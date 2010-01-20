@@ -95,7 +95,7 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_ZURAMAT) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_ZURAMAT) != SPECIAL && m_pInstance->GetData(TYPE_ZURAMAT) != IN_PROGRESS)
             return;
 
         if (!pWho || pWho == m_creature)

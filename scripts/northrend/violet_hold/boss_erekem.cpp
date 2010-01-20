@@ -114,7 +114,7 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_EREKEM) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_EREKEM) != SPECIAL && m_pInstance->GetData(TYPE_EREKEM) != IN_PROGRESS)
             return;
 
         if (!pWho || pWho == m_creature)
@@ -249,7 +249,7 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_EREKEM) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_EREKEM) != SPECIAL && m_pInstance->GetData(TYPE_EREKEM) != IN_PROGRESS)
             return;
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

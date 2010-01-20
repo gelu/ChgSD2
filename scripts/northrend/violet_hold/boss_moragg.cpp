@@ -25,6 +25,16 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_violet_hold.h"
 
+static Locations BossWP[]=
+{
+    //From Morag
+    {1887.500, 763.096, 47.666}, // 12 
+    {1880.837, 775.769, 38.796}, // 13 
+    {1861.016, 789.717, 38.908}, // 14 
+    {1856.217, 796.705, 44.008}, // 15 
+    {1827.960, 804.208, 44.364}, // 16 
+};
+
 enum
 {
     SPELL_CORROSICE_SALIVA                = 54527,
@@ -47,6 +57,12 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
     uint32 m_uiCorrosiveSaliva_Timer;
     uint32 m_uiOpticLink_Timer;
     uint32 m_uiRay_Timer;
+    
+    uint32 WalkTimer;
+    bool IsWalking;
+    bool MovementStarted;
+    std::list<WayPoints> WayPointList;
+    std::list<WayPoints>::iterator WayPoint;
 
     void Reset()
     {
@@ -69,13 +85,51 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
     }
+/*
+    void StartMovement()
+    {
+        if(!WayPointList.empty() || MovementStarted)
+            return;
+        uint8 start = 0;
+        uint8 end = 4;
+        uint8 wpId = 0;
 
+        for(uint8 i = start; i <= end; ++i){
+            error_log("AddWP: %u", i);
+            AddWaypoint(wpId, BossWP[i].x, BossWP[i].y, BossWP[i].z);
+            wpId++;
+        }
+
+        WayPoint = WayPointList.begin();
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        IsWalking = true;
+        MovementStarted = true;
+    }
+
+    void AddWaypoint(uint32 id, float x, float y, float z)
+    {
+        WayPoints DWP(id, x, y, z);
+        WayPointList.push_back(DWP);
+    }
+
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if(uiType != POINT_MOTION_TYPE )
+            return;
+
+        if(WayPoint->id != uiPointId)
+            return;
+        ++WayPoint;
+        WalkTimer = 200;
+    }
+
+*/
     void AttackStart(Unit* pWho)
     {
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_MORAGG) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_MORAGG) != SPECIAL && m_pInstance->GetData(TYPE_MORAGG) != IN_PROGRESS)
             return;
 
         if (!pWho || pWho == m_creature)
@@ -92,6 +146,8 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+//        if (m_pInstance->GetData(TYPE_MORAGG) == SPECIAL) StartMovement();
+
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;

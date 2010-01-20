@@ -99,7 +99,7 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_XEVOZZ) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_XEVOZZ) != SPECIAL && m_pInstance->GetData(TYPE_XEVOZZ) != IN_PROGRESS)
             return;
 
         if (!pWho || pWho == m_creature)
@@ -138,6 +138,11 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+//            if (m_pInstance->GetData(TYPE_XEVOZZ) == SPECIAL) {
+//            if (Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
+//                m_creature->GetMotionMaster()->MoveChase(pTemp);
+//                };
+
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;

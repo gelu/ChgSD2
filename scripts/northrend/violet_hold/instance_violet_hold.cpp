@@ -36,12 +36,6 @@ EndScriptData */
 */
 //inline uint32 RandRiftBoss() { return ((rand()%2) ? NPC_GUARDIAN : NPC_KEEPER); }
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-
 static Locations PortalLoc[]=
 {
     {1888.271, 810.781, 38.441}, // 0 center
@@ -66,8 +60,10 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     bool bIsInBoss;
 
     uint8 m_uiLastBossID;
+    uint8 m_uiLastBossIDConst;
     uint8 m_uiRiftPortalCount;
     uint32 m_uiShieldPercent;
+    uint32 m_uiDisruptions;
     int8 m_uiPortalTime;
 
     uint64 m_uiSinclariGUID;
@@ -96,6 +92,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
         m_uiSinclariGUID = 0;
         m_uiNPCSealDoorGUID = 0;
+        m_uiLastBossIDConst = 0;
 
         m_uiErekemGUID      = 0;
         m_uiMoraggGUID      = 0;
@@ -103,6 +100,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         m_uiXevozzGUID      = 0;
         m_uiLavanthorGUID   = 0;
         m_uiZuramatGUID     = 0;
+        
+        m_uiDisruptions     = 0;
 
         m_uiSealDoorGUID        = 0;
         m_uiErekemDoorGUID      = 0;
@@ -228,32 +227,35 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 break;
             case TYPE_EREKEM:
                 m_auiEncounter[2] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_MORAGG:
                 m_auiEncounter[3] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_ICHORON:
                 m_auiEncounter[4] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_XEVOZZ:
                 m_auiEncounter[5] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_LAVANTHOR:
                 m_auiEncounter[6] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_ZURAMAT:
                 m_auiEncounter[7] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_RIFT:
                 if (uiData == SPECIAL){
                     ++m_uiRiftPortalCount;
                     DoUpdateWorldState(WORLD_STATE_VH_PORTALS, m_uiRiftPortalCount);
                 }
-                else if (uiData == IN_PROGRESS)
-                    bIsInBoss = true;
-                else
+                else if (uiData == FAIL)
                     DoUseDoorOrButton(m_uiSealDoorGUID);
-
                 m_auiEncounter[1] = uiData;
                 break;
             case TYPE_DOOR:
@@ -266,6 +268,14 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                         m_auiEncounter[0] = FAIL;
                 }
                 break;
+            case TYPE_DISRUPTIONS:
+            m_uiDisruptions = uiData;
+            DoUpdateWorldState(WORLD_STATE_VH_PRISON, 100-m_uiDisruptions*5);
+            break;
+            case TYPE_LASTBOSS_ID:
+            m_uiLastBossIDConst = uiData;
+            break;
+
         }
         if (uiData == DONE)
             bIsInBoss = false;
@@ -291,23 +301,29 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 return m_auiEncounter[7];
             case TYPE_RIFT:
                 return m_uiRiftPortalCount;
+            case TYPE_LASTBOSS_ID:
+                return m_uiLastBossIDConst;
             case TYPE_LASTBOSS:
             {
-                if (!m_uiLastBossID)
-                    m_uiLastBossID = urand(1, 5);
+                if (m_uiLastBossID == 0)
+                    m_uiLastBossID = urand(2, 7);
+//                    m_uiLastBossID = 3;
                 else
                 {
-                    uint8 uiBossID = urand(1, 5);
-                    if (uiBossID == m_uiLastBossID)
-                        --m_uiLastBossID;
-                    else
-                        m_uiLastBossID = uiBossID;
+                    m_uiLastBossID = urand(2, 7);
+                    while ( m_auiEncounter[m_uiLastBossID] == DONE
+                            || m_auiEncounter[m_uiLastBossID] == IN_PROGRESS 
+                            || m_auiEncounter[m_uiLastBossID] == SPECIAL ) 
+                            {
+                    m_uiLastBossID = urand(2, 7);
+                    }
                 }
-
                 return m_uiLastBossID;
             }
             case DATA_BOSSTIME:
                 return bIsInBoss;
+            case TYPE_DISRUPTIONS:
+                return m_uiDisruptions;
         }
         return 0;
     }

@@ -26,6 +26,9 @@ enum
     TYPE_DOOR               = 21,
     TYPE_PORTAL_TIME        = 22,
 
+    TYPE_DISRUPTIONS        = 101,
+    TYPE_LASTBOSS_ID        = 102,
+
     DATA_EREKEM             = 23,
     DATA_MORAGG             = 24,
     DATA_ICHORON            = 25,
@@ -85,4 +88,21 @@ enum
     SPELL_CORRUPT          = 58040
 };
 
+struct Locations
+{
+    float x, y, z;
+    uint32 id;
+};
+struct WayPoints
+{
+    WayPoints(uint32 _id, float _x, float _y, float _z)
+    {
+        id = _id;
+        x = _x;
+        y = _y;
+        z = _z;
+    }
+    uint32 id;
+    float x, y, z;
+};
 #endif

@@ -25,24 +25,6 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_violet_hold.h"
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-struct WayPoints
-{
-    WayPoints(uint32 _id, float _x, float _y, float _z)
-    {
-        id = _id;
-        x = _x;
-        y = _y;
-        z = _z;
-    }
-    uint32 id;
-    float x, y, z;
-};
-
 static Locations PortalLoc[]=
 {
     {1888.271, 810.781, 38.441}, // 0 center
@@ -55,12 +37,14 @@ static Locations PortalLoc[]=
 };
 static Locations BossLoc[]=
 {
-    {1857.125, 763.295, 38.654}, // Lavanthor
-    {1925.480, 849.981, 47.174}, // Zuramat
-    {1892.737, 744.589, 47.666}, // Moragg
+    {0,0,0},
+    {0,0,0},
     {1876.100, 857.079, 43.333}, // Erekem
+    {1892.737, 744.589, 47.666}, // Moragg
     {1908.863, 785.647, 37.435}, // Ichoron
     {1905.364, 840.607, 38.670}, // Xevozz
+    {1857.125, 763.295, 38.654}, // Lavanthor
+    {1925.480, 849.981, 47.174}, // Zuramat
 };
 static Locations DragonsWP[]=
 {
@@ -565,6 +549,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
 
     uint8 m_uiRiftPortalCount;
+    uint8 m_bIsRegular;
     uint32 m_uiBossCheck_Timer;
     uint32 m_uiPortalCheck_Timer;
 
@@ -574,6 +559,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
         m_uiNextPortal_Timer = 0;
         m_uiBossCheck_Timer = 0;
         m_uiPortalCheck_Timer = 1000;
+        m_bIsRegular = m_creature->GetMap()->IsRegularDifficulty();
     }
 
     void SetEvent()
@@ -582,7 +568,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
         m_uiNextPortal_Timer = 5000;
         m_creature->GetMotionMaster()->MovePoint(0, 1815.571, 800.112, 44.364);
         if (m_pInstance){
-            m_pInstance->SetData(TYPE_EVENT, IN_PROGRESS);           
+            m_pInstance->SetData(TYPE_EVENT, IN_PROGRESS);
             m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_SEAL_DOOR));
         }
     }
@@ -627,11 +613,17 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                 ++m_uiRiftPortalCount;
                 if (m_pInstance)
                 {
-                    m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
+                    if ( m_uiRiftPortalCount < 19) m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
                     m_pInstance->SetData(TYPE_RIFT, SPECIAL);
                 }
 
-                if (m_uiRiftPortalCount != 6 && m_uiRiftPortalCount != 12 && m_uiRiftPortalCount != 18)
+                if ( m_uiRiftPortalCount != 3
+                    && m_uiRiftPortalCount != 6
+                    && m_uiRiftPortalCount != 9 
+                    && m_uiRiftPortalCount != 12 
+                    && m_uiRiftPortalCount != 15 
+                    && m_uiRiftPortalCount != 18
+                    && m_uiRiftPortalCount != 19 )
                 {
                     DoSpawnPortal();
                     if (m_uiRiftPortalCount < 12)
@@ -639,7 +631,12 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                     else
                         m_uiNextPortal_Timer = 90000;
                 }
-                else if (m_uiRiftPortalCount == 6 || m_uiRiftPortalCount == 12)
+                else if ( m_uiRiftPortalCount == 3 
+                         || m_uiRiftPortalCount == 6
+                         || m_uiRiftPortalCount == 9
+                         || m_uiRiftPortalCount == 12
+                         || m_uiRiftPortalCount == 15
+                         || m_uiRiftPortalCount == 18 )
                 {
                     if (Creature* pTemp = m_creature->SummonCreature(NPC_PORTAL, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_TIMED_DESPAWN, 1500))
                     {
@@ -648,14 +645,16 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                         pSummoned->AddThreat(pTemp);
                         pTemp->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL, false);
                     }
+                    m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
                     m_pInstance->SetData(TYPE_RIFT, IN_PROGRESS);
                     m_uiBossCheck_Timer = 1000;
-                    m_uiNextPortal_Timer = 0;
+                    m_uiNextPortal_Timer =  m_bIsRegular ? 180000 : 120000;
                 }
-                else if (m_uiRiftPortalCount == 18)
+                else if (m_uiRiftPortalCount == 19)
                 {
                     m_creature->SummonCreature(NPC_CYANIGOSA, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
                     m_pInstance->SetData(TYPE_RIFT, IN_PROGRESS);
+                    m_pInstance->SetData(TYPE_DISRUPTIONS, 20);
                     m_uiNextPortal_Timer = 0;
                 }
             }
@@ -785,8 +784,10 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
 
     uint32 m_uiDisruption_Timer;
     uint32 m_uiDisruptionCounter;
+    uint32 m_uiDisruptionsCount;
 
     uint8 m_uiBossID;
+    uint8 m_bIsRegular;
     uint32 m_uiBossType;
     uint64 m_uiBossGUID;
     uint64 m_uiDoorGUID;
@@ -803,30 +804,32 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
         m_uiDisruptionCounter = 0;
+        m_uiDisruptionsCount = 0;
         m_uiDisruption_Timer = 1000;
+//        m_bIsRegular = m_creature->GetMap()->IsRegularDifficulty();
 
         if (m_pInstance)
         {
             m_uiBossID = m_pInstance->GetData(TYPE_LASTBOSS);
-
+            m_uiDisruptionsCount = m_pInstance->GetData(TYPE_DISRUPTIONS);
             switch (m_uiBossID)
             {
-                case 0: // Lavanthor
+                case 6: // Lavanthor
                     m_uiBossType = TYPE_LAVANTHOR;
                     m_uiBossGUID = m_pInstance->GetData64(DATA_LAVANTHOR);
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_LAVANTHOR_DOOR);
                     break;
-                case 1: // Zuramat
+                case 7: // Zuramat
                     m_uiBossType = TYPE_ZURAMAT;
                     m_uiBossGUID = m_pInstance->GetData64(DATA_ZURAMAT);
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_ZURAMAT_DOOR);
                     break;
-                case 2: // Moragg
+                case 3: // Moragg
                     m_uiBossType = TYPE_MORAGG;
                     m_uiBossGUID = m_pInstance->GetData64(DATA_MORAGG);
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_MORAGG_DOOR);
                     break;
-                case 3: // Erekem
+                case 2: // Erekem
                     m_uiBossType = TYPE_EREKEM;
                     m_uiBossGUID = m_pInstance->GetData64(DATA_EREKEM);
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_EREKEM_DOOR);
@@ -842,6 +845,7 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_XEVOZZ_DOOR);
                     break;
             }
+            m_pInstance->SetData(TYPE_LASTBOSS_ID, m_uiBossType);
             m_creature->GetMotionMaster()->MovePoint(0, BossLoc[m_uiBossID].x,  BossLoc[m_uiBossID].y,  BossLoc[m_uiBossID].z);
         }
     }
@@ -864,12 +868,14 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
         if (m_bIsActiving)
             if (m_uiDisruption_Timer < uiDiff)
             {
-                if (m_uiDisruptionCounter < 3)
+                if (m_uiDisruptionCounter < 3) {
                     DoCast(m_creature, SPELL_SHIELD_DISRUPTION);
+                ++m_uiDisruptionsCount;
+                m_pInstance->SetData(TYPE_DISRUPTIONS, m_uiDisruptionsCount);}
                 else if (m_uiDisruptionCounter == 3)
                 {
                     m_pInstance->DoUseDoorOrButton(m_uiDoorGUID);
-                    m_pInstance->SetData(m_uiBossType, SPECIAL);
+                    m_pInstance->SetData(m_pInstance->GetData(TYPE_LASTBOSS_ID), SPECIAL);
                 }
                 else
                     m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);

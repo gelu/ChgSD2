@@ -26,12 +26,6 @@ EndScriptData */
 #include "def_violet_hold.h"
 
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-
 static Locations PortalLoc[]=
 {
     {1857.125, 763.295, 38.654},
@@ -118,11 +112,13 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (m_pInstance->GetData(TYPE_ICHORON) != SPECIAL)
+        if (m_pInstance->GetData(TYPE_ICHORON) != SPECIAL && m_pInstance->GetData(TYPE_ICHORON) != IN_PROGRESS)
             return;
+
 
         if (!pWho || pWho == m_creature)
             return;
+
 
         if (m_creature->Attack(pWho, true))
         {
@@ -173,6 +169,11 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+//    if (m_pInstance->GetData(TYPE_ICHORON) == SPECIAL) {
+//            if (Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
+//                m_creature->GetMotionMaster()->MoveChase(pTemp);
+//                };
+
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
