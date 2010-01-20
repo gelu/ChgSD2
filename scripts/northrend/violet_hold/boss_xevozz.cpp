@@ -128,7 +128,7 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        pSummoned->SetSpeed(MOVE_RUN, 0.5f);
+//        pSummoned->SetSpeed(MOVE_RUN, 0.5f);
         if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
         {
             pSummoned->AddThreat(pTarget);

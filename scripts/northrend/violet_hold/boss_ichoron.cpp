@@ -144,7 +144,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-        pSummoned->SetSpeed(MOVE_RUN, 0.2f);
+//        pSummoned->SetSpeed(MOVE_RUN, 0.2f);
         pSummoned->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
         m_lWaterElementsGUIDList.push_back(pSummoned->GetGUID());
     }
