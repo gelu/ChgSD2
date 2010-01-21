@@ -36,21 +36,6 @@ EndScriptData */
 */
 //inline uint32 RandRiftBoss() { return ((rand()%2) ? NPC_GUARDIAN : NPC_KEEPER); }
 
-static Locations PortalLoc[]=
-{
-    {1888.271, 810.781, 38.441}, // 0 center
-    {1857.125, 763.295, 38.654}, // 1 Lavanthor
-    {1925.480, 849.981, 47.174}, // 2 Zuramat
-    {1892.737, 744.589, 47.666}, // 3 Moragg
-    {1878.198, 850.005, 43.333}, // 4 Portal in front of Erekem
-    {1909.381, 806.796, 38.645}, // 5 Portal outside of Ichoron
-    {1936.101, 802.950, 52.417}, // 6 at the highest platform
-
-    {1876.100, 857.079, 43.333}, // 7 Erekem
-    {1908.863, 785.647, 37.435}, // 8 Ichoron
-    {1905.364, 840.607, 38.670}, // 9 Xevozz
-};
-
 struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 {
     instance_violet_hold(Map* pMap) : ScriptedInstance(pMap) {Initialize();};

@@ -73,7 +73,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
     void Reset()
     {
         m_uiEvadeCheckCooldown = 2000;
-//        m_creature->SetSpeed(MOVE_RUN, m_fDefaultMoveSpeed);
+        m_creature->SetSpeedRate(MOVE_RUN, m_fDefaultMoveSpeed);
         m_uiBerserkTimer = 300000;
         m_uiRockShardsTimer = 15000;
         m_bRockShardsInProgress = false;
@@ -155,7 +155,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             if ((m_uiCrushingLeapSecureTimer < uiDiff) || (m_pCrushingLeapTarget && m_creature->IsWithinDist(m_pCrushingLeapTarget, 5.0f)))
             {
                 m_creature->getThreatManager().addThreat(m_pCrushingLeapTarget, -100000000.0f);
-//                m_creature->SetSpeed(MOVE_RUN, m_fDefaultMoveSpeed);
+                m_creature->SetSpeedRate(MOVE_RUN, m_fDefaultMoveSpeed);
                 DoCast(m_pCrushingLeapTarget, m_bIsRegularMode ? SPELL_CRUSHING_LEAP_N : SPELL_CRUSHING_LEAP_H, true);
                 m_bCrushingLeapInProgress = false;
             }
@@ -226,7 +226,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
                 {
                     m_creature->MonsterSay(m_pCrushingLeapTarget->GetName(), LANG_UNIVERSAL, NULL);
                     m_creature->getThreatManager().addThreat(m_pCrushingLeapTarget, 100000000.0f);
-//                    m_creature->SetSpeed(MOVE_RUN, m_fDefaultMoveSpeed*10.0f);
+                    m_creature->SetSpeedRate(MOVE_RUN, m_fDefaultMoveSpeed*10.0f);
                     m_bCrushingLeapInProgress = true;
                     m_uiCrushingLeapSecureTimer = 2000;
                 }

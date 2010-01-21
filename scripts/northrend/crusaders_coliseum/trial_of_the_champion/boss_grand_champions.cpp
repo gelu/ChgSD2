@@ -88,11 +88,14 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
 		Intercept_Cooldown = 0;
 		intercept_check = 1000;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+
     }
 
 	void EnterEvadeMode()
 	{
-/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -133,7 +136,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}*/
+			}
 	}
 
 	void Aggro(Unit* pWho)
@@ -153,7 +156,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+//			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
     }
 
@@ -240,11 +243,13 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 		Blast_Wave_Timer = m_bIsRegularMode ? 30000 : 20000;
 		Haste_Timer = m_bIsRegularMode ? 12000 : 9000;
 		Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
 	void EnterEvadeMode()
 	{
-/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -285,7 +290,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}*/
+			}
 	}
 
 	void Aggro(Unit* pWho)
@@ -305,7 +310,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+//			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
     }
 
@@ -388,11 +393,14 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		Earth_Shield_Timer = m_bIsRegularMode ? 10000 : 5000;
 		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 13000;
 		Hex_Timer = m_bIsRegularMode ? 15000 : 10000;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+
     }
 
 	void EnterEvadeMode()
 	{
-/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -433,7 +441,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}*/
+			}
 	}
 
 	void Aggro(Unit* pWho)
@@ -453,7 +461,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+//			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
     }
 
@@ -581,11 +589,14 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 		Disengage_Cooldown = 0;
 		enemy_check = 1000;
 		disengage_check;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+
     }
 
 	void EnterEvadeMode()
 	{
-/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -626,7 +637,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}*/
+			}
 	}
 
 	void Aggro(Unit* pWho)
@@ -646,7 +657,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+//			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
     }
 
@@ -668,14 +679,14 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
 		if (enemy_check < diff)
 		{
-//			if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), 8) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 30))
-//			{
-//				m_creature->SetSpeed(MOVE_RUN, 0.0001);
-//			}
-//			else
-//			{
-//				m_creature->SetSpeed(MOVE_RUN, 1);
-//			}
+			if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), 8) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 30))
+			{
+				m_creature->SetSpeedRate(MOVE_RUN, 0.0001);
+			}
+			else
+			{
+				m_creature->SetSpeedRate(MOVE_RUN, 1);
+			}
 			enemy_check = 100;
 		}else enemy_check -= diff;
 
@@ -744,11 +755,13 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 15000;
 		FoK_Timer = m_bIsRegularMode ? 15000 : 10000;
 		Poison_Timer = m_bIsRegularMode ? 12000 : 7000;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
 	void EnterEvadeMode()
 	{
-/*		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
 			if (!pTemp->isAlive())
 			{
 				pTemp->Respawn();
@@ -789,7 +802,7 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 				pTemp->SetHealth(pTemp->GetMaxHealth());
 				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
 				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}*/
+			}
 	}
 
 	void Aggro(Unit* pWho)
@@ -809,7 +822,7 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+//			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
 		}
     }
 

@@ -24,70 +24,6 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "def_violet_hold.h"
-
-static Locations PortalLoc[]=
-{
-    {1888.271, 810.781, 38.441}, // 0 center
-    {1857.125, 763.295, 38.654}, // 1 Lavanthor
-    {1925.480, 849.981, 47.174}, // 2 Zuramat
-    {1892.737, 744.589, 47.666}, // 3 Moragg
-    {1878.198, 850.005, 43.333}, // 4 Portal in front of Erekem
-    {1909.381, 806.796, 38.645}, // 5 Portal outside of Ichoron
-    {1936.101, 802.950, 52.417}, // 6 at the highest platform
-};
-static Locations BossLoc[]=
-{
-    {0,0,0},
-    {0,0,0},
-    {1876.100, 857.079, 43.333}, // Erekem
-    {1892.737, 744.589, 47.666}, // Moragg
-    {1908.863, 785.647, 37.435}, // Ichoron
-    {1905.364, 840.607, 38.670}, // Xevozz
-    {1857.125, 763.295, 38.654}, // Lavanthor
-    {1925.480, 849.981, 47.174}, // Zuramat
-};
-static Locations DragonsWP[]=
-{
-    //center, ichoron
-    {1869.393, 803.902, 38.768}, // 0 
-    {1859.843, 804.222, 44.008}, // 1 
-    {1827.960, 804.208, 44.364}, // 2 
-
-    //From left side (lavanthor)
-    {1861.016, 789.717, 38.908}, // 3 
-    {1856.217, 796.705, 44.008}, // 4 
-    {1827.960, 804.208, 44.364}, // 5 
-
-    //From Zuramat
-    {1931.446, 826.734, 47.556}, // 6 
-    {1913.049, 823.930, 38.792}, // 7 
-    {1827.960, 804.208, 44.364}, // 8 
-    {1869.393, 803.902, 38.768}, // 9 
-    {1859.843, 804.222, 44.008}, // 10 
-    {1827.960, 804.208, 44.364}, // 11 
-
-    //From Morag
-    {1887.500, 763.096, 47.666}, // 12 
-    {1880.837, 775.769, 38.796}, // 13 
-    {1861.016, 789.717, 38.908}, // 14 
-    {1856.217, 796.705, 44.008}, // 15 
-    {1827.960, 804.208, 44.364}, // 16 
-
-    //From erekem
-    {1878.280, 843.267, 43.333}, // 17 
-    {1872.311, 835.531, 38.780}, // 18 
-    {1861.997, 818.766, 38.650}, // 19 
-    {1857.348, 811.230, 44.008}, // 20
-    {1827.960, 804.208, 44.364}, // 21 
-
-    //From Highest platform
-    {1937.298, 824.557, 52.332}, // 22
-    {1913.049, 823.930, 38.792}, // 23
-    {1869.393, 803.902, 38.768}, // 24
-    {1859.843, 804.222, 44.008}, // 25
-    {1827.960, 804.208, 44.364}, // 26
-
-};
 enum
 {
     SPELL_TELEPORT_INSIDE                 = 62139,
@@ -611,7 +547,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             if (m_uiNextPortal_Timer <= uiDiff)
             {
                 ++m_uiRiftPortalCount;
-                if (m_pInstance)
+                if (m_pInstance &&  m_uiRiftPortalCount < 19)
                 {
                     if ( m_uiRiftPortalCount < 19) m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
                     m_pInstance->SetData(TYPE_RIFT, SPECIAL);
@@ -650,10 +586,10 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                     m_uiBossCheck_Timer = 1000;
                     m_uiNextPortal_Timer =  m_bIsRegular ? 180000 : 120000;
                 }
-                else if (m_uiRiftPortalCount == 19)
+                else if (m_uiRiftPortalCount == 19 && m_pInstance->GetData(TYPE_RIFT) != DONE)
                 {
                     m_creature->SummonCreature(NPC_CYANIGOSA, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-                    m_pInstance->SetData(TYPE_RIFT, IN_PROGRESS);
+                    m_pInstance->SetData(TYPE_RIFT, DONE);
                     m_pInstance->SetData(TYPE_DISRUPTIONS, 20);
                     m_uiNextPortal_Timer = 0;
                 }

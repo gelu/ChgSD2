@@ -26,16 +26,6 @@ EndScriptData */
 #include "def_violet_hold.h"
 
 
-static Locations PortalLoc[]=
-{
-    {1857.125, 763.295, 38.654},
-    {1925.480, 849.981, 47.174},
-    {1892.737, 744.589, 47.666},
-    {1878.198, 850.005, 43.333},
-    {1909.381, 806.796, 38.645},
-    {1936.101, 802.950, 52.417},
-};
-
 enum
 {
     SAY_AGGRO                                 = -1608018,
@@ -75,6 +65,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
     bool m_bIsRegularMode;
     bool m_bIsExploded;
     bool m_bIsFrenzy;
+    bool MovementStarted;
 
     uint32 m_uiBuubleChecker_Timer;
     uint32 m_uiWaterBoltVolley_Timer;
@@ -84,6 +75,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
     {
         m_bIsExploded = false;
         m_bIsFrenzy = false;
+        MovementStarted = false;
         m_uiBuubleChecker_Timer = 1000;
         m_uiWaterBoltVolley_Timer = urand(10000, 15000);
         m_uiShowup_Counter = 0;
@@ -144,7 +136,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-//        pSummoned->SetSpeed(MOVE_RUN, 0.2f);
+        pSummoned->SetSpeedRate(MOVE_RUN, 0.2f);
         pSummoned->GetMotionMaster()->MoveFollow(m_creature, 0, 0);
         m_lWaterElementsGUIDList.push_back(pSummoned->GetGUID());
     }
@@ -169,10 +161,11 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-//    if (m_pInstance->GetData(TYPE_ICHORON) == SPECIAL) {
-//            if (Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
-//                m_creature->GetMotionMaster()->MoveChase(pTemp);
-//                };
+        if (m_pInstance->GetData(TYPE_ICHORON) == SPECIAL && !MovementStarted) {
+	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        MovementStarted = true;
+        }
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -240,9 +233,8 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
                 DoCast(m_creature, m_bIsRegularMode ? SPELL_FRENZY_H : SPELL_FRENZY);
                 m_bIsFrenzy = true;
             }
-
-            DoMeleeAttackIfReady();
         }
+        DoMeleeAttackIfReady();
     }
 
     void JustDied(Unit* pKiller)

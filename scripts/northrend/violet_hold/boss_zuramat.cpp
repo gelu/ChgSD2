@@ -60,6 +60,7 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
 
     bool m_bIsRegularMode;
+    bool MovementStarted;
     std::list<uint64> m_lSentryGUIDList;
 
     uint32 m_uiShroudDarkness_Timer;
@@ -71,6 +72,7 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
         m_uiShroudDarkness_Timer = urand(8000, 9000);
         m_uiSummonVoidSentry_Timer = urand(5000, 10000);
         m_uiVoidShift_Timer = 10000;
+        MovementStarted = false;
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ZURAMAT, NOT_STARTED);
@@ -137,6 +139,12 @@ struct MANGOS_DLL_DECL boss_zuramatAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff) 
     {
+        if (m_pInstance->GetData(TYPE_ZURAMAT) == SPECIAL && !MovementStarted) {
+	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        MovementStarted = true;
+        }
+
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;

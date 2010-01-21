@@ -66,6 +66,7 @@ struct MANGOS_DLL_DECL boss_cyanigosaAI : public ScriptedAI
     uint32 m_uiBlizzard_Timer;
     uint32 m_uiUncontrollableEnergy_Timer;
     uint32 m_uiArcaneVacuum_Timer;
+    bool MovementStarted;
 
     void Reset()
     {
@@ -74,6 +75,7 @@ struct MANGOS_DLL_DECL boss_cyanigosaAI : public ScriptedAI
         m_uiBlizzard_Timer = urand(20000, 25000);
         m_uiTailSweep_Timer = urand(10000, 11000);
         m_uiArcaneVacuum_Timer = urand(28000, 33000);
+        MovementStarted = false;
     }
 
     void Aggro(Unit* pWho)

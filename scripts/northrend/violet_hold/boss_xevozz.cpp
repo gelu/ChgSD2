@@ -64,6 +64,7 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
 
     bool m_bIsRegularMode;
+    bool MovementStarted;
 
     uint32 m_uiSummonEtherealSphere_Timer;
     uint32 m_uiArcaneBarrageVolley_Timer;
@@ -75,6 +76,7 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
         m_uiArcaneBarrageVolley_Timer = urand(20000, 22000);
         m_uiArcaneBuffet_Timer = m_uiSummonEtherealSphere_Timer + urand(5000, 6000);
         DespawnSphere();
+        MovementStarted = false;
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_XEVOZZ, NOT_STARTED);
@@ -128,7 +130,7 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
 
     void JustSummoned(Creature* pSummoned)
     {
-//        pSummoned->SetSpeed(MOVE_RUN, 0.5f);
+        pSummoned->SetSpeedRate(MOVE_RUN, 0.5f);
         if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
         {
             pSummoned->AddThreat(pTarget);
@@ -138,10 +140,11 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-//            if (m_pInstance->GetData(TYPE_XEVOZZ) == SPECIAL) {
-//            if (Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
-//                m_creature->GetMotionMaster()->MoveChase(pTemp);
-//                };
+        if (m_pInstance->GetData(TYPE_XEVOZZ) == SPECIAL && !MovementStarted) {
+	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        MovementStarted = true;
+        }
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

@@ -47,6 +47,7 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
 
     bool m_bIsRegularMode;
+    bool MovementStarted;
 
     uint32 m_uiCauterizingFlames_Timer;
     uint32 m_uiFlameBreath_Timer;
@@ -57,6 +58,7 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
         m_uiCauterizingFlames_Timer = urand(40000, 41000);
         m_uiFlameBreath_Timer = urand(15000, 16000);
         m_uiFirebolt_Timer = urand(10000, 11000);
+        MovementStarted = false;
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_LAVANTHOR, NOT_STARTED);
@@ -93,11 +95,11 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-//        if (m_pInstance->GetData(TYPE_LAVANTHOR) == SPECIAL) {
-//            if (Unit* pTemp = SelectUnit(SELECT_TARGET_RANDOM,0))
-//                m_creature->GetMotionMaster()->MoveChase(pTemp);
-//                };
-
+        if (m_pInstance->GetData(TYPE_LAVANTHOR) == SPECIAL && !MovementStarted) {
+	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        MovementStarted = true;
+        }
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;

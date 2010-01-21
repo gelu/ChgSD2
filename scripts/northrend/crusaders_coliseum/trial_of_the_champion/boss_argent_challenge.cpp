@@ -81,6 +81,8 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 		Hammer_Timer = 40000;
 		Hammer_Dmg_Timer = 45000;
 		HammerTarget = 0;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
 	void EnterEvadeMode()
@@ -190,6 +192,8 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 		Shield_Check = 1000;
 		summoned = false;
 		shielded = false;
+		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
+                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
     void JustSummoned(Creature* _summoned)
