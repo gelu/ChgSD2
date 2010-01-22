@@ -74,6 +74,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
     uint32 WalkTimer;
     int8 portalLoc;
     bool IsWalking;
+    bool IsInCombat;
     bool MovementStarted;
     Creature* pDoorSeal;
 
@@ -102,6 +103,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         WalkTimer = 200;
         portalLoc = -1;
         IsWalking = false;
+        IsInCombat = false;
         MovementStarted = false;
         pDoorSeal = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f);
        
@@ -209,18 +211,24 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         }
 
         //Corrupt Seal
-        if(pDoorSeal){
-            if(m_creature->IsWithinDist(pDoorSeal, 20.0f, false) && !m_creature->IsNonMeleeSpellCasted(false))
+        if(pDoorSeal && !IsInCombat){
+            if(m_creature->IsWithinDist(pDoorSeal, 27.0f, false))
             {
                 IsWalking = false;
                 WayPointList.clear();
                 m_creature->GetMotionMaster()->Clear(false);
                 m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
                 DoCast(pDoorSeal, SPELL_CORRUPT);
-		if (Unit* m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-                m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
+                m_pInstance->SetData(TYPE_DOOR,SPECIAL);
             }
         }
+        if(!IsWalking && !IsInCombat) {
+                if (Unit* m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
+                m_creature->SetInCombatWithZone();
+                IsInCombat = true;
+                }
+
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -680,8 +688,9 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
         if (SpellCorrupt_Timer)
             return;
 
-        if (spell->Id == SPELL_CORRUPT)
+        if (spell->Id == SPELL_CORRUPT) {
             SpellCorrupt_Timer = 1000;
+            }
     }
     void JustDied(Unit* pKiller)
     {
@@ -693,8 +702,6 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
         {
             if (SpellCorrupt_Timer <= diff)
             {
-                m_pInstance->SetData(TYPE_DOOR,SPECIAL);
-
                 if (m_creature->HasAura(SPELL_CORRUPT,0))
                     SpellCorrupt_Timer = 1500;
                 else
@@ -780,9 +787,13 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
                     m_uiBossGUID = m_pInstance->GetData64(DATA_XEVOZZ);
                     m_uiDoorGUID = m_pInstance->GetData64(DATA_XEVOZZ_DOOR);
                     break;
+                case 0: // No boss
+                    m_uiBossType = 0;
+                    break;
             }
             m_pInstance->SetData(TYPE_LASTBOSS_ID, m_uiBossType);
-            m_creature->GetMotionMaster()->MovePoint(0, BossLoc[m_uiBossID].x,  BossLoc[m_uiBossID].y,  BossLoc[m_uiBossID].z);
+            if (m_uiBossType != 0)  m_creature->GetMotionMaster()->MovePoint(0, BossLoc[m_uiBossID].x,  BossLoc[m_uiBossID].y,  BossLoc[m_uiBossID].z);
+            else  m_creature->GetMotionMaster()->MovePoint(0, 1827.960, 804.208, 44.364);
         }
     }
 
@@ -818,7 +829,7 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
                 }
                 else {
                     m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                    m_pInstance->SetData(m_pInstance->GetData(TYPE_LASTBOSS_ID), SPECIAL);
+                    if (m_pInstance->GetData(TYPE_LASTBOSS_ID) != 0) m_pInstance->SetData(m_pInstance->GetData(TYPE_LASTBOSS_ID), SPECIAL);
                     m_bIsActiving = false;
                     }
 

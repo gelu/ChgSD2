@@ -41,6 +41,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
     instance_violet_hold(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
     uint32 m_auiEncounter[MAX_ENCOUNTER];
+    std::string m_strInstData;
 
     bool bIsInBoss;
 
@@ -208,8 +209,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                     Clear();
                     InitWorldState();
                 }
-                else if (uiData == FAIL) DoUseDoorOrButton(m_uiSealDoorGUID);
-                else if (uiData == DONE)
+                else if (uiData == FAIL || uiData == DONE)
                 {
                 DoUpdateWorldState(WORLD_STATE_VH, 0);
                 DoUseDoorOrButton(m_uiSealDoorGUID);
@@ -247,16 +247,19 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
             case TYPE_DOOR:
                 if (uiData == SPECIAL)
                 {
-                    --m_uiShieldPercent;
+                    m_uiShieldPercent = m_uiShieldPercent - 5;
                     if(m_uiShieldPercent > 0)
                         DoUpdateWorldState(WORLD_STATE_VH_PRISON, m_uiShieldPercent);
                     else
+                    {   DoUpdateWorldState(WORLD_STATE_VH, 0);
+                        DoUseDoorOrButton(m_uiSealDoorGUID);
                         m_auiEncounter[0] = FAIL;
+                        }
                 }
                 break;
             case TYPE_DISRUPTIONS:
             m_uiDisruptions = uiData;
-            DoUpdateWorldState(WORLD_STATE_VH_PRISON, 100-m_uiDisruptions*5);
+//            DoUpdateWorldState(WORLD_STATE_VH_PRISON, 100-m_uiDisruptions*5);
             break;
             case TYPE_LASTBOSS_ID:
             m_uiLastBossIDConst = uiData;
@@ -264,7 +267,21 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
         }
         if (uiData == DONE)
+        {
             bIsInBoss = false;
+            OUT_SAVE_INST_DATA;
+
+            std::ostringstream saveStream;
+
+            for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+                saveStream << m_auiEncounter[i] << " ";
+
+            m_strInstData = saveStream.str();
+
+            SaveToDB();
+            OUT_SAVE_INST_DATA_COMPLETE;
+        }
+
     }
 
     uint32 GetData(uint32 uiType)
@@ -297,6 +314,12 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 else
                 {
                     m_uiLastBossID = urand(2, 7);
+                    if ( m_auiEncounter[2] == DONE &&
+                         m_auiEncounter[3] == DONE &&
+                         m_auiEncounter[4] == DONE &&
+                         m_auiEncounter[5] == DONE &&
+                         m_auiEncounter[6] == DONE &&
+                         m_auiEncounter[7] == DONE) return 0;
                     while ( m_auiEncounter[m_uiLastBossID] == DONE
                             || m_auiEncounter[m_uiLastBossID] == IN_PROGRESS 
                             || m_auiEncounter[m_uiLastBossID] == SPECIAL ) 
@@ -354,6 +377,34 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 return m_uiZuramatDoorGUID;
         }
         return 0;
+    }
+
+const char* Save()
+    {
+        return m_strInstData.c_str();
+    }
+
+void Load(const char* strIn)
+    {
+        if (!strIn)
+        {
+            OUT_LOAD_INST_DATA_FAIL;
+            return;
+        }
+
+        OUT_LOAD_INST_DATA(strIn);
+
+        std::istringstream loadStream(strIn);
+
+        for(uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+        {
+            loadStream >> m_auiEncounter[i];
+
+            if (m_auiEncounter[i] == IN_PROGRESS && i != 1)
+                m_auiEncounter[i] = NOT_STARTED;
+        }
+
+        OUT_LOAD_INST_DATA_COMPLETE;
     }
 };
 
