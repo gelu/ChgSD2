@@ -217,6 +217,8 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                 m_creature->GetMotionMaster()->Clear(false);
                 m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
                 DoCast(pDoorSeal, SPELL_CORRUPT);
+		if (Unit* m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
             }
         }
 
@@ -539,17 +541,17 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if(m_pInstance->GetData(TYPE_EVENT) == NOT_STARTED)
+        if(m_pInstance->GetData(TYPE_EVENT) != IN_PROGRESS)
             return;
 
-        if (m_uiNextPortal_Timer)
+        if (m_uiNextPortal_Timer && m_pInstance->GetData(TYPE_RIFT) != DONE)
         {
             if (m_uiNextPortal_Timer <= uiDiff)
             {
                 ++m_uiRiftPortalCount;
-                if (m_pInstance &&  m_uiRiftPortalCount < 19)
+                if (m_pInstance && m_uiRiftPortalCount < 19)
                 {
-                    if ( m_uiRiftPortalCount < 19) m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
+                    m_pInstance->DoUpdateWorldState(WORLD_STATE_VH_PORTALS, m_uiRiftPortalCount);
                     m_pInstance->SetData(TYPE_RIFT, SPECIAL);
                 }
 
@@ -559,7 +561,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                     && m_uiRiftPortalCount != 12 
                     && m_uiRiftPortalCount != 15 
                     && m_uiRiftPortalCount != 18
-                    && m_uiRiftPortalCount != 19 )
+                    && m_uiRiftPortalCount < 19 )
                 {
                     DoSpawnPortal();
                     if (m_uiRiftPortalCount < 12)
@@ -581,7 +583,6 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                         pSummoned->AddThreat(pTemp);
                         pTemp->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL, false);
                     }
-                    m_pInstance->DoUpdateWorldState(WORLD_STATE_VH, m_uiRiftPortalCount);
                     m_pInstance->SetData(TYPE_RIFT, IN_PROGRESS);
                     m_uiBossCheck_Timer = 1000;
                     m_uiNextPortal_Timer =  m_bIsRegular ? 180000 : 120000;
@@ -605,8 +606,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             if (m_uiBossCheck_Timer <= uiDiff)
             {
                 if (!m_pInstance->GetData(DATA_BOSSTIME))
-                    m_uiNextPortal_Timer = 30000;
-
+                    m_uiNextPortal_Timer = 10000;
                 m_uiBossCheck_Timer = 1000;
             }
             else
@@ -811,10 +811,16 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
                 else if (m_uiDisruptionCounter == 3)
                 {
                     m_pInstance->DoUseDoorOrButton(m_uiDoorGUID);
-                    m_pInstance->SetData(m_pInstance->GetData(TYPE_LASTBOSS_ID), SPECIAL);
+                    if (m_uiBossType == TYPE_EREKEM) {
+                        m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_EREKEM_DOOR_L));
+                        m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_EREKEM_DOOR_R));
+                        }
                 }
-                else
+                else {
                     m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    m_pInstance->SetData(m_pInstance->GetData(TYPE_LASTBOSS_ID), SPECIAL);
+                    m_bIsActiving = false;
+                    }
 
                 ++m_uiDisruptionCounter;
                 m_uiDisruption_Timer = 1000;

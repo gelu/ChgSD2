@@ -91,8 +91,6 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_XEVOZZ, IN_PROGRESS);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
 
     }
 
@@ -143,6 +141,8 @@ struct MANGOS_DLL_DECL boss_xevozzAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_XEVOZZ) == SPECIAL && !MovementStarted) {
 	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
         m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;
         }
 

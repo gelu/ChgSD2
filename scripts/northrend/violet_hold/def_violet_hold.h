@@ -7,21 +7,23 @@
 
 enum
 {
-    MAX_ENCOUNTER           = 2,
+    MAX_ENCOUNTER           = 9,
+
+    TYPE_EVENT              = 0,
+    TYPE_RIFT               = 1,
+    TYPE_EREKEM             = 2,
+    TYPE_MORAGG             = 3,
+    TYPE_ICHORON            = 4,
+    TYPE_XEVOZZ             = 5,
+    TYPE_LAVANTHOR          = 6,
+    TYPE_ZURAMAT            = 7,
+    TYPE_CYANIGOSA          = 8,
+
 
     WORLD_STATE_VH          = 3816,
     WORLD_STATE_VH_PRISON   = 3815,
     WORLD_STATE_VH_PORTALS  = 3810,
 
-    TYPE_EVENT              = 10,
-    TYPE_EREKEM             = 11,
-    TYPE_MORAGG             = 12,
-    TYPE_ICHORON            = 13,
-    TYPE_XEVOZZ             = 14,
-    TYPE_LAVANTHOR          = 15,
-    TYPE_ZURAMAT            = 16,
-    TYPE_CYANIGOSA          = 17,
-    TYPE_RIFT               = 18,
     TYPE_LASTBOSS           = 19,
     TYPE_DOOR               = 21,
     TYPE_PORTAL_TIME        = 22,
@@ -46,6 +48,8 @@ enum
     DATA_XEVOZZ_DOOR        = 36,
     DATA_LAVANTHOR_DOOR     = 37,
     DATA_ZURAMAT_DOOR       = 38,
+    DATA_EREKEM_DOOR_L      = 39,
+    DATA_EREKEM_DOOR_R      = 40,
 
     NPC_EREKEM             = 29315,
     NPC_EREKEM_GUARD       = 29395,

@@ -62,15 +62,15 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_LAVANTHOR, NOT_STARTED);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+
     }
 
     void Aggro(Unit* pWho)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_LAVANTHOR, IN_PROGRESS);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-
     }
 
     void AttackStart(Unit* pWho)
@@ -96,8 +96,10 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_pInstance->GetData(TYPE_LAVANTHOR) == SPECIAL && !MovementStarted) {
-	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
         m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;
         }
         //Return since we have no target

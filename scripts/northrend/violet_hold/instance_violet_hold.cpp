@@ -73,7 +73,9 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     void Initialize()
     {
-        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+//        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
+	    for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+            m_auiEncounter[i] = NOT_STARTED;
 
         m_uiSinclariGUID = 0;
         m_uiNPCSealDoorGUID = 0;
@@ -206,8 +208,12 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                     Clear();
                     InitWorldState();
                 }
-                else if (uiData == FAIL)
-                    DoUseDoorOrButton(m_uiSealDoorGUID);
+                else if (uiData == FAIL) DoUseDoorOrButton(m_uiSealDoorGUID);
+                else if (uiData == DONE)
+                {
+                DoUpdateWorldState(WORLD_STATE_VH, 0);
+                DoUseDoorOrButton(m_uiSealDoorGUID);
+                }
                 m_auiEncounter[0] = uiData;
                 break;
             case TYPE_EREKEM:
@@ -235,12 +241,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
             case TYPE_RIFT:
-                if (uiData == SPECIAL){
-                    ++m_uiRiftPortalCount;
-                    DoUpdateWorldState(WORLD_STATE_VH_PORTALS, m_uiRiftPortalCount);
-                }
-                else if (uiData == FAIL)
-                    DoUseDoorOrButton(m_uiSealDoorGUID);
+                if (uiData == FAIL) DoUseDoorOrButton(m_uiSealDoorGUID);
                 m_auiEncounter[1] = uiData;
                 break;
             case TYPE_DOOR:
@@ -337,6 +338,10 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 return m_uiSealDoorGUID;
             case DATA_EREKEM_DOOR:
                 return m_uiErekemDoorGUID;
+            case DATA_EREKEM_DOOR_L:
+                return m_uiErekemDoorLeftGUID;
+            case DATA_EREKEM_DOOR_R:
+                return m_uiErekemDoorRightGUID;
             case DATA_MORAGG_DOOR:
                 return m_uiMoraggDoorGUID;
             case DATA_ICHORON_DOOR:
