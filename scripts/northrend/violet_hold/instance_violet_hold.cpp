@@ -40,7 +40,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 {
     instance_violet_hold(Map* pMap) : ScriptedInstance(pMap) {Initialize();};
 
-    uint32 m_auiEncounter[MAX_ENCOUNTER];
+    uint32 m_auiEncounter[MAX_ENCOUNTER+1];
     std::string m_strInstData;
 
     bool bIsInBoss;

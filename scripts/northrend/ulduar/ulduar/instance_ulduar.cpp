@@ -59,7 +59,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     uint64 mAncientGateGUID;
     uint64 m_uiKologarnBridgeGUID;
     //
-    uint32 mEncounter[ENCOUNTERS];
+    uint32 mEncounter[ENCOUNTERS+1];
     uint32 mLeviathanReached;
     uint32 mXT002Reached;
     uint32 mMimironReached;
