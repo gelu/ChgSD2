@@ -176,8 +176,8 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         MaNGOS::CreatureListSearcher<AllCreaturesOfEntryInRange> searcher(m_creature, creatureList, check);
         TypeContainerVisitor<MaNGOS::CreatureListSearcher<AllCreaturesOfEntryInRange>, GridTypeMapContainer> visitor(searcher);
 
-        CellLock<GridReadGuard> cell_lock(cell, pair);
-        cell_lock->Visit(cell_lock, visitor, *(m_creature->GetMap()));
+//        CellLock<GridReadGuard> cell_lock(cell, pair);
+//        cell_lock->Visit(cell_lock, visitor, *(m_creature->GetMap()));
 
         return creatureList;
     }
