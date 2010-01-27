@@ -22,6 +22,13 @@ SDComment:
 SDCategory: The Violet Hold
 EndScriptData */
 
+/* ContentData
+go_activation_crystal
+npc_door_seal
+npc_sinclari
+npc_teleportation_portal
+EndContentData */
+
 #include "precompiled.h"
 #include "def_violet_hold.h"
 enum
@@ -56,6 +63,7 @@ uint32 m_uiNextPortal_Timer;
 ## they have to be scripted in SD2 because in EventAI you cant
 ## check for distance from door seal :/
 ## (Intro not implented yet)
+## go_activation_crystal
 ######*/
 struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
 {
@@ -859,6 +867,194 @@ CreatureAI* GetAI_npc_violet_portal(Creature* pCreature)
 CreatureAI* GetAI_npc_door_seal(Creature* pCreature)
 {
     return new npc_door_sealAI(pCreature);
+}
+
+/*######
+## npc_teleportation_portal
+######*/
+
+struct MANGOS_DLL_DECL npc_teleportation_portalAI : public ScriptedAI
+{
+    npc_teleportation_portalAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (instance_violet_hold*)pCreature->GetInstanceData();
+        m_uiMyPortalNumber = 0;
+        Reset();
+    }
+
+    instance_violet_hold* m_pInstance;
+
+    std::set<uint64> m_lMobSet;
+
+    bool m_bNeedInvisible;
+    bool m_bIntro;
+    uint32 m_uiIntroTimer;
+    uint32 m_uiMyPortalNumber;
+
+    void Reset()
+    {
+        m_bNeedInvisible = false;
+        m_bIntro = false;
+        m_uiIntroTimer = 10000;
+
+        if (m_pInstance)
+            m_uiMyPortalNumber = m_pInstance->GetCurrentPortalNumber();
+    }
+
+    void DoSummon()
+    {
+        if (m_creature->GetEntry() == NPC_PORTAL_INTRO)
+        {
+            //not made yet
+            return;
+        }
+        else if (m_creature->GetEntry() == NPC_PORTAL)
+        {
+            m_creature->SummonCreature(m_pInstance->GetRandomPortalEliteEntry(), 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600*IN_MILISECONDS);
+            m_creature->CastSpell(m_creature, SPELL_PORTAL_PERIODIC, true);
+        }
+        else if (m_pInstance->IsCurrentPortalForTrash())
+        {
+            for(uint8 i = 0; i < 4; ++i)
+            {
+                uint32 uiSummonId;
+
+                switch(i)
+                {
+                    case 0: uiSummonId = NPC_AZURE_CAPTAIN; break;
+                    case 1: uiSummonId = NPC_AZURE_RAIDER; break;
+                    case 2: uiSummonId = NPC_AZURE_SORCEROR; break;
+                    case 3: uiSummonId = NPC_AZURE_STALKER; break;
+                }
+
+                m_creature->SummonCreature(uiSummonId, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600*IN_MILISECONDS);
+            }
+
+            m_bNeedInvisible = true;
+        }
+        else
+        {
+            m_creature->SummonCreature(NPC_AZURE_SABOTEUR, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600*IN_MILISECONDS);
+            m_bNeedInvisible = true;
+        }
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        switch(pSummoned->GetEntry())
+        {
+            case NPC_PORTAL_GUARDIAN:
+                DoScriptText(EMOTE_GUARDIAN_PORTAL, pSummoned);
+                m_creature->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL, false);
+                break;
+            case NPC_PORTAL_KEEPER:
+                DoScriptText(EMOTE_KEEPER_PORTAL, pSummoned);
+                m_creature->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL, false);
+                break;
+            case NPC_AZURE_CAPTAIN:
+                DoScriptText(EMOTE_DRAGONFLIGHT_PORTAL, pSummoned);
+                m_lMobSet.insert(pSummoned->GetGUID());
+                break;
+            case NPC_AZURE_RAIDER:
+            case NPC_AZURE_SORCEROR:
+            case NPC_AZURE_STALKER:
+                m_lMobSet.insert(pSummoned->GetGUID());
+                return;
+            default:
+                return;
+        }
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_PORTAL, SPECIAL);
+    }
+
+    void SummonedCreatureJustDied(Creature* pSummoned)
+    {
+        switch(pSummoned->GetEntry())
+        {
+            case NPC_PORTAL_GUARDIAN:
+            case NPC_PORTAL_KEEPER:
+                break;
+            case NPC_AZURE_CAPTAIN:
+            case NPC_AZURE_RAIDER:
+            case NPC_AZURE_SORCEROR:
+            case NPC_AZURE_STALKER:
+            {
+                m_lMobSet.erase(pSummoned->GetGUID());
+
+                if (!m_lMobSet.empty())
+                    return;
+
+                break;
+            }
+            default:
+                return;
+        }
+
+        if (m_pInstance)
+        {
+            // no need if a new portal was made while this was in progress
+            if (m_uiMyPortalNumber == m_pInstance->GetCurrentPortalNumber())
+                m_pInstance->SetData(TYPE_PORTAL, DONE);
+        }
+
+        m_creature->ForcedDespawn();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiIntroTimer)
+        {
+            if (m_uiIntroTimer <= uiDiff)
+            {
+                if (!m_pInstance)
+                {
+                    m_creature->ForcedDespawn();
+                    return;
+                }
+
+                m_uiIntroTimer = 0;
+            }
+            else
+            {
+                m_uiIntroTimer -= uiDiff;
+                return;
+            }
+        }
+
+        if (!m_bIntro)
+        {
+            DoSummon();
+            m_bIntro = true;
+        }
+
+        if (m_bNeedInvisible)
+        {
+            // hack; find a better way
+            m_creature->SetVisibility(VISIBILITY_OFF);
+            m_bNeedInvisible = false;
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_teleportation_portal(Creature* pCreature)
+{
+    return new npc_teleportation_portalAI(pCreature);
+}
+
+bool EffectDummyCreature_npc_teleportation_portal(Unit* pCaster, uint32 uiSpellId, uint32 uiEffIndex, Creature* pCreatureTarget)
+{
+    //always check spellid and effectindex
+    if (uiSpellId == SPELL_PORTAL_PERIODIC && uiEffIndex == 0)
+    {
+        if (instance_violet_hold* pInstance = (instance_violet_hold*)pCreatureTarget->GetInstanceData())
+            pCreatureTarget->SummonCreature(pInstance->GetRandomMobForNormalPortal(), 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600*IN_MILISECONDS);
+
+        //always return true when we are handling this spell and effect
+        return true;
+    }
+
+    return false;
 }
 
 void AddSC_violet_hold()
