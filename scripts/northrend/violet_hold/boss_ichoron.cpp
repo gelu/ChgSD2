@@ -112,7 +112,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
         if (m_creature->Attack(pWho, true))
         {
-            DoCast(m_creature, SPELL_PROTECTIVE_BUBBLE);
+//            DoCast(m_creature, SPELL_PROTECTIVE_BUBBLE);
             m_creature->AddThreat(pWho);
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
@@ -183,13 +183,14 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
                         //DoCast(m_creature, SPELL_DRAINED);
                         m_bIsExploded = true;
                         m_uiShowup_Counter = 0;
+                        DoCast(m_creature, SPELL_PROTECTIVE_BUBBLE);
                         m_creature->AttackStop();
-                        m_creature->SetVisibility(VISIBILITY_OFF);
+//                        m_creature->SetVisibility(VISIBILITY_OFF);
                         for(uint8 i = 0; i < 10; i++)
                         {
-                            //int tmp = urand(0, 5);
-                            //m_creature->SummonCreature(NPC_ICHOR_GLOBULE, PortalLoc[tmp].x, PortalLoc[tmp].y, PortalLoc[tmp].z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                            m_creature->SummonCreature(NPC_ICHOR_GLOBULE, m_creature->GetPositionX()-10+rand()%20, m_creature->GetPositionY()-10+rand()%20, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                            int tmp = urand(0, 5);
+                            m_creature->SummonCreature(NPC_ICHOR_GLOBULE, PortalLoc[tmp].x, PortalLoc[tmp].y, PortalLoc[tmp].z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
+                            //m_creature->SummonCreature(NPC_ICHOR_GLOBULE, m_creature->GetPositionX()-10+rand()%20, m_creature->GetPositionY()-10+rand()%20, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                         }
                     }
                     m_uiBuubleChecker_Timer = 3000;
@@ -207,10 +208,10 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
                     }
                     if (!bIsWaterElementsAlive || m_uiShowup_Counter > 20)
                     {
-                        DoCast(m_creature, SPELL_PROTECTIVE_BUBBLE);
                         m_bIsExploded = false;
                         m_uiShowup_Counter = 0;
-                        m_creature->SetVisibility(VISIBILITY_ON);
+//                        m_creature->SetVisibility(VISIBILITY_ON);
+                        m_creature->SetInCombatWithZone();
                         m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                     }
                     m_uiBuubleChecker_Timer = 1000;

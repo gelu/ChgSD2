@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         }
         uint8 wpId = 0;
         for(uint8 i = start; i <= end; ++i){
-            error_log("AddWP: %u", i);
+            debug_log("AddWP: %u", i);
             AddWaypoint(wpId, DragonsWP[i].x, DragonsWP[i].y, DragonsWP[i].z);
             wpId++;
         }
@@ -401,9 +401,9 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
             uint32 uiSpawnEntry = SelectRandSummon();
             if(Creature* pSummoned = m_creature->SummonCreature(uiSpawnEntry, m_creature->GetPositionX()-5+rand()%10, m_creature->GetPositionY()-5+rand()%10, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
             {
-                error_log("Spawnuje NPC %u, motherPortalID %u, portalLoc %u", uiSpawnEntry, portalID, portalLoc);
+                debug_log("Spawn NPC %u, motherPortalID %u, portalLoc %u", uiSpawnEntry, portalID, portalLoc);
                 ((mob_vh_dragonsAI*)pSummoned->AI())->motherPortalID = portalID;
-                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;		
+                ((mob_vh_dragonsAI*)pSummoned->AI())->portalLoc = portalLoc;
             }
         }
     }
@@ -450,7 +450,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
             case 1:
                 if (TimeRiftWave_Timer < diff)
                 {
-                    error_log("SpawnGroup()");
+                    debug_log("SpawnGroup()");
                     SpawnGroup();
                     TimeRiftWave_Timer = 15000;
                 }else TimeRiftWave_Timer -= diff;
