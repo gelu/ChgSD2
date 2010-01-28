@@ -365,6 +365,8 @@ extern void AddSC_boss_xevozz();
 extern void AddSC_boss_ichoron();
 extern void AddSC_boss_zuramat();
 extern void AddSC_boss_lavanthor();
+//IceCrown Citadel
+extern void AddSC_icecrown_teleporter();
 
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
@@ -800,6 +802,8 @@ void AddScripts()
     AddSC_boss_zuramat();
     AddSC_boss_lavanthor();
     AddSC_violet_hold();
+
+    AddSC_icecrown_teleporter();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
