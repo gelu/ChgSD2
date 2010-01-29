@@ -2,7 +2,7 @@
 #include "def_spire.h"
 enum 
 {
-PORTALS_COUNT = 5
+PORTALS_COUNT = 6
 };
 
 struct Locations
@@ -20,6 +20,7 @@ static Locations PortalLoc[]=
 {"Черепной вал",-615.145, 2211.47, 199.972,3,true}, //
 {"Воздушное сражение",-209.5, 2211.91, 199.97,4,true}, //
 {"Подъем смертоносного",-549.131, 2211.29, 539.291,2,true}, //
+{"Цитадель ледяной короны",4198.42, 2769.22, 351.065,5,true}, //
 };
 
 bool GossipSelect_icecrown_teleporter(Player *player, Creature* pCreature, uint32 sender, uint32 action)
@@ -34,10 +35,9 @@ bool GossipSelect_icecrown_teleporter(Player *player, Creature* pCreature, uint3
 
 bool GossipHello_icecrown_teleporter(Player *player, Creature* pCreature)
 {
-//    ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
+    ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
+    if(!pInstance) return true;
     bool m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-
-//    if(!pInstance) return true;
 
     for(uint8 i = 0; i < PORTALS_COUNT; i++) {
     if (PortalLoc[i].state == true)
@@ -51,10 +51,10 @@ bool GossipHello_icecrown_teleporter(Player *player, Creature* pCreature)
 bool GOHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
 {
 
-//    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return true;
+    
     bool m_bIsRegularMode = pGo->GetMap()->IsRegularDifficulty();
-
-//    if(!pInstance) return true;
 
     player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the 1", GOSSIP_SENDER_MAIN, BASE_CAMP);
     player->SEND_GOSSIP_MENU(GO_TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());

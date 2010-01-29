@@ -15,39 +15,31 @@
  */
 
 /* ScriptData
-SDName: Boss_Krystallus
-SD%Complete: 40%
-SDComment: Need adding summons and correct casting time(s), add boss texts
+SDName: Boss Krystallus
+SDAuthor: ckegg
+SD%Complete: 0%
+SDComment: 
 SDCategory: Halls of Stone
 EndScriptData */
 
 #include "precompiled.h"
+#include "def_halls_of_stone.h"
 
 enum
 {
-    SAY_AGGRO                   = -1712001,
-    SAY_SLAY_1                  = -1712002,
-    SAY_SLAY_2                  = -1712003,
-    SAY_SLAY_3                  = -1712004,
-    SAY_SLAY_4                  = -1712005,
-    SAY_KILL                    = -1712006,
-    SAY_DEATH                   = -1712007,
-    SAY_BERSERK                 = -1712008,
+    SAY_AGGRO                          = -1599000,
+    SAY_KILL                           = -1599001,
+    SAY_DEATH                          = -1599002,
+    SAY_SHATTER                        = -1599003,
 
-
-    SPELL_BOMB_N         = 50843,
-    SPELL_SPIKE_N        = 59750,
-    SPELL_ICE_N          = 61546,
-    SPELL_TOPOT_N        = 50868,
-
-    SPELL_BOMB_H         = 59742,
-    SPELL_SPIKE_H        = 59750,
-    SPELL_ICE_H          = 61546,
-    SPELL_TOPOT_H        = 59744,
-
-    SPELL_BERSERK                = 28747,
-    BERSERK_TIME_H               = 180000,
-    BERSERK_TIME_N               = 300000
+    SPELL_BOULDER_TOSS                  = 50843,
+    SPELL_BOULDER_TOSS_H                = 59742,
+    SPELL_GROUND_SPIKE                  = 59750,
+    SPELL_GROUND_SLAM                   = 50827,
+    SPELL_SHATTER                       = 50810,
+    SPELL_SHATTER_H                     = 61546,
+    SPELL_STOMP                         = 50868,
+    SPELL_STOMP_H                       = 59744,
 
 };
 
@@ -57,7 +49,7 @@ enum
 
 struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
 {
-    boss_krystallusAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_krystallusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -65,99 +57,111 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
 
-    uint32 m_uiBomb_Timer;
+    bool m_bIsRegularMode;
+    bool m_bIsSlam;
+
+    uint32 m_uiToss_Timer;
     uint32 m_uiSpike_Timer;
-    uint32 m_uiIce_Timer;
-    uint32 m_uiTopot_Timer;
-    uint32 m_uiBerserk_Timer;
+    uint32 m_uiSlam_Timer;
+    uint32 m_uiShatter_Timer;
+    uint32 m_uiStomp_Timer;
 
     void Reset()
     {
-        m_uiBomb_Timer = urand(10000, 20000);
-        m_uiSpike_Timer = urand(20000, 30000);
-        m_uiIce_Timer = urand(25000, 35000);
-        m_uiTopot_Timer = urand(35000, 45000);
-        m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
+        m_bIsSlam = false;
+        m_uiToss_Timer = 3000 + rand()%6000;
+        m_uiSpike_Timer = 9000 + rand()%5000;
+        m_uiSlam_Timer = 15000 + rand()%3000;
+        m_uiStomp_Timer = 20000 + rand()%9000;
+        m_uiShatter_Timer = 0;
+
+        if(m_pInstance)
+            m_pInstance->SetData(TYPE_KRYSTALLUS, NOT_STARTED);
     }
 
-    void Aggro(Unit* pWho)
+    void EnterCombat(Unit* pWho)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        DoScriptText(SAY_AGGRO,m_creature);
+
+        if(m_pInstance)
+            m_pInstance->SetData(TYPE_KRYSTALLUS, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
     {
-            DoScriptText(SAY_KILL, m_creature);
+        DoScriptText(SAY_KILL, m_creature);
     }
 
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_KRYSTALLUS, DONE);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
+        //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-//////////
-        if (m_uiBomb_Timer < uiDiff)
+
+        if (m_uiToss_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_BOMB_N : SPELL_BOMB_H );
-            m_uiBomb_Timer = urand(10000, 20000);
-            DoScriptText(SAY_SLAY_1, m_creature);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_BOULDER_TOSS_H : SPELL_BOULDER_TOSS);
+            m_uiToss_Timer = 9000 + rand()%6000;
         }
         else
-            m_uiBomb_Timer -= uiDiff;
+            m_uiToss_Timer -= uiDiff;
 
-if (m_uiSpike_Timer < uiDiff)
+        if (m_uiSpike_Timer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_SPIKE_N : SPELL_SPIKE_H);
-            m_uiSpike_Timer = urand(20000, 30000);
-            DoScriptText(SAY_SLAY_3, m_creature);
+                DoCast(pTarget, SPELL_GROUND_SPIKE);
+            m_uiSpike_Timer = 12000 + rand()%5000;
         }
         else
             m_uiSpike_Timer -= uiDiff;
 
-if (m_uiIce_Timer < uiDiff)
+        if (m_uiStomp_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_ICE_N : SPELL_ICE_H);
-            DoScriptText(SAY_SLAY_2, m_creature); 
-            m_uiIce_Timer = urand(25000, 35000);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP_H : SPELL_STOMP);
+            m_uiStomp_Timer = 20000 + rand()%9000;
         }
         else
-            m_uiIce_Timer -= uiDiff;
+            m_uiStomp_Timer -= uiDiff;
 
-if (m_uiTopot_Timer < uiDiff)
+        if (m_uiSlam_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-            DoCast(pTarget, m_bIsRegularMode ? SPELL_TOPOT_N : SPELL_TOPOT_H);
-            m_uiTopot_Timer = urand(20000, 45000);
-            DoScriptText(SAY_SLAY_4, m_creature);
+            DoCast(m_creature, SPELL_GROUND_SLAM);
+            m_bIsSlam = true;
+            m_uiShatter_Timer = 10000;
+            m_uiSlam_Timer = 15000 + rand()%3000;
         }
         else
-            m_uiTopot_Timer -= uiDiff;
+            m_uiSlam_Timer -= uiDiff;
 
-if (m_uiBerserk_Timer < uiDiff)
+        if (m_bIsSlam)
         {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserk_Timer = m_bIsRegularMode ? BERSERK_TIME_N : BERSERK_TIME_H ;
-            DoScriptText(SAY_BERSERK, m_creature);
+            if (m_uiShatter_Timer < uiDiff)
+            {
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_SHATTER_H : SPELL_SHATTER);
+                m_bIsSlam = false;
+                m_uiShatter_Timer = 0;
+            }
+            else
+                m_uiShatter_Timer -= uiDiff;
         }
-        else
-            m_uiBerserk_Timer -= uiDiff;
-/////////////////
+
         DoMeleeAttackIfReady();
     }
 };
 
 CreatureAI* GetAI_boss_krystallus(Creature* pCreature)
 {
-    return new boss_krystallusAI(pCreature);
+    return new boss_krystallusAI (pCreature);
 }
 
 void AddSC_boss_krystallus()

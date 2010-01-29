@@ -159,6 +159,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 
 	void EnterEvadeMode()
 	{
+	if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == IN_PROGRESS) {
 		m_creature->SetDisplayId(29837);
 		Plague_Strike_Timer = 5000;
 		Icy_Touch_Timer = 10000;
@@ -173,6 +174,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
 		m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
 		m_creature->SetHealth(m_creature->GetMaxHealth());
+		}
 	}
 
 	void Aggro(Unit* pWho)

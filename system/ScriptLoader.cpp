@@ -366,7 +366,11 @@ extern void AddSC_boss_ichoron();
 extern void AddSC_boss_zuramat();
 extern void AddSC_boss_lavanthor();
 //IceCrown Citadel
+extern void AddSC_instance_icecrown_spire();
 extern void AddSC_icecrown_teleporter();
+extern void AddSC_boss_lord_marrogwar();
+extern void AddSC_boss_lady_deathwhisper();
+extern void AddSC_boss_deathbringer_saurfang();
 
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
@@ -803,7 +807,11 @@ void AddScripts()
     AddSC_boss_lavanthor();
     AddSC_violet_hold();
 
+    AddSC_instance_icecrown_spire();
     AddSC_icecrown_teleporter();
+    AddSC_boss_lord_marrogwar();
+    AddSC_boss_lady_deathwhisper();
+    AddSC_boss_deathbringer_saurfang();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts

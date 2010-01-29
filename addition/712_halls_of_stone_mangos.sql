@@ -1,9 +1,9 @@
 UPDATE `mangos`.`creature_template` SET `ScriptName` = 'boss_krystallus' WHERE `creature_template`.`entry` =27977 LIMIT 1 ;
 
 DELETE FROM `scriptdev2`.`script_texts` WHERE `entry` IN
-('-1712001','-1712002','-1712003','-1712004','-1712005','-1712006');
+('-1712001','-1712002','-1712003','-1712004','-1712005','-1712006','-1712007','-1712008');
 
-INSERT INTO `scriptdev2`.`script_texts` 
+INSERT IGNORE INTO `scriptdev2`.`script_texts` 
 (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`) 
 VALUES 
 ('-1712001', 'Soft meat! Come to me!', 'Soft meat! Come to me!', NULL, NULL, NULL, NULL, NULL, NULL, 'Мягкие пришли! Заходите!', '0', '0', '0', '0', NULL),
@@ -14,3 +14,14 @@ VALUES
 ('-1712006', 'It is cool!', 'It is cool!', NULL, NULL, NULL, NULL, NULL, NULL, 'Что, съел?', '0', '0', '0', '0', NULL),
 ('-1712007', 'O, no...', 'O, no...', NULL, NULL, NULL, NULL, NULL, NULL, 'Не может быть...', '0', '0', '0', '0', NULL),
 ('-1712008', 'Enrage!', 'Enrage!', NULL, NULL, NULL, NULL, NULL, NULL, 'Ну все, вы меня достали...', '0', '0', '0', '0', NULL);
+
+UPDATE `mangos`.`gameobject` SET `state` = '1' WHERE `gameobject`.`guid` =53556;
+UPDATE `mangos`.`gameobject` SET `state` = '1' WHERE `gameobject`.`guid` =53560;
+
+UPDATE `mangos`.`gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` =191293;
+UPDATE `mangos`.`gameobject_template` SET `faction` = '0', `flags` = '0'  WHERE `gameobject_template`.`entry` IN (193996,190586);
+UPDATE `mangos`.`gameobject` SET `phaseMask` = '65535' WHERE `gameobject`.`guid` =37577;
+UPDATE `mangos`.`gameobject` SET `phaseMask` = '65535' WHERE `gameobject`.`guid` =37583;
+
+
+

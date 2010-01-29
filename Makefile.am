@@ -364,7 +364,7 @@ scripts/northrend/ulduar/halls_of_stone/boss_maiden_of_grief.cpp \
 scripts/northrend/ulduar/halls_of_stone/boss_sjonnir.cpp \
 scripts/northrend/ulduar/halls_of_stone/boss_krystallus.cpp \
 scripts/northrend/ulduar/halls_of_stone/halls_of_stone.cpp \
-scripts/northrend/ulduar/halls_of_stone/halls_of_stone.h \
+scripts/northrend/ulduar/halls_of_stone/def_halls_of_stone.h \
 scripts/northrend/ulduar/halls_of_stone/instance_halls_of_stone.cpp \
 scripts/northrend/ulduar/ulduar/boss_algalon.cpp \
 scripts/northrend/ulduar/ulduar/boss_auriaya.cpp \
@@ -513,6 +513,10 @@ scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_meathook.cpp \
 scripts/kalimdor/caverns_of_time/culling_of_stratholme/instance_culling_of_stratholme.cpp \
 scripts/kalimdor/caverns_of_time/culling_of_stratholme/boss_salramm.cpp \
 scripts/northrend/icecrown_citadel/spire/icecrown_teleport.cpp \
+scripts/northrend/icecrown_citadel/spire/instance_icecrown_spire.cpp \
+scripts/northrend/icecrown_citadel/spire/boss_deathbringer_saurfang.cpp \
+scripts/northrend/icecrown_citadel/spire/boss_lady_deathwhisper.cpp \
+scripts/northrend/icecrown_citadel/spire/boss_lord_marrogwar.cpp \
 scripts/world/areatrigger_scripts.cpp \
 scripts/world/boss_emeriss.cpp \
 scripts/world/boss_lethon.cpp \
