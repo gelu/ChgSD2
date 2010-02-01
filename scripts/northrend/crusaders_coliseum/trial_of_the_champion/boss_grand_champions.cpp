@@ -182,19 +182,19 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		if (Mortal_Strike_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_MORTAL_STRIKE : SPELL_MORTAL_STRIKE_H);
-            Mortal_Strike_Timer = m_bIsRegularMode ? 9000 : 6000;
+            Mortal_Strike_Timer = m_bIsRegularMode ? 6000 : 4000;
         }else Mortal_Strike_Timer -= diff;  
 
 		if (Rolling_Throw_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), SPELL_ROLLING_THROW);
-            Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
+            Rolling_Throw_Timer = m_bIsRegularMode ? 30000 : 15000;
         }else Rolling_Throw_Timer -= diff;
 
 		if (Bladestorm_Timer < diff)
         {
 			DoCast(m_creature, SPELL_BLADESTORM);
-            Bladestorm_Timer = m_bIsRegularMode ? 90000 : 60000;
+            Bladestorm_Timer = m_bIsRegularMode ? 60000 : 20000;
         }else Bladestorm_Timer -= diff;
 
 		if (intercept_check < diff)
@@ -202,7 +202,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 			if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), 8) && m_creature->IsWithinDistInMap(m_creature->getVictim(), 25) && Intercept_Cooldown < diff)
 			{
 				DoCast(m_creature->getVictim(), SPELL_INTERCEPT);
-				Intercept_Cooldown = 15000;
+				Intercept_Cooldown = m_bIsRegularMode ? 15000 : 10000;
 			}
 			intercept_check = 1000;
 		}
@@ -243,9 +243,9 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
     {
 		m_creature->SetRespawnDelay(999999999);
 		Fireball_Timer = 0;
-		Blast_Wave_Timer = m_bIsRegularMode ? 30000 : 20000;
+		Blast_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
 		Haste_Timer = m_bIsRegularMode ? 12000 : 9000;
-		Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
+		Polymorph_Timer = m_bIsRegularMode ? 12000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
@@ -336,28 +336,28 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-		if (Fireball_Timer < diff)
+	if (Fireball_Timer < diff)
         {
-			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FIREBALL : SPELL_FIREBALL_H);
+	DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FIREBALL : SPELL_FIREBALL_H);
             Fireball_Timer = m_bIsRegularMode ? 5000 : 3000;
-        }else Fireball_Timer -= diff;  
+        }else Fireball_Timer -= diff;
 
-		if (Blast_Wave_Timer < diff)
+	if (Blast_Wave_Timer < diff)
         {
-			DoCast(m_creature, m_bIsRegularMode ? SPELL_BLAST_WAVE : SPELL_BLAST_WAVE_H);
-            Blast_Wave_Timer = m_bIsRegularMode ? 30000 : 20000;
+	DoCast(m_creature, m_bIsRegularMode ? SPELL_BLAST_WAVE : SPELL_BLAST_WAVE_H);
+            Blast_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
         }else Blast_Wave_Timer -= diff;
 
-		if (Haste_Timer < diff)
+	if (Haste_Timer < diff)
         {
-			DoCast(m_creature, SPELL_HASTE);
-            Haste_Timer = m_bIsRegularMode ? 15000 : 10000;
+	DoCast(m_creature, SPELL_HASTE);
+            Haste_Timer = m_bIsRegularMode ? 10000 : 8000;
         }else Haste_Timer -= diff;
 
-		if (Polymorph_Timer < diff)
+	if (Polymorph_Timer < diff)
         {
-			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
-				DoCast(target, m_bIsRegularMode ? SPELL_POLYMORPH : SPELL_POLYMORPH_H);
+	if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+	DoCast(target, m_bIsRegularMode ? SPELL_POLYMORPH : SPELL_POLYMORPH_H);
             Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
         }else Polymorph_Timer -= diff;
 		
@@ -397,7 +397,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		m_creature->SetRespawnDelay(999999999);
 		Chain_Lightning_Timer = m_bIsRegularMode ? 2000 : 1000;
 		Earth_Shield_Timer = m_bIsRegularMode ? 10000 : 5000;
-		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 13000;
+		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
 		Hex_Timer = m_bIsRegularMode ? 15000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
@@ -493,7 +493,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		if (Chain_Lightning_Timer < diff)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_CHAIN_LIGHTNING : SPELL_CHAIN_LIGHTNING_H);
-            Chain_Lightning_Timer = m_bIsRegularMode ? 15000 : 10000;
+            Chain_Lightning_Timer = m_bIsRegularMode ? 12000 : 8000;
         }else Chain_Lightning_Timer -= diff;  
 
 		if (Hex_Timer < diff)
@@ -528,7 +528,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 			if (mob3_health < mob2_health && mob1_health > mob3_health && mob3_health < 70)
 				if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
 					DoCast(pTemp, m_bIsRegularMode ? SPELL_HEALING_WAVE : SPELL_HEALING_WAVE_H);
-            Healing_Wave_Timer = 8000;
+            Healing_Wave_Timer = m_bIsRegularMode ? 8000 : 6000;
         }else Healing_Wave_Timer -= diff;
 
 		if (Earth_Shield_Timer < diff)
@@ -593,8 +593,8 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
     {
 		m_creature->SetRespawnDelay(999999999);
 		Shoot_Timer = 0;
-		Lightning_Arrows_Timer = m_bIsRegularMode ? 18000 : 13000;
-		Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 10000;
+		Lightning_Arrows_Timer = m_bIsRegularMode ? 18000 : 10000;
+		Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 8000;
 		Disengage_Cooldown = 0;
 		enemy_check = 1000;
 		disengage_check;
@@ -697,7 +697,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 			}
 			else
 			{
-				m_creature->SetSpeedRate(MOVE_RUN, 1);
+				m_creature->SetSpeedRate(MOVE_RUN, 1.2);
 			}
 			enemy_check = 100;
 		}else enemy_check -= diff;
@@ -715,14 +715,14 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
         {
 			m_creature->CastStop(SPELL_SHOOT);
 			DoCast(m_creature->getVictim(), SPELL_MULTI_SHOT);
-            Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 10000;
+            Multi_Shot_Timer = m_bIsRegularMode ? 10000 : 5000;
         }else Multi_Shot_Timer -= diff;
 
 		if (Lightning_Arrows_Timer < diff)
         {
 			m_creature->CastStop(SPELL_SHOOT);
 			DoCast(m_creature, SPELL_LIGHTNING_ARROWS);
-            Lightning_Arrows_Timer = m_bIsRegularMode ? 30000 : 25000;
+            Lightning_Arrows_Timer = m_bIsRegularMode ? 15000 : 8000;
         }else Lightning_Arrows_Timer -= diff;
 
 		if (disengage_check < diff)
@@ -730,7 +730,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 			if (m_creature->IsWithinDistInMap(m_creature->getVictim(), 5) && Disengage_Cooldown == 0)
 			{
 				DoCast(m_creature, SPELL_DISENGAGE);
-				Disengage_Cooldown = 15000;
+				Disengage_Cooldown = m_bIsRegularMode ? 15000 : 10000;
 			}
 			disengage_check = 1000;
 		}else disengage_check -= diff;
@@ -764,9 +764,9 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
-		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 15000;
+		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 10000;
 		FoK_Timer = m_bIsRegularMode ? 15000 : 10000;
-		Poison_Timer = m_bIsRegularMode ? 12000 : 7000;
+		Poison_Timer = m_bIsRegularMode ? 12000 : 5000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
@@ -857,23 +857,23 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-		if (Eviscerate_Timer < diff)
+	if (Eviscerate_Timer < diff)
         {
-			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_EVISCERATE : SPELL_EVISCERATE_H);
+	DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_EVISCERATE : SPELL_EVISCERATE_H);
             Eviscerate_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Eviscerate_Timer -= diff;  
 
-		if (FoK_Timer < diff)
+	if (FoK_Timer < diff)
         {
-			DoCast(m_creature->getVictim(), SPELL_FAN_OF_KNIVES);
-			FoK_Timer = m_bIsRegularMode ? 12000 : 7000;
+	DoCast(m_creature->getVictim(), SPELL_FAN_OF_KNIVES);
+		FoK_Timer = m_bIsRegularMode ? 12000 : 7000;
         }else FoK_Timer -= diff;
 
-		if (Poison_Timer < diff)
+	if (Poison_Timer < diff)
         {
-			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+	if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
 				DoCast(m_creature, SPELL_POISON_BOTTLE);
-            Poison_Timer = m_bIsRegularMode ? 9000 : 6000;
+            Poison_Timer = m_bIsRegularMode ? 10000 : 5000;
         }else Poison_Timer -= diff;
 		
 		DoMeleeAttackIfReady();

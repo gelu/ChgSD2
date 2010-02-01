@@ -226,9 +226,9 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		phase2 = true;
 		phase3 = false;
 		DoCast(m_creature, SPELL_ARMY);
-		Plague_Strike_Timer = 14000;
-		Icy_Touch_Timer = 12000;
-		Obliterate_Timer = 18000;
+		Plague_Strike_Timer = m_bIsRegularMode ? 14000 : 8000;
+		Icy_Touch_Timer = m_bIsRegularMode ? 12000 : 7000;
+		Obliterate_Timer = m_bIsRegularMode ? 18000 : 10000;
 	}
 
 	void StartPhase3()
@@ -239,8 +239,8 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		phase1 = false;
 		phase2 = false;
 		phase3 = true;
-		Death_Timer = 5000;
-		Mark_Timer = 9000;
+		Death_Timer = m_bIsRegularMode ? 5000 : 3000;
+		Mark_Timer = m_bIsRegularMode ? 9000 : 7000;
 	}
 
 	void UpdateAI(const uint32 diff)
@@ -251,26 +251,26 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		if (Plague_Strike_Timer < diff && !phase3)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_PLAGUE_STRIKE : SPELL_PLAGUE_STRIKE_H);
-            Plague_Strike_Timer = 10500;
+            Plague_Strike_Timer = m_bIsRegularMode ? 10500 : 7000;
         }else Plague_Strike_Timer -= diff;  
 
 		if (Icy_Touch_Timer < diff && !phase3)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_ICY_TOUCH : SPELL_ICY_TOUCH_H);
-            Icy_Touch_Timer = 10000;
+            Icy_Touch_Timer = m_bIsRegularMode ? 10000 : 8000;
         }else Icy_Touch_Timer -= diff;
 
 		if (Obliterate_Timer < diff && !phase3)
         {
 			DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_OBLITERATE : SPELL_OBLITERATE_H);
-            Obliterate_Timer = 11000;
+            Obliterate_Timer = m_bIsRegularMode ? 11000 : 8000;
         }else Obliterate_Timer -= diff;
 
 		if (Choke_Timer < diff && phase1)
         {
 			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
 				DoCast(m_creature->getVictim(), SPELL_CHOKE);
-			Choke_Timer = 15000;
+			Choke_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Choke_Timer -= diff;
 
 		if (Summon_Ghoul < diff && phase1 && !ghoul)
@@ -286,7 +286,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
         {
 			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
 				DoCast(target, SPELL_MARK);
-			Mark_Timer = 15000;
+			Mark_Timer = m_bIsRegularMode ? 15000 : 10000;
         }else Mark_Timer -= diff;
 
 		if (Death_Timer < diff && phase3)

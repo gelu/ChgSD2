@@ -78,6 +78,7 @@ enum
 	GO_EADRIC_LOOT_H            = 195375,
 	GO_PALETRESS_LOOT           = 195323,
 	GO_PALETRESS_LOOT_H         = 195324
+
 };
 
 #endif

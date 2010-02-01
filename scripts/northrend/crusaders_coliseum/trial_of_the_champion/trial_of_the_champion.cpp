@@ -33,6 +33,20 @@ EndContentData */
 /*######
 ## npc_toc5_announcer
 ######*/
+struct _Messages
+{
+    char const* name;
+    uint32 id;
+    bool state;
+};
+
+static _Messages _GossipMessage[]=
+{
+{"Вы готовы драться с чемпионами противоположной фракции?",0,true}, //
+{"Вы готовы драться с чемпионом Серебряного Рассвета?",1,true},  //
+{"Вы готовы драться с Черным рыцарем?",2,true}, //
+{"Не надо сюда тыкать. На сегодня арена закрыта.",3,true}, //
+};
 
 struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
 {
@@ -48,204 +62,125 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
     {
     }
 
-	void StartEvent(Player* pPlayer)
+    void StartEvent(Player* pPlayer)
     {
-		if (!m_pInstance)
-			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED)
-		{
-			m_pInstance->SetData(DATA_TOC5_ANNOUNCER, m_creature->GetGUID());
-			if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_ARELAS))
-			{
-				m_pInstance->SetData(DATA_BLACK_KNIGHT_MINION, 35564);
-				switch(urand(0, 4))
-				{
-					case 0:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 35572);
-					break;
-					case 1:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 35569);
-					break;
-					case 2:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 35571);
-					break;
-					case 3:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 35570);
-					break;
-					case 4:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 35617);
-					break;
-				}
-				do{
-					switch(urand(0, 4))
-					{
-						case 0:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 35572);
-						break;
-						case 1:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 35569);
-						break;
-						case 2:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 35571);
-						break;
-						case 3:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 35570);
-						break;
-						case 4:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 35617);
-						break;
-					}
-				} while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_2));
-				do{
-					switch(urand(0, 4))
-					{
-						case 0:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 35572);
-						break;
-						case 1:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 35569);
-						break;
-						case 2:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 35571);
-						break;
-						case 3:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 35570);
-						break;
-						case 4:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 35617);
-						break;
-					}
-				} while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_3) || m_pInstance->GetData(DATA_CHAMPIONID_2) == m_pInstance->GetData(DATA_CHAMPIONID_3));
-			}
-			if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_JAEREN))
-			{
-				m_pInstance->SetData(DATA_BLACK_KNIGHT_MINION, 123);
-				switch(urand(0, 4))
-				{
-					case 0:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 34705);
-					break;
-					case 1:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 34702);
-					break;
-					case 2:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 34701);
-					break;
-					case 3:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 34657);
-					break;
-					case 4:
-						m_pInstance->SetData(DATA_CHAMPIONID_1, 34703);
-					break;
-				}
-				do{
-					switch(urand(0, 4))
-					{
-						case 0:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 34705);
-						break;
-						case 1:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 34702);
-						break;
-						case 2:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 34701);
-						break;
-						case 3:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 34657);
-						break;
-						case 4:
-							m_pInstance->SetData(DATA_CHAMPIONID_2, 34703);
-						break;
-					}
-				} while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_2));
-				do{
-					switch(urand(0, 4))
-					{
-						case 0:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 34705);
-						break;
-						case 1:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 34702);
-						break;
-						case 2:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 34701);
-						break;
-						case 3:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 34657);
-						break;
-						case 4:
-							m_pInstance->SetData(DATA_CHAMPIONID_3, 34703);
-						break;
-					}
-				} while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_3) || m_pInstance->GetData(DATA_CHAMPIONID_2) == m_pInstance->GetData(DATA_CHAMPIONID_3));
-			}
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-		}
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == FAIL)
-		{
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-			m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
-		}
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-		{
-			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED)
-			{
-				switch(urand(0, 1))
-				{
-					case 0:
-						m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 35119);
-					break;
-					case 1:
-						m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 34928);
-					break;
-				}
-				m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, FAIL);
-			}
-			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == FAIL)
-			{
-			
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_1)))) {
-				pTemp->RemoveCorpse();
-				pTemp->RemoveFromWorld();
-				}
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_2)))) {
-				pTemp->RemoveCorpse();
-				pTemp->RemoveFromWorld();
-				}
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPIONID_3)))) {
-				pTemp->RemoveCorpse();
-				pTemp->RemoveFromWorld();
-				}
+    if (!m_pInstance)  return;
 
-				m_creature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-				m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
-			}
-			if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
-			{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ARGENT_CHALLENGER)))) {
-				pTemp->RemoveCorpse();
-				pTemp->RemoveFromWorld();
-				}
+    if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == 0) {
+               m_pInstance->SetData(DATA_TOC5_ANNOUNCER, m_creature->GetGUID());
 
-				if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
-				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-				else
-				{
-				m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-				m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-				}
-			}
-		}
+           if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_ARELAS))
+               {
+               m_pInstance->SetData(DATA_BLACK_KNIGHT_MINION, 35564);
+               switch(urand(0, 4))
+                     {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_1, 35572); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_1, 35569); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_1, 35571); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_1, 35570); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_1, 35617); break;
+                     };
+               do{
+                     switch(urand(0, 4))
+                     {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_2, 35572); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_2, 35569); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_2, 35571); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_2, 35570); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_2, 35617); break;
+                     }
+                 } while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_2));
+               do{
+                     switch(urand(0, 4))
+                     {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_3, 35572); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_3, 35569); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_3, 35571); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_3, 35570); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_3, 35617); break;
+                     }
+                  } while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_3) || m_pInstance->GetData(DATA_CHAMPIONID_2) == m_pInstance->GetData(DATA_CHAMPIONID_3));
+               };
+
+           if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_JAEREN))
+               {
+               m_pInstance->SetData(DATA_BLACK_KNIGHT_MINION, 123);
+
+               switch(urand(0, 4))
+               {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_1, 34705); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_1, 34702); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_1, 34701); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_1, 34657); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_1, 34703); break;
+               }
+               do{
+                     switch(urand(0, 4))
+                     {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_2, 34705); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_2, 34702); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_2, 34701); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_2, 34657); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_2, 34703); break;
+                     }
+                 } while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_2));
+               do{
+                     switch(urand(0, 4))
+                     {
+                     case 0: m_pInstance->SetData(DATA_CHAMPIONID_3, 34705); break;
+                     case 1: m_pInstance->SetData(DATA_CHAMPIONID_3, 34702); break;
+                     case 2: m_pInstance->SetData(DATA_CHAMPIONID_3, 34701); break;
+                     case 3: m_pInstance->SetData(DATA_CHAMPIONID_3, 34657); break;
+                     case 4: m_pInstance->SetData(DATA_CHAMPIONID_3, 34703); break;
+                     }
+                 } while(m_pInstance->GetData(DATA_CHAMPIONID_1) == m_pInstance->GetData(DATA_CHAMPIONID_3) || m_pInstance->GetData(DATA_CHAMPIONID_2) == m_pInstance->GetData(DATA_CHAMPIONID_3));
+
+             };
+
+            switch(urand(0, 1))
+            {
+                case 0: m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 35119); break;
+                case 1: m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 34928); break;
+            };
+         }
+//    else if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) != m_creature->GetGUID()) return;
+
+    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED)
+                {
+                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
+                return;
+                };
+
+    if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED)
+                {
+                 m_creature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                 m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
+                 return;
+                };
+
+    if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED)
+            {
+                m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                m_pInstance->SetData(TYPE_BLACK_KNIGHT, IN_PROGRESS);
+                return;
+            };
+
+    if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE) {
+                    m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    return;
+                    };
+
     }
 
     void UpdateAI(const uint32 diff)
     {
+        if (!m_pInstance) return;
+        
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
-
-		if (!m_pInstance)
-            return;
     }
 };
 
@@ -256,19 +191,46 @@ CreatureAI* GetAI_npc_toc5_announcer(Creature* pCreature)
 
 bool GossipHello_npc_toc5_announcer(Player* pPlayer, Creature* pCreature)
 {
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START_EVENT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+    ScriptedInstance* m_pInstance;
+
+    if (!m_pInstance) return false;
+
+    if(!pPlayer->getAttackers().empty()) return true;
+
+//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED)
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[0].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+1);
+
+//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE 
+//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED)
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[1].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+2);
+
+//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE
+//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE
+//    && m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED)
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[2].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+3);
+
+//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE
+//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE
+//    && m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[3].name, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
+
+    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
+
     return true;
 }
 
 bool GossipSelect_npc_toc5_announcer(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1 ||
+    uiAction == GOSSIP_ACTION_INFO_DEF+2 ||
+    uiAction == GOSSIP_ACTION_INFO_DEF+3 ||
+    uiAction == GOSSIP_ACTION_INFO_DEF+4)
     {
-        pPlayer->CLOSE_GOSSIP_MENU();
+    pPlayer->CLOSE_GOSSIP_MENU();
     ((npc_toc5_announcerAI*)pCreature->AI())->StartEvent(pPlayer);
     }
+    else pPlayer->CLOSE_GOSSIP_MENU();
 
     return true;
 }

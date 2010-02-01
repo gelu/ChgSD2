@@ -77,9 +77,9 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
     {
 		m_creature->SetRespawnDelay(999999999);
 		Vengeance_Timer = 1000;
-		Radiance_Timer = 15000;
-		Hammer_Timer = 40000;
-		Hammer_Dmg_Timer = 45000;
+		Radiance_Timer = m_bIsRegularMode ? 15000 : 8000;
+		Hammer_Timer = m_bIsRegularMode ? 40000 : 10000;
+		Hammer_Dmg_Timer = m_bIsRegularMode ? 45000 : 20000;
 		HammerTarget = 0;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
@@ -125,13 +125,13 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 		if (Vengeance_Timer < diff)
         {
 			DoCast(m_creature, SPELL_VENGEANCE);
-            Vengeance_Timer = 12000;
+            Vengeance_Timer = m_bIsRegularMode ? 12000 : 8000;
         }else Vengeance_Timer -= diff;  
 
 		if (Radiance_Timer < diff)
         {
 			DoCast(m_creature, m_bIsRegularMode ? SPELL_RADIANCE : SPELL_RADIANCE_H);
-            Radiance_Timer = 20000;
+            Radiance_Timer = m_bIsRegularMode ? 20000 : 12000;
         }else Radiance_Timer -= diff;
 
 		if (Hammer_Timer < diff)
@@ -141,14 +141,14 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 				DoCast(target, SPELL_HAMMER_OF_JUSTICE);
 				HammerTarget = target->GetGUID();
 			}
-            Hammer_Timer = 50000;
+            Hammer_Timer = m_bIsRegularMode ? 40000 : 15000;
         }else Hammer_Timer -= diff;
 
 		if (Hammer_Dmg_Timer < diff)
 		{
 			if (Unit* pHammerTarget = Unit::GetUnit(*m_creature, HammerTarget))
 				DoCast(pHammerTarget, SPELL_HAMMER);
-			Hammer_Dmg_Timer = 50000;
+			Hammer_Dmg_Timer = m_bIsRegularMode ? 50000 : 15000;
 		}
 		else Hammer_Dmg_Timer -= diff;
 		
@@ -188,8 +188,8 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 		m_creature->SetRespawnDelay(999999999);
 		m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
 		Smite_Timer = 5000;
-		Holy_Fire_Timer = 10000;
-		Renew_Timer = 7000;
+		Holy_Fire_Timer = m_bIsRegularMode ? 10000 : 8000;
+		Renew_Timer = m_bIsRegularMode ? 7000 : 5000;
 		Shield_Delay = 0;
 		Shield_Check = 1000;
 		summoned = false;
@@ -211,8 +211,8 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 	if (m_creature->isAlive()) {
 		m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
 		Smite_Timer = 5000;
-		Holy_Fire_Timer = 10000;
-		Renew_Timer = 7000;
+		Holy_Fire_Timer = m_bIsRegularMode ? 10000 : 5000;
+		Renew_Timer = m_bIsRegularMode ? 7000 : 5000;
 		Shield_Delay = 0;
 		Shield_Check = 1000;
 		summoned = false;
@@ -257,7 +257,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 			m_creature->CastStop(m_bIsRegularMode ? SPELL_SMITE : SPELL_SMITE_H);
 			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
 				DoCast(target, m_bIsRegularMode ? SPELL_HOLY_FIRE : SPELL_HOLY_FIRE_H);
-            Holy_Fire_Timer = 10000;
+            Holy_Fire_Timer = m_bIsRegularMode ? 10000 : 7000;
         }else Holy_Fire_Timer -= diff;
 
 		if (Renew_Timer < diff)
