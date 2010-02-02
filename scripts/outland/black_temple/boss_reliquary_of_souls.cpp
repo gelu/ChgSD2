@@ -79,12 +79,12 @@ EndScriptData */
 
 #define CREATURE_ENSLAVED_SOUL          23469
 
-struct Position
+struct _Position
 {
     float x,y;
 };
 
-static Position Coords[]=
+static _Position Coords[]=
 {
     {450.4, 212.3},
     {542.1, 212.3},
