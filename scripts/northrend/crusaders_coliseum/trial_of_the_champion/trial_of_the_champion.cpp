@@ -38,14 +38,15 @@ struct _Messages
     char const* name;
     uint32 id;
     bool state;
+    uint32 encounter;
 };
 
 static _Messages _GossipMessage[]=
 {
-{"Вы готовы драться с чемпионами противоположной фракции?",0,true}, //
-{"Вы готовы драться с чемпионом Серебряного Рассвета?",1,true},  //
-{"Вы готовы драться с Черным рыцарем?",2,true}, //
-{"Не надо сюда тыкать. На сегодня арена закрыта.",3,true}, //
+{"Вы готовы драться с чемпионами противоположной фракции?",GOSSIP_ACTION_INFO_DEF+1,false,TYPE_GRAND_CHAMPIONS}, //
+{"Вы готовы драться с чемпионом Серебряного Рассвета?",GOSSIP_ACTION_INFO_DEF+2,false,TYPE_ARGENT_CHALLENGE},  //
+{"Вы готовы драться с Черным рыцарем?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_BLACK_KNIGHT}, //
+{"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+4,true,TYPE_BLACK_KNIGHT}, //
 };
 
 struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
@@ -62,12 +63,53 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
     {
     }
 
-    void StartEvent(Player* pPlayer)
+    void UpdateAI(const uint32 diff)
     {
-    if (!m_pInstance)  return;
+        if (!m_pInstance) return;
 
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
+    }
+};
+
+CreatureAI* GetAI_npc_toc5_announcer(Creature* pCreature)
+{
+    return new npc_toc5_announcerAI(pCreature);
+}
+
+bool GossipHello_npc_toc5_announcer(Player* pPlayer, Creature* pCreature)
+{
+ 
+    ScriptedInstance* m_pInstance;
+    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (!m_pInstance) return false;
+
+    if(!pPlayer->getAttackers().empty()) return true;
+
+    for(uint8 i = 0; i < MAX_ENCOUNTER+1; i++) {
+    if (!_GossipMessage[i].state && (m_pInstance->GetData(_GossipMessage[i].encounter) == NOT_STARTED || m_pInstance->GetData(_GossipMessage[i].encounter) == IN_PROGRESS))
+        {pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[i].name, GOSSIP_SENDER_MAIN,_GossipMessage[i].id);
+        break;
+        }
+    if (_GossipMessage[i].state && m_pInstance->GetData(_GossipMessage[i].encounter) == DONE)
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[i].name, GOSSIP_SENDER_MAIN,_GossipMessage[i].id);
+    };
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_toc5_announcer(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    ScriptedInstance* m_pInstance;
+    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+pPlayer->CLOSE_GOSSIP_MENU();
+
+switch(uiAction) {
+    case GOSSIP_ACTION_INFO_DEF+1: {
     if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == 0) {
-               m_pInstance->SetData(DATA_TOC5_ANNOUNCER, m_creature->GetGUID());
+               m_pInstance->SetData(DATA_TOC5_ANNOUNCER, pCreature->GetGUID());
 
            if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) == m_pInstance->GetData(DATA_ARELAS))
                {
@@ -142,95 +184,50 @@ struct MANGOS_DLL_DECL npc_toc5_announcerAI : public ScriptedAI
                 case 0: m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 35119); break;
                 case 1: m_pInstance->SetData(DATA_ARGENT_CHALLENGER, 34928); break;
             };
-         }
-//    else if (m_pInstance->GetData(DATA_TOC5_ANNOUNCER) != m_creature->GetGUID()) return;
+        };
 
-    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED)
+    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED || m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
                 {
-                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
-                m_creature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_MANUAL_DESPAWN, 0);
+                pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
+                pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
                 m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
-                return;
                 };
+    };
 
-    if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED)
+    case GOSSIP_ACTION_INFO_DEF+2: {
+    if ((m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED || m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == IN_PROGRESS) && m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
                 {
-                 m_creature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 180000);
+                 if (Creature* pTemp = ((Creature*)Unit::GetUnit((*pCreature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                      pTemp->ForcedDespawn();
+                 if (Creature* pTemp = ((Creature*)Unit::GetUnit((*pCreature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                      pTemp->ForcedDespawn();
+                 if (Creature* pTemp = ((Creature*)Unit::GetUnit((*pCreature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                      pTemp->ForcedDespawn();
+
+                 pCreature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
                  m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, IN_PROGRESS);
-                 return;
                 };
 
-    if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED)
+    };
+
+    case GOSSIP_ACTION_INFO_DEF+3: {
+    if ((m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED || m_pInstance->GetData(TYPE_BLACK_KNIGHT) == IN_PROGRESS) && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
             {
-                m_creature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_MANUAL_DESPAWN, 0);
-                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                 if (Creature* pTemp = ((Creature*)Unit::GetUnit((*pCreature), m_pInstance->GetData64(DATA_ARGENT_CHALLENGER))))
+                      pTemp->ForcedDespawn();
+                pCreature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 300000);
+                pCreature->DealDamage(pCreature, pCreature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_pInstance->SetData(TYPE_BLACK_KNIGHT, IN_PROGRESS);
-                return;
             };
+    };
 
+    case GOSSIP_ACTION_INFO_DEF+4: {
     if (m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE) {
-                    m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                    return;
+                    pCreature->DealDamage(pCreature, pCreature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                     };
-
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!m_pInstance) return;
-        
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
-    }
+    };
 };
-
-CreatureAI* GetAI_npc_toc5_announcer(Creature* pCreature)
-{
-    return new npc_toc5_announcerAI(pCreature);
-}
-
-bool GossipHello_npc_toc5_announcer(Player* pPlayer, Creature* pCreature)
-{
-
-    ScriptedInstance* m_pInstance;
-
-    if (!m_pInstance) return false;
-
-    if(!pPlayer->getAttackers().empty()) return true;
-
-//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED)
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[0].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+1);
-
-//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE 
-//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED)
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[1].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+2);
-
-//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE
-//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE
-//    && m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED)
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[2].name, GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+3);
-
-//    if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE
-//    && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE
-//    && m_pInstance->GetData(TYPE_BLACK_KNIGHT) == DONE)
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,  _GossipMessage[3].name, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+4);
-
-    pPlayer->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_toc5_announcer(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
-{
-    if (uiAction == GOSSIP_ACTION_INFO_DEF+1 ||
-    uiAction == GOSSIP_ACTION_INFO_DEF+2 ||
-    uiAction == GOSSIP_ACTION_INFO_DEF+3 ||
-    uiAction == GOSSIP_ACTION_INFO_DEF+4)
-    {
-    pPlayer->CLOSE_GOSSIP_MENU();
-    ((npc_toc5_announcerAI*)pCreature->AI())->StartEvent(pPlayer);
-    }
-    else pPlayer->CLOSE_GOSSIP_MENU();
 
     return true;
 }

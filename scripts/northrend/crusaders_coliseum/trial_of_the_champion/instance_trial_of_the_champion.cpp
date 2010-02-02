@@ -378,16 +378,20 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 			break;
 			case TYPE_GRAND_CHAMPIONS:
 				m_auiEncounter[0] = uiData;
-				if (uiData == DONE)
+                if (uiData == DONE)
                 {
                     if (GameObject* pChest = instance->GetGameObject(m_uiChampionsLootGUID))
                         if (pChest && !pChest->isSpawned())
                             pChest->SetRespawnTime(350000000);
                 }
+                if (uiData == FAIL)
+                {
+                      m_auiEncounter[0] = NOT_STARTED;
+                }
                 break;
             case TYPE_ARGENT_CHALLENGE:
 				m_auiEncounter[1] = uiData;
-				if (uiData == DONE)
+                  if (uiData == DONE)
                 {
 					if (m_uiArgentChallenger == m_uiEadricGUID)
 						if (GameObject* pChest = instance->GetGameObject(m_uiEadricLootGUID))
@@ -398,9 +402,17 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 							if (pChest && !pChest->isSpawned())
 								pChest->SetRespawnTime(350000000);
                 }
+                if (uiData == FAIL)
+                {
+                      m_auiEncounter[1] = NOT_STARTED;
+                }
                 break;
             case TYPE_BLACK_KNIGHT:
 				m_auiEncounter[2] = uiData;
+                if (uiData == FAIL)
+                {
+                      m_auiEncounter[2] = NOT_STARTED;
+                }
                 break;
         }
 
@@ -432,8 +444,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 				return m_uiChampion3;
 			case DATA_MEMORY:
 				return m_uiMemoryGUID;
+			case DATA_ARGENT_CHALLENGER:
+				return m_uiArgentChallengerID;
 			case DATA_BLACK_KNIGHT:
-			return m_uiBlackKnightGUID;
+				return m_uiBlackKnightGUID;
         }
 
         return 0;
@@ -464,7 +478,6 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
             case TYPE_GRAND_CHAMPIONS: return m_auiEncounter[0];
             case TYPE_ARGENT_CHALLENGE: return m_auiEncounter[1];
             case TYPE_BLACK_KNIGHT: return m_auiEncounter[2];
-            
         }
 
         return 0;

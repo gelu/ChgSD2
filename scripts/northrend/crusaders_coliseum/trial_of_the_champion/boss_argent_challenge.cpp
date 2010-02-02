@@ -26,6 +26,7 @@ EndScriptData */
 
 enum
 {
+        SPELL_BERSERK                           = 47008,
 	//yells
 
 	//eadric
@@ -70,7 +71,7 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 	uint32 Radiance_Timer;
 	uint32 Hammer_Timer;
 	uint32 Hammer_Dmg_Timer;
-	
+        uint32 m_uiBerserk_Timer;
 	uint64 HammerTarget;
 
     void Reset()
@@ -80,28 +81,18 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 		Radiance_Timer = m_bIsRegularMode ? 15000 : 8000;
 		Hammer_Timer = m_bIsRegularMode ? 40000 : 10000;
 		Hammer_Dmg_Timer = m_bIsRegularMode ? 45000 : 20000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		HammerTarget = 0;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
-	void EnterEvadeMode()
-	{
-	if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == IN_PROGRESS) {
-		if (m_creature->isAlive()) {
-		Vengeance_Timer = 1000;
-		Radiance_Timer = 15000;
-		Hammer_Timer = 40000;
-		Hammer_Dmg_Timer = 45000;
-		HammerTarget = 0;
-		m_creature->RemoveArenaAuras(true);
-		m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
-		m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
-		m_creature->SetHealth(m_creature->GetMaxHealth());
-		}
-		}
-	}
-
+      void EnterEvadeMode()
+      {
+        m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, FAIL);
+        m_creature->ForcedDespawn();
+      }
+      
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
@@ -151,7 +142,14 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 			Hammer_Dmg_Timer = m_bIsRegularMode ? 50000 : 15000;
 		}
 		else Hammer_Dmg_Timer -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };
@@ -179,7 +177,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 	uint32 Renew_Timer;
 	uint32 Shield_Delay;
 	uint32 Shield_Check;
-	
+        uint32 m_uiBerserk_Timer;
 	bool summoned;
 	bool shielded;
 
@@ -192,6 +190,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 		Renew_Timer = m_bIsRegularMode ? 7000 : 5000;
 		Shield_Delay = 0;
 		Shield_Check = 1000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		summoned = false;
 		shielded = false;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
@@ -205,26 +204,12 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
             summoned = true;
     }
 
-	void EnterEvadeMode()
-	{
-	if (m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == IN_PROGRESS) {
-	if (m_creature->isAlive()) {
-		m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
-		Smite_Timer = 5000;
-		Holy_Fire_Timer = m_bIsRegularMode ? 10000 : 5000;
-		Renew_Timer = m_bIsRegularMode ? 7000 : 5000;
-		Shield_Delay = 0;
-		Shield_Check = 1000;
-		summoned = false;
-		shielded = false;
-		m_creature->RemoveArenaAuras(true);
-		m_creature->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, m_creature->GetMonsterMoveFlags(), 1);
-		m_creature->GetMap()->CreatureRelocation(m_creature, 754.360779, 660.816162, 412.395996, 4.698700);
-		m_creature->SetHealth(m_creature->GetMaxHealth());
-		}
-		}
-	}
-
+      void EnterEvadeMode()
+      {
+        m_pInstance->SetData(TYPE_ARGENT_CHALLENGE, FAIL);
+        m_creature->ForcedDespawn();
+      }
+ 
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
@@ -359,7 +344,14 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 					shielded = false;
 				} else Shield_Check = 1000;
         }else Shield_Check -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };

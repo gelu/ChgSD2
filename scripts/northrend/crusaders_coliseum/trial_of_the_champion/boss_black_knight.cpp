@@ -26,6 +26,7 @@ EndScriptData */
 
 enum
 {
+        SPELL_BERSERK                           = 47008,
 	//yells
 
 	//undead
@@ -132,7 +133,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 	uint32 Mark_Timer;
 	uint32 Phase_Delay;
 	uint32 Summon_Ghoul;
-
+        uint32 m_uiBerserk_Timer;
 	bool phase1;
 	bool phase2;
 	bool phase3;
@@ -143,18 +144,18 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 		m_creature->SetRespawnDelay(999999999);
 		m_creature->SetDisplayId(29837);
 		SetEquipmentSlots(false, EQUIP_SWORD, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
-		Plague_Strike_Timer = 5000;
-		Icy_Touch_Timer = 10000;
-		Obliterate_Timer = 16000;
+		Plague_Strike_Timer = m_bIsRegularMode ? 5000 : 4000;
+		Icy_Touch_Timer = m_bIsRegularMode ? 10000 : 7000;
+		Obliterate_Timer = m_bIsRegularMode ? 16000 : 10000;
 		Choke_Timer = 15000;
 		Summon_Ghoul = 4000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		phase1 = true;
 		phase2 = false;
 		phase3 = false;
 		ghoul = false;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
-
     }
 
 	void EnterEvadeMode()
@@ -294,7 +295,14 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 			DoCast(m_creature, m_bIsRegularMode ? SPELL_DEATH : SPELL_DEATH_H);
 			Death_Timer = 3500;
         }else Death_Timer -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };

@@ -26,8 +26,9 @@ EndScriptData */
 
 enum
 {
+	//common
+	SPELL_BERSERK                           = 47008,
 	//yells
-
 	//warrior
 	SPELL_MORTAL_STRIKE			= 68783,
 	SPELL_MORTAL_STRIKE_H			= 68784,
@@ -79,6 +80,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 	uint32 Rolling_Throw_Timer;
 	uint32 Intercept_Cooldown;
 	uint32 intercept_check;
+        uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
@@ -86,6 +88,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		Mortal_Strike_Timer = m_bIsRegularMode ? 9000 : 6000;
 		Bladestorm_Timer = m_bIsRegularMode ? 30000 : 20000;
 		Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
+                m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Intercept_Cooldown = 0;
 		intercept_check = 1000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
@@ -93,54 +96,16 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 
     }
 
-	void EnterEvadeMode()
-	{
-	if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
-		{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-		}
-	}
+     void EnterEvadeMode()
+    {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                pTemp->ForcedDespawn();
+        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
+    }
 
 	void Aggro(Unit* pWho)
     {
@@ -211,7 +176,13 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 			intercept_check -= diff;
 			Intercept_Cooldown -= diff;
 		}
-		
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };
@@ -238,6 +209,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 	uint32 Blast_Wave_Timer;
 	uint32 Haste_Timer;
 	uint32 Polymorph_Timer;
+        uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
@@ -245,59 +217,22 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 		Fireball_Timer = 0;
 		Blast_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
 		Haste_Timer = m_bIsRegularMode ? 12000 : 9000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Polymorph_Timer = m_bIsRegularMode ? 12000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
-	void EnterEvadeMode()
-	{
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
-		{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-		}
-	}
+     void EnterEvadeMode()
+    {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                pTemp->ForcedDespawn();
+        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
+    }
 
 	void Aggro(Unit* pWho)
     {
@@ -360,7 +295,14 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 	DoCast(target, m_bIsRegularMode ? SPELL_POLYMORPH : SPELL_POLYMORPH_H);
             Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
         }else Polymorph_Timer -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };
@@ -391,6 +333,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 	float mob1_health;
 	float mob2_health;
 	float mob3_health;
+        uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
@@ -398,60 +341,23 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		Chain_Lightning_Timer = m_bIsRegularMode ? 2000 : 1000;
 		Earth_Shield_Timer = m_bIsRegularMode ? 10000 : 5000;
 		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Hex_Timer = m_bIsRegularMode ? 15000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
 
     }
 
-	void EnterEvadeMode()
-	{
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
-		{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-		}
-	}
+     void EnterEvadeMode()
+    {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                pTemp->ForcedDespawn();
+        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
+    }
 
 	void Aggro(Unit* pWho)
     {
@@ -559,7 +465,14 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 			}
             Earth_Shield_Timer = m_bIsRegularMode ? 35000 : 25000;
         }else Earth_Shield_Timer -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };
@@ -588,12 +501,14 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 	uint32 Disengage_Cooldown;
 	uint32 enemy_check;
 	uint32 disengage_check;
+        uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
 		Shoot_Timer = 0;
 		Lightning_Arrows_Timer = m_bIsRegularMode ? 18000 : 10000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Multi_Shot_Timer = m_bIsRegularMode ? 15000 : 8000;
 		Disengage_Cooldown = 0;
 		enemy_check = 1000;
@@ -603,54 +518,16 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
     }
 
-	void EnterEvadeMode()
-	{
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
-		{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-		}
-	}
+     void EnterEvadeMode()
+    {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                pTemp->ForcedDespawn();
+        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
+    }
 
 	void Aggro(Unit* pWho)
     {
@@ -734,7 +611,15 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 			}
 			disengage_check = 1000;
 		}else disengage_check -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
+
 		DoMeleeAttackIfReady();
 	}
 };
@@ -760,65 +645,29 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 	uint32 Eviscerate_Timer;
 	uint32 FoK_Timer;
 	uint32 Poison_Timer;
+        uint32 m_uiBerserk_Timer;
 
     void Reset()
     {
 		m_creature->SetRespawnDelay(999999999);
 		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 10000;
 		FoK_Timer = m_bIsRegularMode ? 15000 : 10000;
+		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Poison_Timer = m_bIsRegularMode ? 12000 : 5000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
-	void EnterEvadeMode()
-	{
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
-		{
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(738.665771, 661.031433, 412.394623, 4.698702, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 738.665771, 661.031433, 412.394623, 4.698702);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(746.864441, 660.918762, 411.695465, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 746.864441, 660.918762, 411.695465, 4.698700);
-			}
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-			if (!pTemp->isAlive())
-			{
-				pTemp->Respawn();
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-			else
-			{
-				pTemp->RemoveArenaAuras(true);
-				pTemp->SetHealth(pTemp->GetMaxHealth());
-				pTemp->SendMonsterMove(754.360779, 660.816162, 412.395996, 4.698700, pTemp->GetMonsterMoveFlags(), 1);
-				pTemp->GetMap()->CreatureRelocation(pTemp, 754.360779, 660.816162, 412.395996, 4.698700);
-			}
-		}
-	}
+     void EnterEvadeMode()
+    {
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                pTemp->ForcedDespawn();
+            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                pTemp->ForcedDespawn();
+        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
+    }
 
 	void Aggro(Unit* pWho)
     {
@@ -875,7 +724,14 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 				DoCast(m_creature, SPELL_POISON_BOTTLE);
             Poison_Timer = m_bIsRegularMode ? 10000 : 5000;
         }else Poison_Timer -= diff;
-		
+
+        if (m_uiBerserk_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_BERSERK);
+            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
+        }
+        else  m_uiBerserk_Timer -= diff;
+
 		DoMeleeAttackIfReady();
 	}
 };
