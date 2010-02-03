@@ -1,10 +1,10 @@
 
-#ifndef DEF_ICECROWN_SPIRE_H
-#define DEF_ICECROWN_SPIRE_H
+#ifndef DEF_ICECROWN_HALLS_H
+#define DEF_ICECROWN_HALLS_H
 
 enum
 {
-    MAX_ENCOUNTERS              = 15;
+    MAX_ENCOUNTERS              = 2;
 
     TYPE_BOSS_1                 = 1,
 

@@ -4,13 +4,13 @@
 
 enum
 {
-    MAX_ENCOUNTERS              = 15,
+    MAX_ENCOUNTERS              = 5,
     NPC_BARRENT                 = 34816,
 
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 35469,
-    NPC_L1                      = 34797,
-    NPC_L2                      = 34797,
+    NPC_DREADSCALE              = 34799,
+    NPC_ACIDMAW                 = 35144,
 
     NPC_JARAXXUS                = 34780,
 
@@ -34,11 +34,16 @@ enum
 
     NPC_ANUBARAK                = 34564,
     
-    TYPE_BEASTS                 = 1,
-    TYPE_JARAXXUS               = 2,
-    TYPE_CRUSADERS              = 3,
-    TYPE_FROJA                  = 4,
-    TYPE_ANUBARAK               = 5
+    GO_CHAMPIONS_CACHE_10       = 73111,
+    GO_CHAMPIONS_CACHE_25       = 73112,
+    GO_CHAMPIONS_CACHE_10_H     = 73113,
+    GO_CHAMPIONS_CACHE_25_H     = 73114,
+    
+    TYPE_BEASTS                 = 0,
+    TYPE_JARAXXUS               = 1,
+    TYPE_CRUSADERS              = 2,
+    TYPE_FROJA                  = 3,
+    TYPE_ANUBARAK               = 4
 
 };
 #endif

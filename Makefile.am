@@ -517,6 +517,13 @@ scripts/northrend/icecrown_citadel/spire/instance_icecrown_spire.cpp \
 scripts/northrend/icecrown_citadel/spire/boss_deathbringer_saurfang.cpp \
 scripts/northrend/icecrown_citadel/spire/boss_lady_deathwhisper.cpp \
 scripts/northrend/icecrown_citadel/spire/boss_lord_marrogwar.cpp \
+scripts/northrend/icecrown_citadel/forge_of_souls/instance_forge_of_souls.cpp \
+scripts/northrend/icecrown_citadel/forge_of_souls/boss_devourer_of_souls.cpp \
+scripts/northrend/icecrown_citadel/forge_of_souls/boss_bronjahm.cpp \
+scripts/northrend/icecrown_citadel/pit_of_saron/instance_pit_of_saron.cpp \
+scripts/northrend/icecrown_citadel/pit_of_saron/boss_forgemaster_garfrost.cpp \
+scripts/northrend/icecrown_citadel/pit_of_saron/boss_ick_and_krick.cpp \
+scripts/northrend/icecrown_citadel/pit_of_saron/boss_scourgelord_tirannus.cpp \
 scripts/world/areatrigger_scripts.cpp \
 scripts/world/boss_emeriss.cpp \
 scripts/world/boss_lethon.cpp \

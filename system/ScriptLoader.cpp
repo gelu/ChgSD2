@@ -372,6 +372,15 @@ extern void AddSC_boss_lord_marrogwar();
 extern void AddSC_boss_lady_deathwhisper();
 extern void AddSC_boss_deathbringer_saurfang();
 
+extern void AddSC_instance_forge_of_souls();
+extern void AddSC_boss_devourer_of_souls();
+extern void AddSC_boss_bronjahm();
+
+extern void AddSC_instance_pit_of_saron();
+extern void AddSC_boss_forgemaster_garfrost();
+extern void AddSC_boss_krick();
+extern void AddSC_boss_scourgelord_tirannus();
+
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
 extern void AddSC_boss_nexusprince_shaffar();               //auchindoun, mana_tombs
@@ -812,6 +821,15 @@ void AddScripts()
     AddSC_boss_lord_marrogwar();
     AddSC_boss_lady_deathwhisper();
     AddSC_boss_deathbringer_saurfang();
+
+    AddSC_instance_forge_of_souls();
+    AddSC_boss_devourer_of_souls();
+    AddSC_boss_bronjahm();
+
+    AddSC_instance_pit_of_saron();
+    AddSC_boss_forgemaster_garfrost();
+    AddSC_boss_krick();
+    AddSC_boss_scourgelord_tirannus();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts

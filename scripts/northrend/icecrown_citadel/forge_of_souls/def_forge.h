@@ -4,13 +4,13 @@
 
 enum
 {
-    MAX_ENCOUNTERS              = 15;
+    MAX_ENCOUNTERS                = 2,
 
-    TYPE_BOSS_1                 = 1,
+    TYPE_BRONJAHM                 = 0,
+    TYPE_DEVOURER                 = 1,
 
-    NPC_BOSS1                   = 33113,
-
-    GO_1                        = 194232
+    NPC_BRONJAHM                  = 36497,
+    NPC_DEVOURER                  = 33113
 
 };
 

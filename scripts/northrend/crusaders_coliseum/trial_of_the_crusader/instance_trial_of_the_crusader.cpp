@@ -26,28 +26,26 @@ EndScriptData */
 
 struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
 {
-    instance_trial_of_the_crusader(Map* pMap) : ScriptedInstance(pMap) { Initialize(); }
+    instance_trial_of_the_crusader(Map* pMap) : ScriptedInstance(pMap) { 
+    Difficulty = pMap->GetDifficulty();
+    Initialize(); 
+    }
 
     uint32 m_auiEncounter[MAX_ENCOUNTER+1];
-
+    uint8 Difficulty;
     std::string m_strInstData;
 
-    uint64 m_uiJacobGUID;
-    uint64 m_uiAmbroseGUID;
-    uint64 m_uiColososGUID;
-    uint64 m_uiJaelyneGUID;
-    uint64 m_uiLanaGUID;
-    uint64 m_uiMokraGUID;
-    uint64 m_uiEresseaGUID;
-    uint64 m_uiRunokGUID;
-    uint64 m_uiZultoreGUID;
-    uint64 m_uiVisceriGUID;
-    uint64 m_uicrusadersLootGUID;
-    uint64 m_uiEadricGUID;
-    uint64 m_uiEadricLootGUID;
-    uint64 m_uiPaletressGUID;
-    uint64 m_uiPaletressLootGUID;
-    uint64 m_uiBlackKnightGUID;
+    uint64 m_uiBarrentGUID;
+
+    uint64 m_uiGormokGUID;
+    uint64 m_uiAcidmawGUID;
+    uint64 m_uiDreadscaleGUID;
+    uint64 m_uiIcehowlGUID;
+    uint64 m_uiJaraxxusGUID;
+    uint64 m_uiDarkbaneGUID;
+    uint64 m_uiLightbaneGUID;
+
+    uint64 m_uiCrusadersCacheGUID;
 
     void Initialize()
     {
@@ -59,9 +57,15 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_JACOB:
-                m_uiJacobGUID = pCreature->GetGUID();
-                break;
+            case NPC_BARRENT: m_uiBarrentGUID = pCreature->GetGUID(); break;
+            case NPC_GORMOK: m_uiGormokGUID = pCreature->GetGUID(); break;
+            case NPC_ACIDMAW: m_uiAcidmawGUID = pCreature->GetGUID(); break;
+            case NPC_DREADSCALE: m_uiDreascaleGUID = pCreature->GetGUID(); break;
+            case NPC_ICEHOWL: m_uiIcehowlGUID = pCreature->GetGUID(); break;
+            case NPC_JARAXXUS: m_uiJaraxxusGUID = pCreature->GetGUID(); break;
+            case NPC_DARKBANE: m_uiDarkbaneGUID = pCreature->GetGUID(); break;
+            case NPC_LIGHTBANE: m_uiLightbaneGUID = pCreature->GetGUID(); break;
+            case NPC_ANUBARAK: m_uiBarrentGUID = pCreature->GetGUID(); break;
         }
     }
 
@@ -69,7 +73,22 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
-        case GO_crusaderS_LOOT: m_uicrusadersLootGUID = pGo->GetGUID(); break;
+        case GO_CRUSADERS_CACHE_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiCrusadersCacheGUID = pGo->GetGUID(); 
+                                  break;
+        case GO_CRUSADERS_CACHE_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiCrusadersCacheGUID = pGo->GetGUID(); 
+                                  break;
+        case GO_CRUSADERS_CACHE_10H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiCrusadersCacheGUID = pGo->GetGUID(); 
+                                  break;
+        case GO_CRUSADERS_CACHE_25H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiCrusadersCacheGUID = pGo->GetGUID(); 
+                                  break;
         }
     }
 
@@ -77,19 +96,11 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(uiType)
         {
-        case DATA_TOC_ANNOUNCER: m_uiAnnouncerGUID = uiData; break;
-        case TYPE_GRAND_crusaderS: m_auiEncounter[0] = uiData;
-                if (uiData == DONE)
-                {
-                    if (GameObject* pChest = instance->GetGameObject(m_uicrusadersLootGUID))
-                        if (pChest && !pChest->isSpawned())
-                            pChest->SetRespawnTime(350000000);
-                }
-                if (uiData == FAIL)
-                {
-                      m_auiEncounter[0] = NOT_STARTED;
-                }
-                break;
+        case TYPE_BEASTS:    m_auiEncounter[0] = uiData; break;
+        case TYPE_JARAXXUS:  m_auiEncounter[1] = uiData; break;
+        case TYPE_CRUSADERS: m_auiEncounter[2] = uiData; break;
+        case TYPE_FROJA:     m_auiEncounter[3] = uiData; break;
+        case TYPE_ANUBARAK:  m_auiEncounter[4] = uiData; break;
         }
 
         if (uiData == DONE)
@@ -112,7 +123,15 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(uiData)
         {
-         case DATA_crusader_1: return m_uicrusader1;
+         case NPC_BARRENT: return m_uiBarrentGUID;
+         case NPC_GORMOK: return m_uiGormokGUID;
+         case NPC_ACIDMAW: return m_uiAcidmawGUID;
+         case NPC_DREADSCALE: return m_uiDreascaleGUID;
+         case NPC_ICEHOWL: return m_uiIcehowlGUID;
+         case NPC_JARAXXUS: return  m_uiJaraxxusGUID;
+         case NPC_DARKBANE: return m_uiDarkbaneGUID;
+         case NPC_LIGHTBANE: return m_uiLightbaneGUID;
+         case NPC_ANUBARAK: return m_uiBarrentGUID;
         }
         return 0;
     }
@@ -121,10 +140,11 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(uiType)
         {
-            case DATA_crusaderID_1: return m_uicrusaderId1;
-            case TYPE_GRAND_crusaderS: return m_auiEncounter[0];
-            case TYPE_ARGENT_CHALLENGE: return m_auiEncounter[1];
-            case TYPE_BLACK_KNIGHT: return m_auiEncounter[2];
+            case TYPE_BEASTS: return m_auiEncounter[0];
+            case TYPE_JARAXXUS: return m_auiEncounter[1];
+            case TYPE_CRUSADERS: return m_auiEncounter[2];
+            case TYPE_FROJA: return m_auiEncounter[3];
+            case TYPE_ANUBARAK: return m_auiEncounter[4];
         }
 
         return 0;

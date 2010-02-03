@@ -1,16 +1,22 @@
 
-#ifndef DEF_ICECROWN_SPIRE_H
-#define DEF_ICECROWN_SPIRE_H
+#ifndef DEF_ICECROWN_PIT_H
+#define DEF_ICECROWN_PIT_H
 
 enum
 {
-    MAX_ENCOUNTERS              = 15;
+    MAX_ENCOUNTERS              = 4,
 
-    TYPE_BOSS_1                 = 1,
+    TYPE_GARFROST                 = 0,
+    TYPE_KRICK                    = 1,
+    TYPE_ICK                      = 2,
+    TYPE_TIRANNUS                 = 3,
 
-    NPC_BOSS1                   = 33113,
+    NPC_GARFROST                 = 36494,
+    NPC_KRICK                    = 36477,
+    NPC_ICK                      = 36476,
+    NPC_TIRANNUS                 = 36658
 
-    GO_1                        = 194232
+//    GO_1                        = 194232
 
 };
 
