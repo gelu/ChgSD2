@@ -96,23 +96,11 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 
     }
 
-     void EnterEvadeMode()
-    {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-                pTemp->ForcedDespawn();
-        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-    }
 
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-			m_creature->ForcedDespawn();
 		else
 		{
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
@@ -128,16 +116,24 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		}
     }
 
-	void JustDied(Unit* pKiller)
-	{
-		if (!m_pInstance)
-			return;
+        void JustDied(Unit* pKiller)
+        {
+        if (!m_pInstance)
+         return;
 
-	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
-		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-	}
+        if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
+              m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+             }
+        }
 
 	void UpdateAI(const uint32 diff)
     {
@@ -223,23 +219,10 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
-     void EnterEvadeMode()
-    {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-                pTemp->ForcedDespawn();
-        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-    }
-
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-			m_creature->ForcedDespawn();
 		else
 		{
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
@@ -255,16 +238,24 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 		}
     }
 
-	void JustDied(Unit* pKiller)
-	{
-		if (!m_pInstance)
-			return;
+        void JustDied(Unit* pKiller)
+        {
+        if (!m_pInstance)
+         return;
 
-	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
-		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-	}
+        if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
+              m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+             }
+        }
 
 	void UpdateAI(const uint32 diff)
     {
@@ -348,23 +339,10 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 
     }
 
-     void EnterEvadeMode()
-    {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-                pTemp->ForcedDespawn();
-        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-    }
-
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-			m_creature->ForcedDespawn();
 		else
 		{
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
@@ -380,16 +358,24 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		}
     }
 
-	void JustDied(Unit* pKiller)
-	{
-		if (!m_pInstance)
-			return;
+        void JustDied(Unit* pKiller)
+        {
+        if (!m_pInstance)
+         return;
 
-	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
-		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-	}
+        if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
+              m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+             }
+        }
 
 	void UpdateAI(const uint32 diff)
     {
@@ -518,23 +504,10 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
     }
 
-     void EnterEvadeMode()
-    {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-                pTemp->ForcedDespawn();
-        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-    }
-
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-			m_creature->ForcedDespawn();
 		else
 		{
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
@@ -550,16 +523,24 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 		}
     }
 
-	void JustDied(Unit* pKiller)
-	{
-		if (!m_pInstance)
-			return;
+        void JustDied(Unit* pKiller)
+        {
+        if (!m_pInstance)
+         return;
 
-	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
-		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-	}
+        if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
+              m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+             }
+        }
 
 	void UpdateAI(const uint32 diff)
     {
@@ -658,23 +639,10 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
                 m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
     }
 
-     void EnterEvadeMode()
-    {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
-                pTemp->ForcedDespawn();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
-                pTemp->ForcedDespawn();
-        m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, FAIL);
-    }
-
 	void Aggro(Unit* pWho)
     {
 		if (!m_pInstance)
 			return;
-		if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
-			m_creature->ForcedDespawn();
 		else
 		{
 			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
@@ -690,16 +658,24 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 		}
     }
 
-	void JustDied(Unit* pKiller)
-	{
-		if (!m_pInstance)
-			return;
+        void JustDied(Unit* pKiller)
+        {
+        if (!m_pInstance)
+         return;
 
-	m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_pInstance->SetData(DATA_CHAMPIONS_COUNT, m_pInstance->GetData(DATA_CHAMPIONS_COUNT) - 1);
+        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
 
-	if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1)
-		m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-	}
+        if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
+              m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                          pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+             }
+        }
 
 	void UpdateAI(const uint32 diff)
     {

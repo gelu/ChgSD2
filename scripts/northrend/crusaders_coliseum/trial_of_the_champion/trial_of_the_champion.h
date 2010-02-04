@@ -77,7 +77,9 @@ enum
 	GO_EADRIC_LOOT              = 195374,
 	GO_EADRIC_LOOT_H            = 195375,
 	GO_PALETRESS_LOOT           = 195323,
-	GO_PALETRESS_LOOT_H         = 195324
+	GO_PALETRESS_LOOT_H         = 195324,
+
+	DESPAWN_TIME                = 300000
 
 };
 
