@@ -255,6 +255,9 @@ extern void AddSC_ungoro_crater();
 extern void AddSC_winterspring();
 
 //northrend
+extern void AddSC_trial_of_the_crusader();                            //trial_of_the_crusader
+extern void AddSC_instance_trial_of_the_crusader();
+
 extern void AddSC_trial_of_the_champion();                            //trial_of_the_champion
 extern void AddSC_boss_argent_challenge(); 
 extern void AddSC_boss_black_knight();
@@ -705,11 +708,14 @@ void AddScripts()
     AddSC_winterspring();
 
     //northrend
-	AddSC_trial_of_the_champion();							//trial_of_the_champion
-	AddSC_boss_argent_challenge();
-	AddSC_boss_black_knight();
-	AddSC_boss_grand_champions();
-	AddSC_instance_trial_of_the_champion();
+    AddSC_trial_of_the_crusader();                            //trial_of_the_crusader
+    AddSC_instance_trial_of_the_crusader();
+
+    AddSC_trial_of_the_champion();                            //trial_of_the_champion
+    AddSC_boss_argent_challenge();
+    AddSC_boss_black_knight();
+    AddSC_boss_grand_champions();
+    AddSC_instance_trial_of_the_champion();
 
     AddSC_boss_jedoga();                                    //ahnkahet
     AddSC_boss_nadox();

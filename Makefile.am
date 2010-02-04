@@ -495,6 +495,9 @@ scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_grand_champions.
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/instance_trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.h \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/instance_trial_of_the_crusader.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/trial_of_the_crusader.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/trial_of_the_crusader.h \
 scripts/northrend/violet_hold/def_violet_hold.h \
 scripts/northrend/violet_hold/violet_hold.cpp \
 scripts/northrend/violet_hold/boss_cyanigosa.cpp \
