@@ -57,10 +57,12 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
+    bool flag25;
 
     void Reset()
     {
     m_pInstance->SetData(TYPE_STAGE,0);
+    flag25 = true;
     }
 
     void UpdateAI(const uint32 diff)
@@ -87,10 +89,12 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DREADSCALE))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_ACIDMAW))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                         }
                  break;
@@ -107,6 +111,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_ICEHOWL))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                         }
                  break;
@@ -123,6 +128,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_JARAXXUS))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                         }
                  break;
@@ -135,8 +141,22 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                 Creature* pTemp4 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_4));
                 Creature* pTemp5 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_5));
                 Creature* pTemp6 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_6));
+                          if (m_pInstance->GetData(TYPE_DIFFICULTY) == 25) {
+                                 Creature* pTemp7 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_7));
+                                 Creature* pTemp8 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_8));
+                                 Creature* pTemp9 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_9));
+                                 Creature* pTemp10 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_1_10));
+                                 Creature* pTemp11 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_0_1));
+                                 Creature* pTemp12 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_0_1));
+                                 if (pTemp7 && pTemp8 && pTemp9 && pTemp10 && pTemp11 && pTemp12) {
+                                    if (!pTemp7->isAlive() && !pTemp8->isAlive() && !pTemp9->isAlive() && !pTemp10->isAlive() && !pTemp11->isAlive() && !pTemp12->isAlive())
+                                        flag25 = true;
+                                        else flag25 = false;
+                                 }
+                          } else flag25 = true;
+
                 if (pTemp1 && pTemp2 && pTemp3 && pTemp4 && pTemp5 && pTemp6) {
-                    if (!pTemp1->isAlive() && !pTemp2->isAlive() && !pTemp3->isAlive() && !pTemp4->isAlive() && !pTemp5->isAlive() && !pTemp6->isAlive()) {
+                    if (!pTemp1->isAlive() && !pTemp2->isAlive() && !pTemp3->isAlive() && !pTemp4->isAlive() && !pTemp5->isAlive() && !pTemp6->isAlive() && flag25) {
                         m_pInstance->SetData(TYPE_STAGE,0);
                         m_pInstance->SetData(TYPE_CRUSADERS,DONE);
                         }
@@ -151,8 +171,22 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                 Creature* pTemp4 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_4));
                 Creature* pTemp5 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_5));
                 Creature* pTemp6 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_6));
+                          if (m_pInstance->GetData(TYPE_DIFFICULTY) == 25) {
+                                 Creature* pTemp7 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_7));
+                                 Creature* pTemp8 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_8));
+                                 Creature* pTemp9 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_9));
+                                 Creature* pTemp10 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_2_10));
+                                 Creature* pTemp11 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_0_1));
+                                 Creature* pTemp12 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_CRUSADER_0_1));
+                                 if (pTemp7 && pTemp8 && pTemp9 && pTemp10 && pTemp11 && pTemp12) {
+                                    if (!pTemp7->isAlive() && !pTemp8->isAlive() && !pTemp9->isAlive() && !pTemp10->isAlive() && !pTemp11->isAlive() && !pTemp12->isAlive())
+                                        flag25 = true;
+                                        else flag25 = false;
+                                 }
+                          } else flag25 = true;
+
                 if (pTemp1 && pTemp2 && pTemp3 && pTemp4 && pTemp5 && pTemp6) {
-                    if (!pTemp1->isAlive() && !pTemp2->isAlive() && !pTemp3->isAlive() && !pTemp4->isAlive() && !pTemp5->isAlive() && !pTemp6->isAlive()) {
+                    if (!pTemp1->isAlive() && !pTemp2->isAlive() && !pTemp3->isAlive() && !pTemp4->isAlive() && !pTemp5->isAlive() && !pTemp6->isAlive() && flag25) {
                         m_pInstance->SetData(TYPE_STAGE,0);
                         m_pInstance->SetData(TYPE_CRUSADERS,DONE);
                         }
@@ -232,6 +266,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_GORMOK))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
     break;
@@ -247,6 +282,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_JARAXXUS))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
     break;
@@ -262,6 +298,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_1))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_2)))
@@ -271,6 +308,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_2))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_3)))
@@ -280,6 +318,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_3))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_4)))
@@ -289,6 +328,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_4))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_5)))
@@ -298,6 +338,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_5))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_6)))
@@ -307,8 +348,71 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_6))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
+                          if (m_pInstance->GetData(TYPE_DIFFICULTY) == 25) {
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_7)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_1_7, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_7))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_8)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_1_8, SpawnLoc[10].x, SpawnLoc[10].y, SpawnLoc[10].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_8))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_9)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_1_9, SpawnLoc[11].x, SpawnLoc[11].y, SpawnLoc[11].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_9))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_10)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_1_10, SpawnLoc[12].x, SpawnLoc[12].y, SpawnLoc[12].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_1_10))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_1)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_0_1, SpawnLoc[13].x, SpawnLoc[13].y, SpawnLoc[13].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_1))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_2)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_0_2, SpawnLoc[14].x, SpawnLoc[14].y, SpawnLoc[14].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_2))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                            }
     break;
     };
 
@@ -322,6 +426,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_1))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_2)))
@@ -331,6 +436,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_2))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_3)))
@@ -340,6 +446,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_3))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_4)))
@@ -349,6 +456,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_4))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_5)))
@@ -358,6 +466,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_5))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_6)))
@@ -367,7 +476,70 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_6))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
+                          }
+                          if (m_pInstance->GetData(TYPE_DIFFICULTY) == 25) {
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_7)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_2_7, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_7))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_8)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_2_8, SpawnLoc[10].x, SpawnLoc[10].y, SpawnLoc[10].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_8))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_9)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_2_9, SpawnLoc[11].x, SpawnLoc[11].y, SpawnLoc[11].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_9))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_10)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_2_10, SpawnLoc[12].x, SpawnLoc[12].y, SpawnLoc[12].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_2_10))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_1)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_0_1, SpawnLoc[13].x, SpawnLoc[13].y, SpawnLoc[13].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_1))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
+                                   if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_2)))
+                                       pTemp->Respawn();
+                                   else {
+                                       pCreature->SummonCreature(NPC_CRUSADER_0_2, SpawnLoc[14].x, SpawnLoc[14].y, SpawnLoc[14].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_CRUSADER_0_2))) {
+                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                           pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                           pTemp->SetInCombatWithZone();
+                                           }
+                                         }
                           }
     break;
     };
@@ -382,6 +554,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_LIGHTBANE))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
             if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_DARKBANE)))
@@ -391,6 +564,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_DARKBANE))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
     break;
@@ -406,6 +580,7 @@ switch(uiAction) {
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(NPC_ANUBARAK))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                                pTemp->SetInCombatWithZone();
                                 }
                           }
     break;
