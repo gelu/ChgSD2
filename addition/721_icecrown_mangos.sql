@@ -39,5 +39,5 @@ UPDATE `instance_template` SET `script`='instance_icecrown_spire' WHERE `map`=63
 
 -- UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
 -- UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
--- UPDATE `creature_template` SET `ScriptName`='boss_lord_marrogwar' WHERE `entry`=36612;
+UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`= 36612;
 

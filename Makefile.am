@@ -519,7 +519,7 @@ scripts/northrend/icecrown_citadel/spire/icecrown_teleport.cpp \
 scripts/northrend/icecrown_citadel/spire/instance_icecrown_spire.cpp \
 scripts/northrend/icecrown_citadel/spire/boss_deathbringer_saurfang.cpp \
 scripts/northrend/icecrown_citadel/spire/boss_lady_deathwhisper.cpp \
-scripts/northrend/icecrown_citadel/spire/boss_lord_marrogwar.cpp \
+scripts/northrend/icecrown_citadel/spire/boss_lord_marrowgar.cpp \
 scripts/northrend/icecrown_citadel/forge_of_souls/instance_forge_of_souls.cpp \
 scripts/northrend/icecrown_citadel/forge_of_souls/boss_devourer_of_souls.cpp \
 scripts/northrend/icecrown_citadel/forge_of_souls/boss_bronjahm.cpp \

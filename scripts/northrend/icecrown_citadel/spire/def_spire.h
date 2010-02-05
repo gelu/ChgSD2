@@ -7,7 +7,7 @@ enum
     MAP_NUM                     = 631,
     MAX_ENCOUNTERS              = 15,
 
-    TYPE_MARROGWAR              = 1,
+    TYPE_MARROWGAR              = 1,
     TYPE_DEATHWHISPER            = 2,
     TYPE_SKULLS_PLATO           = 3,
     TYPE_FLIGHT_WAR             = 4,
@@ -15,7 +15,7 @@ enum
 
     BASE_CAMP                   = 1000,
 
-    NPC_LORD_MARROGWAR          = 36612,
+    NPC_LORD_MARROWGAR          = 36612,
     NPC_LADY_DEATHWHISPER        = 36855,
     NPC_DEATHBRINGER_SAURFANG   = 37813,
 

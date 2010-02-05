@@ -62,7 +62,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_LORD_MARROGWAR: 
+            case NPC_LORD_MARROWGAR: 
                          m_uiMarrogwarGUID = pCreature->GetGUID();
                          break;
             case NPC_LADY_DEATHWHISPER: 
@@ -84,7 +84,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_MARROGWAR:
+            case TYPE_MARROWGAR:
                 if(uiData == IN_PROGRESS)
                 {
                     needSave = true;
@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
-             case TYPE_MARROGWAR:     return m_auiEncounter[0];
+             case TYPE_MARROWGAR:     return m_auiEncounter[0];
              case TYPE_DEATHWHISPER:   return m_auiEncounter[1];
              case TYPE_SKULLS_PLATO:  return m_auiEncounter[2];
              case TYPE_FLIGHT_WAR:    return m_auiEncounter[3];
@@ -136,7 +136,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiData)
         {
-            case NPC_LORD_MARROGWAR: 
+            case NPC_LORD_MARROWGAR: 
                                      return m_uiMarrogwarGUID;
             case NPC_LADY_DEATHWHISPER:
                                      return m_uiDeathWhisperGUID;
