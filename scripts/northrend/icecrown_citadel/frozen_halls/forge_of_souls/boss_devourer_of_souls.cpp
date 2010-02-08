@@ -1,24 +1,64 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
-
-/* ScriptData
-SDName: boss_devourer_of_souls
-SD%Complete: 0%
-SDComment:
-SDCategory: The Forge of Souls
-EndScriptData */
-
 #include "precompiled.h"
+#include "def_forge.h"
+enum
+{
+        //common
+        SPELL_BERSERK                           = 47008,
+        //yells
+        //Abilities
+        SPELL_PHANTOM_BLAST_N                   = 68982,
+        SPELL_MIRRORED_SOUL_N                   = 69051,
+        SPELL_WELL_OF_SOULS_N                   = 68820,
+        SPELL_UNLEASHED_SOULS_N                 = 68939,
+        SPELL_WAILING_SOULS_N                   = 68873
+};
+
+struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
+{
+    boss_devourer_of_soulsAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+
+    bool Regular;
+    ScriptedInstance *pInstance;
+
+    void Reset()
+    {
+        if(pInstance) pInstance->SetData(TYPE_DEVOURER, NOT_STARTED);
+    }
+
+    void Aggro(Unit *who) 
+    {
+        if(pInstance) pInstance->SetData(TYPE_DEVOURER, IN_PROGRESS);
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if(pInstance) pInstance->SetData(TYPE_DEVOURER, DONE);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_boss_devourer_of_souls(Creature* pCreature)
+{
+    return new boss_devourer_of_soulsAI(pCreature);
+}
+
+void AddSC_boss_devourer_of_souls()
+{
+    Script *newscript;
+    newscript = new Script;
+    newscript->Name = "boss_devourer_of_souls";
+    newscript->GetAI = &GetAI_boss_devourer_of_souls;
+    newscript->RegisterSelf();
+}
