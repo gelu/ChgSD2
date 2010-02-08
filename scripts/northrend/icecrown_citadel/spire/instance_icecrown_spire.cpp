@@ -35,6 +35,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiDeathWhisperGUID;
     uint64 m_uiSaurfangGUID;
 
+    uint64 m_uiIcewall1GUID;
+    uint64 m_uiIcewall2GUID;
+
     void OpenDoor(uint64 guid)
     {
         if(!guid) return;
@@ -78,6 +81,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
+            case GO_ICEWALL_1: 
+                         m_uiIcewall1GUID = pGo->GetGUID();
+                         break;
+            case GO_ICEWALL_2: 
+                         m_uiIcewall2GUID = pGo->GetGUID();
+                         break;
         }
     }
     void SetData(uint32 uiType, uint32 uiData)
@@ -85,17 +94,24 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         switch(uiType)
         {
             case TYPE_MARROWGAR:
-                if(uiData == IN_PROGRESS)
-                {
-                    needSave = true;
+                m_auiEncounter[1] = uiData; 
+                if (uiData == DONE) {
+                OpenDoor(m_uiIcewall1GUID);
+                OpenDoor(m_uiIcewall1GUID);
                 }
-                if(uiData == DONE) m_auiEncounter[0] = uiData; 
                 break;
              case TYPE_DEATHWHISPER:
+                m_auiEncounter[2] = uiData; 
+                break;
              case TYPE_SKULLS_PLATO:
+                m_auiEncounter[3] = uiData; 
+                break;
              case TYPE_FLIGHT_WAR:
+                m_auiEncounter[4] = uiData; 
+                break;
              case TYPE_SAURFANG:
-             break;
+                m_auiEncounter[5] = uiData; 
+                break;
         }
 
         if (uiData == DONE)
@@ -123,11 +139,11 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
-             case TYPE_MARROWGAR:     return m_auiEncounter[0];
-             case TYPE_DEATHWHISPER:   return m_auiEncounter[1];
-             case TYPE_SKULLS_PLATO:  return m_auiEncounter[2];
-             case TYPE_FLIGHT_WAR:    return m_auiEncounter[3];
-             case TYPE_SAURFANG:      return m_auiEncounter[4];
+             case TYPE_MARROWGAR:     return m_auiEncounter[1];
+             case TYPE_DEATHWHISPER:   return m_auiEncounter[2];
+             case TYPE_SKULLS_PLATO:  return m_auiEncounter[3];
+             case TYPE_FLIGHT_WAR:    return m_auiEncounter[4];
+             case TYPE_SAURFANG:      return m_auiEncounter[5];
         }
         return 0;
     }
