@@ -345,7 +345,6 @@ scripts/northrend/icecrown_citadel/icecrown_citadel/boss_lady_deathwhisper.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_lord_marrowgar.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/blood_prince_council.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_blood_queen_lanathel.cpp \
-scripts/northrend/icecrown_citadel/icecrown_citadel/boss_deathbringer_saurfang.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_festergut.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_proffesor_putricide.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_rotface.cpp \

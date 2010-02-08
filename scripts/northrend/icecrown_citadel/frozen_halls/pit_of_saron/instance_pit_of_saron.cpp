@@ -31,7 +31,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
 
     //Creatures GUID
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
-    uint64 m_uiGarfrostGUID;
+    uint64 m_uiGafrostGUID;
     uint64 m_uiKrickGUID;
     uint64 m_uiIckGUID;
     uint64 m_uiTirannusGUID;
@@ -54,7 +54,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
-        m_uiGarfrostGUID =0;
+        m_uiGafrostGUID =0;
         m_uiKrickGUID =0;
         m_uiIckGUID =0;
         m_uiTirannusGUID =0;
@@ -64,7 +64,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_GARFROST: m_uiGarfrostGUID = pCreature->GetGUID(); break;
+            case NPC_GAFROST:  m_uiGafrostGUID = pCreature->GetGUID(); break;
             case NPC_KRICK:    m_uiKrickGUID = pCreature->GetGUID(); break;
             case NPC_ICK:      m_uiIckGUID = pCreature->GetGUID(); break;
             case NPC_TIRANNUS: m_uiTirannusGUID = pCreature->GetGUID(); break;
@@ -81,7 +81,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_GARFROST: m_auiEncounter[0] = uiData; break;
+            case TYPE_GAFROST: m_auiEncounter[0] = uiData; break;
             case TYPE_KRICK: m_auiEncounter[1] = uiData; break;
             case TYPE_ICK: m_auiEncounter[2] = uiData; break;
             case TYPE_TIRANNUS: m_auiEncounter[3] = uiData; break;
@@ -112,7 +112,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_GARFROST: return m_auiEncounter[0];
+            case TYPE_GAFROST: return m_auiEncounter[0];
             case TYPE_KRICK: return m_auiEncounter[1];
             case TYPE_ICK: return m_auiEncounter[2];
             case TYPE_TIRANNUS: return m_auiEncounter[3];
@@ -124,7 +124,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiData)
         {
-            case NPC_GARFROST: return m_uiGarfrostGUID;
+            case NPC_GAFROST:  return m_uiGafrostGUID;
             case NPC_KRICK:    return m_uiKrickGUID;
             case NPC_ICK:      return m_uiIckGUID;
             case NPC_TIRANNUS: return m_uiTirannusGUID;

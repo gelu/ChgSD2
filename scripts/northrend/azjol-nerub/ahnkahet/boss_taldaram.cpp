@@ -302,7 +302,7 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
 
             }
             m_bIsFlying = true;
-            m_creature->AddMonsterMoveFlag(MONSTER_MOVE_SPLINE_FLY);
+            m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
         }else m_uiCast_Timer -= uiDiff;
     }
 };

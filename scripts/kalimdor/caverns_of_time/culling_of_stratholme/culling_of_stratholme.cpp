@@ -262,7 +262,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                 DoScriptText(SAY_PHASE502, Arthas);
                 break;
 			case 3: 
-                Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                 DoScriptText(SAY_PHASE505, Arthas);
                 break;
 			case 4:
@@ -285,7 +285,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                 DoScriptText(SAY_PHASE510, Arthas);
                 break;
             case 11:
-                Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                 break; 
 			case 13: 
                 DoScriptText(SAY_PHASE508,Arthas);
@@ -318,7 +318,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
             case 19:
                 break;
             case 20:
-                Arthas->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->AddSplineFlag(SPLINEFLAG_WALKMODE);
                 break;
             case 23:
                 DoScriptText(SAY_PHASE503,Arthas);
@@ -333,14 +333,14 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                 break;
             case 32:
                 DoScriptText(SAY_PHASE601,Arthas);
-                Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                 break;
 			case 34: 
-                Arthas->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->AddSplineFlag(SPLINEFLAG_WALKMODE);
                 DoScriptText(SAY_PHASE602,Arthas);
                 break;
 			case 35: 
-                Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                 DoScriptText(SAY_PHASE603,Arthas);
                 break;
             case 40:
@@ -431,7 +431,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
 				case 1:
 					PhaseC = true;
                     Arthas = m_creature;                   
-                    Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                     Uther = Arthas->SummonCreature(26528,1794.357f,1272.183f,140.558f,1.37f,TEMPSUMMON_TIMED_DESPAWN,180000);
 
 					if (Creature* pJaina = GetClosestCreatureWithEntry(Arthas, NPC_JAINA, 50.0f))
@@ -440,7 +440,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
 					if (m_pInstance)
 						m_pInstance->SetData(TYPE_ARTHAS_EVENT, NOT_STARTED);
 
-					Uther->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+					Uther->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                     Arthas->GetMotionMaster()->MovePoint(0, 1903.167f, 1291.573f, 143.32f);
                     Uther->GetMotionMaster()->MovePoint(0, 1897.018f, 1287.487f, 143.481f);
                     Arthas->SetUInt64Value(UNIT_FIELD_TARGET, Uther->GetGUID());
@@ -459,7 +459,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                     phasetim = 8000;
                     break;
 				case 7:
-                    Arthas->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Arthas->AddSplineFlag(SPLINEFLAG_WALKMODE);
                     DoScriptText(SAY_INTRO03, Arthas);
                     Arthas->GetMotionMaster()->MovePoint(0, 1911.087f, 1314.263f, 150.026f);
                     ++phase;
@@ -528,7 +528,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                     phasetim = 4000;
                     break;
 				case 33:
-                    Uther->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Uther->AddSplineFlag(SPLINEFLAG_WALKMODE);
                     Uther->GetMotionMaster()->MovePoint(0, 1794.357f,1272.183f,140.558f);
                     ++phase;
                     phasetim = 1000;
@@ -567,7 +567,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                     phasetim = 10000;
                     break;
 				case 47:
-                    Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                     Arthas->SetUInt64Value(UNIT_FIELD_TARGET, 0);
                     Jaina->SetVisibility(VISIBILITY_OFF);
                     Uther->SetVisibility(VISIBILITY_OFF);
@@ -611,7 +611,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                     break;
 				case 61:
                     Arthas->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-                    Arthas->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Arthas->AddSplineFlag(SPLINEFLAG_WALKMODE);
                     Arthas->GetMotionMaster()->MovePoint(0, 2081.447f,1287.770f,141.3241f);
                     ++phase;
                     phasetim = 15000;
@@ -619,7 +619,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
 				case 63:
                     Arthas->SetUInt64Value(UNIT_FIELD_TARGET, Cityman->GetGUID());
                     Cityman->SetUInt64Value(UNIT_FIELD_TARGET, Arthas->GetGUID());
-                    Cityman->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Cityman->AddSplineFlag(SPLINEFLAG_WALKMODE);
                     Cityman->GetMotionMaster()->MovePoint(0, 2088.625f,1279.191f,140.743f);
                     ++phase;
                     phasetim = 2000;
@@ -720,7 +720,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
                     break;
 				case 87: 
                     DoScriptText(SAY_ENTER07, TempMalganis);
-                    Arthas->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Arthas->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                     ++phase;
                     phasetim = 17000;
 					if (SalrammGUID = m_pInstance->GetData64(DATA_SALRAMM)) 
@@ -732,7 +732,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
 							// set his flags back to be atackable if there is no cd on this boss
 							Salramm->SetVisibility(VISIBILITY_ON);
 							Salramm->setFaction(14);
-							Salramm->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+							Salramm->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
 							Salramm->GetMotionMaster()->MovePoint(0, 2165.110f,1284.64f,133.29f);
 						}
 						// already has ben killed as the db says so needs to die or just leave him with invisible flag
@@ -933,7 +933,7 @@ struct MANGOS_DLL_DECL npc_patriciaAI : public ScriptedAI
 							Meathook->SetDeadByDefault(true);
 						}
 					}
-                    Patricia->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                    Patricia->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                     DoScriptText(SAY_PEOPLE06, Patricia);
                     Patricia->GetMotionMaster()->MovePoint(0, 2395.487f,1203.199f,134.125f); 
                     ++Step;

@@ -92,7 +92,7 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 		Intercept_Cooldown = 0;
 		intercept_check = 1000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
 
     }
 
@@ -216,7 +216,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Polymorph_Timer = m_bIsRegularMode ? 12000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     }
 
 	void Aggro(Unit* pWho)
@@ -335,7 +335,7 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Hex_Timer = m_bIsRegularMode ? 15000 : 10000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
 
     }
 
@@ -500,7 +500,7 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 		enemy_check = 1000;
 		disengage_check;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
 
     }
 
@@ -636,7 +636,7 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
 		Poison_Timer = m_bIsRegularMode ? 12000 : 5000;
 		m_creature->GetMotionMaster()->MovePoint(0, 746, 614, m_creature->GetPositionZ());
-                m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+                m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     }
 
 	void Aggro(Unit* pWho)

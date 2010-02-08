@@ -97,7 +97,7 @@ struct MANGOS_DLL_DECL boss_lavanthorAI : public ScriptedAI
     {
         if (m_pInstance->GetData(TYPE_LAVANTHOR) == SPECIAL && !MovementStarted) {
         m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
-        m_creature->AddMonsterMoveFlag(MONSTER_MOVE_WALK);
+        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;

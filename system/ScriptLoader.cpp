@@ -380,7 +380,7 @@ extern void AddSC_boss_devourer_of_souls();
 extern void AddSC_boss_bronjahm();
 
 extern void AddSC_instance_pit_of_saron();
-extern void AddSC_boss_forgemaster_garfrost();
+extern void AddSC_boss_forgemaster_gafrost();
 extern void AddSC_boss_krick();
 extern void AddSC_boss_scourgelord_tirannus();
 
@@ -833,7 +833,7 @@ void AddScripts()
     AddSC_boss_bronjahm();
 
     AddSC_instance_pit_of_saron();
-    AddSC_boss_forgemaster_garfrost();
+    AddSC_boss_forgemaster_gafrost();
     AddSC_boss_krick();
     AddSC_boss_scourgelord_tirannus();
 
