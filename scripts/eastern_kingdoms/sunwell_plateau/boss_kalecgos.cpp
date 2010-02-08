@@ -152,7 +152,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             {
                 damage = 0;
                 m_bBanished = true;
-                DoCast(m_creature, SPELL_BANISH, true);
+                DoCastSpellIfCan(m_creature, SPELL_BANISH, true);
                 m_creature->GetMotionMaster()->MoveIdle();
             }
             else
@@ -214,7 +214,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             pSathrovarr->DealDamage(pSathrovarr, pSathrovarr->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
             pSathrovarr->GetMap()->CreatureRelocation(pSathrovarr, KALECGOS_ARENA[0], KALECGOS_ARENA[1], KALECGOS_ARENA[2], 0.0f);
-            pSathrovarr->SendMonsterMove(KALECGOS_ARENA[0], KALECGOS_ARENA[1], KALECGOS_ARENA[2], 0, MONSTER_MOVE_NONE, 0);
+            pSathrovarr->SendMonsterMove(KALECGOS_ARENA[0], KALECGOS_ARENA[1], KALECGOS_ARENA[2], 0, SPLINEFLAG_NONE, 0);
         }
 
         if (Creature* pKalec = m_pInstance->instance->GetCreature(m_pInstance->GetData64(DATA_KALECGOS_HUMAN)))
@@ -268,7 +268,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             if (!m_bUncorrupted)
             {
                 m_bBanished = true;
-                DoCast(m_creature, SPELL_BANISH, true);
+                DoCastSpellIfCan(m_creature, SPELL_BANISH, true);
                 m_creature->GetMotionMaster()->MoveIdle();
             }
             else
@@ -296,7 +296,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             if (!urand(0, 2))
                 DoScriptText(SAY_EVIL_SPELL1, m_creature);
 
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_BUFFET);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_BUFFET);
             m_uiArcaneBuffetTimer = 20000;
         }
         else
@@ -307,7 +307,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             if (!urand(0, 1))
                 DoScriptText(SAY_EVIL_SPELL2, m_creature);
 
-            DoCast(m_creature->getVictim(), SPELL_FROST_BREATH);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_BREATH);
             m_uiFrostBreathTimer = 25000;
         }
         else
@@ -316,7 +316,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
         if (m_uiWildMagicTimer < diff)
         {
             if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(target, WildMagic[rand()%6]);
+                DoCastSpellIfCan(target, WildMagic[rand()%6]);
 
             m_uiWildMagicTimer = 19000;
         }
@@ -385,7 +385,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
         if (damage > m_creature->GetHealth())
         {
             damage = 0;
-            DoCast(m_creature, SPELL_BANISH, true);
+            DoCastSpellIfCan(m_creature, SPELL_BANISH, CAST_TRIGGERED);
             m_bBanished = true;
 
             DoScriptText(SAY_SATH_DEATH, m_creature);
@@ -430,14 +430,14 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             if (!urand(0, 1))
                 DoScriptText(SAY_SATH_SPELL2, m_creature);
 
-            DoCast(m_creature->getVictim(), SPELL_CORRUPTING_STRIKE);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_CORRUPTING_STRIKE);
             CorruptingStrikeTimer = 13000;
         }else CorruptingStrikeTimer -= diff;
 
         if (CurseOfBoundlessAgonyTimer < diff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_CURSE_OF_BOUNDLESS_AGONY);
+                DoCastSpellIfCan(pTarget, SPELL_CURSE_OF_BOUNDLESS_AGONY);
 
             CurseOfBoundlessAgonyTimer = 35000;
         }else CurseOfBoundlessAgonyTimer -= diff;
@@ -447,7 +447,7 @@ struct MANGOS_DLL_DECL boss_sathrovarrAI : public ScriptedAI
             if (!urand(0, 1))
                 DoScriptText(SAY_SATH_SPELL1, m_creature);
 
-            DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHADOW_BOLT_VOLLEY);
             ShadowBoltVolleyTimer = 15000;
         }else ShadowBoltVolleyTimer -= diff;
 
@@ -504,14 +504,14 @@ struct MANGOS_DLL_DECL boss_kalecgos_humanoidAI : public ScriptedAI
             {
                 /*Unit* pUnit = Unit::GetUnit(*m_creature, m_pInstance->GetData64(DATA_RANDOM_SPECTRAL_PLAYER));
                 if (pUnit)
-                    DoCast(pUnit, SPELL_REVITALIZE);*/
+                    DoCastSpellIfCan(pUnit, SPELL_REVITALIZE);*/
                 RevitalizeTimer = 30000;
             }
         }else RevitalizeTimer -= diff;
 
         if (HeroicStrikeTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_HEROIC_STRIKE);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_HEROIC_STRIKE);
             HeroicStrikeTimer = 30000;
         }else HeroicStrikeTimer -= diff;
 

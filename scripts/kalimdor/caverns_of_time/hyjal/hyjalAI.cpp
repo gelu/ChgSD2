@@ -101,7 +101,7 @@ void hyjalAI::Reset()
     {
         case NPC_JAINA:
             m_uiBase = BASE_ALLY;
-            DoCast(m_creature, SPELL_BRILLIANCE_AURA, true);
+            DoCastSpellIfCan(m_creature, SPELL_BRILLIANCE_AURA, CAST_TRIGGERED);
             break;
         case NPC_THRALL:
             m_uiBase = BASE_HORDE;
@@ -149,7 +149,7 @@ void hyjalAI::EnterEvadeMode()
 void hyjalAI::JustReachedHome()
 {
     if (m_uiBase == BASE_ALLY)
-        DoCast(m_creature, SPELL_BRILLIANCE_AURA, true);
+        DoCastSpellIfCan(m_creature, SPELL_BRILLIANCE_AURA, CAST_TRIGGERED);
 
     m_bIsFirstBossDead = m_uiBase ? m_pInstance->GetData(TYPE_KAZROGAL) : m_pInstance->GetData(TYPE_WINTERCHILL);
     m_bIsSecondBossDead = m_uiBase ? m_pInstance->GetData(TYPE_AZGALOR) : m_pInstance->GetData(TYPE_ANETHERON);
@@ -218,7 +218,7 @@ void hyjalAI::JustSummoned(Creature* pSummoned)
         float fX, fY, fZ;
         pSummoned->GetRandomPoint(pMove->m_fX, pMove->m_fY, pMove->m_fZ, 10.0f, fX, fY, fZ);
 
-        pSummoned->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+        pSummoned->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
         pSummoned->GetMotionMaster()->MovePoint(0, fX, fY, fZ);
     }
 
@@ -368,7 +368,7 @@ void hyjalAI::Retreat()
     if (m_pInstance)
         m_pInstance->SetData(TYPE_RETREAT, SPECIAL);
 
-    DoCast(m_creature, SPELL_MASS_TELEPORT);
+    DoCastSpellIfCan(m_creature, SPELL_MASS_TELEPORT);
 
     m_bIsRetreating = true;
 }
@@ -405,7 +405,7 @@ void hyjalAI::UpdateAI(const uint32 uiDiff)
                         if (!pTemp->isAlive() || pTemp->getVictim())
                             continue;
 
-                        pTemp->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+                        pTemp->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                         pTemp->GetMotionMaster()->MovePoint(1, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ());
                     }
                 }
@@ -483,7 +483,7 @@ void hyjalAI::UpdateAI(const uint32 uiDiff)
 
                 if (pTarget)
                 {
-                    DoCast(pTarget, m_aSpells[i].m_uiSpellId);
+                    DoCastSpellIfCan(pTarget, m_aSpells[i].m_uiSpellId);
                     m_uiSpellTimer[i] = m_aSpells[i].m_uiCooldown;
                 }
             }

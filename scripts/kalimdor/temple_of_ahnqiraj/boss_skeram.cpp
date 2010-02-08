@@ -131,7 +131,7 @@ struct MANGOS_DLL_DECL boss_skeramAI : public ScriptedAI
         //ArcaneExplosion_Timer
         if (ArcaneExplosion_Timer < diff)
         {
-            DoCast(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_EXPLOSION);
             ArcaneExplosion_Timer = urand(8000, 18000);
         }else ArcaneExplosion_Timer -= diff;
 
@@ -149,7 +149,7 @@ struct MANGOS_DLL_DECL boss_skeramAI : public ScriptedAI
             //EarthShock_Timer
             if (EarthShock_Timer < diff)
             {
-                DoCast(m_creature->getVictim(),SPELL_EARTH_SHOCK);
+                DoCastSpellIfCan(m_creature->getVictim(),SPELL_EARTH_SHOCK);
                 EarthShock_Timer = 1000;
             }else EarthShock_Timer -= diff;
         }
@@ -157,7 +157,7 @@ struct MANGOS_DLL_DECL boss_skeramAI : public ScriptedAI
         //Blink_Timer
         if (Blink_Timer < diff)
         {
-            //DoCast(m_creature, SPELL_BLINK);
+            //DoCastSpellIfCan(m_creature, SPELL_BLINK);
             switch(urand(0, 2))
             {
                 case 0:
@@ -236,24 +236,6 @@ struct MANGOS_DLL_DECL boss_skeramAI : public ScriptedAI
                 i1 = place1;
                 i2 = place2;
                 break;
-        }
-
-        for (int tryi = 0; tryi < 41; ++tryi)
-        {
-            Unit *targetpl = SelectUnit(SELECT_TARGET_RANDOM, 0);
-            if (targetpl->GetTypeId() == TYPEID_PLAYER)
-            {
-                Group *grp = ((Player *)targetpl)->GetGroup();
-                if (grp)
-                {
-                    for (int ici = 0; ici < TARGETICONCOUNT; ++ici)
-                    {
-                        //if (grp ->m_targetIcons[ici] == m_creature->GetGUID()) -- private member:(
-                        //grp->SetTargetIcon(ici, 0);
-                    }
-                }
-                break;
-            }
         }
 
         m_creature->RemoveAllAuras();

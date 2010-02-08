@@ -143,7 +143,7 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             if (pCrystal && pCrystal->isAlive())
             {
                 // select nearest
-                if(!CrystalChosen || m_creature->GetDistanceOrder(pCrystal, CrystalChosen, false))
+                if (!CrystalChosen || m_creature->GetDistanceOrder(pCrystal, CrystalChosen, false))
                 {
                     CrystalGUID = pCrystal->GetGUID();
                     CrystalChosen = pCrystal;               // Store a copy of pCrystal so we don't need to recreate a pointer to closest crystal for the movement and yell.
@@ -160,7 +160,7 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             float x, y, z;                                  // coords that we move to, close to the crystal.
             CrystalChosen->GetClosePoint(x, y, z, m_creature->GetObjectSize(), CONTACT_DISTANCE);
 
-            m_creature->RemoveMonsterMoveFlag(MONSTER_MOVE_WALK);
+            m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
             m_creature->GetMotionMaster()->MovePoint(1, x, y, z);
             DrainingCrystal = true;
         }
@@ -253,7 +253,9 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             {
                 if (DrainLifeTimer < diff)
                 {
-                    DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0), SPELL_DRAIN_LIFE);
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                        DoCastSpellIfCan(pTarget, SPELL_DRAIN_LIFE);
+
                     DrainLifeTimer = 10000;
                 }else DrainLifeTimer -= diff;
 
@@ -262,7 +264,9 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
                 {
                     if (DrainManaTimer < diff)
                     {
-                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 1), SPELL_DRAIN_MANA);
+                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                            DoCastSpellIfCan(pTarget, SPELL_DRAIN_MANA);
+
                         DrainManaTimer = 10000;
                     }else DrainManaTimer -= diff;
                 }
@@ -272,7 +276,7 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             {
                 if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
-                    DoCast(m_creature, SPELL_FEL_EXPLOSION);
+                    DoCastSpellIfCan(m_creature, SPELL_FEL_EXPLOSION);
                     FelExplosionTimer = 2000;
                 }
             }else FelExplosionTimer -= diff;

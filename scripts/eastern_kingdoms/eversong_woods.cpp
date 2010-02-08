@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Eversong_Woods
 SD%Complete: 100
-SDComment: Quest support: 8483, 9686
+SDComment: Quest support: 8483, 8488, 9686
 SDCategory: Eversong Woods
 EndScriptData */
 
@@ -25,6 +25,7 @@ EndScriptData */
 npc_kelerun_bloodmourn
 go_harbinger_second_trial
 npc_prospector_anvilward
+npc_apprentice_mirveda
 EndContentData */
 
 #include "precompiled.h"
@@ -244,11 +245,16 @@ bool GOHello_go_harbinger_second_trial(Player* pPlayer, GameObject* pGO)
 /*######
 ## npc_prospector_anvilward
 ######*/
+enum
+{
+    SAY_ANVIL1            = -1000209,
+    SAY_ANVIL2            = -1000210,
 
-#define SAY_ANVIL1              -1000209
-#define SAY_ANVIL2              -1000210
+    FACTION_DEFAULT       = 35,
+    FACTION_HOSTILE       = 24,
 
-#define QUEST_THE_DWARVEN_SPY   8483
+    QUEST_THE_DWARVEN_SPY = 8483
+};
 
 struct MANGOS_DLL_DECL npc_prospector_anvilwardAI : public npc_escortAI
 {
@@ -269,10 +275,10 @@ struct MANGOS_DLL_DECL npc_prospector_anvilwardAI : public npc_escortAI
                 DoScriptText(SAY_ANVIL1, m_creature, pPlayer);
                 break;
             case 5:
-                DoScriptText(SAY_ANVIL1, m_creature, pPlayer);
+                DoScriptText(SAY_ANVIL2, m_creature, pPlayer);
                 break;
             case 6:
-                m_creature->setFaction(24);
+                m_creature->setFaction(FACTION_HOSTILE);
                 break;
         }
     }
@@ -280,13 +286,13 @@ struct MANGOS_DLL_DECL npc_prospector_anvilwardAI : public npc_escortAI
     void Reset()
     {
         //Default npc faction
-        m_creature->setFaction(35);
+        m_creature->setFaction(FACTION_DEFAULT);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* pKiller)
     {
         //Default npc faction
-        m_creature->setFaction(35);
+        m_creature->setFaction(FACTION_DEFAULT);
     }
 };
 
@@ -309,7 +315,7 @@ bool GossipSelect_npc_prospector_anvilward(Player* pPlayer, Creature* pCreature,
     switch(uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Why... yes, of course. I've something to show you right inside this building, Mr. Anvilward.",GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Why... yes, of course. I've something to show you right inside this building, Mr. Anvilward.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             pPlayer->SEND_GOSSIP_MENU(8240, pCreature->GetGUID());
             break;
         case GOSSIP_ACTION_INFO_DEF+2:
@@ -323,9 +329,107 @@ bool GossipSelect_npc_prospector_anvilward(Player* pPlayer, Creature* pCreature,
     return true;
 }
 
+/*######
+## npc_apprentice_mirveda
+######*/
+
+enum
+{
+    QUEST_UNEXPECTED_RESULT = 8488,
+
+    SPELL_FIREBALL          = 20811,
+
+    NPC_GHARSUL             = 15958,
+    NPC_ANGERSHADE          = 15656
+};
+
+struct MANGOS_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
+{
+    npc_apprentice_mirvedaAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    uint8 m_uiMobCount;
+    uint32 m_uiFireballTimer;
+    uint64 m_uiPlayerGUID;
+
+    void Reset()
+    {
+        m_uiMobCount      = 0;
+        m_uiPlayerGUID    = 0;
+        m_uiFireballTimer = 0;
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+        Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID));
+        if (pPlayer && pPlayer->GetQuestStatus(QUEST_UNEXPECTED_RESULT) == QUEST_STATUS_INCOMPLETE)
+            pPlayer->SendQuestFailed(QUEST_UNEXPECTED_RESULT);
+    }
+
+    void JustSummoned(Creature* pSummoned)
+    {
+        pSummoned->AI()->AttackStart(m_creature);
+        ++m_uiMobCount;
+    }
+
+    void SummonedCreatureJustDied(Creature* pKilled)
+    {
+        --m_uiMobCount;
+
+        if (m_uiMobCount)
+            return;
+
+        Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID));
+        if (pPlayer && pPlayer->GetQuestStatus(QUEST_UNEXPECTED_RESULT) == QUEST_STATUS_INCOMPLETE)
+            pPlayer->GroupEventHappens(QUEST_UNEXPECTED_RESULT, m_creature);
+
+        m_uiPlayerGUID = 0;
+        m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+    }
+
+    void StartEvent(uint64 uiPlayerGUID)
+    {
+        m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+        m_uiPlayerGUID = uiPlayerGUID;
+
+        m_creature->SummonCreature(NPC_GHARSUL,    8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+        m_creature->SummonCreature(NPC_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+        m_creature->SummonCreature(NPC_ANGERSHADE, 8745, -7134.32, 35.22, 0, TEMPSUMMON_CORPSE_DESPAWN, 4000);
+    }
+
+    void UpdateAI (const uint32 uiDiff)
+    {
+        //Return since we have no target
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (m_uiFireballTimer < uiDiff)
+        {
+            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FIREBALL) == CAST_OK)
+                m_uiFireballTimer = urand(4000, 6000);
+        }
+        else
+            m_uiFireballTimer -= uiDiff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+bool QuestAccept_unexpected_results(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+{
+    if (pQuest->GetQuestId() == QUEST_UNEXPECTED_RESULT)
+        if (npc_apprentice_mirvedaAI* mirvedaAI = dynamic_cast<npc_apprentice_mirvedaAI*>(pCreature->AI()))
+            mirvedaAI->StartEvent(pPlayer->GetGUID());
+    return true;
+}
+
+CreatureAI* GetAI_npc_apprentice_mirvedaAI(Creature* pCreature)
+{
+    return new npc_apprentice_mirvedaAI (pCreature);
+}
+
 void AddSC_eversong_woods()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "npc_kelerun_bloodmourn";
@@ -343,5 +447,11 @@ void AddSC_eversong_woods()
     newscript->GetAI = &GetAI_npc_prospector_anvilward;
     newscript->pGossipHello =  &GossipHello_npc_prospector_anvilward;
     newscript->pGossipSelect = &GossipSelect_npc_prospector_anvilward;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_apprentice_mirveda";
+    newscript->GetAI = GetAI_npc_apprentice_mirvedaAI;
+    newscript->pQuestAccept = &QuestAccept_unexpected_results;
     newscript->RegisterSelf();
 }

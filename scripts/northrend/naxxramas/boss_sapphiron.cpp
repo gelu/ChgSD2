@@ -142,6 +142,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     //DoCast(m_creature,11010);
                     m_creature->SetHover(true);
                     //DoCast(m_creature,18430);
+//                    DoCastSpellIfCan(m_creature,11010);
+//                    DoCastSpellIfCan(m_creature,18430);
                     Icebolt_Timer = 4000;
                     Icebolt_Count = 0;
                     landoff = false;
@@ -167,7 +169,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                 if (FrostBreath_Timer < diff)
                 {
                     DoScriptText(EMOTE_BREATH, m_creature);
-                    //DoCast(m_creature->getVictim(),SPELL_FROST_BREATH);
+                    DoCastSpellIfCan(m_creature->getVictim(),SPELL_FROST_BREATH);
                     land_Timer = 2000;
                     landoff = true;
                     FrostBreath_Timer = 6000;

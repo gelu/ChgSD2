@@ -170,7 +170,7 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
         if (m_uiPoisonNovaTimer < uiDiff)
         {
             DoScriptText(EMOTE_NOVA, m_creature);
-            DoCast(m_creature->getVictim(),m_bIsRegularMode ? SPELL_POISON_NOVA : SPELL_POISON_NOVA_H);
+            DoCastSpellIfCan(m_creature->getVictim(),m_bIsRegularMode ? SPELL_POISON_NOVA : SPELL_POISON_NOVA_H);
             m_uiPoisonNovaTimer = 22000;
         }
         else
@@ -183,7 +183,7 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
                 if (urand(0, 3))
                 {
                     // we don't want to get spammed
-                    if(!urand(0, 4))
+                    if (!urand(0, 4))
                         DoScriptText(SAY_SUMMON_CONSTRICTOR, m_creature);
 
                     pSummonTarget->CastSpell(pSummonTarget, SPELL_SUMMON_CONSTRICTOR, false);
@@ -191,7 +191,7 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
                 else
                 {
                     // we don't want to get spammed
-                    if(!urand(0, 4))
+                    if (!urand(0, 4))
                         DoScriptText(SAY_SUMMON_SNAKE, m_creature);
 
                     pSummonTarget->CastSpell(pSummonTarget, SPELL_SUMMON_VIPER, false);
@@ -205,7 +205,7 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
 
         if (m_uiPowerfulBiteTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_POWERFUL_BITE : SPELL_POWERFUL_BITE_H);
+            DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_POWERFUL_BITE : SPELL_POWERFUL_BITE_H);
             m_uiPowerfulBiteTimer = 10000;
         }
         else
@@ -214,7 +214,7 @@ struct MANGOS_DLL_DECL boss_sladranAI : public ScriptedAI
         if (m_uiVenomBoltTimer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_VENOM_BOLT : SPELL_VENOM_BOLT_H);
+                DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_VENOM_BOLT : SPELL_VENOM_BOLT_H);
 
             m_uiVenomBoltTimer = 15000;
         }

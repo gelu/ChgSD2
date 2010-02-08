@@ -186,7 +186,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             if (m_pPointData)
             {
                 m_creature->GetMap()->CreatureRelocation(m_creature, m_pPointData->fX, m_pPointData->fY, m_pPointData->fZ, 0.0f);
-                m_creature->SendMonsterMove(m_pPointData->fX, m_pPointData->fY, m_pPointData->fZ, 0, m_creature->GetMonsterMoveFlags(), 1);
+                m_creature->SendMonsterMove(m_pPointData->fX, m_pPointData->fY, m_pPointData->fZ, 0, m_creature->GetSplineFlags(), 1);
             }
         }
     }
@@ -225,7 +225,11 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         {
             if (m_uiFlameBreathTimer < uiDiff)
             {
+<<<<<<< HEAD:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 DoCast(m_creature->getVictim(), Regular ? SPELL_FLAMEBREATH : H_SPELL_FLAMEBREATH);
+=======
+                DoCastSpellIfCan(m_creature->getVictim(), SPELL_FLAMEBREATH);
+>>>>>>> a148fdc669ed8c26c4e76995c3924d2e9a775bbf:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 m_uiFlameBreathTimer = urand(10000, 20000);
             }
             else
@@ -233,7 +237,11 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_uiTailSweepTimer < uiDiff)
             {
+<<<<<<< HEAD:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 DoCast(m_creature, Regular ? SPELL_TAILSWEEP : H_SPELL_TAILSWEEP);
+=======
+                DoCastSpellIfCan(m_creature, SPELL_TAILSWEEP);
+>>>>>>> a148fdc669ed8c26c4e76995c3924d2e9a775bbf:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 m_uiTailSweepTimer = urand(15000, 20000);
             }
             else
@@ -241,7 +249,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_uiCleaveTimer < uiDiff)
             {
-                DoCast(m_creature->getVictim(), SPELL_CLEAVE);
+                DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE);
                 m_uiCleaveTimer = urand(2000, 5000);
             }
             else
@@ -249,7 +257,11 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_uiWingBuffetTimer < uiDiff)
             {
+<<<<<<< HEAD:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 DoCast(m_creature->getVictim(), Regular ? SPELL_WINGBUFFET : H_SPELL_WINGBUFFET);
+=======
+                DoCastSpellIfCan(m_creature->getVictim(), SPELL_WINGBUFFET);
+>>>>>>> a148fdc669ed8c26c4e76995c3924d2e9a775bbf:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                 m_uiWingBuffetTimer = urand(15000, 30000);
             }
             else
@@ -259,7 +271,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             {
                 if (m_uiBellowingRoarTimer < uiDiff)
                 {
-                    DoCast(m_creature->getVictim(), SPELL_BELLOWINGROAR);
+                    DoCastSpellIfCan(m_creature->getVictim(), SPELL_BELLOWINGROAR);
                     m_uiBellowingRoarTimer = 30000;
                 }
                 else
@@ -318,7 +330,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
                         m_creature->InterruptNonMeleeSpells(false);
 
                     DoScriptText(EMOTE_BREATH, m_creature);
-                    DoCast(m_creature, m_pPointData->uiSpellId);
+                    DoCastSpellIfCan(m_creature, m_pPointData->uiSpellId);
                 }
                 else
                 {
@@ -333,7 +345,11 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE)
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+<<<<<<< HEAD:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
                         DoCast(pTarget, Regular ? SPELL_FIREBALL : H_SPELL_FIREBALL);
+=======
+                        DoCastSpellIfCan(pTarget, SPELL_FIREBALL);
+>>>>>>> a148fdc669ed8c26c4e76995c3924d2e9a775bbf:scripts/kalimdor/onyxias_lair/boss_onyxia.cpp
 
                     m_uiEngulfingFlamesTimer = 8000;
                 }

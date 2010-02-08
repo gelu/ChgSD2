@@ -99,7 +99,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         // Mark of Blaumeux
         if(Mark_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MARK_OF_BLAUMEUX);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_MARK_OF_BLAUMEUX);
             Mark_Timer = 12000;
         }
         else Mark_Timer -= diff;
@@ -109,7 +109,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         {
             if(ShieldWall1)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
@@ -117,7 +117,7 @@ struct MANGOS_DLL_DECL boss_lady_blaumeuxAI : public ScriptedAI
         {
             if(ShieldWall2)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }
@@ -326,7 +326,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         // Mark of Korthazz
         if (Mark_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MARK_OF_KORTHAZZ);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_MARK_OF_KORTHAZZ);
             Mark_Timer = 12000;
         }else Mark_Timer -= diff;
 
@@ -335,7 +335,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         {
             if (ShieldWall1)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
@@ -343,7 +343,7 @@ struct MANGOS_DLL_DECL boss_thane_korthazzAI : public ScriptedAI
         {
             if (ShieldWall2)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }
@@ -436,7 +436,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         // Mark of Zeliek
         if (Mark_Timer < diff)
         {
-            DoCast(m_creature->getVictim(),SPELL_MARK_OF_ZELIEK);
+            DoCastSpellIfCan(m_creature->getVictim(),SPELL_MARK_OF_ZELIEK);
             Mark_Timer = 12000;
         }else Mark_Timer -= diff;
 
@@ -445,7 +445,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         {
             if (ShieldWall1)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall1 = false;
             }
         }
@@ -453,7 +453,7 @@ struct MANGOS_DLL_DECL boss_sir_zeliekAI : public ScriptedAI
         {
             if (ShieldWall2)
             {
-                DoCast(m_creature,SPELL_SHIELDWALL);
+                DoCastSpellIfCan(m_creature,SPELL_SHIELDWALL);
                 ShieldWall2 = false;
             }
         }

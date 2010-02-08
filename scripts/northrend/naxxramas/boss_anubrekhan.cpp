@@ -213,19 +213,24 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         {
             DoCast(m_creature,SPELL_BERSERK);
             Berserk_Timer = 300000;
+            //Cast Impale on a random target
+            //Do NOT cast it when we are afflicted by locust swarm
+            if (!m_creature->HasAura(SPELL_LOCUSTSWARM) || !m_creature->HasAura(SPELL_LOCUSTSWARM_H))
+            {
+                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    DoCastSpellIfCan(target, m_bIsRegularMode ? SPELL_IMPALE : SPELL_IMPALE_H);
+            }
         }else Berserk_Timer -= diff;
 
-        //SumonFirstCryptGuard_Timer
-        if (SummonFirst_Timer < diff)
-        {
-            if (CryptGuard_count < MAX_CRYPT_GUARDS)
-                DoSpawnCreature(MOB_CRYPT_GUARD,0,0,0,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,10000);
-            SummonFirst_Timer = 2000000;
-        }else SummonFirst_Timer -= diff;
 
-        //RiseFromCorpse_Timer
-        if (RiseFromCorpse_Timer < diff)
-        {
+        //SumonFirstCryptGuard_Timer
+//        if (SummonFirst_Timer < diff)
+//        {
+//            if (CryptGuard_count < MAX_CRYPT_GUARDS)
+//                DoSpawnCreature(MOB_CRYPT_GUARD,0,0,0,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,10000);
+//            SummonFirst_Timer = 2000000;
+//        }else SummonFirst_Timer -= diff;
+
             RiseFromCorpse_Timer = 60000 + (rand()%10000);
             std::list<Creature*> CryptGuards = GetCreaturesByEntry(MOB_CRYPT_GUARD);
             if (!CryptGuards.empty())
@@ -251,9 +256,11 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                 }
             CryptGuards.clear();
         }else RiseFromCorpse_Timer -= diff;
-
-        if(!swarm)
-        {
+            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_LOCUSTSWARM :SPELL_LOCUSTSWARM_H);
+            m_uiLocustSwarmTimer = 90000;
+        }
+        else
+            m_uiLocustSwarmTimer -= uiDiff;
             //Impale_Timer
             if (Impale_Timer < diff)
             {
@@ -276,6 +283,8 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                     DoSpawnCreature(MOB_CRYPT_GUARD,0,0,0,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,10000);
                 LocustSwarm_Timer = 20000;
             }else LocustSwarm_Timer -= diff;
+            DoCastSpellIfCan(m_creature, SPELL_SUMMONGUARD);
+            Summon_Timer = 45000;
         }
         else
         {
