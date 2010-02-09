@@ -37,6 +37,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
+    uint64 m_uiSaurfangDoorGUID;
+
+    uint64 m_uiFrostwyrm1GUID;
+    uint64 m_uiFrostwyrm2GUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -56,9 +60,15 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
+
+        m_auiEncounter[0] = 0;
+
         m_uiMarrogwarGUID =0;
         m_uiDeathWhisperGUID =0;
-        m_uiSaurfangGUID =0;
+        m_uiSaurfangGUID = 0;
+        m_uiFrostwyrm1GUID = NPC_FROSTWYRM1_GUID;
+        m_uiFrostwyrm2GUID = NPC_FROSTWYRM2_GUID;
+
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -87,30 +97,50 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_ICEWALL_2: 
                          m_uiIcewall2GUID = pGo->GetGUID();
                          break;
+            case GO_SAURFANG_DOOR: 
+                         m_uiSaurfangDoorGUID = pGo->GetGUID();
+                         break;
         }
     }
     void SetData(uint32 uiType, uint32 uiData)
     {
         switch(uiType)
         {
+            case TYPE_TELEPORT:
+                if (uiData > m_auiEncounter[0]) m_auiEncounter[0] = uiData;
+                uiData = NOT_STARTED;
+                break;
             case TYPE_MARROWGAR:
                 m_auiEncounter[1] = uiData; 
                 if (uiData == DONE) {
                 OpenDoor(m_uiIcewall1GUID);
                 OpenDoor(m_uiIcewall1GUID);
+                m_auiEncounter[0] = TYPE_MARROWGAR;
                 }
                 break;
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
+                if (uiData == DONE) {
+                m_auiEncounter[0] = TYPE_DEATHWHISPER; 
+                }
                 break;
              case TYPE_SKULLS_PLATO:
                 m_auiEncounter[3] = uiData; 
+                if (uiData == DONE) {
+                m_auiEncounter[0] = TYPE_SKULLS_PLATO; 
+                }
                 break;
              case TYPE_FLIGHT_WAR:
                 m_auiEncounter[4] = uiData; 
+                if (uiData == DONE) {
+                m_auiEncounter[0] = TYPE_FLIGHT_WAR; 
+                }
                 break;
              case TYPE_SAURFANG:
                 m_auiEncounter[5] = uiData; 
+                if (uiData == DONE) {
+                m_auiEncounter[0] = TYPE_SAURFANG; 
+                }
                 break;
         }
 
@@ -139,8 +169,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
+             case TYPE_TELEPORT:      return m_auiEncounter[0];
              case TYPE_MARROWGAR:     return m_auiEncounter[1];
-             case TYPE_DEATHWHISPER:   return m_auiEncounter[2];
+             case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
              case TYPE_SKULLS_PLATO:  return m_auiEncounter[3];
              case TYPE_FLIGHT_WAR:    return m_auiEncounter[4];
              case TYPE_SAURFANG:      return m_auiEncounter[5];
@@ -158,6 +189,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                      return m_uiDeathWhisperGUID;
             case NPC_DEATHBRINGER_SAURFANG: 
                                      return m_uiSaurfangGUID;
+            case FLIGHT_WAR_1: 
+                                     return m_uiFrostwyrm1GUID;
+            case FLIGHT_WAR_2: 
+                                     return m_uiFrostwyrm2GUID;
         }
         return 0;
     }
@@ -178,7 +213,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         {
             loadStream >> m_auiEncounter[i];
 
-            if (m_auiEncounter[i] == IN_PROGRESS)
+            if (m_auiEncounter[i] == IN_PROGRESS && i >= 1)
                 m_auiEncounter[i] = NOT_STARTED;
         }
 

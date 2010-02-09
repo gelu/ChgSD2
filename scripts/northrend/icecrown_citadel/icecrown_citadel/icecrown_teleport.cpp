@@ -17,7 +17,7 @@ struct Locations
 
 static Locations PortalLoc[]=
 {
-{"Молот света",-17.1928, 2211.44, 30.1158,1,true,true,TYPE_START}, //
+{"Молот света",-17.1928, 2211.44, 30.1158,1,true,true,TYPE_TELEPORT}, //
 {"Шпиль",-503.62, 2211.47, 62.8235,0,false,true,TYPE_MARROWGAR},  //
 {"Черепной вал",-615.145, 2211.47, 199.972,3,false,true,TYPE_DEATHWHISPER}, //
 {"Воздушное сражение",-209.5, 2211.91, 199.97,4,false,true,TYPE_SKULLS_PLATO}, //
@@ -38,12 +38,21 @@ struct MANGOS_DLL_DECL icecrown_teleporterAI : public ScriptedAI
 
     void Reset()
     {
-    m_pInstance->SetData(TYPE_START,DONE);
+    m_pInstance->SetData(TYPE_TELEPORT,0);
     }
 
     void UpdateAI(const uint32 diff)
     {
         if (!m_pInstance) return;
+
+                Creature* pTemp1 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(FLIGHT_WAR_1));
+                Creature* pTemp2 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(FLIGHT_WAR_2));
+                if (pTemp1 && pTemp2) {
+                    if (!pTemp1->isAlive() && !pTemp2->isAlive()) {
+                        m_pInstance->SetData(TYPE_FLIGHT_WAR,DONE);
+                        }
+                    };
+
     }
 };
 
@@ -69,7 +78,7 @@ bool GossipHello_icecrown_teleporter(Player *player, Creature* pCreature)
     bool m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
 
     for(uint8 i = 0; i < PORTALS_COUNT; i++) {
-    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(PortalLoc[i].encounter) == DONE))
+    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter))
              player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, PortalLoc[i].name, GOSSIP_SENDER_MAIN, i);
     };
     player->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pCreature->GetGUID());

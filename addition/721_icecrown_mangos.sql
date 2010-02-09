@@ -12,12 +12,12 @@ REPLACE INTO `locales_creature` values ('99322','IceCrown teleporter','','','','
 
 DELETE FROM `creature` WHERE `guid` IN (599322,599323,599324,599325,599326,599327);
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
-(599322, 99322, 631, 3, 1, 0, 0, -209.5, 2211.91, 199.97, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599323, 99322, 631, 3, 1, 0, 0, -503.62, 2211.47, 62.8235, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599324, 99322, 631, 3, 1, 0, 0, -17.1928, 2211.44, 30.1158, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599325, 99322, 631, 3, 1, 0, 0, -549.131, 2211.29, 539.291, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599326, 99322, 631, 3, 1, 0, 0, -615.145, 2211.47, 199.972, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599327, 99322, 631, 3, 1, 0, 0, 4198.42, 2769.22, 351.065, 0, 3600, 0, 0, 64200, 12300, 0, 0);
+(599322, 99322, 631, 15, 1, 0, 0, -209.5, 2211.91, 199.97, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599323, 99322, 631, 15, 1, 0, 0, -503.62, 2211.47, 62.8235, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599324, 99322, 631, 15, 1, 0, 0, -17.1928, 2211.44, 30.1158, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599325, 99322, 631, 15, 1, 0, 0, -549.131, 2211.29, 539.291, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599326, 99322, 631, 15, 1, 0, 0, -615.145, 2211.47, 199.972, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599327, 99322, 631, 15, 1, 0, 0, 4198.42, 2769.22, 351.065, 0, 3600, 0, 0, 64200, 12300, 0, 0);
 
 DELETE FROM `locales_npc_text` WHERE `entry` = 99322;
 INSERT INTO `locales_npc_text` (`entry`, `Text0_0_loc1`, `Text0_0_loc2`, `Text0_0_loc3`, `Text0_0_loc4`, `Text0_0_loc5`, `Text0_0_loc6`, `Text0_0_loc7`, `Text0_0_loc8`, `Text0_1_loc1`, `Text0_1_loc2`, `Text0_1_loc3`, `Text0_1_loc4`, `Text0_1_loc5`, `Text0_1_loc6`, `Text0_1_loc7`, `Text0_1_loc8`, `Text1_0_loc1`, `Text1_0_loc2`, `Text1_0_loc3`, `Text1_0_loc4`, `Text1_0_loc5`, `Text1_0_loc6`, `Text1_0_loc7`, `Text1_0_loc8`, `Text1_1_loc1`, `Text1_1_loc2`, `Text1_1_loc3`, `Text1_1_loc4`, `Text1_1_loc5`, `Text1_1_loc6`, `Text1_1_loc7`, `Text1_1_loc8`, `Text2_0_loc1`, `Text2_0_loc2`, `Text2_0_loc3`, `Text2_0_loc4`, `Text2_0_loc5`, `Text2_0_loc6`, `Text2_0_loc7`, `Text2_0_loc8`, `Text2_1_loc1`, `Text2_1_loc2`, `Text2_1_loc3`, `Text2_1_loc4`, `Text2_1_loc5`, `Text2_1_loc6`, `Text2_1_loc7`, `Text2_1_loc8`, `Text3_0_loc1`, `Text3_0_loc2`, `Text3_0_loc3`, `Text3_0_loc4`, `Text3_0_loc5`, `Text3_0_loc6`, `Text3_0_loc7`, `Text3_0_loc8`, `Text3_1_loc1`, `Text3_1_loc2`, `Text3_1_loc3`, `Text3_1_loc4`, `Text3_1_loc5`, `Text3_1_loc6`, `Text3_1_loc7`, `Text3_1_loc8`, `Text4_0_loc1`, `Text4_0_loc2`, `Text4_0_loc3`, `Text4_0_loc4`, `Text4_0_loc5`, `Text4_0_loc6`, `Text4_0_loc7`, `Text4_0_loc8`, `Text4_1_loc1`, `Text4_1_loc2`, `Text4_1_loc3`, `Text4_1_loc4`, `Text4_1_loc5`, `Text4_1_loc6`, `Text4_1_loc7`, `Text4_1_loc8`, `Text5_0_loc1`, `Text5_0_loc2`, `Text5_0_loc3`, `Text5_0_loc4`, `Text5_0_loc5`, `Text5_0_loc6`, `Text5_0_loc7`, `Text5_0_loc8`, `Text5_1_loc1`, `Text5_1_loc2`, `Text5_1_loc3`, `Text5_1_loc4`, `Text5_1_loc5`, `Text5_1_loc6`, `Text5_1_loc7`, `Text5_1_loc8`, `Text6_0_loc1`, `Text6_0_loc2`, `Text6_0_loc3`, `Text6_0_loc4`, `Text6_0_loc5`, `Text6_0_loc6`, `Text6_0_loc7`, `Text6_0_loc8`, `Text6_1_loc1`, `Text6_1_loc2`, `Text6_1_loc3`, `Text6_1_loc4`, `Text6_1_loc5`, `Text6_1_loc6`, `Text6_1_loc7`, `Text6_1_loc8`, `Text7_0_loc1`, `Text7_0_loc2`, `Text7_0_loc3`, `Text7_0_loc4`, `Text7_0_loc5`, `Text7_0_loc6`, `Text7_0_loc7`, `Text7_0_loc8`, `Text7_1_loc1`, `Text7_1_loc2`, `Text7_1_loc3`, `Text7_1_loc4`, `Text7_1_loc5`, `Text7_1_loc6`, `Text7_1_loc7`, `Text7_1_loc8`) VALUES
@@ -37,7 +37,7 @@ INSERT INTO `npc_text` (`ID`, `text0_0`, `text0_1`, `lang0`, `prob0`, `em0_0`, `
 
 UPDATE `instance_template` SET `script`='instance_icecrown_spire' WHERE `map`=631;
 
--- UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
 
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
 
@@ -45,3 +45,15 @@ UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`=
 
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201910,201911);
 UPDATE `gameobject` SET `state` = '1' WHERE `guid` IN (72526,72525);
+
+DELETE FROM `creature` WHERE `guid` IN (81531, 83459, 78383, 78385, 81170, 81535, 81165, 81168, 124864);
+INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
+(81531, 37230, 631, 15, 1, 0, 0, -541.262, 2287.1, 199.97, 2.73098, 300, 0, 0, 1078480, 41690, 0, 0),
+(83459, 37230, 631, 15, 1, 0, 0, -536.326, 2125.85, 199.97, 2.86921, 300, 0, 0, 1078480, 41690, 0, 0),
+(78383, 37230, 631, 15, 1, 0, 0, -436.712, 2078.51, 191.254, 3.82738, 300, 0, 0, 1078480, 41690, 0, 0),
+(78385, 37230, 631, 15, 1, 0, 0, -436.977, 2345.78, 191.254, 3.53716, 300, 0, 0, 1078480, 41690, 0, 0),
+(81170, 37230, 631, 15, 1, 0, 0, -302.465, 2229.49, 199.982, 2.04961, 300, 0, 0, 1078480, 41690, 0, 0),
+(81535, 37230, 631, 15, 1, 0, 0, -223.486, 2200.9, 199.97, 3.07063, 300, 0, 0, 1078480, 41690, 0, 0),
+(81165, 37230, 631, 15, 1, 0, 0, -505.65, 2320, 199.969, 0.369649, 300, 0, 0, 1078480, 41690, 0, 0),
+(81168, 37230, 631, 15, 1, 0, 0, -298.341, 2203.06, 199.983, 4.17647, 300, 0, 0, 1078480, 41690, 0, 0),
+(124864, 37230, 631, 15, 1, 0, 0, -222.214, 2220.68, 199.97, 3.1586, 300, 0, 0, 1078480, 41690, 0, 0);
