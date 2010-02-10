@@ -37,16 +37,23 @@ INSERT INTO `npc_text` (`ID`, `text0_0`, `text0_1`, `lang0`, `prob0`, `em0_0`, `
 
 UPDATE `instance_template` SET `script`='instance_icecrown_spire' WHERE `map`=631;
 
+-- Saurfang
 UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+DELETE FROM `gameobject` WHERE `id` IN (202239,202240);
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
+(913383, 202239, 631, 1, 64, -498.363, 2230.69, 539.284, 3.70944, 0, 0, 0.959963, -0.280126, 25, 0, 1),
+(913385, 202240, 631, 1, 64, -498.363, 2230.69, 539.284, 3.70944, 0, 0, 0.959963, -0.280126, 25, 0, 1);
 
+-- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
-UPDATE `creature_template` SET `ScriptName`='mob_vengeful_shade', `AIName`='' WHERE `entry`= 38222;
+UPDATE `creature_template` SET `faction_A`=14, `faction_H`=14,`ScriptName`='mob_vengeful_shade', `AIName`='' WHERE `entry`= 38222;
 
+-- Marrowgar
 UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`= 36612;
-
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201910,201911);
 UPDATE `gameobject` SET `state` = '1' WHERE `guid` IN (72526,72525);
 
+-- Gunship battle
 UPDATE `creature_template` SET `ScriptName`='mob_spire_frostwyrm', `AIName`='' WHERE `entry`= 37230;
 
 DELETE FROM `creature` WHERE `guid` IN (81531, 83459, 78383, 78385, 81170, 81535, 81165, 81168, 124864);
@@ -60,3 +67,13 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 (81165, 37230, 631, 15, 1, 0, 0, -505.65, 2320, 199.969, 0.369649, 300, 0, 0, 1078480, 41690, 0, 0),
 (81168, 37230, 631, 15, 1, 0, 0, -298.341, 2203.06, 199.983, 4.17647, 300, 0, 0, 1078480, 41690, 0, 0),
 (124864, 37230, 631, 15, 1, 0, 0, -222.214, 2220.68, 199.97, 3.1586, 300, 0, 0, 1078480, 41690, 0, 0);
+
+DELETE FROM `gameobject` WHERE `id` IN (201873,201874,202178,202180);
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
+(913387, 201873, 631, 1, 64, -558.932, 2211.48, 539.287, 0.0149338, 0, 0, 0.00746682, 0.999972, 25, 0, 1),
+(913389, 201874, 631, 1, 64, -558.932, 2211.48, 539.287, 0.0149338, 0, 0, 0.00746682, 0.999972, 25, 0, 1),
+(913391, 202178, 631, 1, 64, -558.932, 2211.48, 539.287, 0.0149338, 0, 0, 0.00746682, 0.999972, 25, 0, 1),
+(913393, 202180, 631, 1, 64, -558.932, 2211.48, 539.287, 0.0149338, 0, 0, 0.00746682, 0.999972, 25, 0, 1);
+
+-- Entrance
+UPDATE `areatrigger_teleport` SET `required_level` = '80' WHERE `areatrigger_teleport`.`id` =5670;

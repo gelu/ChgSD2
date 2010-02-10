@@ -73,7 +73,8 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     uint32 m_uiSummon_Timer;
     bool isManaBarrier;
     uint8 health;
-
+    uint64 m_uiMana;
+    
     void Reset()
     {
         if(pInstance) pInstance->SetData(TYPE_DEATHWHISPER, NOT_STARTED);
@@ -86,6 +87,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     m_uiInsignificance_Timer = 40000;
     m_uiDominateMind_Timer = 30000;
     m_uiBerserk_Timer = 600000;
+
     stage = 0;
     isManaBarrier = false;
     }
@@ -94,7 +96,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     {
         float fPosX, fPosY, fPosZ;
         m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(15, 25), fPosX, fPosY, fPosZ);
+        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(75, 100), fPosX, fPosY, fPosZ);
         Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
         if(pSummon) pSummon->SetInCombatWithZone();
 //        DoScriptText(EMOTE_SUMMON, m_creature);
@@ -122,7 +124,9 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-uiDamage*4);
             uiDamage = 0;
             if(m_creature->GetHealth() <= m_creature->GetMaxHealth()) {
-                                 m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth()- m_creature->GetHealth())*4);
+                        m_uiMana = m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth()- m_creature->GetHealth())*2;
+                        if (m_uiMana <= 0) m_uiMana =0;
+                                 m_creature->SetPower(POWER_MANA,m_uiMana);
                                  m_creature->SetHealth(m_creature->GetMaxHealth());
                                  };
             if(m_creature->GetPower(POWER_MANA) <= m_creature->GetMaxPower(POWER_MANA)/10 ) {
@@ -148,11 +152,11 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
                     if (m_uiSummon_Timer < diff)
                     { 
-                    CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                    CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 60000);
+                    CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 60000);
                     if(!Regular){
-                                 CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                                 CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                                 CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 60000);
+                                 CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 60000);
                                  };
                     m_uiSummon_Timer=20000;
                     } else m_uiSummon_Timer -= diff;
@@ -223,47 +227,59 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
         Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
-    ScriptedInstance *m_pInstance;
 
+    ScriptedInstance *m_pInstance;
     uint32 m_uiRangeCheck_Timer;
     bool Regular;
+
 
     void Reset()
     {
         m_uiRangeCheck_Timer = 1000;
-        m_creature->SetSpeedRate(MOVE_RUN, 0.8);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetInCombatWithZone();
+        if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
+                m_creature->SetSpeedRate(MOVE_RUN, 0.8);
+                } else
+        if (Unit* pTarget = Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_LADY_DEATHWHISPER))) {
+                m_creature->GetMotionMaster()->MoveChase(pTarget);
+                m_creature->SetSpeedRate(MOVE_RUN, 0.8);
+                }
     }
 
-    void AttackStart(Unit* pWho)
-    {
-        return;
-    }
 
     void UpdateAI(const uint32 uiDiff)
     {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
         if (m_uiRangeCheck_Timer < uiDiff)
         {
             if (m_pInstance)
             {
-                if (Unit* pTarget = m_creature->getVictim())
-                {
-                    float fDistance = m_creature->GetDistance2d(pTarget);
-                    if (fDistance <= 2)
+                    if (m_creature->IsWithinDist(m_creature->getVictim(), 2.0f, false))
                     {
-                        DoCastSpellIfCan(pTarget, Regular ? SPELL_VENGEFUL_BLAST_N : SPELL_VENGEFUL_BLAST_H);
+                        DoCast(m_creature->getVictim(), Regular ? SPELL_VENGEFUL_BLAST_N : SPELL_VENGEFUL_BLAST_H);
                         m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                     }
-                }
             }
             m_uiRangeCheck_Timer = 1000;
+            if (m_creature->getVictim()) {
+                                  m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                                  m_creature->SetSpeedRate(MOVE_RUN, 0.8);
+                                  }
         }
         else m_uiRangeCheck_Timer -= uiDiff;
     }
 
-    void JustDied(Unit* pKiller)
-    {
-    }
 };
+
+CreatureAI* GetAI_mob_vengeful_shade(Creature* pCreature)
+{
+    return new mob_vengeful_shadeAI(pCreature);
+}
 
 
 CreatureAI* GetAI_boss_lady_deathwhisper(Creature* pCreature)
@@ -277,5 +293,10 @@ void AddSC_boss_lady_deathwhisper()
     newscript = new Script;
     newscript->Name = "boss_lady_deathwhisper";
     newscript->GetAI = &GetAI_boss_lady_deathwhisper;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_vengeful_shade";
+    newscript->GetAI = &GetAI_mob_vengeful_shade;
     newscript->RegisterSelf();
 }
