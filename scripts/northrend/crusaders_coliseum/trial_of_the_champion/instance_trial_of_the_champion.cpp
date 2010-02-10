@@ -382,7 +382,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
                 {
                     if (GameObject* pChest = instance->GetGameObject(m_uiChampionsLootGUID))
                         if (pChest && !pChest->isSpawned())
-                            pChest->SetRespawnTime(350000000);
+                            pChest->SetRespawnTime(DAY);
                 }
                 if (uiData == FAIL)
                 {
@@ -396,11 +396,11 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 					if (m_uiArgentChallenger == m_uiEadricGUID)
 						if (GameObject* pChest = instance->GetGameObject(m_uiEadricLootGUID))
 							if (pChest && !pChest->isSpawned())
-								pChest->SetRespawnTime(350000000);
+								pChest->SetRespawnTime(DAY);
 					if (m_uiArgentChallenger == m_uiPaletressGUID)
 						if (GameObject* pChest = instance->GetGameObject(m_uiPaletressLootGUID))
 							if (pChest && !pChest->isSpawned())
-								pChest->SetRespawnTime(350000000);
+								pChest->SetRespawnTime(DAY);
                 }
                 if (uiData == FAIL)
                 {

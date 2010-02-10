@@ -84,7 +84,6 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Mortal_Strike_Timer = m_bIsRegularMode ? 9000 : 6000;
 		Bladestorm_Timer = m_bIsRegularMode ? 30000 : 20000;
 		Rolling_Throw_Timer = m_bIsRegularMode ? 45000 : 30000;
@@ -209,7 +208,6 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Fireball_Timer = 0;
 		Blast_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
 		Haste_Timer = m_bIsRegularMode ? 12000 : 9000;
@@ -328,7 +326,6 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Chain_Lightning_Timer = m_bIsRegularMode ? 2000 : 1000;
 		Earth_Shield_Timer = m_bIsRegularMode ? 10000 : 5000;
 		Healing_Wave_Timer = m_bIsRegularMode ? 20000 : 12000;
@@ -491,7 +488,6 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Shoot_Timer = 0;
 		Lightning_Arrows_Timer = m_bIsRegularMode ? 18000 : 10000;
 		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
@@ -630,7 +626,6 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Eviscerate_Timer = m_bIsRegularMode ? 20000 : 10000;
 		FoK_Timer = m_bIsRegularMode ? 15000 : 10000;
 		m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;

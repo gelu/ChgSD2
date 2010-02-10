@@ -141,7 +141,6 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		m_creature->SetDisplayId(29837);
 		SetEquipmentSlots(false, EQUIP_SWORD, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
 		Plague_Strike_Timer = m_bIsRegularMode ? 5000 : 4000;

@@ -76,7 +76,6 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		Vengeance_Timer = 1000;
 		Radiance_Timer = m_bIsRegularMode ? 15000 : 8000;
 		Hammer_Timer = m_bIsRegularMode ? 40000 : 10000;
@@ -177,7 +176,6 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 
     void Reset()
     {
-		m_creature->SetRespawnDelay(999999999);
 		m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);
 		Smite_Timer = 5000;
 		Holy_Fire_Timer = m_bIsRegularMode ? 10000 : 8000;
