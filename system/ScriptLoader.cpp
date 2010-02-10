@@ -370,6 +370,7 @@ extern void AddSC_boss_zuramat();
 extern void AddSC_boss_lavanthor();
 //IceCrown Citadel
 extern void AddSC_instance_icecrown_spire();
+extern void AddSC_icecrown_spire();
 extern void AddSC_icecrown_teleporter();
 extern void AddSC_boss_lord_marrowgar();
 extern void AddSC_boss_lady_deathwhisper();
@@ -823,6 +824,7 @@ void AddScripts()
     AddSC_violet_hold();
 
     AddSC_instance_icecrown_spire();
+    AddSC_icecrown_spire();
     AddSC_icecrown_teleporter();
     AddSC_boss_lord_marrowgar();
     AddSC_boss_lady_deathwhisper();

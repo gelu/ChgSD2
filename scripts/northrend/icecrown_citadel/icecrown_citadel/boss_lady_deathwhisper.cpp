@@ -30,8 +30,10 @@ enum
         //yells
         //summons
         NPC_VENGEFUL_SHADE                      = 38222,
-        NPC_FANATIC                             = 38009,
-        NPC_ADHERENT                            = 38010,
+        NPC_FANATIC                             = 37890,
+        NPC_REANIMATED_FANATIC                  = 38009,
+        NPC_ADHERENT                            = 37949,
+        NPC_REANIMATED_ADHERENT                 = 38010,
         //Abilities
         SPELL_MANA_BARRIER                      = 70842,
         SPELL_SHADOW_BOLT_N                     = 71254,
@@ -44,6 +46,8 @@ enum
         SPELL_FROSTBOLT_H                       = 72007,
         SPELL_DOMINATE_MIND_H                   = 71289,
 
+        SPELL_VENGEFUL_BLAST_N                  = 72011,
+        SPELL_VENGEFUL_BLAST_H                  = 72012,
 };
 
 struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
@@ -144,21 +148,24 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
                     if (m_uiSummon_Timer < diff)
                     { 
-//                    CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
-//                    CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
                     if(!Regular){
-//                                 CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
-//                                 CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                                 CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                                 CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 30000);
                                  };
                     m_uiSummon_Timer=20000;
                     } else m_uiSummon_Timer -= diff;
 
-/*                    if (m_uiDarkEmpowerment_Timer < diff)
-                    { if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, DARK_EMPOWERMENT_N);
+                    if (m_uiDarkEmpowerment_Timer < diff)
+                    { 
+                    if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_FANATIC, 30.0f))
+                    DoCastSpellIfCan(pGuard, SPELL_DARK_EMPOWERMENT_N);
+                    else if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_ADHERENT, 30.0f))
+                    DoCastSpellIfCan(pGuard, SPELL_DARK_EMPOWERMENT_N);
                     m_uiDarkEmpowerment_Timer=urand(20000,40000);
                     } else m_uiDarkEmpowerment_Timer -= diff;
-*/
+
                     break;}
 
             case 1: {
@@ -207,6 +214,57 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
+struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
+{
+    mob_vengeful_shadeAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+    ScriptedInstance *m_pInstance;
+
+    uint32 m_uiRangeCheck_Timer;
+    bool Regular;
+
+    void Reset()
+    {
+        m_uiRangeCheck_Timer = 1000;
+        m_creature->SetSpeedRate(MOVE_RUN, 0.8);
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_uiRangeCheck_Timer < uiDiff)
+        {
+            if (m_pInstance)
+            {
+                if (Unit* pTarget = m_creature->getVictim())
+                {
+                    float fDistance = m_creature->GetDistance2d(pTarget);
+                    if (fDistance <= 2)
+                    {
+                        DoCastSpellIfCan(pTarget, Regular ? SPELL_VENGEFUL_BLAST_N : SPELL_VENGEFUL_BLAST_H);
+                        m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                    }
+                }
+            }
+            m_uiRangeCheck_Timer = 1000;
+        }
+        else m_uiRangeCheck_Timer -= uiDiff;
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+    }
+};
+
 
 CreatureAI* GetAI_boss_lady_deathwhisper(Creature* pCreature)
 {

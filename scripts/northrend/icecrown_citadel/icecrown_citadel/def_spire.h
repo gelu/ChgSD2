@@ -5,7 +5,7 @@
 enum
 {
     MAP_NUM                     = 631,
-    MAX_ENCOUNTERS              = 15,
+    MAX_ENCOUNTERS              = 16,
 
     TYPE_TELEPORT               = 0,
     TYPE_MARROWGAR              = 1,
@@ -13,6 +13,7 @@ enum
     TYPE_SKULLS_PLATO           = 3,
     TYPE_FLIGHT_WAR             = 4,
     TYPE_SAURFANG               = 5,
+    TYPE_FROSTWIRM_COUNT        = 15,
 
     BASE_CAMP                   = 1000,
     FLIGHT_WAR_1                = 1001,
@@ -22,9 +23,6 @@ enum
     NPC_LADY_DEATHWHISPER       = 36855,
     NPC_DEATHBRINGER_SAURFANG   = 37813,
 
-    NPC_FROSTWYRM1_GUID         = 124864,
-    NPC_FROSTWYRM2_GUID         = 81535,
-
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
 
@@ -32,8 +30,16 @@ enum
     GO_ICEWALL_2                = 201910,
     GO_ORATORY_DOOR             = 201563,
     GO_SAURFANG_DOOR            = 201825,
-    
 
+    GO_SAURFANG_CACHE_10        = 202239,
+    GO_SAURFANG_CACHE_10_H      = 202240,
+    GO_SAURFANG_CACHE_25        = 202241, //need correct!  not in DB
+    GO_SAURFANG_CACHE_25_H      = 202242, //need correct!  not in DB
+
+    GO_GUNSHIP_ARMORY_10        = 201873,
+    GO_GUNSHIP_ARMORY_10_H      = 201874,
+    GO_GUNSHIP_ARMORY_25        = 202178,
+    GO_GUNSHIP_ARMORY_25_H      = 202180,
 };
 
 #endif

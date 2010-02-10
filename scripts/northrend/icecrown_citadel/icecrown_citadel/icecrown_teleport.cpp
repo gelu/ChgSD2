@@ -1,5 +1,28 @@
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* ScriptData
+SDName: icecrown_teleport
+SD%Complete: 30%
+SDComment: by /dev/rsa
+SDCategory: Icecrown Citadel
+EndScriptData */
 #include "precompiled.h"
 #include "def_spire.h"
+
 enum 
 {
 PORTALS_COUNT = 6
@@ -25,41 +48,6 @@ static Locations PortalLoc[]=
 {"Цитадель ледяной короны",4198.42, 2769.22, 351.065,5,false,false,TYPE_SAURFANG}, //
 };
 
-struct MANGOS_DLL_DECL icecrown_teleporterAI : public ScriptedAI
-{
-
-    icecrown_teleporterAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Reset();
-    }
-
-    ScriptedInstance* m_pInstance;
-
-    void Reset()
-    {
-    m_pInstance->SetData(TYPE_TELEPORT,0);
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!m_pInstance) return;
-
-                Creature* pTemp1 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(FLIGHT_WAR_1));
-                Creature* pTemp2 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(FLIGHT_WAR_2));
-                if (pTemp1 && pTemp2) {
-                    if (!pTemp1->isAlive() && !pTemp2->isAlive()) {
-                        m_pInstance->SetData(TYPE_FLIGHT_WAR,DONE);
-                        }
-                    };
-
-    }
-};
-
-CreatureAI* GetAI_icecrown_teleporter(Creature* pCreature)
-{
-    return new icecrown_teleporterAI(pCreature);
-}
 
 bool GossipSelect_icecrown_teleporter(Player *player, Creature* pCreature, uint32 sender, uint32 action)
 {
@@ -91,10 +79,10 @@ bool GOHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
 
     ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
     if(!pInstance) return true;
-    
+
     bool m_bIsRegularMode = pGo->GetMap()->IsRegularDifficulty();
 
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the 1", GOSSIP_SENDER_MAIN, BASE_CAMP);
+    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "No message", GOSSIP_SENDER_MAIN, BASE_CAMP);
     player->SEND_GOSSIP_MENU(GO_TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;
 }
@@ -106,7 +94,6 @@ void AddSC_icecrown_teleporter()
 
     newscript = new Script;
     newscript->Name = "icecrown_teleporter";
-    newscript->GetAI = &GetAI_icecrown_teleporter;
     newscript->pGossipHello = &GossipHello_icecrown_teleporter;
     newscript->pGossipSelect = &GossipSelect_icecrown_teleporter;
     newscript->RegisterSelf();

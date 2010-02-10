@@ -21,11 +21,11 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 {
     instance_icecrown_spire(Map* pMap) : ScriptedInstance(pMap) 
     {
-        Regular = pMap->IsRegularDifficulty();
+        Difficulty = pMap->GetDifficulty();
         Initialize();
     }
 
-    bool Regular;
+    uint8 Difficulty;
     bool needSave;
     std::string strSaveData;
 
@@ -38,9 +38,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
-
-    uint64 m_uiFrostwyrm1GUID;
-    uint64 m_uiFrostwyrm2GUID;
+    uint64 m_uiSaurfangCacheGUID;
+    uint64 m_uiGunshipArmoryGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -66,8 +65,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         m_uiMarrogwarGUID =0;
         m_uiDeathWhisperGUID =0;
         m_uiSaurfangGUID = 0;
-        m_uiFrostwyrm1GUID = NPC_FROSTWYRM1_GUID;
-        m_uiFrostwyrm2GUID = NPC_FROSTWYRM2_GUID;
+        m_uiSaurfangCacheGUID = 0;
+        m_uiGunshipArmoryGUID = 0;
 
     }
 
@@ -100,6 +99,38 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_SAURFANG_DOOR: 
                          m_uiSaurfangDoorGUID = pGo->GetGUID();
                          break;
+            case GO_SAURFANG_CACHE_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_SAURFANG_CACHE_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_SAURFANG_CACHE_10_H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_SAURFANG_CACHE_25_H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_10_H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_25_H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  break;
         }
     }
     void SetData(uint32 uiType, uint32 uiData)
@@ -136,9 +167,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[0] = TYPE_FLIGHT_WAR; 
                 }
                 break;
+             case TYPE_FROSTWIRM_COUNT:
+                m_auiEncounter[15] = uiData;
+                uiData = NOT_STARTED;
+                break;
              case TYPE_SAURFANG:
                 m_auiEncounter[5] = uiData; 
                 if (uiData == DONE) {
+                OpenDoor(m_uiSaurfangDoorGUID);
                 m_auiEncounter[0] = TYPE_SAURFANG; 
                 }
                 break;
@@ -175,6 +211,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_SKULLS_PLATO:  return m_auiEncounter[3];
              case TYPE_FLIGHT_WAR:    return m_auiEncounter[4];
              case TYPE_SAURFANG:      return m_auiEncounter[5];
+             case TYPE_FROSTWIRM_COUNT:      return m_auiEncounter[15];
         }
         return 0;
     }
@@ -189,10 +226,6 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                      return m_uiDeathWhisperGUID;
             case NPC_DEATHBRINGER_SAURFANG: 
                                      return m_uiSaurfangGUID;
-            case FLIGHT_WAR_1: 
-                                     return m_uiFrostwyrm1GUID;
-            case FLIGHT_WAR_2: 
-                                     return m_uiFrostwyrm2GUID;
         }
         return 0;
     }
