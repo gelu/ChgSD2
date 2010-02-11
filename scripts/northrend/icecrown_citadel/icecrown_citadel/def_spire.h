@@ -32,13 +32,13 @@ enum
     GO_SAURFANG_DOOR            = 201825,
 
     GO_SAURFANG_CACHE_10        = 202239,
-    GO_SAURFANG_CACHE_10_H      = 202240,
-    GO_SAURFANG_CACHE_25        = 202241, //need correct!  not in DB
-    GO_SAURFANG_CACHE_25_H      = 202242, //need correct!  not in DB
+    GO_SAURFANG_CACHE_25        = 202240,
+    GO_SAURFANG_CACHE_10_H      = 902241, //need correct!  not in YTDB 533
+    GO_SAURFANG_CACHE_25_H      = 902242, //need correct!  not in YTDB 533
 
     GO_GUNSHIP_ARMORY_10        = 201873,
-    GO_GUNSHIP_ARMORY_10_H      = 201874,
-    GO_GUNSHIP_ARMORY_25        = 202178,
+    GO_GUNSHIP_ARMORY_25        = 201874,
+    GO_GUNSHIP_ARMORY_10_H      = 202178,
     GO_GUNSHIP_ARMORY_25_H      = 202180,
 };
 

@@ -105,15 +105,15 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   break;
             case GO_SAURFANG_CACHE_25:
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
-                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID();
                                   break;
             case GO_SAURFANG_CACHE_10_H:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
-                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID();
                                   break;
             case GO_SAURFANG_CACHE_25_H:
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
-                                  m_uiSaurfangCacheGUID = pGo->GetGUID(); 
+                                  m_uiSaurfangCacheGUID = pGo->GetGUID();
                                   break;
             case GO_GUNSHIP_ARMORY_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
@@ -164,8 +164,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_FLIGHT_WAR:
                 m_auiEncounter[4] = uiData; 
                 if (uiData == DONE) {
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryGUID))
+                                     if (pChest && !pChest->isSpawned()) {
+                                          pChest->SetRespawnTime(DAY);
+//                                        pChest->SetGoState(GO_STATE_ACTIVE);
+                                      };
+                                };
                 m_auiEncounter[0] = TYPE_FLIGHT_WAR; 
-                }
                 break;
              case TYPE_FROSTWIRM_COUNT:
                 m_auiEncounter[15] = uiData;
@@ -174,9 +179,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_SAURFANG:
                 m_auiEncounter[5] = uiData; 
                 if (uiData == DONE) {
-                OpenDoor(m_uiSaurfangDoorGUID);
-                m_auiEncounter[0] = TYPE_SAURFANG; 
-                }
+//                OpenDoor(m_uiSaurfangDoorGUID);
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
+                                     if (pChest && !pChest->isSpawned()) {
+                                          pChest->SetRespawnTime(DAY);
+//                                        pChest->SetGoState(GO_STATE_ACTIVE);
+                                      };
+                                };
+//                m_auiEncounter[0] = TYPE_SAURFANG;
                 break;
         }
 
