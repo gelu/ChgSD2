@@ -445,7 +445,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_champion : public ScriptedInstance
 			case DATA_MEMORY:
 				return m_uiMemoryGUID;
 			case DATA_ARGENT_CHALLENGER:
-				return m_uiArgentChallengerID;
+				return m_uiArgentChallenger;
 			case DATA_BLACK_KNIGHT:
 				return m_uiBlackKnightGUID;
         }

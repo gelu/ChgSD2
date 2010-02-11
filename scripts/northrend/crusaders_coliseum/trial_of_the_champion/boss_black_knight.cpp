@@ -36,13 +36,13 @@ enum
 	SPELL_ICY_TOUCH_H			= 67881,
 	SPELL_OBLITERATE			= 67725,
 	SPELL_OBLITERATE_H			= 67883,
-	SPELL_CHOKE					= 68306,
+	SPELL_CHOKE				= 68306,
 	//skeleton
-	SPELL_ARMY					= 42650,			//replacing original one, since that one spawns millions of ghouls!!
+	SPELL_ARMY				= 42650, //replacing original one, since that one spawns millions of ghouls!!
 	//ghost
 	SPELL_DEATH 				= 67808,
 	SPELL_DEATH_H				= 67875,
-	SPELL_MARK					= 67823,
+	SPELL_MARK				= 67823,
 
 	//risen ghoul
 	SPELL_CLAW					= 67879,
@@ -141,6 +141,7 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 
     void Reset()
     {
+    m_creature->SetRespawnDelay(DAY);
 		m_creature->SetDisplayId(29837);
 		SetEquipmentSlots(false, EQUIP_SWORD, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
 		Plague_Strike_Timer = m_bIsRegularMode ? 5000 : 4000;
@@ -166,37 +167,39 @@ struct MANGOS_DLL_DECL boss_black_knightAI : public ScriptedAI
 			m_pInstance->SetData(TYPE_BLACK_KNIGHT, IN_PROGRESS);
     }
 
-	void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
+    void DamageTaken(Unit* pDoneBy, uint32& uiDamage)
     {
-		if (uiDamage > m_creature->GetHealth() && !phase3){
-			uiDamage = 0;
-			if (phase2)
-				StartPhase3();
-			if (phase1)
-				StartPhase2();
-		}
+        if ((uiDamage > m_creature->GetHealth() || 
+        m_creature->GetHealth()/m_creature->GetHealth() <= 0.1 )  && !phase3){
+            uiDamage = 0;
+            if (phase2)
+                StartPhase3();
+            if (phase1)
+                StartPhase2();
+        }
     }
 
-	void JustDied(Unit* pKiller)
+
+    void JustDied(Unit* pKiller)
     {
 		if (!m_pInstance)
 			return;
-		if (phase3)
+		if (phase3 && !phase1 && !phase2)
 		{
 			m_pInstance->SetData(TYPE_BLACK_KNIGHT, DONE);
 		}
-		if (phase2)
+/*		if (phase2 && !phase1 && !phase3)
 			if (!m_creature->isAlive())
 			{
 				m_creature->Respawn();
 				StartPhase3();
 			}
-		if (phase1)
+		if (phase1 && !phase2 && !phase3)
 			if (!m_creature->isAlive())
 			{
 				m_creature->Respawn();
 				StartPhase2();
-			}
+			}*/
 	}
 
 	void StartPhase2()

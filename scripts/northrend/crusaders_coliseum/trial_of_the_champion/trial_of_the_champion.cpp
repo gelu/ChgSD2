@@ -208,7 +208,7 @@ switch(uiAction) {
     case GOSSIP_ACTION_INFO_DEF+2: {
     if ((m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED || m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == IN_PROGRESS) && m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
                 {
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData(DATA_ARGENT_CHALLENGER)))
+                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(DATA_ARGENT_CHALLENGER)))
                         pTemp->Respawn();
                     else
                         pCreature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -220,7 +220,7 @@ switch(uiAction) {
     case GOSSIP_ACTION_INFO_DEF+3: {
     if ((m_pInstance->GetData(TYPE_BLACK_KNIGHT) == NOT_STARTED || m_pInstance->GetData(TYPE_BLACK_KNIGHT) == IN_PROGRESS) && m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == DONE)
             {
-                pCreature->SummonCreature(35451, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                pCreature->SummonCreature(NPC_BLACK_KNIGHT, 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                 pCreature->DealDamage(pCreature, pCreature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
                 m_pInstance->SetData(TYPE_BLACK_KNIGHT, IN_PROGRESS);
             };
