@@ -103,7 +103,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             case 1: {
                     if (!m_uiBoneStorm)
                     {if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, Regular ? SPELL_BONE_STORM_N : SPELL_BONE_STORM_H);
+                    DoCast(pTarget, Regular ? SPELL_BONE_STORM_N : SPELL_BONE_STORM_H);
                     m_uiBoneStorm = true;
                     stage = 2;
                     }
@@ -111,7 +111,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             case 2: {
                     if (m_uiBoneStorm_Timer < diff)
                     {
-                    m_creature->RemoveAurasDueToSpell(Regular ? SPELL_BONE_STORM_N : SPELL_BONE_STORM_H);
+//                    m_creature->RemoveAurasDueToSpell(Regular ? SPELL_BONE_STORM_N : SPELL_BONE_STORM_H);
                     m_creature->SetInCombatWithZone();
                     stage = 3;
                     } else m_uiBoneStorm_Timer -= diff;
@@ -121,21 +121,21 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
                     if (m_uiSaberLash_Timer < diff)
                     {DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_SABER_LASH_N :SPELL_SABER_LASH_H);
-                    m_uiSaberLash_Timer=urand(10000,15000);
+                    m_uiSaberLash_Timer=urand(8000,12000);
                     } else m_uiSaberLash_Timer -= diff;
 
                     if (m_uiColdFlame_Timer < diff)
                     {if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCastSpellIfCan(pTarget, Regular ? SPELL_COLD_FLAME_N :SPELL_COLD_FLAME_H);
-                    m_uiColdFlame_Timer=urand(25000,35000);
+                    m_uiColdFlame_Timer=urand(15000,25000);
                     } else m_uiColdFlame_Timer -= diff;
 
         health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
-        if (health <= 50 && stage == 0) stage = 1;
+        if (health <= 30 && stage == 0) stage = 1;
 
         if (m_uiBerserk_Timer < diff)
         {
-            DoCastSpellIfCan(m_creature, SPELL_BERSERK);
+            DoCast(m_creature, SPELL_BERSERK);
 //            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
         }
         else  m_uiBerserk_Timer -= diff;
