@@ -79,9 +79,9 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     stage = 0;
 
     uint32 m_uiBloodLink_Timer = 10000;
-    uint32 m_uiBloodNova_Timer = 30000;
-    uint32 m_uiBoilingBlood_Timer = 30000;
-    uint32 m_uiSummon_Timer =40000;
+    uint32 m_uiBloodNova_Timer = 20000;
+    uint32 m_uiBoilingBlood_Timer = 25000;
+    uint32 m_uiSummon_Timer =30000;
 
     }
     uint64 CallGuard(uint64 npctype,TempSummonType type, uint32 _summontime )
@@ -116,7 +116,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     break;}
             case 1: {
                     if (!m_uiIsFrenzy) {
-                    DoCastSpellIfCan(m_creature, SPELL_FRENZY);
+                    DoCast(m_creature, SPELL_FRENZY);
                     m_uiIsFrenzy = true;
                     stage = 2;
                     }
@@ -128,18 +128,18 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
                     if (m_uiBloodLink_Timer < diff) {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, SPELL_BLOOD_LINK);
+                    DoCast(pTarget, SPELL_BLOOD_LINK);
                     m_uiBloodLink_Timer=urand(8000,15000);
                     } else m_uiBloodLink_Timer -= diff;
 
                     if (m_uiBloodNova_Timer < diff) {
-                    DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_BLOOD_NOVA_N : SPELL_BLOOD_NOVA_H);
-                    m_uiBloodNova_Timer=urand(30000,35000);
+                    DoCast(m_creature->getVictim(), Regular ? SPELL_BLOOD_NOVA_N : SPELL_BLOOD_NOVA_H);
+                    m_uiBloodNova_Timer=urand(25000,30000);
                     } else m_uiBloodNova_Timer -= diff;
 
                     if (m_uiBoilingBlood_Timer < diff) {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, Regular ? SPELL_BOILING_BLOOD_N : SPELL_BOILING_BLOOD_H);
+                    DoCast(pTarget, Regular ? SPELL_BOILING_BLOOD_N : SPELL_BOILING_BLOOD_H);
                     m_uiBoilingBlood_Timer=urand(20000,40000);
                     } else m_uiBoilingBlood_Timer -= diff;
 
@@ -149,7 +149,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
-                    m_uiSummon_Timer=40000;
+                    m_uiSummon_Timer=30000;
                     } else m_uiSummon_Timer -= diff;
 
         health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
@@ -157,7 +157,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
         if (m_uiBerserk_Timer < diff)
         {
-            DoCastSpellIfCan(m_creature, SPELL_BERSERK);
+            DoCast(m_creature, SPELL_BERSERK);
             m_uiBerserk_Timer = 600000;
         } else  m_uiBerserk_Timer -= diff;
 
