@@ -71,6 +71,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     uint32 m_uiDominateMind_Timer;
     uint32 m_uiBerserk_Timer;
     uint32 m_uiSummon_Timer;
+    uint32 m_uiSummon2_Timer;
     bool isManaBarrier;
     uint8 health;
     uint64 m_uiMana;
@@ -79,11 +80,12 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_DEATHWHISPER, NOT_STARTED);
     m_uiManaBarrier_Timer = 30000;
-    m_uiSummon_Timer = 30000;
+    m_uiSummon_Timer = 60000;
+    m_uiSummon2_Timer = 20000;
     m_uiShadowBolt_Timer = urand(8000,10000);
-    m_uiDeathAndDecay_Timer = urand(10000,20000);
+    m_uiDeathAndDecay_Timer = urand(40000,60000);
     m_uiDarkEmpowerment_Timer = 45000;
-    m_uiFrostBolt_Timer = urand(10000,15000);
+    m_uiFrostBolt_Timer = urand(20000,25000);
     m_uiInsignificance_Timer = 40000;
     m_uiDominateMind_Timer = 30000;
     m_uiBerserk_Timer = 600000;
@@ -158,15 +160,15 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                                  CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 60000);
                                  CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 60000);
                                  };
-                    m_uiSummon_Timer=20000;
+                    m_uiSummon_Timer=60000;
                     } else m_uiSummon_Timer -= diff;
 
                     if (m_uiDarkEmpowerment_Timer < diff)
                     { 
                     if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_FANATIC, 30.0f))
-                    DoCastSpellIfCan(pGuard, SPELL_DARK_EMPOWERMENT_N);
+                    DoCast(pGuard, SPELL_DARK_EMPOWERMENT_N);
                     else if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_ADHERENT, 30.0f))
-                    DoCastSpellIfCan(pGuard, SPELL_DARK_EMPOWERMENT_N);
+                    DoCast(pGuard, SPELL_DARK_EMPOWERMENT_N);
                     m_uiDarkEmpowerment_Timer=urand(20000,40000);
                     } else m_uiDarkEmpowerment_Timer -= diff;
 
@@ -184,27 +186,27 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                     m_uiInsignificance_Timer=urand(20000,40000);
                     } else m_uiInsignificance_Timer -= diff;
 
-                    if (m_uiSummon_Timer < diff)
+                    if (m_uiSummon2_Timer < diff)
                     { 
                     CallGuard(NPC_VENGEFUL_SHADE, TEMPSUMMON_TIMED_DESPAWN, 30000);
                     if(!Regular) CallGuard(NPC_VENGEFUL_SHADE, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                    m_uiSummon_Timer=20000;
-                    } else m_uiSummon_Timer -= diff;
+                    m_uiSummon2_Timer=20000;
+                    } else m_uiSummon2_Timer -= diff;
 
+                    if (m_uiDominateMind_Timer < diff)
+                    {if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCastSpellIfCan(pTarget, SPELL_DOMINATE_MIND_H);
+                    m_uiDominateMind_Timer=urand(15000,25000);
+                    } else m_uiDominateMind_Timer -= diff;
 
                     break;}
         }
 
                     if (m_uiDeathAndDecay_Timer < diff)
                     {DoCastSpellIfCan(m_creature->getVictim(), SPELL_DEATH_AND_DECAY_N);
-                    m_uiDeathAndDecay_Timer=urand(10000,15000);
+                    m_uiDeathAndDecay_Timer=urand(30000,45000);
                     } else m_uiDeathAndDecay_Timer -= diff;
 
-                    if (m_uiDominateMind_Timer < diff)
-                    {if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, SPELL_DOMINATE_MIND_H);
-                    m_uiDominateMind_Timer=urand(25000,35000);
-                    } else m_uiDominateMind_Timer -= diff;
 
          health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
          if (!isManaBarrier && stage == 0) stage = 1;

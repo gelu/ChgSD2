@@ -35,8 +35,8 @@ enum
         SPELL_BONE_STRIKE_N                     = 69057,
         SPELL_BONE_STORM_N                      = 69076,
 
-        SPELL_SABER_LASH_H                      = 70814,
-        SPELL_COLD_FLAME_H                      = 70825,
+        SPELL_SABER_LASH_H                      = 71021,
+        SPELL_COLD_FLAME_H                      = 70824,
         SPELL_BONE_STRIKE_H                     = 69057,
         SPELL_BONE_STORM_H                      = 69076,
 };

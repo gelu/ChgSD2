@@ -149,7 +149,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
-                    m_uiSummon_Timer=30000;
+                    m_uiSummon_Timer=60000;
                     } else m_uiSummon_Timer -= diff;
 
         health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
