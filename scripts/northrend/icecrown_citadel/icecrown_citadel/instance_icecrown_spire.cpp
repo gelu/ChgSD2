@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 if (uiData == DONE) {
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryGUID))
                                      if (pChest && !pChest->isSpawned()) {
-                                          pChest->SetRespawnTime(WEEK);
+                                          pChest->SetRespawnTime(7*DAY);
 //                                        pChest->SetGoState(GO_STATE_ACTIVE);
                                       };
                                 };
@@ -182,7 +182,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 //                OpenDoor(m_uiSaurfangDoorGUID);
                                  if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
                                      if (pChest && !pChest->isSpawned()) {
-                                          pChest->SetRespawnTime(WEEK);
+                                          pChest->SetRespawnTime(7*DAY);
 //                                        pChest->SetGoState(GO_STATE_ACTIVE);
                                       };
                                 };
