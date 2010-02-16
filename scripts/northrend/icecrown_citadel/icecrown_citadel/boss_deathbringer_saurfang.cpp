@@ -48,6 +48,10 @@ enum
         SPELL_BLOOD_NOVA_H                      = 72438,
         SPELL_RUNE_OF_BLOOD_H                   = 72448,
 
+        SPELL_BEAST_1                           = 72176,
+        SPELL_BEAST_2                           = 72723,
+        SPELL_BEAST_3                           = 21150,
+
 };
 
 struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
@@ -66,6 +70,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     uint32 m_uiBloodLink_Timer;
     uint32 m_uiBloodNova_Timer;
     uint32 m_uiBoilingBlood_Timer;
+    uint32 m_uiRuneOfBlood_Timer;
     uint32 m_uiSummon_Timer;
 
     uint8 health;
@@ -81,6 +86,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     uint32 m_uiBloodLink_Timer = 10000;
     uint32 m_uiBloodNova_Timer = 20000;
     uint32 m_uiBoilingBlood_Timer = 25000;
+    uint32 m_uiRuneOfBlood_Timer = 35000;
     uint32 m_uiSummon_Timer =30000;
 
     }
@@ -142,6 +148,12 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     DoCast(pTarget, Regular ? SPELL_BOILING_BLOOD_N : SPELL_BOILING_BLOOD_H);
                     m_uiBoilingBlood_Timer=urand(20000,40000);
                     } else m_uiBoilingBlood_Timer -= diff;
+
+                    if (m_uiRuneOfBlood_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, Regular ? SPELL_RUNE_OF_BLOOD_N : SPELL_RUNE_OF_BLOOD_H);
+                    m_uiRuneOfBlood_Timer=urand(20000,40000);
+                    } else m_uiRuneOfBlood_Timer -= diff;
 
                     if (m_uiSummon_Timer < diff)
                     {

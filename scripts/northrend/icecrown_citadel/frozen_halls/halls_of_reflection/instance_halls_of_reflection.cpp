@@ -31,8 +31,15 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
 
     //Creatures GUID
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
-    uint64 m_uiBronjahmGUID;
-    uint64 m_uiDevourerGUID;
+    uint64 m_uiFalrynGUID;
+    uint64 m_uiMarwynGUID;
+    uint64 m_uiLichKingGUID;
+    uint64 m_uiFrostGeneralGUID;
+    uint64 m_uiCaptainsChestGUID;
+    uint64 m_uiIcecrownDoorGUID;
+    uint64 m_uiImpenetrableDoorGUID;
+    uint64 m_uiFrostmourneGUID;
+    uint64 m_uiFrostmourneAltarGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -52,19 +59,23 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
-        m_uiBronjahmGUID =0;
-        m_uiDevourerGUID =0;
     }
 
     void OnCreatureCreate(Creature* pCreature)
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_DEVOURER: 
-                         m_uiDevourerGUID = pCreature->GetGUID();
+            case NPC_FALRYN: 
+                         m_uiMarwynGUID = pCreature->GetGUID();
                          break;
-            case NPC_BRONJAHM: 
-                          m_uiBronjahmGUID = pCreature->GetGUID();
+            case NPC_MARWYN: 
+                          m_uiMarwynGUID = pCreature->GetGUID();
+                          break;
+            case NPC_LICH_KING: 
+                          m_uiLichKingGUID = pCreature->GetGUID();
+                          break;
+            case NPC_FROST_GENERAL: 
+                          m_uiFrostGeneralGUID = pCreature->GetGUID();
                           break;
         }
     }
@@ -73,14 +84,40 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
+        case GO_CAPTAIN_CHEST_1:
+                               if(Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                                  break;
+        case GO_CAPTAIN_CHEST_2:
+                               if(Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                                  break;
+        case GO_CAPTAIN_CHEST_3:
+                               if(!Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                                  break;
+        case GO_CAPTAIN_CHEST_4:
+                               if(!Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                                  break;
+        case GO_ICECROWN_DOOR:     m_uiIcecrownDoorGUID = pGo->GetGUID(); break;
+        case GO_IMPENETRABLE_DOOR: m_uiImpenetrableDoorGUID = pGo->GetGUID(); break;
+        case GO_FROSTMOURNE:       m_uiFrostmourneGUID = pGo->GetGUID(); break;
+        case GO_FROSTMOURNE_ALTAR: m_uiFrostmourneAltarGUID = pGo->GetGUID(); break;
         }
     }
     void SetData(uint32 uiType, uint32 uiData)
     {
         switch(uiType)
         {
-            case TYPE_BRONJAHM: m_auiEncounter[0] = uiData; break;
-            case TYPE_DEVOURER: m_auiEncounter[1] = uiData; break;
+            case TYPE_START_EVENT:   m_auiEncounter[0] = uiData; break;
+            case TYPE_MOBS_WAVE_1:   m_auiEncounter[1] = uiData; break;
+            case TYPE_FALRYN:        m_auiEncounter[2] = uiData; break;
+            case TYPE_MOBS_WAVE_2:   m_auiEncounter[3] = uiData; break;
+            case TYPE_MARWYN:        m_auiEncounter[4] = uiData; 
+                                     if (uiData == DONE) {
+                                         OpenDoor(m_uiImpenetrableDoorGUID);
+                                     }; break;
+            case TYPE_LICH_KING_1:   m_auiEncounter[5] = uiData; break;
+            case TYPE_FROST_GENERAL: m_auiEncounter[6] = uiData; break;
+            case TYPE_LICH_KING_BATTLE: m_auiEncounter[7] = uiData; break;
+            case TYPE_ESCAPE:        m_auiEncounter[8] = uiData; break;
         }
 
         if (uiData == DONE)
@@ -108,8 +145,15 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         switch(uiType)
         {
-             case TYPE_BRONJAHM:     return m_auiEncounter[0];
-             case TYPE_DEVOURER:   return m_auiEncounter[1];
+            case TYPE_START_EVENT:   return m_auiEncounter[0];
+            case TYPE_MOBS_WAVE_1:   return m_auiEncounter[1];
+            case TYPE_FALRYN:        return m_auiEncounter[2];
+            case TYPE_MOBS_WAVE_2:   return m_auiEncounter[3];
+            case TYPE_MARWYN:        return m_auiEncounter[4];
+            case TYPE_LICH_KING_1:   return m_auiEncounter[5];
+            case TYPE_FROST_GENERAL: return m_auiEncounter[6];
+            case TYPE_LICH_KING_BATTLE: return m_auiEncounter[7];
+            case TYPE_ESCAPE:        return m_auiEncounter[8];
         }
         return 0;
     }
@@ -118,8 +162,10 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         switch(uiData)
         {
-            case NPC_BRONJAHM: return m_uiBronjahmGUID;
-            case NPC_DEVOURER: return m_uiDevourerGUID;
+            case NPC_FALRYN: return  m_uiFalrynGUID;
+            case NPC_MARWYN: return  m_uiMarwynGUID;
+            case NPC_LICH_KING: return m_uiLichKingGUID;
+            case NPC_FROST_GENERAL: return m_uiFrostGeneralGUID;
         }
         return 0;
     }

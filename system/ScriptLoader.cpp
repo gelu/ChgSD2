@@ -385,6 +385,11 @@ extern void AddSC_boss_forgemaster_gafrost();
 extern void AddSC_boss_krick();
 extern void AddSC_boss_scourgelord_tirannus();
 
+extern void AddSC_instance_halls_of_reflection();
+//extern void AddSC_boss_falryn();
+//extern void AddSC_boss_marwyn();
+//extern void AddSC_boss_lich_king_fh();
+
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
 extern void AddSC_boss_nexusprince_shaffar();               //auchindoun, mana_tombs
@@ -838,6 +843,11 @@ void AddScripts()
     AddSC_boss_forgemaster_gafrost();
     AddSC_boss_krick();
     AddSC_boss_scourgelord_tirannus();
+
+    AddSC_instance_halls_of_reflection();
+//    AddSC_boss_falryn();
+//    AddSC_boss_marwyn();
+//    AddSC_boss_lich_king_fh();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
