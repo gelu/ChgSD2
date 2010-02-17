@@ -155,7 +155,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                             if (uiData == DONE) {
                                                  if (GameObject* pChest = instance->GetGameObject(m_uiCrusadersCacheGUID))
                                                      if (pChest && !pChest->isSpawned()) {
-                                                                                          pChest->SetRespawnTime(DAY);
+                                                                                          pChest->SetRespawnTime(7*DAY);
 //                                                                                          pChest->SetGoState(GO_STATE_ACTIVE);
                                                                                       };
                                                                 };
