@@ -293,8 +293,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->InterruptNonMeleeSpells(true);
         DoCast(m_creature, SPELL_SPHERE_VISUAL);
-        m_creature->GetMap()->CreatureRelocation(m_creature, JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O);
-        m_creature->SendMonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O, SPLINEFLAG_NONE, 0);
+        m_creature->MonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, 0);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, NOT_STARTED);
 
@@ -402,8 +401,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     return;
 
                 SetCombatMovement(true);
-                m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
-                m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O, SPLINEFLAG_NONE, 0);
+                m_creature->MonsterMove(CENTER_X, CENTER_Y, GROUND_Z, 0);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->RemoveAurasDueToSpell(SPELL_SPHERE_VISUAL);
@@ -489,8 +487,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->InterruptNonMeleeSpells(true);
                 DoCast(m_creature, SPELL_SPHERE_VISUAL);
-                m_creature->GetMap()->CreatureRelocation(m_creature, JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O);
-                m_creature->SendMonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O, SPLINEFLAG_NONE, 0);
+                m_creature->MonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, 0);
                 m_uiSubPhase = SUBPHASE_CALL_VOLUNTEER;
                 GameObject* pCircle = GetClosestGameObjectWithEntry(m_creature,GO_CIRCLE,50.0f);
                 if (pCircle && !pCircle->isSpawned())
@@ -541,7 +538,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 if(!m_bVolunteerDied)
                     DoCast(m_creature, SPELL_GIFT_OF_THE_HERALD);
                 m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
-                m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O, SPLINEFLAG_NONE, 0);
+                m_creature->MonsterMove(CENTER_X, CENTER_Y, GROUND_Z, 0);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->RemoveAurasDueToSpell(SPELL_SPHERE_VISUAL);

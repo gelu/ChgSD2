@@ -184,8 +184,7 @@ struct MANGOS_DLL_DECL boss_talon_king_ikissAI : public ScriptedAI
                 float Y = target->GetPositionY();
                 float Z = target->GetPositionZ();
 
-                m_creature->GetMap()->CreatureRelocation(m_creature,X,Y,Z,0.0f);
-                m_creature->SendMonsterMove(X, Y, Z, 0, SPLINEFLAG_WALKMODE, 1);
+                m_creature->MonsterMove(X, Y, Z, 1);
 
                 DoCastSpellIfCan(target,SPELL_BLINK_TELEPORT);
                 Blink = true;
