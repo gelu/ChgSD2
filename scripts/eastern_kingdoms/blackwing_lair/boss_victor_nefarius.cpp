@@ -301,8 +301,8 @@ struct MANGOS_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
                     //Make super invis
                     DoCastSpellIfCan(m_creature,8149);
 
-                    //Teleport self to a hiding spot (this causes errors in the mangos log but no real issues)
-                    m_creature->MonsterMove(HIDE_X, HIDE_Y, HIDE_Z,0);
+                    //Teleport self to a hiding spot
+                    m_creature->NearTeleportTo(HIDE_X, HIDE_Y, HIDE_Z, 0.0f);
 
                     //Spawn nef and have him attack a random target
                     Creature* Nefarian = m_creature->SummonCreature(CREATURE_NEFARIAN,NEF_X,NEF_Y,NEF_Z,0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,120000);
