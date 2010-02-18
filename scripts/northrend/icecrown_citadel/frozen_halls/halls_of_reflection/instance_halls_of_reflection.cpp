@@ -200,11 +200,32 @@ InstanceData* GetInstanceData_instance_halls_of_reflection(Map* pMap)
 }
 
 
+bool GOHello_go_frostmourne_altar(Player *player, GameObject* pGo)
+{
+
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return false;
+
+    switch(pGo->GetEntry())
+    {
+        case GO_FROSTMOURNE_ALTAR:  pInstance->SetData(TYPE_START_EVENT, SPECIAL);  break;
+    }
+
+    pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+    return true;
+}
+
 void AddSC_instance_halls_of_reflection()
 {
-    Script* pNewScript;
-    pNewScript = new Script;
-    pNewScript->Name = "instance_halls_of_reflection";
-    pNewScript->GetInstanceData = &GetInstanceData_instance_halls_of_reflection;
-    pNewScript->RegisterSelf();
+    Script* newscript;
+    newscript = new Script;
+    newscript->Name = "instance_halls_of_reflection";
+    newscript->GetInstanceData = &GetInstanceData_instance_halls_of_reflection;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_frostmourne_altar";
+    newscript->pGOHello = &GOHello_go_frostmourne_altar;
+    newscript->RegisterSelf();
+
 }

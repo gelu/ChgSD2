@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_marwyn
-SD%Complete: 0%
-SDComment:
+SD%Complete: 40%
+SDComment: by /dev/rsa
 SDCategory: Halls of Reflection
 EndScriptData */
 
@@ -52,9 +52,13 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
     }
 
     bool Regular;
-    bool m_uiIsFrenzy;
     ScriptedInstance *pInstance;
     uint32 m_uiBerserk_Timer;
+    uint32 m_uiSharedSuffering_Timer;
+    uint32 m_uiWell_Timer;
+    uint32 m_uiTouch_Timer;
+    uint32 m_uiFlesh_Timer;
+    uint32 m_uiObliterate_Timer;
 
     uint8 health;
     uint8 stage;
@@ -63,19 +67,11 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
     {
     if(pInstance) pInstance->SetData(TYPE_FALRYN, NOT_STARTED);
     m_uiBerserk_Timer = 180000;
-    stage = 0;
-
-
-    }
-    uint64 CallGuard(uint64 npctype,TempSummonType type, uint32 _summontime )
-    {
-        float fPosX, fPosY, fPosZ;
-        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(15, 25), fPosX, fPosY, fPosZ);
-        Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
-        if(pSummon) pSummon->SetInCombatWithZone();
-//        DoScriptText(EMOTE_SUMMON, m_creature);
-        return pSummon ? pSummon->GetGUID() : 0;
+    m_uiSharedSuffering_Timer = 4000;
+    m_uiWell_Timer = 5000;
+    m_uiTouch_Timer = 8000;
+    m_uiFlesh_Timer = 10000;
+    m_uiObliterate_Timer = 1000;
     }
 
     void Aggro(Unit *who) 
@@ -93,23 +89,41 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        switch(stage)
-        {
-            case 0: {
-                    break;}
-            case 1: {
-                    break;}
-            case 2: {
-                    break;}
-        }
+                    if (m_uiSharedSuffering_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, Regular ? SPELL_SHARED_SUFFERING_N : SPELL_SHARED_SUFFERING_H);
+                    m_uiSharedSuffering_Timer= 20000;
+                    } else m_uiSharedSuffering_Timer -= diff;
 
-        health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
-        if (health <= 30 && stage == 0) stage = 1;
+                    if (m_uiWell_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_WELL_OF_CORRUPTION);
+                    m_uiWell_Timer= 30000;
+                    } else m_uiWell_Timer -= diff;
+
+/*                    if (m_uiTouch_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, Regular ? SPELL_WELL_OF_CORRUPTION_N : SPELL_WELL_OF_CORRUPTION_H);
+                    m_uiTouch_Timer= 30000;
+                    } else m_uiTouch_Timer -= diff;
+*/
+                    if (m_uiFlesh_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, Regular ? SPELL_CORRUPTED_FLESH_N : SPELL_CORRUPTED_FLESH_H);
+                    m_uiWell_Timer= 10000;
+                    } else m_uiWell_Timer -= diff;
+
+                    if (m_uiObliterate_Timer < diff)
+                    {DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_OBLITERATE_N : SPELL_OBLITERATE_H);
+                    m_uiObliterate_Timer=urand(8000,12000);
+                    } else m_uiObliterate_Timer -= diff;
+
+
 
         if (m_uiBerserk_Timer < diff)
         {
             DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserk_Timer = 600000;
+            m_uiBerserk_Timer = 180000;
         } else  m_uiBerserk_Timer -= diff;
 
         DoMeleeAttackIfReady();

@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_falryn
-SD%Complete: 0%
-SDComment:
+SD%Complete: 40%
+SDComment: by /dev/rsa
 SDCategory: Halls of Reflection
 EndScriptData */
 
@@ -51,9 +51,11 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
     }
 
     bool Regular;
-    bool m_uiIsFrenzy;
     ScriptedInstance *pInstance;
     uint32 m_uiBerserk_Timer;
+    uint32 m_uiDespair_Timer;
+    uint32 m_uiHorror_Timer;
+    uint32 m_uiStrike_Timer;
 
     uint8 health;
     uint8 stage;
@@ -63,18 +65,9 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
     if(pInstance) pInstance->SetData(TYPE_FALRYN, NOT_STARTED);
     m_uiBerserk_Timer = 180000;
     stage = 0;
-
-
-    }
-    uint64 CallGuard(uint64 npctype,TempSummonType type, uint32 _summontime )
-    {
-        float fPosX, fPosY, fPosZ;
-        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(15, 25), fPosX, fPosY, fPosZ);
-        Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
-        if(pSummon) pSummon->SetInCombatWithZone();
-//        DoScriptText(EMOTE_SUMMON, m_creature);
-        return pSummon ? pSummon->GetGUID() : 0;
+    m_uiDespair_Timer = Regular ? 40000 : 30000;
+    m_uiHorror_Timer = urand(25000,35000);
+    m_uiStrike_Timer = urand(10000,15000);
     }
 
     void Aggro(Unit *who) 
@@ -97,18 +90,53 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
             case 0: {
                     break;}
             case 1: {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_HOPELESSNESS);
+                    stage = 2;
                     break;}
             case 2: {
                     break;}
+            case 3: {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_HOPELESSNESS);
+                    stage = 4;
+                    break;}
+            case 4: {
+                    break;}
+            case 5: {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_HOPELESSNESS);
+                    stage = 6;
+                    break;}
+            case 6: {
+                    break;}
         }
+                    if (m_uiDespair_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, SPELL_IMPENDING_DESPAIR);
+                    m_uiDespair_Timer= Regular ? 40000 : 30000;
+                    } else m_uiDespair_Timer -= diff;
+
+                    if (m_uiStrike_Timer < diff)
+                    {DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_QUIVERING_STRIKE_N : SPELL_QUIVERING_STRIKE_H);
+                    m_uiStrike_Timer=urand(10000,15000);
+                    } else m_uiStrike_Timer -= diff;
+
+                    if (m_uiHorror_Timer < diff) {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    DoCast(pTarget, Regular ? SPELL_DEFILING_HORROR_N : SPELL_DEFILING_HORROR_H);
+                    m_uiHorror_Timer=urand(25000,35000);
+                    } else m_uiHorror_Timer -= diff;
 
         health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
-        if (health <= 30 && stage == 0) stage = 1;
+        if (health <= 66 && stage == 0) stage = 1;
+        if (health <= 33 && stage == 2) stage = 3;
+        if (health <= 10 && stage == 4) stage = 5;
 
         if (m_uiBerserk_Timer < diff)
         {
             DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserk_Timer = 600000;
+            m_uiBerserk_Timer = 180000;
         } else  m_uiBerserk_Timer -= diff;
 
         DoMeleeAttackIfReady();
