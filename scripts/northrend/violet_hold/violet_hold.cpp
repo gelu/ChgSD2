@@ -702,7 +702,7 @@ struct MANGOS_DLL_DECL npc_door_sealAI : public ScriptedAI
         {
             if (SpellCorrupt_Timer <= diff)
             {
-                if (m_creature->HasAura(SPELL_CORRUPT,0))
+                if (m_creature->HasAura(SPELL_CORRUPT,EFFECT_INDEX_0))
                     SpellCorrupt_Timer = 1500;
                 else
                     SpellCorrupt_Timer = 0;

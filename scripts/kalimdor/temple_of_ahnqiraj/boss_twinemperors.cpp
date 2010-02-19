@@ -431,7 +431,7 @@ struct MANGOS_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 class MANGOS_DLL_DECL BugAura : public Aura
 {
     public:
-        BugAura(SpellEntry *spell, uint32 eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
+        BugAura(SpellEntry *spell, SpellEffectIndex eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
             {}
 };
 
@@ -472,7 +472,11 @@ struct MANGOS_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
         {
             if (!spell->Effect[i])
                 continue;
-            target->AddAura(new BugAura(spell, i, NULL, target, target));
+            switch (i) {
+            case 0: target->AddAura(new BugAura(spell, EFFECT_INDEX_0, NULL, target, target)); break;
+            case 1: target->AddAura(new BugAura(spell, EFFECT_INDEX_1, NULL, target, target)); break;
+            case 2: target->AddAura(new BugAura(spell, EFFECT_INDEX_2, NULL, target, target)); break;
+            }
         }
         target->SetHealth(target->GetMaxHealth());
     }
@@ -558,7 +562,11 @@ struct MANGOS_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
         {
             if (!spell->Effect[i])
                 continue;
-            target->AddAura(new BugAura(spell, i, NULL, target, target));
+            switch (i) {
+            case 0: target->AddAura(new BugAura(spell, EFFECT_INDEX_0, NULL, target, target)); break;
+            case 1: target->AddAura(new BugAura(spell, EFFECT_INDEX_1, NULL, target, target)); break;
+            case 2: target->AddAura(new BugAura(spell, EFFECT_INDEX_2, NULL, target, target)); break;
+            }
         }
         target->SetHealth(target->GetMaxHealth());
     }

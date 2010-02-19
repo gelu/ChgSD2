@@ -206,7 +206,7 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
             FelAcidTimer = 25000;
         }else FelAcidTimer -= diff;
 
-        if (!m_creature->HasAura(SPELL_BERSERK, 0))
+        if (!m_creature->HasAura(SPELL_BERSERK, EFFECT_INDEX_0))
         {
             if (EnrageTimer < diff)
             {
