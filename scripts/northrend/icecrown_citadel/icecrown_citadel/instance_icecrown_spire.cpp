@@ -135,11 +135,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     }
     void SetData(uint32 uiType, uint32 uiData)
     {
+        if (uiType > m_auiEncounter[0] && uiData == DONE) m_auiEncounter[0] = uiType;
         switch(uiType)
         {
             case TYPE_TELEPORT:
-                if (uiData > m_auiEncounter[0]) m_auiEncounter[0] = uiData;
-                uiData = NOT_STARTED;
                 break;
             case TYPE_MARROWGAR:
                 m_auiEncounter[1] = uiData; 
