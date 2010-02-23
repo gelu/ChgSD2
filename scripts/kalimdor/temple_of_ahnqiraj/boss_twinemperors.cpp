@@ -428,13 +428,6 @@ struct MANGOS_DLL_DECL boss_twinemperorsAI : public ScriptedAI
     }
 };
 
-class MANGOS_DLL_DECL BugAura : public Aura
-{
-    public:
-        BugAura(SpellEntry *spell, SpellEffectIndex eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
-            {}
-};
-
 struct MANGOS_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
 {
     bool IAmVeklor() {return false;}
@@ -466,19 +459,8 @@ struct MANGOS_DLL_DECL boss_veknilashAI : public boss_twinemperorsAI
     void CastSpellOnBug(Creature *target)
     {
         target->setFaction(14);
-        ((CreatureAI*)target->AI())->AttackStart(m_creature->getThreatManager().getHostileTarget());
-        SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SPELL_MUTATE_BUG);
-        for (int i=0; i<3; ++i)
-        {
-            if (!spell->Effect[i])
-                continue;
-            switch (i) {
-            case 0: target->AddAura(new BugAura(spell, EFFECT_INDEX_0, NULL, target, target)); break;
-            case 1: target->AddAura(new BugAura(spell, EFFECT_INDEX_1, NULL, target, target)); break;
-            case 2: target->AddAura(new BugAura(spell, EFFECT_INDEX_2, NULL, target, target)); break;
-            }
-        }
-        target->SetHealth(target->GetMaxHealth());
+
+        DoCastSpellIfCan(target, SPELL_MUTATE_BUG, CAST_TRIGGERED);
     }
 
     void UpdateAI(const uint32 diff)
@@ -557,18 +539,8 @@ struct MANGOS_DLL_DECL boss_veklorAI : public boss_twinemperorsAI
     void CastSpellOnBug(Creature *target)
     {
         target->setFaction(14);
-        SpellEntry *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SPELL_EXPLODEBUG);
-        for (int i=0; i<3; ++i)
-        {
-            if (!spell->Effect[i])
-                continue;
-            switch (i) {
-            case 0: target->AddAura(new BugAura(spell, EFFECT_INDEX_0, NULL, target, target)); break;
-            case 1: target->AddAura(new BugAura(spell, EFFECT_INDEX_1, NULL, target, target)); break;
-            case 2: target->AddAura(new BugAura(spell, EFFECT_INDEX_2, NULL, target, target)); break;
-            }
-        }
-        target->SetHealth(target->GetMaxHealth());
+
+        DoCastSpellIfCan(target, SPELL_EXPLODEBUG, CAST_TRIGGERED);
     }
 
     void UpdateAI(const uint32 diff)

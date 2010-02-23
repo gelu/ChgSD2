@@ -844,6 +844,7 @@ CreatureAI* GetAI_npc_azure_saboteur(Creature* pCreature)
 {
     return new npc_azure_saboteurAI (pCreature);
 }
+
 CreatureAI* GetAI_mob_vh_dragons(Creature* pCreature)
 {
     return new mob_vh_dragonsAI(pCreature);

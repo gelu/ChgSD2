@@ -210,8 +210,8 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (EnrageTimer < diff)
             {
-                DoCastSpellIfCan(m_creature, SPELL_BERSERK);
-                DoScriptText(urand(0, 1) ? SAY_ENRAGE1 : SAY_ENRAGE2, m_creature);
+                if (DoCastSpellIfCan(m_creature, SPELL_BERSERK) == CAST_OK)
+                    DoScriptText(urand(0, 1) ? SAY_ENRAGE1 : SAY_ENRAGE2, m_creature);
             }else EnrageTimer -= diff;
         }
 

@@ -59,7 +59,7 @@ class MANGOS_DLL_DECL SentinelAbilityAura : public Aura
     public:
         ~SentinelAbilityAura();
         Unit* GetTriggerTarget() const;
-        SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, uint32 eff);
+        SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, SpellEffectIndex eff);
     protected:
         aqsentinelAI *aOwner;
         int32 currentBasePoints;
@@ -228,7 +228,7 @@ struct MANGOS_DLL_DECL aqsentinelAI : public ScriptedAI
         {
             if (!spell->Effect[i])
                 continue;
-            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, i);
+            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, SpellEffectIndex(i));
             m_creature->AddAura(a);
         }
     }
@@ -309,8 +309,8 @@ Unit* SentinelAbilityAura::GetTriggerTarget() const
     }
 }
 
-SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, uint32 eff)
-: Aura(spell, EFFECT_INDEX_0, NULL, abilityOwner->m_creature, abilityOwner->m_creature, NULL)
+SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, SpellEffectIndex eff)
+: Aura(spell, eff, NULL, abilityOwner->m_creature, abilityOwner->m_creature, NULL)
 {
     aOwner = abilityOwner;
     abilityId = ability;

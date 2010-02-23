@@ -189,7 +189,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
             if (pTarget->GetTypeId() != TYPEID_PLAYER)
                 return;
 
-            if (pTarget->HasAura(SPELL_SPECTRAL_EXHAUSTION,EFFECT_INDEX_0) || pTarget->HasAura(SPELL_SPECTRAL_REALM))
+            if (pTarget->HasAura(SPELL_SPECTRAL_EXHAUSTION, EFFECT_INDEX_0) || pTarget->HasAura(SPELL_SPECTRAL_REALM))
                 return;
 
             if (pTarget == m_creature->getVictim())
@@ -294,22 +294,26 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
 
         if (m_uiArcaneBuffetTimer < diff)
         {
-            if (!urand(0, 2))
-                DoScriptText(SAY_EVIL_SPELL1, m_creature);
+            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_BUFFET) == CAST_OK)
+            {
+                if (!urand(0, 2))
+                    DoScriptText(SAY_EVIL_SPELL1, m_creature);
 
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_ARCANE_BUFFET);
-            m_uiArcaneBuffetTimer = 20000;
+                m_uiArcaneBuffetTimer = 20000;
+            }
         }
         else
             m_uiArcaneBuffetTimer -= diff;
 
         if (m_uiFrostBreathTimer < diff)
         {
-            if (!urand(0, 1))
-                DoScriptText(SAY_EVIL_SPELL2, m_creature);
+            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_BREATH) == CAST_OK)
+            {
+                if (!urand(0, 1))
+                    DoScriptText(SAY_EVIL_SPELL2, m_creature);
 
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_FROST_BREATH);
-            m_uiFrostBreathTimer = 25000;
+                m_uiFrostBreathTimer = 25000;
+            }
         }
         else
             m_uiFrostBreathTimer -= diff;
