@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_marwyn
-SD%Complete: 40%
+SD%Complete: 30%
 SDComment: by /dev/rsa
 SDCategory: Halls of Reflection
 EndScriptData */
@@ -46,49 +46,134 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
 {
     boss_marwynAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     bool Regular;
-    ScriptedInstance *pInstance;
+    ScriptedInstance *m_pInstance;
     uint32 m_uiBerserk_Timer;
     uint32 m_uiSharedSuffering_Timer;
     uint32 m_uiWell_Timer;
     uint32 m_uiTouch_Timer;
     uint32 m_uiFlesh_Timer;
     uint32 m_uiObliterate_Timer;
+    uint32 m_uiSummon_Timer;
 
     uint8 health;
     uint8 stage;
+    uint8 SummonCount;
+
+    uint64 npctype1;
+    uint64 npctype2;
+    uint64 npctype3;
 
     void Reset()
     {
-    if(pInstance) pInstance->SetData(TYPE_FALRYN, NOT_STARTED);
     m_uiBerserk_Timer = 180000;
     m_uiSharedSuffering_Timer = 4000;
     m_uiWell_Timer = 5000;
     m_uiTouch_Timer = 8000;
     m_uiFlesh_Timer = 10000;
     m_uiObliterate_Timer = 1000;
+    SummonCount = 0;
+    stage = 0;
+    m_uiSummon_Timer = 0;
+            if (m_pInstance)
+            m_pInstance->SetData(TYPE_MARWYN, NOT_STARTED);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->SetVisibility(VISIBILITY_OFF);
+    }
+
+    bool CallGuards(TempSummonType type, uint32 _summontime )
+    {
+        switch(urand(0,3))
+        {
+            case 0: {
+                     npctype1 = NPC_DARK_1;
+                     npctype2 = NPC_DARK_3;
+                     npctype3 = NPC_DARK_6;
+                    break;}
+            case 1: {
+                     npctype1 = NPC_DARK_2;
+                     npctype2 = NPC_DARK_3;
+                     npctype3 = NPC_DARK_4;
+                    break;}
+            case 2: {
+                     npctype1 = NPC_DARK_2;
+                     npctype2 = NPC_DARK_5;
+                     npctype3 = NPC_DARK_6;
+                    break;}
+            case 3: {
+                     npctype1 = NPC_DARK_1;
+                     npctype2 = NPC_DARK_5;
+                     npctype3 = NPC_DARK_4;
+                    break;}
+        }
+
+        if (Creature* pSummon1 = m_creature->SummonCreature(npctype1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, type, _summontime))
+                      pSummon1->SetInCombatWithZone();
+        if (Creature* pSummon2 = m_creature->SummonCreature(npctype2, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 0, type, _summontime))
+                      pSummon2->SetInCombatWithZone();
+        if (Creature* pSummon3 = m_creature->SummonCreature(npctype3, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 0, type, _summontime))
+                      pSummon3->SetInCombatWithZone();
+
+        return true;
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        if (!m_pInstance)  return;
+
+        if (m_pInstance->GetData(TYPE_MARWYN) != IN_PROGRESS) return;
+
+        if (!pWho || pWho == m_creature) return;
+
+        if (m_creature->Attack(pWho, true)) {
+            m_creature->AddThreat(pWho);
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+            DoStartMovement(pWho);
+        }
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_MARWYN, IN_PROGRESS);
+//        if(m_pInstance) m_pInstance->SetData(TYPE_MARWYN, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_MARWYN, DONE);
+        if(m_pInstance) m_pInstance->SetData(TYPE_MARWYN, DONE);
     }
 
     void UpdateAI(const uint32 diff)
     {
+            if (m_pInstance->GetData(TYPE_MARWYN) == SPECIAL ) {
+            if (m_uiSummon_Timer < diff) {
+                    ++SummonCount;
+                    if (SummonCount > MOB_WAVES_NUM_1) {
+                             m_pInstance->SetData(TYPE_MARWYN, IN_PROGRESS);
+                             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                             m_creature->SetVisibility(VISIBILITY_ON);
+                             m_creature->SetInCombatWithZone();
+                             }
+                    else CallGuards(TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
+                    m_uiSummon_Timer = MOB_WAVES_DELAY_1;
+                    } else m_uiSummon_Timer -= diff;
+        }
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        switch(stage)
+        {
+            case 0: {
+                    break;}
+            case 1: {
                     if (m_uiSharedSuffering_Timer < diff) {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
                     DoCast(pTarget, Regular ? SPELL_SHARED_SUFFERING_N : SPELL_SHARED_SUFFERING_H);
@@ -117,6 +202,8 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
                     {DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_OBLITERATE_N : SPELL_OBLITERATE_H);
                     m_uiObliterate_Timer=urand(8000,12000);
                     } else m_uiObliterate_Timer -= diff;
+                    }
+        }
 
 
 

@@ -66,7 +66,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         switch(pCreature->GetEntry())
         {
             case NPC_FALRYN: 
-                         m_uiMarwynGUID = pCreature->GetGUID();
+                         m_uiFalrynGUID = pCreature->GetGUID();
                          break;
             case NPC_MARWYN: 
                           m_uiMarwynGUID = pCreature->GetGUID();
@@ -98,26 +98,32 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
                                   break;
         case GO_ICECROWN_DOOR:     m_uiIcecrownDoorGUID = pGo->GetGUID(); break;
         case GO_IMPENETRABLE_DOOR: m_uiImpenetrableDoorGUID = pGo->GetGUID(); break;
-        case GO_FROSTMOURNE:       m_uiFrostmourneGUID = pGo->GetGUID(); break;
-        case GO_FROSTMOURNE_ALTAR: m_uiFrostmourneAltarGUID = pGo->GetGUID(); break;
+        case GO_FROSTMOURNE:       m_uiFrostmourneGUID = pGo->GetGUID(); 
+                                   pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                                   break;
+        case GO_FROSTMOURNE_ALTAR: m_uiFrostmourneAltarGUID = pGo->GetGUID();
+                                   pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                                   break;
         }
     }
     void SetData(uint32 uiType, uint32 uiData)
     {
         switch(uiType)
         {
-            case TYPE_START_EVENT:   m_auiEncounter[0] = uiData; break;
-            case TYPE_MOBS_WAVE_1:   m_auiEncounter[1] = uiData; break;
-            case TYPE_FALRYN:        m_auiEncounter[2] = uiData; break;
-            case TYPE_MOBS_WAVE_2:   m_auiEncounter[3] = uiData; break;
-            case TYPE_MARWYN:        m_auiEncounter[4] = uiData; 
+            case TYPE_START_EVENT:   m_auiEncounter[0] = uiData;
+                                     if (uiData == DONE) {
+                                         CloseDoor(m_uiIcecrownDoorGUID);
+                                     }; break;
+            case TYPE_FALRYN:        m_auiEncounter[1] = uiData; break;
+            case TYPE_MARWYN:        m_auiEncounter[2] = uiData;
                                      if (uiData == DONE) {
                                          OpenDoor(m_uiImpenetrableDoorGUID);
+                                         OpenDoor(m_uiIcecrownDoorGUID);
                                      }; break;
-            case TYPE_LICH_KING_1:   m_auiEncounter[5] = uiData; break;
-            case TYPE_FROST_GENERAL: m_auiEncounter[6] = uiData; break;
-            case TYPE_LICH_KING_BATTLE: m_auiEncounter[7] = uiData; break;
-            case TYPE_ESCAPE:        m_auiEncounter[8] = uiData; break;
+            case TYPE_LICH_KING_1:   m_auiEncounter[3] = uiData; break;
+            case TYPE_FROST_GENERAL: m_auiEncounter[4] = uiData; break;
+            case TYPE_LICH_KING_BATTLE: m_auiEncounter[5] = uiData; break;
+            case TYPE_ESCAPE:        m_auiEncounter[6] = uiData; break;
         }
 
         if (uiData == DONE)
@@ -146,14 +152,12 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         switch(uiType)
         {
             case TYPE_START_EVENT:   return m_auiEncounter[0];
-            case TYPE_MOBS_WAVE_1:   return m_auiEncounter[1];
-            case TYPE_FALRYN:        return m_auiEncounter[2];
-            case TYPE_MOBS_WAVE_2:   return m_auiEncounter[3];
-            case TYPE_MARWYN:        return m_auiEncounter[4];
-            case TYPE_LICH_KING_1:   return m_auiEncounter[5];
-            case TYPE_FROST_GENERAL: return m_auiEncounter[6];
-            case TYPE_LICH_KING_BATTLE: return m_auiEncounter[7];
-            case TYPE_ESCAPE:        return m_auiEncounter[8];
+            case TYPE_FALRYN:        return m_auiEncounter[1];
+            case TYPE_MARWYN:        return m_auiEncounter[2];
+            case TYPE_LICH_KING_1:   return m_auiEncounter[3];
+            case TYPE_FROST_GENERAL: return m_auiEncounter[4];
+            case TYPE_LICH_KING_BATTLE: return m_auiEncounter[5];
+            case TYPE_ESCAPE:        return m_auiEncounter[6];
         }
         return 0;
     }
@@ -186,11 +190,12 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         {
             loadStream >> m_auiEncounter[i];
 
-            if (m_auiEncounter[i] == IN_PROGRESS)
+            if (m_auiEncounter[i] != DONE)
                 m_auiEncounter[i] = NOT_STARTED;
         }
 
         OUT_LOAD_INST_DATA_COMPLETE;
+        OpenDoor(m_uiIcecrownDoorGUID);
     }
 };
 
@@ -208,10 +213,44 @@ bool GOHello_go_frostmourne_altar(Player *player, GameObject* pGo)
 
     switch(pGo->GetEntry())
     {
-        case GO_FROSTMOURNE_ALTAR:  pInstance->SetData(TYPE_START_EVENT, SPECIAL);  break;
+        case GO_FROSTMOURNE_ALTAR: {
+                              if (pInstance->GetData(TYPE_START_EVENT) != DONE) {
+                                           pInstance->SetData(TYPE_START_EVENT, DONE);
+                                           pInstance->SetData(TYPE_FALRYN, SPECIAL);
+                                           pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                              };
+                              if (pInstance->GetData(TYPE_START_EVENT) == DONE
+                                  && pInstance->GetData(TYPE_FALRYN) != DONE) {
+                                           pInstance->SetData(TYPE_START_EVENT, DONE);
+                                           pInstance->SetData(TYPE_FALRYN, SPECIAL);
+                                           pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                              };
+                              }  break;
     }
 
     pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+    return true;
+}
+
+bool GOHello_go_frostmourne(Player *player, GameObject* pGo)
+{
+
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return false;
+
+    switch(pGo->GetEntry())
+    {
+        case GO_FROSTMOURNE:  {
+                              if (pInstance->GetData(TYPE_START_EVENT) == DONE
+                                  && pInstance->GetData(TYPE_FALRYN) == DONE
+                                  && pInstance->GetData(TYPE_MARWYN) != DONE) {
+                                           pInstance->SetData(TYPE_MARWYN, SPECIAL);
+                                           pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                              };
+                              }  break;
+    }
+
+
     return true;
 }
 
@@ -226,6 +265,11 @@ void AddSC_instance_halls_of_reflection()
     newscript = new Script;
     newscript->Name = "go_frostmourne_altar";
     newscript->pGOHello = &GOHello_go_frostmourne_altar;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_frostmourne";
+    newscript->pGOHello = &GOHello_go_frostmourne;
     newscript->RegisterSelf();
 
 }
