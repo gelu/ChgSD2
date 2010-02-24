@@ -234,7 +234,7 @@ struct MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
                 break;
             case GO_ARAC_MAEX_OUTER_DOOR:
                 m_uiMaexOuterGUID = pGo->GetGUID();
-                if (m_auiEncounter[2] == DONE)
+                if (m_auiEncounter[1] == DONE)
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 break;
 
