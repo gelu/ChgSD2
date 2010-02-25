@@ -266,7 +266,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else
             {
-                if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 65)
+                if (m_creature->GetHealthPercent() < 60.0f)
                 {
                     m_uiPhase = PHASE_BREATH;
 
@@ -289,7 +289,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         }
         else
         {
-            if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 40)
+            if (m_creature->GetHealthPercent() < 40.0f)
             {
                 m_uiPhase = PHASE_END;
                 DoScriptText(SAY_PHASE_3_TRANS, m_creature);

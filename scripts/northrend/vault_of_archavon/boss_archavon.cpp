@@ -125,7 +125,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 if (Unit* pTarget = m_creature->getVictim())
                 {
-                    DoCast(pTarget, m_bIsRegularMode ? SPELL_IMPALE_DMG_N : SPELL_IMPALE_DMG_H);
+                    DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_IMPALE_DMG_N : SPELL_IMPALE_DMG_H);
                     pTarget->CastSpell(pTarget, SPELL_IMPALE_STUN, true);
                 }
                 m_bImpaleInProgress = false;
@@ -156,7 +156,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 m_creature->getThreatManager().addThreat(m_pCrushingLeapTarget, -100000000.0f);
                 m_creature->SetSpeedRate(MOVE_RUN, m_fDefaultMoveSpeed);
-                DoCast(m_pCrushingLeapTarget, m_bIsRegularMode ? SPELL_CRUSHING_LEAP_N : SPELL_CRUSHING_LEAP_H, true);
+                DoCastSpellIfCan(m_pCrushingLeapTarget, m_bIsRegularMode ? SPELL_CRUSHING_LEAP_N : SPELL_CRUSHING_LEAP_H, true);
                 m_bCrushingLeapInProgress = false;
             }
             else
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
             {
                 if (m_pRockShardsTarget && m_pRockShardsTarget->isAlive())
                 {
-                    DoCast(m_pRockShardsTarget, m_bIsRegularMode ? (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_N : SPELL_ROCK_SHARDS_RIGHT_N) : (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_H : SPELL_ROCK_SHARDS_RIGHT_H));
+                    DoCastSpellIfCan(m_pRockShardsTarget, m_bIsRegularMode ? (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_N : SPELL_ROCK_SHARDS_RIGHT_N) : (m_bRLRockShard ? SPELL_ROCK_SHARDS_LEFT_H : SPELL_ROCK_SHARDS_RIGHT_H));
                     m_bRLRockShard = !m_bRLRockShard;
                 }
                 m_uiRockShardTimer = 100;
@@ -239,7 +239,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
         if (m_uiStompTimer < uiDiff)
         {
-            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP_N : SPELL_STOMP_H);
+            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_STOMP_N : SPELL_STOMP_H);
             m_uiImpaleAfterStompTimer = 1000;
             m_bImpaleInProgress = true;
             m_uiStompTimer = 45000+rand()%15000;
@@ -249,7 +249,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
 
         if (m_uiBerserkTimer < uiDiff)
         {
-            DoCast(m_creature, SPELL_BERSERK);
+            DoCastSpellIfCan(m_creature, SPELL_BERSERK);
             m_uiBerserkTimer = 60000;
         }
         else

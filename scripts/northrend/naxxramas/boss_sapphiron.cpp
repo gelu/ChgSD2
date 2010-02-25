@@ -203,7 +203,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             else
                 m_uiTailSweepTimer -= diff;
 
-            if (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() > 10)
+            if (m_creature->GetHealthPercent() > 10.0f)
             {
                 if (Fly_Timer < diff)
                 {

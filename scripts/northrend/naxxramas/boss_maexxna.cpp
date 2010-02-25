@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
             m_uiSummonSpiderlingTimer -= uiDiff;
 
         //Enrage if not already enraged and below 30%
-        if (!m_bEnraged && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 30)
+        if (!m_bEnraged && m_creature->GetHealthPercent() < 30.0f)
         {
             DoCast(m_creature, m_bIsRegularMode ? SPELL_FRENZY : H_SPELL_FRENZY);
             m_bEnraged = true;
