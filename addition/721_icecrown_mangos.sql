@@ -48,8 +48,8 @@ UPDATE `creature_template` SET `faction_A`=14, `faction_H`=14,`ScriptName`='mob_
 UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`= 36612;
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201910,201911);
 UPDATE `gameobject` SET `state` = '1' WHERE `guid` IN (72526,72525);
-UPDATE `creature_template` SET `ScriptName`='mob_coldflame' WHERE `entry`= 36672;
--- UPDATE `creature_template` SET `ScriptName`='mob_bone_spike' WHERE `entry`= 38711;
+UPDATE `creature_template` SET `ScriptName`='mob_coldflame', `minlevel` = 80, `maxlevel` = 80, `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686, `faction_A` = 35, `faction_H` = 35  WHERE `entry`= 36672;
+UPDATE `creature_template` SET `ScriptName`='mob_bone_spike' WHERE `entry`= 38711;
 
 -- Gunship battle
 UPDATE `creature_template` SET `ScriptName`='mob_spire_frostwyrm', `AIName`='' WHERE `entry`= 37230;

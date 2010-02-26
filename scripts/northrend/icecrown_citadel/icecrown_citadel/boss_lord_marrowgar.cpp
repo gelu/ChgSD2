@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_lord_marrowgar
-SD%Complete: 10%
+SD%Complete: 20%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -34,13 +34,13 @@ enum
         //Abilities
         SPELL_SABER_LASH_N                      = 71021,
         SPELL_COLD_FLAME_N                      = 69146,
-        SPELL_BONE_STRIKE_N                     = 69057,
+        SPELL_BONE_STRIKE                       = 69057,
         SPELL_BONE_STORM                        = 69076,
+        SPELL_BONE_STRIKE_IMPALE                = 69065,
         SPELL_BONE_STORM_STRIKE_N               = 69075,
 
         SPELL_SABER_LASH_H                      = 71021,
         SPELL_COLD_FLAME_H                      = 70824,
-        SPELL_BONE_STRIKE_H                     = 69057,
         SPELL_BONE_STORM_STRIKE_H               = 70835, //h25 - 70836
 };
 
@@ -62,6 +62,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     bool m_uiBoneStorm;
     bool m_uiBoneStorm_Timer;
     uint32 m_uiBerserk_Timer;
+    uint32 m_uiBoneStormStrike_Timer;
     uint8 health;
 
     void Reset()
@@ -70,6 +71,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     health = 100;
     m_uiSaberLash_Timer = 10000;
     m_uiColdFlame_Timer = 5000;
+    m_uiBoneStormStrike_Timer = 2000;
     m_uiBoneStrike_Timer = urand(17000,29000);
     m_uiBoneStorm = false;
     m_uiBoneStorm_Timer = 40000;
@@ -82,19 +84,26 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     {
         float fPosX, fPosY, fPosZ;
         m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(5, 15), fPosX, fPosY, fPosZ);
+        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(0, 10), fPosX, fPosY, fPosZ);
         Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
-        if(pSummon) pSummon->SetInCombatWithZone();
         return pSummon ? pSummon->GetGUID() : 0;
     }
 
-
+    uint64 CallSpike(Unit* pPlayer, uint64 npctype,TempSummonType type, uint32 _summontime )
+    {
+        float fPosX, fPosY, fPosZ;
+        pPlayer->GetPosition(fPosX, fPosY, fPosZ);
+        Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
+        if (pSummon) pSummon->AddThreat(pPlayer);
+        return pSummon ? pSummon->GetGUID() : 0;
+    }
+/*
     void JustSummoned(Creature* _summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_BOTTOMAGGRO,0))
+        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
             _summoned->AddThreat(target);
     }
-
+*/
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_MARROWGAR, IN_PROGRESS);
@@ -115,7 +124,8 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             case 0: {
                     if (m_uiBoneStrike_Timer < diff)
                     { if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, Regular ? SPELL_BONE_STRIKE_N :SPELL_BONE_STRIKE_H);
+                          if (DoCastSpellIfCan(pTarget, SPELL_BONE_STRIKE))
+                                CallSpike(pTarget, MOB_BONE_SPIKE, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     m_uiBoneStrike_Timer=urand(17000,29000);
                     } else m_uiBoneStrike_Timer -= diff;
                     break;}
@@ -131,19 +141,22 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             case 2: {
                     if (m_uiBoneStorm_Timer < diff)
                     {
-//                    m_creature->RemoveAurasDueToSpell(Regular ? SPELL_BONE_STORM_N : SPELL_BONE_STORM_H);
+                    m_creature->RemoveAurasDueToSpell(SPELL_BONE_STORM);
                     m_creature->SetInCombatWithZone();
                     stage = 3;
                     } else  m_uiBoneStorm_Timer -= diff;
 
+                    if (m_uiBoneStormStrike_Timer < diff) {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
                     {
-                        Player* pPlayer = itr->getSource();
+                        Unit* pPlayer = itr->getSource();
                         if (!pPlayer) continue;
-                        if (itr->getSource()->isAlive() && itr->getSource()->IsWithinDistInMap(m_creature, 4))
-                                      DoCast(itr->getSource(), Regular ? SPELL_BONE_STRIKE_N : SPELL_BONE_STRIKE_H);
+                        if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 5.0f))
+                              m_creature->CastSpell(pPlayer, Regular ? SPELL_BONE_STORM_STRIKE_N : SPELL_BONE_STORM_STRIKE_H, true);
+                     }
+                     m_uiBoneStormStrike_Timer = 2000;
                      }
                     break;}
             case 3: break;
@@ -154,11 +167,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     m_uiSaberLash_Timer=urand(8000,12000);
                     } else m_uiSaberLash_Timer -= diff;
 
-                    if (m_uiColdFlame_Timer < diff)
-                    {if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-//                    DoCastSpellIfCan(pTarget, Regular ? SPELL_COLD_FLAME_N :SPELL_COLD_FLAME_H);
+                    if (m_uiColdFlame_Timer < diff) {
                     CallGuard(MOB_COLDFLAME, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                    m_uiColdFlame_Timer=urand(25000,35000);
+                    m_uiColdFlame_Timer=urand(10000,30000);
                     } else m_uiColdFlame_Timer -= diff;
 
         health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
@@ -167,7 +178,6 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         if (m_uiBerserk_Timer < diff)
         {
             DoCast(m_creature, SPELL_BERSERK);
-//            m_uiBerserk_Timer = m_bIsRegularMode ? 300000 : 180000;
         }
         else  m_uiBerserk_Timer -= diff;
 
@@ -188,35 +198,103 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
     uint32 m_uiRangeCheck_Timer;
     bool Regular;
+    uint32 _diff;
+        float fPosX, fPosY, fPosZ;
 
     void Reset()
     {
         m_uiRangeCheck_Timer = 1000;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+        m_creature->GetPosition(fPosX, fPosY, fPosZ);
+        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(150, 200), fPosX, fPosY, fPosZ);
+        m_creature->GetMotionMaster()->MovePoint(0, fPosX, fPosY, fPosZ);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
     }
 
-    void AttackStart(Unit* pWho)
+    void UpdateAI(const uint32 uiDiff)
     {
-        if (m_creature->Attack(pWho, true))
+    _diff = uiDiff;
+
+        if (m_uiRangeCheck_Timer < uiDiff)
         {
-            m_creature->AddThreat(pWho);
-            m_creature->SetInCombatWith(pWho);
-            pWho->SetInCombatWith(m_creature);
-            m_creature->GetMotionMaster()->MoveChase(pWho);
+        m_creature->CastSpell(m_creature, Regular ? SPELL_COLD_FLAME_N : SPELL_COLD_FLAME_H, false);
+                    Map* pMap = m_creature->GetMap();
+                    Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                    for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                    {
+                        Unit* pPlayer = itr->getSource();
+                        if (!pPlayer) continue;
+                        if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 5.0f))
+                            if (Creature* pMarrowgar = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LORD_MARROWGAR))))
+                                pMarrowgar->CastSpell(pPlayer, Regular ? SPELL_COLD_FLAME_N : SPELL_COLD_FLAME_H, true);
+                     }
+            m_uiRangeCheck_Timer = 1000;
+        }
+        else m_uiRangeCheck_Timer -= uiDiff;
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+    }
+};
+
+struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
+{
+    mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+
+    ScriptedInstance *m_pInstance;
+    uint32 m_uiRangeCheck_Timer;
+    bool Regular;
+    uint32 _diff;
+    uint64 m_uiVictimGUID;
+
+
+    void Reset()
+    {
+        m_uiRangeCheck_Timer = 1000;
+        m_creature->SetSpeedRate(MOVE_RUN, 5);
+        _diff = 1000;
+        m_creature->SetInCombatWithZone();
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        m_creature->SetInCombatWith(pWho);
+        pWho->SetInCombatWith(m_creature);
+        m_creature->GetMotionMaster()->MoveChase(pWho);
+        DoCast(pWho, SPELL_BONE_STRIKE_IMPALE);
+        m_uiVictimGUID = pWho->GetGUID();
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (uiDamage > m_creature->GetHealth())
+        {
+            if (m_uiVictimGUID)
+            {
+                if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+                    pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+            }
         }
     }
 
-    void MoveInLineOfSight(Unit* pWho)
+    void KilledUnit(Unit* pVictim)
     {
-        if (pWho->GetTypeId() == TYPEID_PLAYER && m_creature->IsWithinDistInMap(pWho, 4.0f))
-        {
-            DoCast(pWho, Regular ? SPELL_COLD_FLAME_N : SPELL_COLD_FLAME_H);
-        }
-        ScriptedAI::MoveInLineOfSight(pWho);
+        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
     }
 
+    void JustDied(Unit* Killer)
+    {
+        if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+            pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+        if (Killer)
+            Killer->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+    }
 
     void UpdateAI(const uint32 uiDiff)
     {
@@ -225,19 +303,16 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
 
         if (m_uiRangeCheck_Timer < uiDiff)
         {
-            if (m_pInstance)
-            {
-                    if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f, false))
-                    {
-                        DoCast(m_creature->getVictim(), Regular ? SPELL_COLD_FLAME_N : SPELL_COLD_FLAME_H);
-                    }
-            }
-            m_uiRangeCheck_Timer = 1000;
         }
         else m_uiRangeCheck_Timer -= uiDiff;
     }
 
 };
+
+CreatureAI* GetAI_mob_bone_spike(Creature* pCreature)
+{
+    return new mob_bone_spikeAI(pCreature);
+}
 
 CreatureAI* GetAI_mob_coldflame(Creature* pCreature)
 {
@@ -260,6 +335,11 @@ void AddSC_boss_lord_marrowgar()
     newscript = new Script;
     newscript->Name = "mob_coldflame";
     newscript->GetAI = &GetAI_mob_coldflame;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_bone_spike";
+    newscript->GetAI = &GetAI_mob_bone_spike;
     newscript->RegisterSelf();
 
 }
