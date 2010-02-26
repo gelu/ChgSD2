@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         {
             case 0: {
                     if (m_uiBoneStrike_Timer < diff)
-                    { if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    { if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                           if (DoCastSpellIfCan(pTarget, SPELL_BONE_STRIKE))
                                 CallSpike(pTarget, MOB_BONE_SPIKE, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
                     m_uiBoneStrike_Timer=urand(17000,29000);
