@@ -175,7 +175,7 @@ struct MANGOS_DLL_DECL npc_tempest_minionAI : public ScriptedAI
             Aura* pAuraOvercharged = m_creature->GetAura(SPELL_OVERCHARGED, EFFECT_INDEX_0);
             if(pAuraOvercharged && pAuraOvercharged->GetStackAmount() >= 10)
             {
-                DoCastSpellIfCan(m_creature, SPELL_OVERCHARGED_BLAST);
+                DoCast(m_creature, SPELL_OVERCHARGED_BLAST);
                 m_bTimeToDie = true;
                 return;
             }
@@ -185,7 +185,7 @@ struct MANGOS_DLL_DECL npc_tempest_minionAI : public ScriptedAI
 
         if (m_uiShockTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHOCK);
+            DoCast(m_creature->getVictim(), SPELL_SHOCK);
             m_uiShockTimer = 8000+rand()%4000;
         }
         else
@@ -308,7 +308,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
         if (m_uiChainLightningTimer < uiDiff)
         {
             if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTNING_N : SPELL_CHAIN_LIGHTNING_H);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTNING_N : SPELL_CHAIN_LIGHTNING_H);
             m_uiChainLightningTimer = 10000 + rand()%15000;
         }
         else
@@ -316,7 +316,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
 
         if (m_uiLightningNovaTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_LIGHTNING_NOVA_N : SPELL_LIGHTNING_NOVA_H);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_LIGHTNING_NOVA_N : SPELL_LIGHTNING_NOVA_H);
             m_uiLightningNovaTimer = 45000;
         }
         else
@@ -324,7 +324,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
 
         if (m_uiEnrageTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature, SPELL_BERSERK);
+            DoCast(m_creature, SPELL_BERSERK);
             m_uiEnrageTimer = 30000;
         }
         else
@@ -376,7 +376,7 @@ struct MANGOS_DLL_DECL npc_tempest_warderAI : public ScriptedAI
 
         if (!m_bOvercharged && ((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 37))
         {
-            DoCastSpellIfCan(m_creature, SPELL_OVERCHARGE);
+            DoCast(m_creature, SPELL_OVERCHARGE);
             m_bOvercharged = true;
         }
 
@@ -388,7 +388,7 @@ struct MANGOS_DLL_DECL npc_tempest_warderAI : public ScriptedAI
                 Aura* pAuraOvercharged = m_creature->GetAura(SPELL_OVERCHARGED, EFFECT_INDEX_0);
                 if(pAuraOvercharged && pAuraOvercharged->GetStackAmount() >= 10)
                 {
-                    DoCastSpellIfCan(m_creature, SPELL_OVERCHARGED_BLAST);
+                    DoCast(m_creature, SPELL_OVERCHARGED_BLAST);
                     m_bTimeToDie = true;
                     return;
                 }
@@ -399,7 +399,7 @@ struct MANGOS_DLL_DECL npc_tempest_warderAI : public ScriptedAI
 
         if (m_uiShockTimer < uiDiff)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SHOCK);
+            DoCast(m_creature->getVictim(), SPELL_SHOCK);
             m_uiShockTimer = 8000+rand()%4000;
         }
         else
