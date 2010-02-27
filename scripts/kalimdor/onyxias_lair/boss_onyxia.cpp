@@ -39,11 +39,10 @@ enum
     SPELL_TAILSWEEP             = 68867,
     H_SPELL_TAILSWEEP           = 69286,
     SPELL_KNOCK_AWAY            = 19633,
-
-    SPELL_ENGULFINGFLAMES       = 20019,
-    SPELL_DEEPBREATH            = 23461,
     SPELL_FIREBALL              = 18392,
     H_SPELL_FIREBALL            = 68926,
+    SPELL_ERRUPTION             = 17731,                    // does not work                
+    H_SPELL_ERRUPTION           = 69294,                    // does not work
 
     //Not much choise about these. We have to make own defintion on the direction/start-end point
     //SPELL_BREATH_NORTH_TO_SOUTH = 17086,                  // 20x in "array"
@@ -94,10 +93,10 @@ static sOnyxMove aMoveData[]=
 
 static float SpawnLocs[4][3]=
 {
-    {-30.127, -254.463, -89.440}, //whelps
-    {-30.817, -177.106, -89.258}, //whelps
-    {-126.57, -214.609, -71.446}, //guardians
-    {-22.347, -214.571, -89.104}  //Onyxia
+    {-30.127f, -254.463f, -89.440f}, //whelps
+    {-30.817f, -177.106f, -89.258f}, //whelps
+    {-126.57f, -214.609f, -71.446f}, //guardians
+    {-22.347f, -214.571f, -89.104f}  //Onyxia
 };
 
 struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
@@ -109,6 +108,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
     }
 
     bool Regular;
+    uint32 m_uiEvadeCheckCooldown;
     uint32 m_uiPhase;
 
     uint32 m_uiFlameBreathTimer;
@@ -135,6 +135,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (!IsCombatMovement())
             SetCombatMovement(true);
 
+        m_uiEvadeCheckCooldown = 2000;
         m_uiPhase = PHASE_START;
 
         m_uiFlameBreathTimer = urand(10000, 20000);
@@ -220,6 +221,18 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (m_uiEvadeCheckCooldown < uiDiff)
+        {
+            if (m_creature->GetDistance2d(-22.346f, -214.57f) > 100.0f)
+            {
+                EnterEvadeMode();
+                m_uiPhase = PHASE_START;
+            }
+            m_uiEvadeCheckCooldown = 2000;
+        }
+        else
+            m_uiEvadeCheckCooldown -= uiDiff;
+
         if (m_uiPhase == PHASE_START || m_uiPhase == PHASE_END)
         {
             if (m_uiFlameBreathTimer < uiDiff)
@@ -266,7 +279,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else
             {
-                if (m_creature->GetHealthPercent() < 60.0f)
+                if (m_creature->GetHealthPercent() < 65.0f)
                 {
                     m_uiPhase = PHASE_BREATH;
 
