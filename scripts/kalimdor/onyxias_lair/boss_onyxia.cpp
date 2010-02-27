@@ -32,14 +32,17 @@ enum
     EMOTE_BREATH                = -1249004,
 
     SPELL_WINGBUFFET            = 18500,
+    H_SPELL_WINGBUFFET          = 69293,
     SPELL_FLAMEBREATH           = 18435,
-    SPELL_CLEAVE                = 19983,
-    SPELL_TAILSWEEP             = 15847,
+    H_SPELL_FLAMEBREATH         = 68970,
+    SPELL_CLEAVE                = 68868,
+    SPELL_TAILSWEEP             = 68867,
+    H_SPELL_TAILSWEEP           = 69286,
     SPELL_KNOCK_AWAY            = 19633,
-
-    SPELL_ENGULFINGFLAMES       = 20019,
-    SPELL_DEEPBREATH            = 23461,
     SPELL_FIREBALL              = 18392,
+    H_SPELL_FIREBALL            = 68926,
+    SPELL_ERRUPTION             = 17731,                    // does not work                
+    H_SPELL_ERRUPTION           = 69294,                    // does not work
 
     //Not much choise about these. We have to make own defintion on the direction/start-end point
     //SPELL_BREATH_NORTH_TO_SOUTH = 17086,                  // 20x in "array"
@@ -59,8 +62,9 @@ enum
     SPELL_HEATED_GROUND         = 22191,
 
     SPELL_SUMMONWHELP           = 17646,
+    SPELL_SUMMONGUARD           = 68968,
     NPC_WHELP                   = 11262,
-    MAX_WHELP                   = 16,
+    NPC_GUARD                   = 36561,
 
     PHASE_START                 = 1,
     PHASE_BREATH                = 2,
@@ -87,16 +91,24 @@ static sOnyxMove aMoveData[]=
     //{7, 6, SPELL_BREATH_NORTH_TO_SOUTH,  22.8763f, -217.152f, -60.0548f},//north
 };
 
-static float afSpawnLocations[2][3]=
+static float SpawnLocs[4][3]=
 {
-    {-30.127f, -254.463f, -89.440f},
-    {-30.817f, -177.106f, -89.258f}
+    {-30.127f, -254.463f, -89.440f}, //whelps
+    {-30.817f, -177.106f, -89.258f}, //whelps
+    {-126.57f, -214.609f, -71.446f}, //guardians
+    {-22.347f, -214.571f, -89.104f}  //Onyxia
 };
 
 struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 {
-    boss_onyxiaAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+    boss_onyxiaAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
 
+    bool Regular;
+    uint32 m_uiEvadeCheckCooldown;
     uint32 m_uiPhase;
 
     uint32 m_uiFlameBreathTimer;
@@ -112,8 +124,10 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
     uint32 m_uiSummonWhelpsTimer;
     uint32 m_uiBellowingRoarTimer;
     uint32 m_uiWhelpTimer;
+    uint32 SummonGuardTimer;
 
     uint8 m_uiSummonCount;
+    uint8 m_uiMaxWhelps;
     bool m_bIsSummoningWhelps;
 
     void Reset()
@@ -121,6 +135,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (!IsCombatMovement())
             SetCombatMovement(true);
 
+        m_uiEvadeCheckCooldown = 2000;
         m_uiPhase = PHASE_START;
 
         m_uiFlameBreathTimer = urand(10000, 20000);
@@ -133,11 +148,13 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         m_pPointData = GetMoveData();
 
         m_uiEngulfingFlamesTimer = 15000;
-        m_uiSummonWhelpsTimer = 45000;
+        m_uiSummonWhelpsTimer = 15000;
         m_uiBellowingRoarTimer = 30000;
         m_uiWhelpTimer = 1000;
+        SummonGuardTimer = 35000;
 
         m_uiSummonCount = 0;
+        m_uiMaxWhelps = Regular ? 20 : 40;
         m_bIsSummoningWhelps = false;
     }
 
@@ -149,10 +166,8 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
     void JustSummoned(Creature *pSummoned)
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
-            pSummoned->AI()->AttackStart(pTarget);
-
-        ++m_uiSummonCount;
+        pSummoned->GetMotionMaster()->MovePoint(0, SpawnLocs[3][0], SpawnLocs[3][1], SpawnLocs[3][2]);
+        pSummoned->SetInCombatWithZone();
     }
 
     void KilledUnit(Unit* pVictim)
@@ -207,11 +222,23 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (m_uiEvadeCheckCooldown < uiDiff)
+        {
+            if (m_creature->GetDistance2d(-22.346f, -214.57f) > 100.0f)
+            {
+                EnterEvadeMode();
+                m_uiPhase = PHASE_START;
+            }
+            m_uiEvadeCheckCooldown = 2000;
+        }
+        else
+            m_uiEvadeCheckCooldown -= uiDiff;
+
         if (m_uiPhase == PHASE_START || m_uiPhase == PHASE_END)
         {
             if (m_uiFlameBreathTimer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_FLAMEBREATH);
+                DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_FLAMEBREATH : H_SPELL_FLAMEBREATH);
                 m_uiFlameBreathTimer = urand(10000, 20000);
             }
             else
@@ -219,7 +246,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_uiTailSweepTimer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature, SPELL_TAILSWEEP);
+                DoCastSpellIfCan(m_creature, Regular ? SPELL_TAILSWEEP : H_SPELL_TAILSWEEP);
                 m_uiTailSweepTimer = urand(15000, 20000);
             }
             else
@@ -235,7 +262,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_uiWingBuffetTimer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature->getVictim(), SPELL_WINGBUFFET);
+                DoCastSpellIfCan(m_creature->getVictim(), Regular ? SPELL_WINGBUFFET : H_SPELL_WINGBUFFET);
                 m_uiWingBuffetTimer = urand(15000, 30000);
             }
             else
@@ -253,7 +280,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
             }
             else
             {
-                if (m_creature->GetHealthPercent() < 60.0f)
+                if (m_creature->GetHealthPercent() < 65.0f)
                 {
                     m_uiPhase = PHASE_BREATH;
 
@@ -319,7 +346,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != POINT_MOTION_TYPE)
                 {
                     if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                        DoCastSpellIfCan(pTarget, SPELL_FIREBALL);
+                        DoCastSpellIfCan(pTarget, Regular ? SPELL_FIREBALL : H_SPELL_FIREBALL);
 
                     m_uiEngulfingFlamesTimer = 8000;
                 }
@@ -329,13 +356,14 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
 
             if (m_bIsSummoningWhelps)
             {
-                if (m_uiSummonCount < MAX_WHELP)
+                if (m_uiSummonCount < m_uiMaxWhelps)
                 {
                     if (m_uiWhelpTimer < uiDiff)
                     {
-                        m_creature->SummonCreature(NPC_WHELP, afSpawnLocations[0][0], afSpawnLocations[0][1], afSpawnLocations[0][2], 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
-                        m_creature->SummonCreature(NPC_WHELP, afSpawnLocations[1][0], afSpawnLocations[1][1], afSpawnLocations[1][2], 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
-                        m_uiWhelpTimer = 1000;
+                        m_creature->SummonCreature(NPC_WHELP, SpawnLocs[0][0], SpawnLocs[0][1], SpawnLocs[0][2], 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                        m_creature->SummonCreature(NPC_WHELP, SpawnLocs[1][0], SpawnLocs[1][1], SpawnLocs[1][2], 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                        m_uiSummonCount += 2;
+                        m_uiWhelpTimer = 500;
                     }
                     else
                         m_uiWhelpTimer -= uiDiff;
@@ -344,7 +372,7 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 {
                     m_bIsSummoningWhelps = false;
                     m_uiSummonCount = 0;
-                    m_uiSummonWhelpsTimer = 30000;
+                    m_uiSummonWhelpsTimer = 85000;
                 }
             }
             else
@@ -354,6 +382,14 @@ struct MANGOS_DLL_DECL boss_onyxiaAI : public ScriptedAI
                 else
                     m_uiSummonWhelpsTimer -= uiDiff;
             }
+
+            if(SummonGuardTimer < uiDiff)
+            {
+                m_creature->SummonCreature(NPC_GUARD, SpawnLocs[2][0], SpawnLocs[2][1], SpawnLocs[2][2], 0.0f, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
+                SummonGuardTimer = 30000;
+            }
+            else 
+                SummonGuardTimer -= uiDiff;
         }
     }
 };
