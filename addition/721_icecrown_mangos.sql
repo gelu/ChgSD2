@@ -43,6 +43,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `
 -- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
 UPDATE `creature_template` SET `faction_A`=14, `faction_H`=14,`ScriptName`='mob_vengeful_shade', `AIName`='' WHERE `entry`= 38222;
+#UPDATE `gameobject` SET `spawntimesecs` = -25, `state` = 1 WHERE `id` = 202220;
 
 -- Marrowgar
 UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`= 36612;
@@ -68,3 +69,24 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 
 -- Entrance
 UPDATE `areatrigger_teleport` SET `required_level` = '80' WHERE `areatrigger_teleport`.`id` =5670;
+
+-- Rotface
+-- UPDATE `creature_template` SET `ScriptName`='boss_rotface' WHERE `entry`= 36627;
+-- Festergut
+-- UPDATE `creature_template` SET `ScriptName`='boss_festergut' WHERE `entry`= 36626;
+-- Professor putricide
+-- UPDATE `creature_template` SET `ScriptName`='boss_professor_putricide' WHERE `entry`= 36678;
+-- Taldaram
+-- UPDATE `creature_template` SET `ScriptName`='boss_taldaram' WHERE `entry`= 37973;
+-- Valanar
+-- UPDATE `creature_template` SET `ScriptName`='boss_valanar' WHERE `entry`= 37970;
+-- Keleseth
+-- UPDATE `creature_template` SET `ScriptName`='boss_keleseth' WHERE `entry`= 37972;
+-- Qween Lana'thel
+-- UPDATE `creature_template` SET `ScriptName`='boss_lanathel' WHERE `entry`= 37955;
+-- Valithria dreamwalker
+-- UPDATE `creature_template` SET `ScriptName`='boss_valithria' WHERE `entry`= 36789;
+-- Sindragosa
+-- UPDATE `creature_template` SET `ScriptName`='boss_sindragosa' WHERE `entry`= 37755;
+-- Lich King
+-- UPDATE `creature_template` SET `ScriptName`='boss_lich_king' WHERE `entry`= 29983;

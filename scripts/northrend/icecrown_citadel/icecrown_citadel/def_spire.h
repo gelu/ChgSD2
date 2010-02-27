@@ -22,6 +22,16 @@ enum
     NPC_LORD_MARROWGAR          = 36612,
     NPC_LADY_DEATHWHISPER       = 36855,
     NPC_DEATHBRINGER_SAURFANG   = 37813,
+    NPC_FESTERGUT               = 36626,
+    NPC_ROTFACE                 = 36627,
+    NPC_PROFESSOR_PUTRICIDE     = 36678,
+    NPC_TALDARAM                = 37973,
+    NPC_VALANAR                 = 37970,
+    NPC_KELESETH                = 37972,
+    NPC_LANATHEL                = 37955,
+    NPC_VALITHRIA               = 36789,
+    NPC_SINDRAGOSA              = 37755,
+    NPC_LICH_KING               = 29983,
 
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
@@ -30,6 +40,15 @@ enum
     GO_ICEWALL_2                = 201910,
     GO_ORATORY_DOOR             = 201563,
     GO_SAURFANG_DOOR            = 201825,
+    GO_DEATHWHISPER_ELEVATOR    = 202220, //5653
+    GO_ORANGE_PLAGUE            = 201371, //72536
+    GO_GREEN_PLAGUE             = 201370, //72537
+    GO_SCIENTIST_DOOR_GREEN     = 201614, //72530
+    GO_SCIENTIST_DOOR_ORANGE    = 201613, //72531
+    GO_SCIENTIST_DOOR           = 201372, //72541
+    GO_CRIMSON_HALL_DOOR        = 201376, //72532
+    GO_COUNCIL_DOOR_1           = 201377, //72533
+    GO_COUNCIL_DOOR_2           = 201378, //72534
 
     GO_SAURFANG_CACHE_10        = 202239,
     GO_SAURFANG_CACHE_25        = 202240,

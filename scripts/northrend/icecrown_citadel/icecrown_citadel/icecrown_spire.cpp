@@ -74,12 +74,12 @@ struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_SKULLS_PLATO, IN_PROGRESS);
+        if(pInstance && who->GetTypeId() == TYPEID_PLAYER) pInstance->SetData(TYPE_SKULLS_PLATO, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) {
+        if(pInstance && killer->GetTypeId() == TYPEID_PLAYER) {
                pInstance->SetData(TYPE_SKULLS_PLATO, DONE);
                wirmsdied=pInstance->GetData(TYPE_FROSTWIRM_COUNT);
                ++wirmsdied;

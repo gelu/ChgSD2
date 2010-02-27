@@ -34,18 +34,29 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiMarrogwarGUID;
     uint64 m_uiDeathWhisperGUID;
     uint64 m_uiSaurfangGUID;
+    uint64 m_uiRotfaceGUID;
+    uint64 m_uiFestergutGUID;
+    uint64 m_uiPutricideGUID;
+    uint64 m_uiTaldaramGUID;
+    uint64 m_uiValanarGUID;
+    uint64 m_uiKelesethGUID;
+    uint64 m_uiLanathelGUID;
+    uint64 m_uiValithriaGUID;
+    uint64 m_uiSindragosaGUID;
+    uint64 m_uiLichKingGUID;
 
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryGUID;
+    uint64 m_uiDeathWhisperElevatorGUID;
 
     void OpenDoor(uint64 guid)
     {
         if(!guid) return;
         GameObject* pGo = instance->GetGameObject(guid);
-        if(pGo) pGo->SetGoState(GO_STATE_ACTIVE);
+        if(pGo) pGo->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
     }
 
     void CloseDoor(uint64 guid)
@@ -83,6 +94,36 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case NPC_DEATHBRINGER_SAURFANG: 
                           m_uiSaurfangGUID = pCreature->GetGUID();
                           break;
+            case NPC_FESTERGUT:
+                          m_uiFestergutGUID = pCreature->GetGUID();
+                          break;
+            case NPC_ROTFACE:
+                          m_uiRotfaceGUID = pCreature->GetGUID();
+                          break;
+            case NPC_PROFESSOR_PUTRICIDE:
+                          m_uiPutricideGUID = pCreature->GetGUID();
+                          break;
+            case NPC_TALDARAM:
+                          m_uiTaldaramGUID = pCreature->GetGUID();
+                          break;
+            case NPC_VALANAR:
+                          m_uiValanarGUID = pCreature->GetGUID();
+                          break;
+            case NPC_KELESETH:
+                          m_uiKelesethGUID = pCreature->GetGUID();
+                          break;
+            case NPC_LANATHEL:
+                          m_uiLanathelGUID = pCreature->GetGUID();
+                          break;
+            case NPC_VALITHRIA:
+                          m_uiValithriaGUID = pCreature->GetGUID();
+                          break;
+            case NPC_SINDRAGOSA:
+                          m_uiSindragosaGUID = pCreature->GetGUID();
+                          break;
+            case NPC_LICH_KING:
+                          m_uiLichKingGUID = pCreature->GetGUID();
+                          break;
         }
     }
 
@@ -98,6 +139,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                          break;
             case GO_SAURFANG_DOOR: 
                          m_uiSaurfangDoorGUID = pGo->GetGUID();
+                         break;
+            case GO_DEATHWHISPER_ELEVATOR:
+                         m_uiDeathWhisperElevatorGUID = pGo->GetGUID();
                          break;
             case GO_SAURFANG_CACHE_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
@@ -151,7 +195,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
                 if (uiData == DONE) {
-                m_auiEncounter[0] = TYPE_DEATHWHISPER; 
+                m_auiEncounter[0] = TYPE_DEATHWHISPER;
+                    if (GameObject* pGOTemp = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
+                        pGOTemp->SetRespawnTime(25000);
                 }
                 break;
              case TYPE_SKULLS_PLATO:
@@ -235,6 +281,27 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                      return m_uiDeathWhisperGUID;
             case NPC_DEATHBRINGER_SAURFANG: 
                                      return m_uiSaurfangGUID;
+            case NPC_FESTERGUT:
+                                     return m_uiFestergutGUID;
+            case NPC_ROTFACE:
+                                     return m_uiRotfaceGUID;
+            case NPC_PROFESSOR_PUTRICIDE:
+                                     return m_uiPutricideGUID;
+            case NPC_TALDARAM:
+                                     return m_uiTaldaramGUID;
+            case NPC_VALANAR:
+                                     return m_uiValanarGUID;
+            case NPC_KELESETH:
+                                     return m_uiKelesethGUID;
+            case NPC_LANATHEL:
+                                     return m_uiLanathelGUID;
+            case NPC_VALITHRIA:
+                                     return m_uiValithriaGUID;
+            case NPC_SINDRAGOSA:
+                                     return m_uiSindragosaGUID;
+            case NPC_LICH_KING:
+                                     return m_uiLichKingGUID;
+
         }
         return 0;
     }
