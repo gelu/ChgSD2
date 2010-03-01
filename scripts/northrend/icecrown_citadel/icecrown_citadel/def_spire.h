@@ -4,6 +4,7 @@
 
 enum
 {
+    DIFFICULTY                  = 1001,
     MAP_NUM                     = 631,
     MAX_ENCOUNTERS              = 16,
 
@@ -79,6 +80,35 @@ enum
     GO_GUNSHIP_ARMORY_25        = 201874,
     GO_GUNSHIP_ARMORY_10_H      = 202178,
     GO_GUNSHIP_ARMORY_25_H      = 202180,
+};
+
+struct Locations
+{
+    float x, y, z;
+    uint32 id;
+};
+
+enum SpellTableParameters
+{
+  DIFFICULTY_LEVELS = 4,
+  CAST_ON_SELF      = 1000,
+  CAST_ON_SUMMONS,
+  CAST_ON_VICTIM,
+  CAST_ON_RANDOM,
+  CAST_ON_BOTTOMAGGRO,
+
+};
+
+struct SpellTable
+{
+    uint32 id;
+    uint32 m_uiSpellEntry[DIFFICULTY_LEVELS];          // Stores spell entry for difficulty levels
+    uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
+    uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
+    uint32 m_uiStageMask;                              // The mask of stages where spell is casted
+    uint32 m_CastTarget;                              // Target on casting spell
+    bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
+    bool   m_IsBugged;                                 // Need override for this spell
 };
 
 #endif

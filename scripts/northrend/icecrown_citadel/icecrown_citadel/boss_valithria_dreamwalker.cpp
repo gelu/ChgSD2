@@ -24,12 +24,6 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_spire.h"
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-
 static Locations SpawnLoc[]=
 {
     {4203.470215, 2484.500000, 364.872009},  // 0 Valithria

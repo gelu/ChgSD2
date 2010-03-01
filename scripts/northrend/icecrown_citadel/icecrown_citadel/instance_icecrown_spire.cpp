@@ -343,6 +343,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
+             case DIFFICULTY:         return Difficulty;
              case TYPE_TELEPORT:      return m_auiEncounter[0];
              case TYPE_MARROWGAR:     return m_auiEncounter[1];
              case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
