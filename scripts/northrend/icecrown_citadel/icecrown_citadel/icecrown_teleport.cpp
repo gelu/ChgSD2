@@ -40,12 +40,14 @@ struct Locations
 
 static Locations PortalLoc[]=
 {
-{"Молот света",-17.1928, 2211.44, 30.1158,1,true,true,TYPE_TELEPORT}, //
-{"Шпиль",-503.62, 2211.47, 62.8235,0,false,true,TYPE_MARROWGAR},  //
-{"Черепной вал",-615.145, 2211.47, 199.972,3,false,true,TYPE_DEATHWHISPER}, //
-{"Воздушное сражение",-209.5, 2211.91, 199.97,4,false,true,TYPE_SKULLS_PLATO}, //
-{"Подъем смертоносного",-549.131, 2211.29, 539.291,2,false,true,TYPE_FLIGHT_WAR}, //
+{"Молот света",-17.1928, 2211.44, 30.1158,0,true,true,TYPE_TELEPORT}, //
+{"Шпиль",-503.62, 2211.47, 62.8235,1,false,true,TYPE_MARROWGAR},  //
+{"Черепной вал",-615.145, 2211.47, 199.972,2,false,true,TYPE_DEATHWHISPER}, //
+{"Воздушное сражение",-209.5, 2211.91, 199.97,3,false,true,TYPE_SKULLS_PLATO}, //
+{"Подъем смертоносного",-549.131, 2211.29, 539.291,4,false,true,TYPE_FLIGHT_WAR}, //
 {"Цитадель ледяной короны",4198.42, 2769.22, 351.065,5,false,false,TYPE_SAURFANG}, //
+{"Святилище крови",4490.205566, 2769.275635, 403.983765,6,false,false,TYPE_BLOOD_COUNCIL}, //
+{"Логово Королевы льда",4356.236816, 2402.573242, 220.462540,7,false,false,TYPE_VALITHRIA}, //
 };
 
 
@@ -82,7 +84,7 @@ bool GOHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
 
     bool m_bIsRegularMode = pGo->GetMap()->IsRegularDifficulty();
 
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "No message", GOSSIP_SENDER_MAIN, BASE_CAMP);
+    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "No message", GOSSIP_SENDER_MAIN, 0);
     player->SEND_GOSSIP_MENU(GO_TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;
 }

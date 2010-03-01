@@ -48,9 +48,25 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
+    uint64 m_uiOratoryDoorGUID;
+    uint64 m_uiDeathWhisperElevatorGUID;
+    uint64 m_uiOrangePlagueGUID;
+    uint64 m_uiGreenPlagueGUID;
+    uint64 m_uiSDoorGreenGUID;
+    uint64 m_uiSDoorOrangeGUID;
+    uint64 m_uiScientistDoorGUID;
+    uint64 m_uiCrimsonDoorGUID;
+    uint64 m_uiCounsilDoor1GUID;
+    uint64 m_uiCounsilDoor2GUID;
+    uint64 m_uiGreenDragonDoor1GUID;
+    uint64 m_uiGreenDragonDoor2GUID;
+    uint64 m_uiValithriaDoor1GUID;
+    uint64 m_uiValithriaDoor2GUID;
+    uint64 m_uiValithriaDoor3GUID;
+    uint64 m_uiValithriaDoor4GUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryGUID;
-    uint64 m_uiDeathWhisperElevatorGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -137,11 +153,56 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_ICEWALL_2: 
                          m_uiIcewall2GUID = pGo->GetGUID();
                          break;
-            case GO_SAURFANG_DOOR: 
-                         m_uiSaurfangDoorGUID = pGo->GetGUID();
+            case GO_ORATORY_DOOR: 
+                         m_uiOratoryDoorGUID = pGo->GetGUID();
                          break;
             case GO_DEATHWHISPER_ELEVATOR:
                          m_uiDeathWhisperElevatorGUID = pGo->GetGUID();
+                         break;
+            case GO_SAURFANG_DOOR: 
+                         m_uiSaurfangDoorGUID = pGo->GetGUID();
+                         break;
+            case GO_ORANGE_PLAGUE: 
+                         m_uiOrangePlagueGUID = pGo->GetGUID();
+                         break;
+            case GO_GREEN_PLAGUE: 
+                         m_uiGreenPlagueGUID = pGo->GetGUID();
+                         break;
+            case GO_SCIENTIST_DOOR_GREEN: 
+                         m_uiSDoorGreenGUID = pGo->GetGUID();
+                         break;
+            case GO_SCIENTIST_DOOR_ORANGE: 
+                         m_uiSDoorOrangeGUID = pGo->GetGUID();
+                         break;
+            case GO_SCIENTIST_DOOR: 
+                         m_uiScientistDoorGUID = pGo->GetGUID();
+                         break;
+            case GO_CRIMSON_HALL_DOOR: 
+                         m_uiCrimsonDoorGUID = pGo->GetGUID();
+                         break;
+            case GO_COUNCIL_DOOR_1: 
+                         m_uiCounsilDoor1GUID = pGo->GetGUID();
+                         break;
+            case GO_COUNCIL_DOOR_2: 
+                         m_uiCounsilDoor2GUID = pGo->GetGUID();
+                         break;
+            case GO_GREEN_DRAGON_DOOR_1: 
+                         m_uiGreenDragonDoor1GUID = pGo->GetGUID();
+                         break;
+            case GO_GREEN_DRAGON_DOOR_2: 
+                         m_uiGreenDragonDoor2GUID = pGo->GetGUID();
+                         break;
+            case GO_VALITHRIA_DOOR_1: 
+                         m_uiValithriaDoor1GUID = pGo->GetGUID();
+                         break;
+            case GO_VALITHRIA_DOOR_2: 
+                         m_uiValithriaDoor2GUID = pGo->GetGUID();
+                         break;
+            case GO_VALITHRIA_DOOR_3: 
+                         m_uiValithriaDoor3GUID = pGo->GetGUID();
+                         break;
+            case GO_VALITHRIA_DOOR_4: 
+                         m_uiValithriaDoor4GUID = pGo->GetGUID();
                          break;
             case GO_SAURFANG_CACHE_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
@@ -207,15 +268,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 }
                 break;
              case TYPE_FLIGHT_WAR:
-                m_auiEncounter[4] = uiData; 
-                if (uiData == DONE) {
+                if (uiData == DONE && m_auiEncounter[4] != DONE  ) {
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
 //                                        pChest->SetGoState(GO_STATE_ACTIVE);
                                       };
+                                m_auiEncounter[4] = uiData; 
                                 };
-                m_auiEncounter[0] = TYPE_FLIGHT_WAR; 
                 break;
              case TYPE_FROSTWIRM_COUNT:
                 m_auiEncounter[15] = uiData;
@@ -231,7 +291,30 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 //                                        pChest->SetGoState(GO_STATE_ACTIVE);
                                       };
                                 };
-//                m_auiEncounter[0] = TYPE_SAURFANG;
+                break;
+             case TYPE_FESTERGUT:
+                m_auiEncounter[6] = uiData;
+                break;
+             case TYPE_ROTFACE:
+                m_auiEncounter[7] = uiData;
+                break;
+             case TYPE_PUTRICIDE:
+                m_auiEncounter[8] = uiData;
+                break;
+             case TYPE_BLOOD_COUNCIL:
+                m_auiEncounter[9] = uiData;
+                break;
+             case TYPE_LANATHEL:
+                m_auiEncounter[10] = uiData;
+                break;
+             case TYPE_VALITHRIA:
+                m_auiEncounter[11] = uiData;
+                break;
+             case TYPE_SINDRAGOSA:
+                m_auiEncounter[12] = uiData;
+                break;
+             case TYPE_LICH_KING:
+                m_auiEncounter[13] = uiData;
                 break;
         }
 

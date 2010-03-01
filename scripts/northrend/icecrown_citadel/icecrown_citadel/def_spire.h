@@ -13,11 +13,15 @@ enum
     TYPE_SKULLS_PLATO           = 3,
     TYPE_FLIGHT_WAR             = 4,
     TYPE_SAURFANG               = 5,
+    TYPE_FESTERGUT              = 6,
+    TYPE_ROTFACE                = 7,
+    TYPE_PUTRICIDE              = 8,
+    TYPE_BLOOD_COUNCIL          = 9,
+    TYPE_LANATHEL               = 10,
+    TYPE_VALITHRIA              = 11,
+    TYPE_SINDRAGOSA             = 12,
+    TYPE_LICH_KING              = 13,
     TYPE_FROSTWIRM_COUNT        = 15,
-
-    BASE_CAMP                   = 1000,
-    FLIGHT_WAR_1                = 1001,
-    FLIGHT_WAR_2                = 1002,
 
     NPC_LORD_MARROWGAR          = 36612,
     NPC_LADY_DEATHWHISPER       = 36855,
@@ -38,17 +42,33 @@ enum
 
     GO_ICEWALL_1                = 201911,
     GO_ICEWALL_2                = 201910,
+
     GO_ORATORY_DOOR             = 201563,
-    GO_SAURFANG_DOOR            = 201825,
     GO_DEATHWHISPER_ELEVATOR    = 202220, //5653
+
+    GO_SAURFANG_DOOR            = 201825,
+
     GO_ORANGE_PLAGUE            = 201371, //72536
     GO_GREEN_PLAGUE             = 201370, //72537
+
     GO_SCIENTIST_DOOR_GREEN     = 201614, //72530
     GO_SCIENTIST_DOOR_ORANGE    = 201613, //72531
     GO_SCIENTIST_DOOR           = 201372, //72541
+
     GO_CRIMSON_HALL_DOOR        = 201376, //72532
     GO_COUNCIL_DOOR_1           = 201377, //72533
     GO_COUNCIL_DOOR_2           = 201378, //72534
+
+    GO_GREEN_DRAGON_DOOR_1      = 201375, //1202
+    GO_GREEN_DRAGON_DOOR_2      = 201374, //1200
+    GO_VALITHRIA_DOOR_1         = 201380, //1618
+    GO_VALITHRIA_DOOR_2         = 201382, //1482
+    GO_VALITHRIA_DOOR_3         = 201383, //1335
+    GO_VALITHRIA_DOOR_4         = 201381, //1558
+
+    GO_SINDRAGOSA_DOOR_1        = 201369, //1619
+
+    GO_FROZENTRONE_TR           = 202223, //72061
 
     GO_SAURFANG_CACHE_10        = 202239,
     GO_SAURFANG_CACHE_25        = 202240,

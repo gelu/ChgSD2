@@ -84,7 +84,7 @@ struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
                wirmsdied=pInstance->GetData(TYPE_FROSTWIRM_COUNT);
                ++wirmsdied;
                pInstance->SetData(TYPE_FROSTWIRM_COUNT,wirmsdied);
-               if (pInstance->GetData(TYPE_FROSTWIRM_COUNT) == 8 ) pInstance->SetData(TYPE_FLIGHT_WAR,DONE);
+               if (pInstance->GetData(TYPE_FROSTWIRM_COUNT) >= 8 ) pInstance->SetData(TYPE_FLIGHT_WAR,DONE);
                }
     }
 

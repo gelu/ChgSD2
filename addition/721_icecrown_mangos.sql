@@ -1,23 +1,29 @@
+-- Entrance
+UPDATE `areatrigger_teleport` SET `required_level` = '80' WHERE `areatrigger_teleport`.`id` =5670;
+
 DELETE FROM `gameobject` WHERE `guid` = 913334;
 
 INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
 (913334, 202244, 631, 3, 1, -209.5, 2211.91, 199.97, 3.07661, 0, 0, 0.999472, 0.0324833, 0, 0, 1);
 
 UPDATE `gameobject_template` SET ScriptName = 'go_icecrown_teleporter' WHERE `entry`  IN (202242,202243,202244,202245,202235);
-
+# 202223 202246
 DELETE FROM `creature_template` WHERE `entry` = 99322;
 INSERT INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entry_2`, `difficulty_entry_3`, `KillCredit1`, `KillCredit2`, `modelid_A`, `modelid_A2`, `modelid_H`, `modelid_H2`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `minhealth`, `maxhealth`, `minmana`, `maxmana`, `armor`, `faction_A`, `faction_H`, `npcflag`, `speed`, `scale`, `rank`, `mindmg`, `maxdmg`, `dmgschool`, `attackpower`, `dmg_multiplier`, `baseattacktime`, `rangeattacktime`, `unit_class`, `unit_flags`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_class`, `trainer_race`, `minrangedmg`, `maxrangedmg`, `rangedattackpower`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `resistance1`, `resistance2`, `resistance3`, `resistance4`, `resistance5`, `resistance6`, `spell1`, `spell2`, `spell3`, `spell4`, `PetSpellDataId`, `mingold`, `maxgold`, `AIName`, `MovementType`, `InhabitType`, `unk16`, `unk17`, `RacialLeader`, `questItem1`, `questItem2`, `questItem3`, `questItem4`, `questItem5`, `questItem6`, `movementId`, `RegenHealth`, `equipment_id`, `mechanic_immune_mask`, `flags_extra`, `ScriptName`) VALUES
 (99322, 0, 0, 0, 0, 0, 22448, 0, 22448, 0, 'IceCrown teleporter', '', NULL, 0, 80, 80, 64200, 64200, 12300, 12300, 9730, 35, 35, 1, 1.48, 0.5, 0, 294, 441, 0, 110, 1.4, 1400, 1400, 0, 0, 0, 0, 0, 0, 0, 0, 235, 353, 88, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '', 1, 3, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 'icecrown_teleporter');
 REPLACE INTO `locales_creature` values ('99322','IceCrown teleporter','','','','','','','Телепортер цитадели Ледяной короны',NULL,NULL,NULL,NULL,NULL,NULL,NULL,'');
 
-DELETE FROM `creature` WHERE `guid` IN (599322,599323,599324,599325,599326,599327);
+DELETE FROM `creature` WHERE `guid` IN (599322,599323,599324,599325,599326,599327,599328,599329,599330);
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
 (599322, 99322, 631, 15, 1, 0, 0, -209.5, 2211.91, 199.97, 0, 3600, 0, 0, 64200, 12300, 0, 0),
 (599323, 99322, 631, 15, 1, 0, 0, -503.62, 2211.47, 62.8235, 0, 3600, 0, 0, 64200, 12300, 0, 0),
 (599324, 99322, 631, 15, 1, 0, 0, -17.1928, 2211.44, 30.1158, 0, 3600, 0, 0, 64200, 12300, 0, 0),
 (599325, 99322, 631, 15, 1, 0, 0, -549.131, 2211.29, 539.291, 0, 3600, 0, 0, 64200, 12300, 0, 0),
 (599326, 99322, 631, 15, 1, 0, 0, -615.145, 2211.47, 199.972, 0, 3600, 0, 0, 64200, 12300, 0, 0),
-(599327, 99322, 631, 15, 1, 0, 0, 4198.42, 2769.22, 351.065, 0, 3600, 0, 0, 64200, 12300, 0, 0);
+(599327, 99322, 631, 15, 1, 0, 0, 4198.42, 2769.22, 351.065, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599328, 99322, 631, 15, 1, 0, 0, 4490.205566, 2769.275635, 403.983765, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599329, 99322, 631, 15, 1, 0, 0, 4356.236816, 2402.573242, 220.462540, 0, 3600, 0, 0, 64200, 12300, 0, 0),
+(599330, 99322, 631, 15, 1, 0, 0, 4356.236816, 2402.573242, 220.462540, 0, 3600, 0, 0, 64200, 12300, 0, 0);
 
 DELETE FROM `locales_npc_text` WHERE `entry` = 99322;
 INSERT INTO `locales_npc_text` (`entry`, `Text0_0_loc1`, `Text0_0_loc2`, `Text0_0_loc3`, `Text0_0_loc4`, `Text0_0_loc5`, `Text0_0_loc6`, `Text0_0_loc7`, `Text0_0_loc8`, `Text0_1_loc1`, `Text0_1_loc2`, `Text0_1_loc3`, `Text0_1_loc4`, `Text0_1_loc5`, `Text0_1_loc6`, `Text0_1_loc7`, `Text0_1_loc8`, `Text1_0_loc1`, `Text1_0_loc2`, `Text1_0_loc3`, `Text1_0_loc4`, `Text1_0_loc5`, `Text1_0_loc6`, `Text1_0_loc7`, `Text1_0_loc8`, `Text1_1_loc1`, `Text1_1_loc2`, `Text1_1_loc3`, `Text1_1_loc4`, `Text1_1_loc5`, `Text1_1_loc6`, `Text1_1_loc7`, `Text1_1_loc8`, `Text2_0_loc1`, `Text2_0_loc2`, `Text2_0_loc3`, `Text2_0_loc4`, `Text2_0_loc5`, `Text2_0_loc6`, `Text2_0_loc7`, `Text2_0_loc8`, `Text2_1_loc1`, `Text2_1_loc2`, `Text2_1_loc3`, `Text2_1_loc4`, `Text2_1_loc5`, `Text2_1_loc6`, `Text2_1_loc7`, `Text2_1_loc8`, `Text3_0_loc1`, `Text3_0_loc2`, `Text3_0_loc3`, `Text3_0_loc4`, `Text3_0_loc5`, `Text3_0_loc6`, `Text3_0_loc7`, `Text3_0_loc8`, `Text3_1_loc1`, `Text3_1_loc2`, `Text3_1_loc3`, `Text3_1_loc4`, `Text3_1_loc5`, `Text3_1_loc6`, `Text3_1_loc7`, `Text3_1_loc8`, `Text4_0_loc1`, `Text4_0_loc2`, `Text4_0_loc3`, `Text4_0_loc4`, `Text4_0_loc5`, `Text4_0_loc6`, `Text4_0_loc7`, `Text4_0_loc8`, `Text4_1_loc1`, `Text4_1_loc2`, `Text4_1_loc3`, `Text4_1_loc4`, `Text4_1_loc5`, `Text4_1_loc6`, `Text4_1_loc7`, `Text4_1_loc8`, `Text5_0_loc1`, `Text5_0_loc2`, `Text5_0_loc3`, `Text5_0_loc4`, `Text5_0_loc5`, `Text5_0_loc6`, `Text5_0_loc7`, `Text5_0_loc8`, `Text5_1_loc1`, `Text5_1_loc2`, `Text5_1_loc3`, `Text5_1_loc4`, `Text5_1_loc5`, `Text5_1_loc6`, `Text5_1_loc7`, `Text5_1_loc8`, `Text6_0_loc1`, `Text6_0_loc2`, `Text6_0_loc3`, `Text6_0_loc4`, `Text6_0_loc5`, `Text6_0_loc6`, `Text6_0_loc7`, `Text6_0_loc8`, `Text6_1_loc1`, `Text6_1_loc2`, `Text6_1_loc3`, `Text6_1_loc4`, `Text6_1_loc5`, `Text6_1_loc6`, `Text6_1_loc7`, `Text6_1_loc8`, `Text7_0_loc1`, `Text7_0_loc2`, `Text7_0_loc3`, `Text7_0_loc4`, `Text7_0_loc5`, `Text7_0_loc6`, `Text7_0_loc7`, `Text7_0_loc8`, `Text7_1_loc1`, `Text7_1_loc2`, `Text7_1_loc3`, `Text7_1_loc4`, `Text7_1_loc5`, `Text7_1_loc6`, `Text7_1_loc7`, `Text7_1_loc8`) VALUES
@@ -67,25 +73,34 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 (81168, 37230, 631, 15, 1, 0, 0, -298.341, 2203.06, 199.983, 4.17647, 300, 0, 0, 1078480, 41690, 0, 0),
 (124864, 37230, 631, 15, 1, 0, 0, -222.214, 2220.68, 199.97, 3.1586, 300, 0, 0, 1078480, 41690, 0, 0);
 
--- Entrance
-UPDATE `areatrigger_teleport` SET `required_level` = '80' WHERE `areatrigger_teleport`.`id` =5670;
-
 -- Rotface
 -- UPDATE `creature_template` SET `ScriptName`='boss_rotface' WHERE `entry`= 36627;
 -- Festergut
 -- UPDATE `creature_template` SET `ScriptName`='boss_festergut' WHERE `entry`= 36626;
 -- Professor putricide
 -- UPDATE `creature_template` SET `ScriptName`='boss_professor_putricide' WHERE `entry`= 36678;
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201371,201370,201372,201614,201613);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201371,201370,201372,201614,201613);
+
 -- Taldaram
 -- UPDATE `creature_template` SET `ScriptName`='boss_taldaram' WHERE `entry`= 37973;
 -- Valanar
 -- UPDATE `creature_template` SET `ScriptName`='boss_valanar' WHERE `entry`= 37970;
 -- Keleseth
 -- UPDATE `creature_template` SET `ScriptName`='boss_keleseth' WHERE `entry`= 37972;
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201376,201377,201378);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201376,201377,201378);
+
 -- Qween Lana'thel
 -- UPDATE `creature_template` SET `ScriptName`='boss_lanathel' WHERE `entry`= 37955;
+
 -- Valithria dreamwalker
 -- UPDATE `creature_template` SET `ScriptName`='boss_valithria' WHERE `entry`= 36789;
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201374,201375,201369);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201374,201375,201369);
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201380,201381,201382,201383);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201380,201381,201382,201383);
+
 -- Sindragosa
 -- UPDATE `creature_template` SET `ScriptName`='boss_sindragosa' WHERE `entry`= 37755;
 -- Lich King

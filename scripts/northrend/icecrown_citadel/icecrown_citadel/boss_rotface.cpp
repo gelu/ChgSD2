@@ -17,8 +17,9 @@
 /* ScriptData
 SDName: boss_rotface
 SD%Complete: 0%
-SDComment:
+SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
 
 #include "precompiled.h"
+#include "def_spire.h"
