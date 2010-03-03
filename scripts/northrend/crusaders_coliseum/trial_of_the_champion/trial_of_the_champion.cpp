@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Trial Of the Champion
 SD%Complete: 80%
-SDComment: event script
+SDComment: event script. modified by /dev/rsa
 SDCategory: trial_of_the_champion
 EndScriptData */
 

@@ -4,8 +4,24 @@
 
 enum
 {
-    MAX_ENCOUNTERS              = 6,
+    TYPE_STAGE                  = 0,
+    TYPE_BEASTS                 = 1,
+    TYPE_JARAXXUS               = 2,
+    TYPE_CRUSADERS              = 3,
+    TYPE_FROJA                  = 4,
+    TYPE_LICH_KING              = 5,
+    TYPE_ANUBARAK               = 6,
+    TYPE_COUNTER                = 7,
+    TYPE_EVENT                  = 8,
+    MAX_ENCOUNTERS              = 9,
+
     NPC_BARRENT                 = 34816,
+    NPC_TIRION                  = 34996,
+    NPC_FIZZLEBANG              = 35458,
+    NPC_GARROSH                 = 34995,
+    NPC_RINN                    = 34990,
+    NPC_LICH_KING_0             = 16980,
+    NPC_LICH_KING_1             = 35877,
 
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 34796,
@@ -39,7 +55,6 @@ enum
     NPC_CRUSADER_0_1            = 35465,
     NPC_CRUSADER_0_2            = 35610,
 
-
     NPC_LIGHTBANE               = 34497,
     NPC_DARKBANE                = 34496,
 
@@ -50,14 +65,20 @@ enum
     GO_CRUSADERS_CACHE_10_H     = 195633,
     GO_CRUSADERS_CACHE_25_H     = 195635,
 
-    TYPE_STAGE                  = 0,
-    TYPE_BEASTS                 = 1,
-    TYPE_JARAXXUS               = 2,
-    TYPE_CRUSADERS              = 3,
-    TYPE_FROJA                  = 4,
-    TYPE_ANUBARAK               = 5,
+    GO_TRIBUTE_CHEST_10H_25     = 195665,
+    GO_TRIBUTE_CHEST_10H_45     = 195666,
+    GO_TRIBUTE_CHEST_10H_50     = 195667,
+    GO_TRIBUTE_CHEST_10H_99     = 195668,
+
+    GO_TRIBUTE_CHEST_25H_25     = 195669,
+    GO_TRIBUTE_CHEST_25H_45     = 195670,
+    GO_TRIBUTE_CHEST_25H_50     = 195671,
+    GO_TRIBUTE_CHEST_25H_99     = 195672,
+
+    GO_ARGENT_COLISEUM_FLOOR    = 195527, //20943
 
     TYPE_DIFFICULTY             = 101,
+    TYPE_EVENT_TIMER            = 102,
 
     DESPAWN_TIME                = 300000
 
@@ -88,6 +109,23 @@ static Locations SpawnLoc[]=
     {575.641724, 170.351501, 394.659943}, // 14
     {516.633972, 159.391708, 395.137543}, // 15
     {612.816956, 161.477921, 395.136810}, // 16
+    {563.549, 152.474, 394.393},          // 17 - Lich king start
+    {563.547, 141.613, 393.908},          // 18 - Lich king end
+    {787.932556, 133.28978, 142.612152},  // 19 - Anub'arak start location
+    {618.157898, 132.640869, 139.559769}, // 20 - Anub'arak move point location
+};
+
+struct WayPoints
+{
+    WayPoints(uint32 _id, float _x, float _y, float _z)
+    {
+        id = _id;
+        x = _x;
+        y = _y;
+        z = _z;
+    }
+    uint32 id;
+    float x, y, z;
 };
 
 #endif

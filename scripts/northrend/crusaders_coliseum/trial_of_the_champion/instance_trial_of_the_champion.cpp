@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Instance_Trial_Of_the_Champion
-SD%Complete: 100
-SDComment: 
+SD%Complete: 70
+SDComment: modified by /dev/rsa
 SDCategory: Trial Of the Champion
 EndScriptData */
 

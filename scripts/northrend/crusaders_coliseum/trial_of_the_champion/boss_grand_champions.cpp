@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_grand_champions
-SD%Complete: 92%
-SDComment: missing yells. hunter AI sucks. no pvp diminuishing returns(is it DB related?)
+SD%Complete: 70%
+SDComment: missing yells. hunter AI sucks. no pvp diminuishing returns(is it DB related?). modified by /dev/rsa
 SDCategory: Trial Of the Champion
 EndScriptData */
 

@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_black_knight
-SD%Complete: 92%
-SDComment: missing yells. not sure about timers.
+SD%Complete: 70%
+SDComment: missing yells. not sure about timers. modified by /dev/rsa
 SDCategory: Trial Of the Champion
 EndScriptData */
 

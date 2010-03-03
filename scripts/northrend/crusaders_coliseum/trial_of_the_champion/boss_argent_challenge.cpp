@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_argent_challenge
-SD%Complete: 92%
-SDComment: missing yells. radiance is "wrong"
+SD%Complete: 50%
+SDComment: missing yells. radiance is "wrong". modified by /dev/rsa
 SDCategory: Trial Of the Champion
 EndScriptData */
 
