@@ -109,7 +109,7 @@ UPDATE creature_template SET ScriptName='npc_tabard_vendor' WHERE entry=28776;
 UPDATE creature_template SET ScriptName='npc_locksmith' WHERE entry IN (29665,29725,29728);
 
 /* SPELL */
-UPDATE creature_template SET ScriptName='spell_dummy_npc' WHERE entry IN (16880,1200,26616,26643,16518,25793,25758,25752,25792,25753,26421,26841,27808,27122,28068,12298,12296,24918,17326,17654,16847,18879,26270,26268);
+UPDATE creature_template SET ScriptName='spell_dummy_npc' WHERE entry IN (16880,1200,26616,26643,16518,25793,25758,25752,25792,25753,26421,26841,27808,27122,28068,12298,12296,24918,17326,17654,16847,18879,26270,26268,30146);
 
 /*  */
 /* ZONE */
@@ -636,9 +636,8 @@ UPDATE creature_template SET ScriptName='boss_lord_crispin_ference' WHERE entry=
 UPDATE creature_template SET ScriptName='boss_bigbadwolf' WHERE entry=17521;
 UPDATE creature_template SET ScriptName='mob_shadow_of_aran' WHERE entry=18254;
 UPDATE creature_template SET ScriptName='mob_aran_elemental' WHERE entry=17167;
-UPDATE creature_template SET ScriptName='mob_kilrek' WHERE entry=17229;
 UPDATE creature_template SET ScriptName='mob_demon_chain' WHERE entry=17248;
-UPDATE creature_template SET ScriptName='mob_karazhan_imp' WHERE entry=17267;
+UPDATE creature_template SET ScriptName='npc_fiendish_portal' WHERE entry=17265;
 UPDATE creature_template SET ScriptName='mob_cyclone' WHERE entry=18412;
 UPDATE creature_template SET ScriptName='netherspite_infernal' WHERE entry=17646;
 UPDATE creature_template SET ScriptName='npc_berthold' WHERE entry=16153;
