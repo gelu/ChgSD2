@@ -33,6 +33,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
 
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
     uint32 m_auiEventTimer;
+    uint32 m_auiEventNPCId;
     uint8 Difficulty;
     std::string m_strInstData;
 
@@ -312,6 +313,77 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                 if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) return 25;
                        else return 10;
             case TYPE_EVENT_TIMER:  return m_auiEventTimer;
+            case TYPE_EVENT_NPC: switch (m_auiEncounter[8]) 
+                                 {
+                                 case 110:
+                                 case 140:
+                                 case 150:
+                                 case 200:
+                                 case 300:
+                                 case 400:
+                                 case 1010:
+                                 case 2000:
+                                 case 2030:
+                                 case 3000:
+                                 case 3001:
+                                 case 3060:
+                                 case 3061:
+                                 case 3090:
+                                 case 3091:
+                                 case 3100:
+                                 case 3110:
+                                 case 4000:
+                                 case 4010:
+                                 case 4015:
+                                 case 4040:
+                                 case 4050:
+                                 case 5000:
+                                 case 5020:
+                                 case 6000:
+                                 m_auiEventNPCId = NPC_TIRION;
+                                 break;
+
+                                 case 5010:
+                                 case 5030:
+                                 case 5040:
+                                 case 5050:
+                                 case 5060:
+                                 case 5070:
+                                 case 5080:
+                                 m_auiEventNPCId = NPC_LICH_KING_1;
+                                 break;
+
+                                 case 130:
+                                 case 2020:
+                                 case 3080:
+                                 case 3081:
+                                 case 4020:
+                                 m_auiEventNPCId = NPC_RINN;
+                                 break;
+
+                                 case 120:
+                                 case 2010:
+                                 case 3050:
+                                 case 3051:
+                                 case 3070:
+                                 case 3071:
+                                 case 4030:
+                                 m_auiEventNPCId = NPC_GARROSH;
+                                 break;
+
+                                 case 1110:
+                                 case 1120:
+                                 case 1130:
+                                 case 1140:
+                                 m_auiEventNPCId = NPC_FIZZLEBANG;
+                                 break;
+
+                                 default:
+                                 m_auiEventNPCId = NPC_TIRION;
+                                 break;
+
+                                 };
+                                 return m_auiEventNPCId;
         }
 
         return 0;

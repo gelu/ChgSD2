@@ -79,6 +79,7 @@ enum
 
     TYPE_DIFFICULTY             = 101,
     TYPE_EVENT_TIMER            = 102,
+    TYPE_EVENT_NPC              = 103,
 
     DESPAWN_TIME                = 300000
 
@@ -113,6 +114,7 @@ static Locations SpawnLoc[]=
     {563.547, 141.613, 393.908},          // 18 - Lich king end
     {787.932556, 133.28978, 142.612152},  // 19 - Anub'arak start location
     {618.157898, 132.640869, 139.559769}, // 20 - Anub'arak move point location
+    {508.104767, 138.247345, 395.128052}, // 21 - Fizzlebang start location
 };
 
 struct WayPoints
