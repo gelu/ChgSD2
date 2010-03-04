@@ -18,6 +18,8 @@ INSERT INTO areatrigger_scripts VALUES
 (5285,'at_aldurthar_gate'),
 (5286,'at_aldurthar_gate'),
 (5287,'at_aldurthar_gate');
+DELETE FROM areatrigger_scripts WHERE entry=4112;
+INSERT INTO areatrigger_scripts VALUES (4112,'at_naxxramas');
 
 /* BATTLEGROUNDS */
 UPDATE creature_template SET ScriptName='npc_spirit_guide' WHERE entry IN (13116, 13117);
@@ -733,7 +735,7 @@ UPDATE creature_template SET ScriptName='boss_gluth' WHERE entry=15932;
 -- UPDATE creature_template SET ScriptName='boss_stalagg' WHERE entry=15929;
 -- UPDATE creature_template SET ScriptName='boss_feugen' WHERE entry=15930;
 UPDATE creature_template SET ScriptName='boss_sapphiron' WHERE entry=15989;
--- UPDATE creature_template SET ScriptName='boss_kelthuzad' WHERE entry=15990;
+UPDATE creature_template SET ScriptName='boss_kelthuzad' WHERE entry=15990;
 
 /* NETHERSTORM */
 DELETE FROM areatrigger_scripts WHERE entry=4497;
