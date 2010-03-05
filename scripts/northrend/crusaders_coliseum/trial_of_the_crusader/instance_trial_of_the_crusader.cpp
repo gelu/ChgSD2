@@ -192,7 +192,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
         switch(uiType)
         {
-        case TYPE_STAGE:     m_auiEncounter[0] = uiData; uiData = NOT_STARTED; break;
+        case TYPE_STAGE:     m_auiEncounter[0] = uiData; break;
         case TYPE_BEASTS:    m_auiEncounter[1] = uiData; break;
         case TYPE_JARAXXUS:  m_auiEncounter[2] = uiData; break;
         case TYPE_CRUSADERS: m_auiEncounter[3] = uiData;
@@ -229,7 +229,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
 
-        if (uiData == DONE && uiType != TYPE_STAGE)
+        if (uiData == DONE && uiType != TYPE_STAGE
+                           && uiType != TYPE_COUNTER
+                           && uiType != TYPE_EVENT
+                           && uiType != TYPE_EVENT_TIMER)
         {
             OUT_SAVE_INST_DATA;
 
@@ -309,9 +312,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
             case TYPE_ANUBARAK:  return m_auiEncounter[6];
             case TYPE_COUNTER:   return m_auiEncounter[7];
             case TYPE_EVENT:     return m_auiEncounter[8];
-            case TYPE_DIFFICULTY:
-                if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) return 25;
-                       else return 10;
+            case TYPE_DIFFICULTY:   return Difficulty;
             case TYPE_EVENT_TIMER:  return m_auiEventTimer;
             case TYPE_EVENT_NPC: switch (m_auiEncounter[8]) 
                                  {
@@ -319,9 +320,12 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 140:
                                  case 150:
                                  case 200:
+                                 case 210:
                                  case 300:
+                                 case 310:
                                  case 400:
                                  case 1010:
+                                 case 1180:
                                  case 2000:
                                  case 2030:
                                  case 3000:
@@ -340,6 +344,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 5000:
                                  case 5020:
                                  case 6000:
+                                 case 6005:
+                                 case 6010:
                                  m_auiEventNPCId = NPC_TIRION;
                                  break;
 
@@ -354,19 +360,21 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  break;
 
                                  case 130:
+                                 case 132:
                                  case 2020:
                                  case 3080:
-                                 case 3081:
+                                 case 3051:
+                                 case 3071:
                                  case 4020:
                                  m_auiEventNPCId = NPC_RINN;
                                  break;
 
                                  case 120:
+                                 case 122:
                                  case 2010:
                                  case 3050:
-                                 case 3051:
                                  case 3070:
-                                 case 3071:
+                                 case 3081:
                                  case 4030:
                                  m_auiEventNPCId = NPC_GARROSH;
                                  break;
@@ -375,6 +383,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 1120:
                                  case 1130:
                                  case 1140:
+                                 case 1150:
+                                 case 1160:
                                  m_auiEventNPCId = NPC_FIZZLEBANG;
                                  break;
 
