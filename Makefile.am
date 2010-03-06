@@ -317,18 +317,8 @@ scripts/northrend/azjol-nerub/azjol-nerub/boss_anubarak.cpp \
 scripts/northrend/azjol-nerub/azjol-nerub/boss_hadronox.cpp \
 scripts/northrend/azjol-nerub/azjol-nerub/boss_krikthir.cpp \
 scripts/northrend/azjol-nerub/azjol-nerub/instance_azjol-nerub.cpp \
-<<<<<<< HEAD:Makefile.am
 scripts/northrend/draktharon_keep/draktharon_keep.h \
 scripts/northrend/draktharon_keep/boss_dred.cpp \
-=======
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_anubarak.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_faction_champions.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_jaraxxus.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_northrend_beasts.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_twin_valkyr.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/instance_trial_of_the_crusader.cpp \
-scripts/northrend/crusaders_coliseum/trial_of_the_crusader/trial_of_the_crusader.h \
->>>>>>> 502d01c570b503a5c23a524d3caa9065c298a1e3:Makefile.am
 scripts/northrend/draktharon_keep/boss_novos.cpp \
 scripts/northrend/draktharon_keep/boss_tharonja.cpp \
 scripts/northrend/draktharon_keep/boss_trollgore.cpp \
@@ -531,6 +521,11 @@ scripts/northrend/crusaders_coliseum/trial_of_the_champion/boss_grand_champions.
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/instance_trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_champion/trial_of_the_champion.h \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_anubarak.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_faction_champions.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_jaraxxus.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_northrend_beasts.cpp \
+scripts/northrend/crusaders_coliseum/trial_of_the_crusader/boss_twin_valkyr.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_crusader/instance_trial_of_the_crusader.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_crusader/trial_of_the_crusader.cpp \
 scripts/northrend/crusaders_coliseum/trial_of_the_crusader/trial_of_the_crusader.h \

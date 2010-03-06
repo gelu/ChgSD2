@@ -258,14 +258,19 @@ extern void AddSC_ungoro_crater();
 extern void AddSC_winterspring();
 
 //northrend
-extern void AddSC_trial_of_the_crusader();                            //trial_of_the_crusader
+extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
+extern void AddSC_boss_jaraxxus();
+extern void AddSC_boss_anubarak_trial();
+extern void AddSC_twin_valkyr();
+extern void AddSC_trial_of_the_crusader();
 extern void AddSC_instance_trial_of_the_crusader();
 
-extern void AddSC_trial_of_the_champion();                            //trial_of_the_champion
+extern void AddSC_trial_of_the_champion();                  //trial_of_the_champion
 extern void AddSC_boss_argent_challenge(); 
 extern void AddSC_boss_black_knight();
 extern void AddSC_boss_grand_champions();
 extern void AddSC_instance_trial_of_the_champion();
+
 extern void AddSC_boss_jedoga();                            //ahnkahet
 extern void AddSC_boss_nadox();
 extern void AddSC_boss_taldaram();
@@ -275,17 +280,9 @@ extern void AddSC_boss_anubarak();                          //azjol-nerub
 extern void AddSC_boss_hadronox();
 extern void AddSC_boss_krikthir();
 extern void AddSC_instance_azjol_nerub();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_boss_dred();                              //draktharon_keep
 extern void AddSC_boss_novos();
-=======
-extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
-extern void AddSC_boss_jaraxxus();
-extern void AddSC_boss_anubarak_trial();
-extern void AddSC_twin_valkyr();
-extern void AddSC_instance_trial_of_the_crusader();
 extern void AddSC_boss_novos();                             //draktharon_keep
->>>>>>> 502d01c570b503a5c23a524d3caa9065c298a1e3:system/ScriptLoader.cpp
 extern void AddSC_boss_tharonja();
 extern void AddSC_boss_trollgore();
 extern void AddSC_boss_colossus();                          //gundrak
@@ -733,6 +730,10 @@ void AddScripts()
     AddSC_winterspring();
 
     //northrend
+    AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
+    AddSC_boss_jaraxxus();
+    AddSC_boss_anubarak_trial();
+    AddSC_twin_valkyr();
     AddSC_trial_of_the_crusader();                            //trial_of_the_crusader
     AddSC_instance_trial_of_the_crusader();
 
@@ -751,11 +752,6 @@ void AddScripts()
     AddSC_boss_hadronox();
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
-    AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
-    AddSC_boss_jaraxxus();
-    AddSC_boss_anubarak_trial();
-    AddSC_twin_valkyr();
-    AddSC_instance_trial_of_the_crusader();
     AddSC_boss_novos();                                     //draktharon_keep
     AddSC_boss_dred();
     AddSC_boss_tharonja();
@@ -939,8 +935,8 @@ void AddScripts()
     AddSC_boss_nethermancer_sepethrea();
     AddSC_boss_pathaleon_the_calculator();
     AddSC_instance_mechanar();
-							    //culling of stratholme
-    AddSC_boss_lord_epoch();
+
+    AddSC_boss_lord_epoch();                                //culling of stratholme
     AddSC_culling_of_stratholme();
     AddSC_boss_malganis();
     AddSC_boss_meathook();

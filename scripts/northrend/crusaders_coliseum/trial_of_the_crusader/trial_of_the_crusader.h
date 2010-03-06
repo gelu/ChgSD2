@@ -80,6 +80,7 @@ enum
     TYPE_DIFFICULTY             = 101,
     TYPE_EVENT_TIMER            = 102,
     TYPE_EVENT_NPC              = 103,
+    TYPE_NORTHREND_BEASTS       = 110,
 
     DESPAWN_TIME                = 300000
 
