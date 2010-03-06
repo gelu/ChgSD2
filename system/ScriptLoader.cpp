@@ -360,13 +360,7 @@ extern void AddSC_borean_tundra();
 extern void AddSC_dalaran();
 extern void AddSC_dragonblight();
 extern void AddSC_grizzly_hills();
-<<<<<<< HEAD:system/ScriptLoader.cpp
-
 extern void AddSC_howling_fjord();
-
-=======
-extern void AddSC_howling_fjord();
->>>>>>> 502d01c570b503a5c23a524d3caa9065c298a1e3:system/ScriptLoader.cpp
 extern void AddSC_icecrown();
 extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
