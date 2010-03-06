@@ -275,8 +275,17 @@ extern void AddSC_boss_anubarak();                          //azjol-nerub
 extern void AddSC_boss_hadronox();
 extern void AddSC_boss_krikthir();
 extern void AddSC_instance_azjol_nerub();
+<<<<<<< HEAD:system/ScriptLoader.cpp
 extern void AddSC_boss_dred();                              //draktharon_keep
 extern void AddSC_boss_novos();
+=======
+extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
+extern void AddSC_boss_jaraxxus();
+extern void AddSC_boss_anubarak_trial();
+extern void AddSC_twin_valkyr();
+extern void AddSC_instance_trial_of_the_crusader();
+extern void AddSC_boss_novos();                             //draktharon_keep
+>>>>>>> 502d01c570b503a5c23a524d3caa9065c298a1e3:system/ScriptLoader.cpp
 extern void AddSC_boss_tharonja();
 extern void AddSC_boss_trollgore();
 extern void AddSC_boss_colossus();                          //gundrak
@@ -354,9 +363,13 @@ extern void AddSC_borean_tundra();
 extern void AddSC_dalaran();
 extern void AddSC_dragonblight();
 extern void AddSC_grizzly_hills();
+<<<<<<< HEAD:system/ScriptLoader.cpp
 
 extern void AddSC_howling_fjord();
 
+=======
+extern void AddSC_howling_fjord();
+>>>>>>> 502d01c570b503a5c23a524d3caa9065c298a1e3:system/ScriptLoader.cpp
 extern void AddSC_icecrown();
 extern void AddSC_sholazar_basin();
 extern void AddSC_storm_peaks();
@@ -738,6 +751,11 @@ void AddScripts()
     AddSC_boss_hadronox();
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
+    AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
+    AddSC_boss_jaraxxus();
+    AddSC_boss_anubarak_trial();
+    AddSC_twin_valkyr();
+    AddSC_instance_trial_of_the_crusader();
     AddSC_boss_novos();                                     //draktharon_keep
     AddSC_boss_dred();
     AddSC_boss_tharonja();

@@ -409,6 +409,22 @@ UPDATE creature_template SET ScriptName='mob_shield_generator_channel' WHERE ent
 
 /* CRYSTALSONG FOREST */
 
+/*  */
+/* CRUSADER COLISEUM */
+/*  */
+
+/* TRAIL OF THE CHAMPION */
+
+/* TRIAL OF THE CRUSADER */
+UPDATE instance_template SET script='instance_trial_of_the_crusader' WHERE map=649;
+UPDATE creature_template SET ScriptName='boss_gormok' WHERE entry=34796;
+UPDATE creature_template SET ScriptName='boss_acidmaw' WHERE entry=35144;
+UPDATE creature_template SET ScriptName='boss_dreadscale' WHERE entry=34799;
+UPDATE creature_template SET ScriptName='boss_icehowl' WHERE entry=34797;
+UPDATE creature_template SET ScriptName='boss_jaraxxis' WHERE entry=34780;
+UPDATE creature_template SET ScriptName='boss_anubarak_trial' WHERE entry=34564;
+UPDATE creature_template SET ScriptName='boss_fjola' WHERE entry=34497;
+UPDATE creature_template SET ScriptName='boss_eydis' WHERE entry=34496;
 
 /* DALARAN */
 UPDATE creature_template SET ScriptName='npc_dalaran_guardian_mage' WHERE entry IN (29255, 29254);
@@ -723,7 +739,7 @@ UPDATE creature_template SET ScriptName='boss_noth' WHERE entry=15954;
 UPDATE creature_template SET ScriptName='boss_heigan' WHERE entry=15936;
 UPDATE creature_template SET ScriptName='boss_loatheb' WHERE entry=16011;
 UPDATE creature_template SET ScriptName='boss_razuvious' WHERE entry=16061;
--- UPDATE creature_template SET ScriptName='boss_gothik' WHERE entry=16060;
+UPDATE creature_template SET ScriptName='boss_gothik' WHERE entry=16060;
 UPDATE creature_template SET ScriptName='boss_thane_korthazz' WHERE entry=16064;
 UPDATE creature_template SET ScriptName='boss_sir_zeliek' WHERE entry=16063;
 UPDATE creature_template SET ScriptName='boss_lady_blaumeux' WHERE entry=16065;
