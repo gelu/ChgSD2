@@ -1653,6 +1653,14 @@
 					<Filter
 						Name="trial_of_the_champion"
 						>
+					</Filter>
+					<Filter
+						Name="trial_of_the_crusader"
+						>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\boss_anubarak_trial.cpp"
+							>
+						</File>
 						<File
 							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_champion\boss_argent_challenge.cpp"
 							>
@@ -1675,6 +1683,14 @@
 						</File>
 						<File
 							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_champion\trial_of_the_champion.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\trial_of_the_crusader.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\trial_of_the_crusader.h"
 							>
 						</File>
 					</Filter>
