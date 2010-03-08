@@ -45,6 +45,8 @@ UPDATE `instance_template` SET `script`='instance_icecrown_spire' WHERE `map`=63
 
 -- Saurfang
 UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+DELETE FROM `gameobject` WHERE `guid` IN (913383, 913385, 913395, 913397);
+DELETE FROM `gameobject_template` WHERE `entry` IN (902241,902242);
 
 -- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;

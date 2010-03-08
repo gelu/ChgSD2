@@ -71,10 +71,10 @@ enum
 
     GO_FROZENTRONE_TR           = 202223, //72061
 
-    GO_SAURFANG_CACHE_10        = 202239,
-    GO_SAURFANG_CACHE_25        = 202240,
-    GO_SAURFANG_CACHE_10_H      = 902241, //need correct!  not in YTDB 533
-    GO_SAURFANG_CACHE_25_H      = 902242, //need correct!  not in YTDB 533
+    GO_SAURFANG_CACHE_10        = 202239, // 2753
+    GO_SAURFANG_CACHE_25        = 202240, // 2761
+    GO_SAURFANG_CACHE_10_H      = 202241, // 2910
+    GO_SAURFANG_CACHE_25_H      = 202238, // 2724
 
     GO_GUNSHIP_ARMORY_10        = 201873,
     GO_GUNSHIP_ARMORY_25        = 201874,
