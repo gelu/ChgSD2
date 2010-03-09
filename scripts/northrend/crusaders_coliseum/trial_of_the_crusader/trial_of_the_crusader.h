@@ -153,4 +153,10 @@ struct SpellTable
     bool   m_IsBugged;                                 // Need override for this spell
 };
 
+enum uiWorldStates
+{
+    UPDATE_STATE_UI_SHOW            = 4390,
+    UPDATE_STATE_UI_COUNT           = 4389,
+};
+
 #endif

@@ -111,8 +111,32 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     m_auiEventTimer = 1000;
     }
 
-    void OnCreatureCreate(Creature* pCreature)
+    void OnPlayerEnter(Player *m_player)
     {
+        if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+        {
+            m_player->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
+            m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, GetData(TYPE_COUNTER));
+        }
+    }
+
+    bool IsRaidWiped()
+    {
+       Map::PlayerList const &players = instance->GetPlayers();
+
+       for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
+              {
+              if(Player* pPlayer = i->getSource())
+                    {
+                    if(pPlayer->isAlive())
+                    return false;
+                    }
+               }
+        return true;
+     }
+
+     void OnCreatureCreate(Creature* pCreature)
+     {
         switch(pCreature->GetEntry())
         {
          case NPC_BARRENT:  m_uiBarrentGUID = pCreature->GetGUID(); break;
