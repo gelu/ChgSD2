@@ -17,12 +17,31 @@
 /* ScriptData
 SDName: boss_anubarak_trial
 SD%Complete: 0
-SDComment:
+SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
 
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
+
+enum
+{
+    TYPE_BOSS            = TYPE_ANUBARAK,
+    NPC_FROST_SPHERE     = 34606,
+
+};
+enum BossSpells
+{
+    SPELL_0,
+    SPELL_BERSERK,
+    BOSS_SPELL_COUNT
+};
+static SpellTable m_BossSpell[]=
+{
+// Name                  10     25     10H    25H
+{SPELL_0, 70138, 70140, 70140, 70137, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
+{SPELL_BERSERK,          47008, 47008, 47008, 47008, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 300000, 65535, CAST_ON_SELF, false, false},
+};
 
 struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
 {

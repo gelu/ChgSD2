@@ -93,7 +93,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint64 m_uiTC25h50GUID;
     uint64 m_uiTC25h99GUID;
 
-    uint64 m_uiTributeChestGUID;
+    uint64 m_uiTributeChest1GUID;
+    uint64 m_uiTributeChest2GUID;
+    uint64 m_uiTributeChest3GUID;
+    uint64 m_uiTributeChest4GUID;
 
     void Initialize()
     {
@@ -101,7 +104,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
             m_auiEncounter[i] = NOT_STARTED;
             m_auiEncounter[0] = 0;
             m_auiEncounter[8] = 0;
-    m_uiTributeChestGUID = 0;
+    m_uiTributeChest1GUID = 0;
+    m_uiTributeChest2GUID = 0;
+    m_uiTributeChest3GUID = 0;
+    m_uiTributeChest4GUID = 0;
     m_auiEventTimer = 1000;
     }
 
@@ -208,20 +214,31 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_ANUBARAK:  m_auiEncounter[6] = uiData; 
                             if (uiData == DONE) {
                             if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC){
-                              if ( m_auiEncounter[7] <= 25) m_uiTributeChestGUID = m_uiTC10h25GUID;
-                                else if ( m_auiEncounter[7] <= 45) m_uiTributeChestGUID = m_uiTC10h45GUID;
-                                   else if ( m_auiEncounter[7] <= 50) m_uiTributeChestGUID = m_uiTC10h50GUID;
-                                       else  m_uiTributeChestGUID = m_uiTC10h99GUID;
+                                if ( m_auiEncounter[7] <= 25) m_uiTributeChest1GUID = m_uiTC10h25GUID;
+                                if ( m_auiEncounter[7] <= 45) m_uiTributeChest2GUID = m_uiTC10h45GUID;
+                                if ( m_auiEncounter[7] <= 50) m_uiTributeChest3GUID = m_uiTC10h50GUID;
+                                m_uiTributeChest4GUID = m_uiTC10h99GUID;
                             }
                             if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC){
-                              if ( m_auiEncounter[7] <= 25) m_uiTributeChestGUID = m_uiTC25h25GUID;
-                                else if ( m_auiEncounter[7] <= 45) m_uiTributeChestGUID = m_uiTC25h45GUID;
-                                   else if ( m_auiEncounter[7] <= 50) m_uiTributeChestGUID = m_uiTC25h50GUID;
-                                       else  m_uiTributeChestGUID = m_uiTC25h99GUID;
+                                if ( m_auiEncounter[7] <= 25) m_uiTributeChest1GUID = m_uiTC25h25GUID;
+                                if ( m_auiEncounter[7] <= 45) m_uiTributeChest2GUID = m_uiTC25h45GUID;
+                                if ( m_auiEncounter[7] <= 50) m_uiTributeChest3GUID = m_uiTC25h50GUID;
+                                m_uiTributeChest4GUID = m_uiTC25h99GUID;
                             }
-                            if (m_uiTributeChestGUID)
-                              if (GameObject* pChest = instance->GetGameObject(m_uiTributeChestGUID))
-                                if (pChest && !pChest->isSpawned()) pChest->SetRespawnTime(7*DAY);
+                            // Attention! It is (may be) not off-like, but  spawning all Tribute Chests is real
+                            // reward for clearing TOC instance
+                            if (m_uiTributeChest1GUID)
+                              if (GameObject* pChest1 = instance->GetGameObject(m_uiTributeChest1GUID))
+                                if (pChest1 && !pChest1->isSpawned()) pChest1->SetRespawnTime(7*DAY);
+                            if (m_uiTributeChest2GUID)
+                              if (GameObject* pChest2 = instance->GetGameObject(m_uiTributeChest2GUID))
+                                if (pChest2 && !pChest2->isSpawned()) pChest2->SetRespawnTime(7*DAY);
+                            if (m_uiTributeChest3GUID)
+                              if (GameObject* pChest3 = instance->GetGameObject(m_uiTributeChest3GUID))
+                                if (pChest3 && !pChest3->isSpawned()) pChest3->SetRespawnTime(7*DAY);
+                            if (m_uiTributeChest4GUID)
+                              if (GameObject* pChest4 = instance->GetGameObject(m_uiTributeChest4GUID))
+                                if (pChest4 && !pChest4->isSpawned()) pChest4->SetRespawnTime(7*DAY);
                             };
         break;
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = NOT_STARTED; break;
@@ -423,10 +440,11 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
             if (m_auiEncounter[i] == IN_PROGRESS)
                 m_auiEncounter[i] = NOT_STARTED;
         }
-        m_auiEncounter[0] = 0;
-        m_auiEncounter[8] = 0;
+        m_auiEncounter[TYPE_EVENT] = 0;
+        m_auiEncounter[TYPE_STAGE] = 0;
 
         OUT_LOAD_INST_DATA_COMPLETE;
+
     }
 };
 
