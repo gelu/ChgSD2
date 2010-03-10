@@ -66,6 +66,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
     pInstance->SetData(TYPE_STAGE,0);
     flag25 = true;
     DelayTimer = 0;
+    m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void AttackStart(Unit *who)

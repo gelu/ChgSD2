@@ -60,7 +60,13 @@ DELETE FROM `creature_loot_template`  WHERE  `entry` IN
 (34796,34799,35144);
 
 -- Jaraxxus
--- UPDATE creature_template SET scriptname='boss_jaraxxus' WHERE entry=34780;
+UPDATE `creature_template` SET `scriptname`='boss_jaraxxus', `AIName` ='' WHERE entry= 34780;
+DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34780, 34784, 34813, 34815, 34825, 34826);
+UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `AIName` ='' WHERE entry = 34784;
+-- UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE entry = 34813;
+-- UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE entry = 34815;
+UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WHERE entry = 34825;
+-- UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE entry = 34826;
 
 -- Froja's
 -- UPDATE creature_template SET scriptname='boss_lightbane' WHERE entry=34497;

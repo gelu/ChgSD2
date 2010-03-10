@@ -103,6 +103,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
             m_auiEncounter[0] = 0;
+            m_auiEncounter[7] = 1;
             m_auiEncounter[8] = 0;
     m_uiTributeChest1GUID = 0;
     m_uiTributeChest2GUID = 0;
@@ -116,7 +117,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
         {
             m_player->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
-            m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, GetData(TYPE_COUNTER));
+            m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, 100-GetData(TYPE_COUNTER));
         }
     }
 
@@ -265,13 +266,20 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                 if (pChest4 && !pChest4->isSpawned()) pChest4->SetRespawnTime(7*DAY);
                             };
         break;
-        case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = NOT_STARTED; break;
+        case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
         case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
 
-        if (uiData == DONE && uiType != TYPE_STAGE
+        if (uiData == FAIL && uiType != TYPE_STAGE
+                           && uiType != TYPE_EVENT
                            && uiType != TYPE_COUNTER
+                           && uiType != TYPE_EVENT_TIMER)
+        { if (IsRaidWiped()) { ++m_auiEncounter[7];
+                               uiData = DONE;}
+        }
+
+        if (uiData == DONE && uiType != TYPE_STAGE
                            && uiType != TYPE_EVENT
                            && uiType != TYPE_EVENT_TIMER)
         {
