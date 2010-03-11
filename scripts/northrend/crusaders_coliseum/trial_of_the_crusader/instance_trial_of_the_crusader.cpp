@@ -103,7 +103,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
             m_auiEncounter[0] = 0;
-            m_auiEncounter[7] = 1;
+            m_auiEncounter[7] = 50;
             m_auiEncounter[8] = 0;
     m_uiTributeChest1GUID = 0;
     m_uiTributeChest2GUID = 0;
@@ -117,7 +117,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
         {
             m_player->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
-            m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, 100-GetData(TYPE_COUNTER));
+            m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, GetData(TYPE_COUNTER));
         }
     }
 
@@ -245,9 +245,9 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                 m_uiTributeChest4GUID = m_uiTC10h99GUID;
                             }
                             if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC){
-                                if ( m_auiEncounter[7] <= 25) m_uiTributeChest1GUID = m_uiTC25h25GUID;
-                                if ( m_auiEncounter[7] <= 45) m_uiTributeChest2GUID = m_uiTC25h45GUID;
-                                if ( m_auiEncounter[7] <= 50) m_uiTributeChest3GUID = m_uiTC25h50GUID;
+                                if ( m_auiEncounter[7] >= 25) m_uiTributeChest1GUID = m_uiTC25h25GUID;
+                                if ( m_auiEncounter[7] >= 45) m_uiTributeChest2GUID = m_uiTC25h45GUID;
+                                if ( m_auiEncounter[7] >= 49) m_uiTributeChest3GUID = m_uiTC25h50GUID;
                                 m_uiTributeChest4GUID = m_uiTC25h99GUID;
                             }
                             // Attention! It is (may be) not off-like, but  spawning all Tribute Chests is real
@@ -275,7 +275,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                            && uiType != TYPE_EVENT
                            && uiType != TYPE_COUNTER
                            && uiType != TYPE_EVENT_TIMER)
-        { if (IsRaidWiped()) { ++m_auiEncounter[7];
+        { if (IsRaidWiped()) { --m_auiEncounter[7];
                                uiData = DONE;}
         }
 

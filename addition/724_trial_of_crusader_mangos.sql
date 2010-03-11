@@ -50,10 +50,10 @@ DELETE FROM `creature_loot_template` WHERE `entry` IN
 (12268,12211,12214,12283,12192,12286,12271,12274,12231,12189,12093,12090,12171,12105,12108,12114,12168,12165,12182,12185,12305,12302);
 
 -- Nortrend beasts
--- UPDATE creature_template SET scriptname='boss_gormok' WHERE entry=34796;
--- UPDATE creature_template SET scriptname='boss_dreadscale' WHERE entry=34799;
--- UPDATE creature_template SET scriptname='boss_acidmaw' WHERE entry=35144;
--- UPDATE creature_template SET scriptname='boss_icehowl' WHERE entry=34797;
+-- UPDATE `creature_template` SET `scriptname`='boss_gormok' WHERE entry=34796;
+-- UPDATE `creature_template` SET `scriptname`='boss_dreadscale' WHERE entry=34799;
+-- UPDATE `creature_template` SET `scriptname`='boss_acidmaw' WHERE entry=35144;
+-- UPDATE `creature_template` SET `scriptname`='boss_icehowl' WHERE entry=34797;
 UPDATE `creature_template` SET `lootid`= 0 WHERE  `entry` IN
 (34796,34799,35144);
 DELETE FROM `creature_loot_template`  WHERE  `entry` IN
@@ -62,15 +62,18 @@ DELETE FROM `creature_loot_template`  WHERE  `entry` IN
 -- Jaraxxus
 UPDATE `creature_template` SET `scriptname`='boss_jaraxxus', `AIName` ='' WHERE entry= 34780;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34780, 34784, 34813, 34815, 34825, 34826);
-UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `AIName` ='' WHERE entry = 34784;
--- UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE entry = 34813;
--- UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE entry = 34815;
+UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `AIName` ='', `faction_A`= 14, `faction_H` = 14 WHERE entry = 34784;
+UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE entry = 34813;
+UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE entry = 34815;
 UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WHERE entry = 34825;
--- UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE entry = 34826;
+UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE entry = 34826;
 
 -- Froja's
--- UPDATE creature_template SET scriptname='boss_lightbane' WHERE entry=34497;
--- UPDATE creature_template SET scriptname='boss_darkbane' WHERE entry=34496;
+-- UPDATE `creature_template` SET `scriptname`='boss_fjola', `AIName` ='' WHERE entry=34497;
+-- UPDATE `creature_template` SET `scriptname`='boss_eydis', `AIName` ='' WHERE entry=34496;
+-- UPDATE `creature_template` SET `scriptname`='mob_light_essence', `AIName` ='' WHERE entry = 34568;
+-- UPDATE `creature_template` SET `scriptname`='mob_dark_essence', `AIName` ='' WHERE entry = 34567;
+
 -- Anub'arak
--- UPDATE creature_template SET scriptname='boss_anubarak' WHERE entry=34564;
+-- UPDATE `creature_template` SET `scriptname`='boss_anubarak' WHERE entry=34564;
 

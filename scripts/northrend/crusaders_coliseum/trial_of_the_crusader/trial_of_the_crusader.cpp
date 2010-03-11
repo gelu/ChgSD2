@@ -520,6 +520,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
     {
         pInstance = (ScriptedInstance*)m_creature->GetInstanceData();
         Reset();
+        m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
     }
 
     InstanceData* pInstance;
@@ -548,7 +549,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
               {
                case 1110:
                     pInstance->SetData(TYPE_EVENT, 1120);
-                    m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);;
+                    m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                     UpdateTimer = 7000;
                     break;
                case 1120:
