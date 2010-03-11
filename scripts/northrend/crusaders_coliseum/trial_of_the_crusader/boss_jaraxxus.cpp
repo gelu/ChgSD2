@@ -23,9 +23,12 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
-enum Default
+enum Equipment
 {
-    EQUIP_STAFF          = 40343,
+    EQUIP_MAIN           = 47266,
+    EQUIP_OFFHAND        = 46996,
+    EQUIP_RANGED         = 47267,
+    EQUIP_DONE           = EQUIP_NO_CHANGE,
 };
 
 enum Summons
@@ -47,7 +50,8 @@ enum BossSpells
     SPELL_INCINERATE_FLESH,
     SPELL_BURNING_INFERNO,
     SPELL_NETHER_PORTAL,
-    SPELL_LEGION_FLAME,
+    SPELL_LEGION_FLAME_0,
+    SPELL_LEGION_FLAME_1,
     SPELL_SHIVAN_SLASH,
     SPELL_SPINNING_STRIKE,
     SPELL_FEL_INFERNO,
@@ -67,7 +71,8 @@ static SpellTable m_BossSpell[]=
 {SPELL_INCINERATE_FLESH, 66237, 67049, 67050, 67051, 30000, 30000, 30000, 30000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_BURNING_INFERNO,  66242, 67060, 67060, 67060, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_NETHER_PORTAL,    66264, 66264, 68405, 68405, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, true, true},
-{SPELL_LEGION_FLAME,     68124, 68124, 68126, 68126, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
+{SPELL_LEGION_FLAME_0,   66199, 68127, 68126, 68128, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
+{SPELL_LEGION_FLAME_1,   66197, 68123, 68124, 68125, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_SHIVAN_SLASH,     67098, 67098, 67098, 67098, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
 {SPELL_SPINNING_STRIKE,  66316, 66316, 66316, 66316, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_FEL_INFERNO,      67047, 67047, 67047, 67047, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
@@ -104,7 +109,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_pInstance->SetData(TYPE_JARAXXUS, NOT_STARTED);
         memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
-        SetEquipmentSlots(false, EQUIP_STAFF, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+        SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_portalsCount = 1;
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) 
         {
@@ -180,7 +185,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (m_pInstance)
+        if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_JARAXXUS, FAIL);
     }
 
@@ -189,6 +194,8 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         if (!m_pInstance) return;
             DoScriptText(-1713525,m_creature);
             m_pInstance->SetData(TYPE_JARAXXUS, DONE);
+            m_pInstance->SetData(TYPE_EVENT,2000);
+            m_pInstance->SetData(TYPE_STAGE,0);
     }
 
     void Aggro(Unit* pWho)
@@ -216,9 +223,9 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
                     CastBossSpell(SPELL_INCINERATE_FLESH);
                     }
 
-        if (QuerySpellPeriod(SPELL_LEGION_FLAME, uiDiff)) {
+        if (QuerySpellPeriod(SPELL_LEGION_FLAME_1, uiDiff)) {
                     DoScriptText(-1713518,m_creature,currentTarget);
-                    CastBossSpell(SPELL_LEGION_FLAME);
+                    CastBossSpell(SPELL_LEGION_FLAME_1);
                     };
 
         if (QuerySpellPeriod(SPELL_INFERNAL_ERUPTION, uiDiff)
@@ -266,7 +273,7 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
-        m_creature->SetRespawnTime(DAY);
+        m_creature->SetRespawnDelay(DAY);
 
         if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
                 m_creature->GetMotionMaster()->MoveChase(pTarget);
@@ -303,7 +310,7 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
             {
                     if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f, false))
                     {
-//                        DoCast(m_creature,m_BossSpell[SPELL_LEGION_FLAME].m_uiSpellEntry[Difficulty]);
+//                        DoCast(m_creature,m_BossSpell[SPELL_LEGION_FLAME_0].m_uiSpellEntry[Difficulty]);
                     }
             }
             m_uiRangeCheck_Timer = 1000;
@@ -328,7 +335,6 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
-        m_creature->SetRespawnTime(DAY);
     }
 
     ScriptedInstance* m_pInstance;
@@ -340,7 +346,7 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
     {
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_Timer = 15000;
-        m_creature->SetRespawnTime(DAY);
+        m_creature->SetRespawnDelay(DAY);
         if (Difficulty != RAID_DIFFICULTY_10MAN_HEROIC && Difficulty != RAID_DIFFICULTY_25MAN_HEROIC) 
         {
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -413,7 +419,7 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
     {
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
-        m_creature->SetRespawnTime(DAY);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -519,7 +525,7 @@ struct MANGOS_DLL_DECL mob_nether_portalAI : public ScriptedAI
     {
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_Timer = 5000;
-        m_creature->SetRespawnTime(DAY);
+        m_creature->SetRespawnDelay(DAY);
         if (Difficulty != RAID_DIFFICULTY_10MAN_HEROIC && Difficulty != RAID_DIFFICULTY_25MAN_HEROIC) 
         {
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -592,7 +598,7 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
         memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
-        m_creature->SetRespawnTime(DAY);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     bool QuerySpellPeriod(uint32 m_uiSpellIdx, uint32 diff)

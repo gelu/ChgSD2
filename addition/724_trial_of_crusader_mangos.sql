@@ -62,7 +62,7 @@ DELETE FROM `creature_loot_template`  WHERE  `entry` IN
 -- Jaraxxus
 UPDATE `creature_template` SET `scriptname`='boss_jaraxxus', `AIName` ='' WHERE entry= 34780;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34780, 34784, 34813, 34815, 34825, 34826);
-UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `AIName` ='', `faction_A`= 14, `faction_H` = 14 WHERE entry = 34784;
+UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `minlevel` = 80, `maxlevel` = 80, `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686, `AIName` ='', `faction_A`= 14, `faction_H` = 14 WHERE entry = 34784;
 UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE entry = 34813;
 UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE entry = 34815;
 UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WHERE entry = 34825;

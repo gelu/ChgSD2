@@ -23,6 +23,9 @@ enum
     NPC_LICH_KING_0             = 16980,
     NPC_LICH_KING_1             = 35877,
 
+    NPC_THRALL                  = 34994,
+    NPC_PROUDMOORE              = 34992,
+
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 34796,
     NPC_DREADSCALE              = 34799,

@@ -67,6 +67,10 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
     flag25 = true;
     DelayTimer = 0;
     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_THRALL, 200.0f))
+                      pAlly->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_PROUDMOORE, 200.0f))
+                      pAlly->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void AttackStart(Unit *who)
@@ -111,22 +115,8 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                  }
                  break;
                  };
+
         case 4: {
-            if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_JARAXXUS))) {
-                 if (!pTemp->isAlive()) {
-                        pInstance->SetData(TYPE_STAGE,0);
-                        pInstance->SetData(TYPE_JARAXXUS,DONE);
-                        pInstance->SetData(TYPE_EVENT,2000);
-                        }
-                 }
-                 else {
-                        m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_JARAXXUS))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                pTemp->SetInCombatWithZone();
-                                }
-                        }
                  break;
                  };
 
