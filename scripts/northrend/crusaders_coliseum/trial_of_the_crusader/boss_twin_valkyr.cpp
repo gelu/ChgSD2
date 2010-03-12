@@ -374,7 +374,7 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance) m_creature->ForcedDespawn();
-        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) {
+        if (m_pInstance->GetData(TYPE_VALKIRIES) == DONE || m_pInstance->GetData(TYPE_VALKIRIES) == NOT_STARTED) {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
@@ -426,7 +426,7 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance) m_creature->ForcedDespawn();
-        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) {
+        if (m_pInstance->GetData(TYPE_VALKIRIES) == DONE || m_pInstance->GetData(TYPE_VALKIRIES) == NOT_STARTED) {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
