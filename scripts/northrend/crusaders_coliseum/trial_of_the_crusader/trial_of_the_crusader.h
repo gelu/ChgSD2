@@ -8,7 +8,7 @@ enum
     TYPE_BEASTS                 = 1,
     TYPE_JARAXXUS               = 2,
     TYPE_CRUSADERS              = 3,
-    TYPE_FROJA                  = 4,
+    TYPE_VALKIRIES              = 4,
     TYPE_LICH_KING              = 5,
     TYPE_ANUBARAK               = 6,
     TYPE_COUNTER                = 7,
@@ -85,6 +85,11 @@ enum
     TYPE_EVENT_NPC              = 103,
     TYPE_NORTHREND_BEASTS       = 110,
 
+    DATA_DAMAGE_EYDIS           = 201,
+    DATA_DAMAGE_FJOLA           = 202,
+    DATA_CASTING_EYDIS          = 203,
+    DATA_CASTING_FJOLA          = 204,
+
     DESPAWN_TIME                = 300000
 
 };
@@ -98,10 +103,10 @@ struct Locations
 static Locations SpawnLoc[]=
 {
     {559.257996, 90.266197, 395.122986},  // 0 Barrent
-    {563.672974, 139.571, 393.837006},    // 1 Center
+    {563.672974, 139.571, 394.837006},    // 1 Center
     {563.833008, 187.244995, 394.5},      // 2 Backdoor
-    {583.336182, 181.737717, 395.135956}, // 3 
-    {545.914185, 180.859543, 395.137909}, // 4 
+    {583.336182, 181.737717, 395.145956}, // 3 
+    {545.914185, 180.859543, 395.147909}, // 4 
     {599.042358, 179.260727, 395.137146}, // 5
     {532.248901, 180.331955, 395.132658}, // 6
     {586.342285, 181.515823, 395.135956}, // 7 
@@ -115,10 +120,14 @@ static Locations SpawnLoc[]=
     {516.633972, 159.391708, 395.137543}, // 15
     {612.816956, 161.477921, 395.136810}, // 16
     {563.549, 152.474, 394.393},          // 17 - Lich king start
-    {563.547, 141.613, 393.908},          // 18 - Lich king end
+    {563.547, 141.613, 394.108},          // 18 - Lich king end
     {787.932556, 133.28978, 142.612152},  // 19 - Anub'arak start location
     {618.157898, 132.640869, 139.559769}, // 20 - Anub'arak move point location
     {508.104767, 138.247345, 395.128052}, // 21 - Fizzlebang start location
+    {586.060242, 117.514809, 394.314026}, // 22 - Dark essence 1
+    {541.602112, 161.879837, 394.587952}, // 23 - Dark essence 2
+    {541.021118, 117.262932, 395.314819}, // 24 - Light essence 1
+    {586.200562, 162.145523, 394.626129}, // 25 - Light essence 2
 };
 
 struct WayPoints

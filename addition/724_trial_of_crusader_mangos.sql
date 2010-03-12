@@ -69,8 +69,9 @@ UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WH
 UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE entry = 34826;
 
 -- Froja's
--- UPDATE `creature_template` SET `scriptname`='boss_fjola', `AIName` ='' WHERE entry=34497;
--- UPDATE `creature_template` SET `scriptname`='boss_eydis', `AIName` ='' WHERE entry=34496;
+UPDATE `creature_template` SET `scriptname` = 'boss_fjola', `AIName` ='' WHERE entry=34497;
+UPDATE `creature_template` SET `scriptname` = 'boss_eydis', `AIName` ='' WHERE entry=34496;
+DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34497, 34496, 34568, 34567);
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_light_essence', `AIName` ='' WHERE entry = 34568;
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_dark_essence', `AIName` ='' WHERE entry = 34567;
 

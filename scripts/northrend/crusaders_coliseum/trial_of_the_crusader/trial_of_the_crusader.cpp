@@ -38,7 +38,7 @@ static _Messages _GossipMessage[]=
 {"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+2,false,TYPE_JARAXXUS},  //
 {"Вы готовы драться с крестоносцами альянса?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_CRUSADERS}, //
 {"Вы готовы драться с крестоносцами орды?",GOSSIP_ACTION_INFO_DEF+4,false,TYPE_CRUSADERS}, //
-{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_FROJA}, //
+{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_VALKIRIES}, //
 {"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+6,true,TYPE_LICH_KING}, //
 {"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+7,true,TYPE_ANUBARAK}, //
 };
@@ -187,15 +187,10 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                 };
 
         case 7: {
-                Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DARKBANE));
-                Creature* pTemp1 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LIGHTBANE));
-                if (pTemp && pTemp1){
-                 if (!pTemp->isAlive() && !pTemp1->isAlive()) {
+                 if (pInstance->GetData(TYPE_VALKIRIES) == DONE) {
                                  pInstance->SetData(TYPE_STAGE,0);
-                                 pInstance->SetData(TYPE_FROJA,DONE);
                                  pInstance->SetData(TYPE_EVENT,4020);
                                  }
-                 }
                 break;
                 };
         case 8: {
@@ -287,8 +282,7 @@ switch(uiAction) {
     };
 
     case GOSSIP_ACTION_INFO_DEF+5: {
-    if (pInstance->GetData(TYPE_FROJA) == NOT_STARTED ||
-        pInstance->GetData(TYPE_FROJA) == FAIL) 
+    if (pInstance->GetData(TYPE_VALKIRIES) != DONE)
            pInstance->SetData(TYPE_EVENT,4000);
     break;
     };
@@ -1032,7 +1026,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
 
         case 4015:
                pInstance->SetData(TYPE_STAGE,7);
-               pInstance->SetData(TYPE_FROJA,IN_PROGRESS);
+               pInstance->SetData(TYPE_VALKIRIES,IN_PROGRESS);
                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LIGHTBANE)))
                         { if(!pTemp->isAlive()) pTemp->Respawn(); }
                     else {
@@ -1067,9 +1061,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                UpdateTimer = 2000;
                pInstance->SetData(TYPE_EVENT,5010);
                pInstance->SetData(TYPE_STAGE,8);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LICH_KING_1)))
-                        { if(!pTemp->isAlive()) pTemp->Respawn(); }
-                        else m_creature->SummonCreature(NPC_LICH_KING_1, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_MANUAL_DESPAWN, 0);
+                    m_creature->SummonCreature(NPC_LICH_KING_1, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_MANUAL_DESPAWN, 0);
                break;
         case 5020:
                DoScriptText(-1713551, m_creature);

@@ -37,6 +37,13 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint8 Difficulty;
     std::string m_strInstData;
 
+    uint32 m_uiDataDamageFjola;
+    uint32 m_uiDataDamageFjola_t;
+    uint32 m_uiDataDamageEydis;
+    uint32 m_uiDataDamageEydis_t;
+    uint32 m_uiFjolaCasting;
+    uint32 m_uiEydisCasting;
+
     uint64 m_uiBarrentGUID;
     uint64 m_uiTirionGUID;
     uint64 m_uiFizzlebangGUID;
@@ -102,13 +109,22 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     {
     for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
+
             m_auiEncounter[0] = 0;
             m_auiEncounter[7] = 50;
             m_auiEncounter[8] = 0;
+
     m_uiTributeChest1GUID = 0;
     m_uiTributeChest2GUID = 0;
     m_uiTributeChest3GUID = 0;
     m_uiTributeChest4GUID = 0;
+    m_uiDataDamageFjola = 0;
+    m_uiDataDamageFjola_t = 0;
+    m_uiDataDamageEydis = 0;
+    m_uiDataDamageEydis_t = 0;
+    m_uiLich0GUID = 0;
+    m_uiLich1GUID = 0;
+
     m_auiEventTimer = 1000;
     }
 
@@ -234,7 +250,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                               };
                             };
          break;
-        case TYPE_FROJA:     m_auiEncounter[4] = uiData; break;
+        case TYPE_VALKIRIES: if (m_auiEncounter[4] == SPECIAL && uiData == SPECIAL) uiData = DONE;
+                             m_auiEncounter[4] = uiData; break;
         case TYPE_LICH_KING: m_auiEncounter[5] = uiData; break;
         case TYPE_ANUBARAK:  m_auiEncounter[6] = uiData; 
                             if (uiData == DONE) {
@@ -269,6 +286,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
         case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+        case DATA_DAMAGE_FJOLA:    m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
+        case DATA_DAMAGE_EYDIS:    m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
+        case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
+        case DATA_CASTING_EYDIS:    m_uiEydisCasting = uiData; uiData = NOT_STARTED; break;
         }
 
         if (uiData == FAIL && uiType != TYPE_STAGE
@@ -356,7 +377,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
             case TYPE_BEASTS:    return m_auiEncounter[1];
             case TYPE_JARAXXUS:  return m_auiEncounter[2];
             case TYPE_CRUSADERS: return m_auiEncounter[3];
-            case TYPE_FROJA:     return m_auiEncounter[4];
+            case TYPE_VALKIRIES: return m_auiEncounter[4];
             case TYPE_LICH_KING: return m_auiEncounter[5];
             case TYPE_ANUBARAK:  return m_auiEncounter[6];
             case TYPE_COUNTER:   return m_auiEncounter[7];
@@ -443,6 +464,15 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
 
                                  };
                                  return m_auiEventNPCId;
+
+        case DATA_DAMAGE_FJOLA: m_uiDataDamageFjola_t = m_uiDataDamageFjola;
+                                m_uiDataDamageFjola = 0;
+                                return m_uiDataDamageFjola_t;
+        case DATA_DAMAGE_EYDIS: m_uiDataDamageEydis_t = m_uiDataDamageEydis;
+                                m_uiDataDamageEydis = 0;
+                                return m_uiDataDamageEydis_t;
+        case DATA_CASTING_FJOLA: return m_uiFjolaCasting;
+        case DATA_CASTING_EYDIS: return m_uiEydisCasting;
         }
 
         return 0;
