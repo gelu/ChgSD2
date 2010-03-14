@@ -455,6 +455,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 1140:
                                  case 1150:
                                  case 1160:
+                                 case 1170:
                                  m_auiEventNPCId = NPC_FIZZLEBANG;
                                  break;
 

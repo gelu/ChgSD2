@@ -1,8 +1,7 @@
-
 -- instance
 UPDATE `instance_template` SET `script`='instance_trial_of_the_crusader' WHERE `map`=649;
 DELETE FROM `creature` WHERE `map` = 649 AND `id` IN 
-(34797,34796,34799,35144,34780,34460,34463,34461,34471,34475,34472,34453,34455,34458,34454,34451,34456,34497,34496,34564,34467,35465,34468,35610,34473,34474,34441,34449,34448,34450);
+(34797,34796,34799,35144,34780,34460,34463,34461,34471,34475,34472,34453,34455,34458,34454,34451,34456,34497,34496,34564,34467,35465,34468,35610,34473,34474,34441,34449,34448,34450,34606, 34605, 34607, 34564);
 
 -- announcers
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='npc_toc_announcer' WHERE `entry`=34816;
@@ -76,5 +75,12 @@ UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_light_essence', `A
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_dark_essence', `AIName` ='' WHERE entry = 34567;
 
 -- Anub'arak
--- UPDATE `creature_template` SET `scriptname`='boss_anubarak' WHERE entry=34564;
+UPDATE `creature_template` SET `scriptname`='boss_anubarak_trial' WHERE entry=34564;
 
+UPDATE `creature_template` SET `modelid_A` = 25144, `modelid_A2` = 0, `modelid_H` = 25144, `modelid_H2` = 0, `faction_A` = 16, `faction_H` = 16, `AIName` = 'EventAI', `ScriptName` = '' WHERE `entry` = 34606;
+DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34606, 34605, 34607, 34564);
+INSERT INTO `creature_ai_scripts` (`id`, `creature_id`, `event_type`, `event_inverse_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action1_type`, `action1_param1`, `action1_param2`, `action1_param3`, `action2_type`, `action2_param1`, `action2_param2`, `action2_param3`, `action3_type`, `action3_param1`, `action3_param2`, `action3_param3`, `comment`) VALUES
+(3460651, 34606, 0, 0, 60, 3,  1000, 15000, 60000, 60000, 11, 66193, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost'),
+(3460654, 34606, 0, 0, 60, 5,  1000, 15000, 60000, 60000, 11, 67855, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost'),
+(3460652, 34606, 0, 0, 60, 9,  1000, 15000, 60000, 60000, 11, 67856, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost'),
+(3460653, 34606, 0, 0, 60, 16, 1000, 15000, 60000, 60000, 11, 67857, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost');

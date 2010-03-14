@@ -151,6 +151,8 @@ enum SpellTableParameters
   CAST_ON_VICTIM,
   CAST_ON_RANDOM,
   CAST_ON_BOTTOMAGGRO,
+  SUMMON_INSTANT,
+  SUMMON_TEMP,
 };
 
 struct SpellTable
