@@ -34,6 +34,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
     uint32 m_auiEventTimer;
     uint32 m_auiEventNPCId;
+    uint32 m_auiNorthrendBeasts;
     uint8 Difficulty;
     std::string m_strInstData;
 
@@ -124,6 +125,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     m_uiDataDamageEydis_t = 0;
     m_uiLich0GUID = 0;
     m_uiLich1GUID = 0;
+
+    m_auiNorthrendBeasts = NOT_STARTED;
 
     m_auiEventTimer = 1000;
     }
@@ -286,6 +289,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
         case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+        case TYPE_NORTHREND_BEASTS: m_auiNorthrendBeasts = uiData; break;
         case DATA_DAMAGE_FJOLA:    m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
         case DATA_DAMAGE_EYDIS:    m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
@@ -383,6 +387,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
             case TYPE_COUNTER:   return m_auiEncounter[7];
             case TYPE_EVENT:     return m_auiEncounter[8];
             case TYPE_DIFFICULTY:   return Difficulty;
+            case TYPE_NORTHREND_BEASTS:    return m_auiNorthrendBeasts;
             case TYPE_EVENT_TIMER:  return m_auiEventTimer;
             case TYPE_EVENT_NPC: switch (m_auiEncounter[8]) 
                                  {
