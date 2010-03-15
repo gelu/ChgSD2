@@ -68,7 +68,7 @@ static SpellTable m_BossSpell[]=
 {SPELL_INFERNAL_ERUPTION,66255, 66255, 66255, 66255, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_FEL_FIREBALL,     66532, 66963, 66964, 66965, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_FEL_LIGHTING,     66528, 66528, 67029, 67029, 15000, 15000, 15000, 15000, 25000, 25000, 25000, 25000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_INCINERATE_FLESH, 66237, 67049, 67050, 67051, 30000, 30000, 30000, 30000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, false, false},
+{SPELL_INCINERATE_FLESH, 66237, 67049, 67050, 67051, 40000, 40000, 40000, 40000, 90000, 90000, 40000, 90000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_BURNING_INFERNO,  66242, 67060, 67060, 67060, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_NETHER_PORTAL,    66264, 66264, 68405, 68405, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, true, true},
 {SPELL_LEGION_FLAME_0,   66199, 68127, 68126, 68128, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
@@ -108,7 +108,8 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_pInstance->SetData(TYPE_JARAXXUS, NOT_STARTED);
-        memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
+        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
+              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_portalsCount = 1;
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) 
@@ -128,8 +129,6 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
     bool result;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
         if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] == 0 ) m_uiSpell_Timer[m_uiSpellIdx]=urand(0,pSpell->m_uiSpellTimerMax[Difficulty]);
 
         if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
             m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
@@ -595,7 +594,8 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
 
     void Reset()
     {
-        memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
+        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
+              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
@@ -607,8 +607,6 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
     bool result;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
         if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] == 0 ) m_uiSpell_Timer[m_uiSpellIdx]=urand(0,pSpell->m_uiSpellTimerMax[Difficulty]);
 
         if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
             m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);

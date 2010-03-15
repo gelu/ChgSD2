@@ -49,33 +49,32 @@ DELETE FROM `creature_loot_template` WHERE `entry` IN
 (12268,12211,12214,12283,12192,12286,12271,12274,12231,12189,12093,12090,12171,12105,12108,12114,12168,12165,12182,12185,12305,12302);
 
 -- Nortrend beasts
--- UPDATE `creature_template` SET `scriptname`='boss_gormok' WHERE entry=34796;
--- UPDATE `creature_template` SET `scriptname`='boss_dreadscale' WHERE entry=34799;
--- UPDATE `creature_template` SET `scriptname`='boss_acidmaw' WHERE entry=35144;
--- UPDATE `creature_template` SET `scriptname`='boss_icehowl' WHERE entry=34797;
-UPDATE `creature_template` SET `lootid`= 0 WHERE  `entry` IN
-(34796,34799,35144);
-DELETE FROM `creature_loot_template`  WHERE  `entry` IN
-(34796,34799,35144);
+DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34796, 34799, 35144, 34797);
+UPDATE `creature_template` SET `scriptname`='boss_gormok', `AIName` ='' WHERE `entry`=34796;
+UPDATE `creature_template` SET `scriptname`='boss_dreadscale', `AIName` ='' WHERE `entry`=34799;
+UPDATE `creature_template` SET `scriptname`='boss_acidmaw', `AIName` ='' WHERE `entry`=35144;
+UPDATE `creature_template` SET `scriptname`='boss_icehowl', `AIName` ='' WHERE `entry`=34797;
+UPDATE `creature_template` SET `lootid`= 0 WHERE  `entry` IN (34796,34799,35144);
+DELETE FROM `creature_loot_template`  WHERE  `entry` IN (34796,34799,35144);
 
 -- Jaraxxus
-UPDATE `creature_template` SET `scriptname`='boss_jaraxxus', `AIName` ='' WHERE entry= 34780;
+UPDATE `creature_template` SET `scriptname`='boss_jaraxxus', `AIName` ='' WHERE `entry`= 34780;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34780, 34784, 34813, 34815, 34825, 34826);
 UPDATE `creature_template` SET `scriptname`='mob_legion_flame', `minlevel` = 80, `maxlevel` = 80, `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686, `AIName` ='', `faction_A`= 14, `faction_H` = 14 WHERE entry = 34784;
-UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE entry = 34813;
-UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE entry = 34815;
-UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WHERE entry = 34825;
-UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE entry = 34826;
+UPDATE `creature_template` SET `scriptname`='mob_infernal_volcano', `AIName` ='' WHERE `entry` = 34813;
+UPDATE `creature_template` SET `scriptname`='mob_fel_infernal', `AIName` ='' WHERE `entry` = 34815;
+UPDATE `creature_template` SET `scriptname`='mob_nether_portal', `AIName` ='' WHERE `entry` = 34825;
+UPDATE `creature_template` SET `scriptname`='mob_mistress_of_pain', `AIName` ='' WHERE `entry` = 34826;
 
 -- Froja's
-UPDATE `creature_template` SET `scriptname` = 'boss_fjola', `AIName` ='' WHERE entry=34497;
-UPDATE `creature_template` SET `scriptname` = 'boss_eydis', `AIName` ='' WHERE entry=34496;
+UPDATE `creature_template` SET `scriptname` = 'boss_fjola', `AIName` ='' WHERE `entry`=34497;
+UPDATE `creature_template` SET `scriptname` = 'boss_eydis', `AIName` ='' WHERE `entry`=34496;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34497, 34496, 34568, 34567);
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_light_essence', `AIName` ='' WHERE entry = 34568;
 UPDATE `creature_template` SET `npcflag`=1, `scriptname`='mob_dark_essence', `AIName` ='' WHERE entry = 34567;
 
 -- Anub'arak
-UPDATE `creature_template` SET `scriptname`='boss_anubarak_trial' WHERE entry=34564;
+UPDATE `creature_template` SET `scriptname`='boss_anubarak_trial', `AIName` ='' WHERE `entry`=34564;
 
 UPDATE `creature_template` SET `modelid_A` = 25144, `modelid_A2` = 0, `modelid_H` = 25144, `modelid_H2` = 0, `faction_A` = 16, `faction_H` = 16, `AIName` = 'EventAI', `ScriptName` = '' WHERE `entry` = 34606;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (34606, 34605, 34607, 34564);
@@ -84,3 +83,6 @@ INSERT INTO `creature_ai_scripts` (`id`, `creature_id`, `event_type`, `event_inv
 (3460654, 34606, 0, 0, 60, 5,  1000, 15000, 60000, 60000, 11, 67855, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost'),
 (3460652, 34606, 0, 0, 60, 9,  1000, 15000, 60000, 60000, 11, 67856, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost'),
 (3460653, 34606, 0, 0, 60, 16, 1000, 15000, 60000, 60000, 11, 67857, 0, 47, 0, 0, 0, 0, 0, 0, 0, 0, 'Frost Sphere - Permafrost');
+
+UPDATE `creature_template` SET `scriptname`='mob_swarm_scarab', `AIName` ='' WHERE `entry`=34605;
+UPDATE `creature_template` SET `scriptname`='mob_nerubian_borrower', `AIName` ='' WHERE `entry`=34607;

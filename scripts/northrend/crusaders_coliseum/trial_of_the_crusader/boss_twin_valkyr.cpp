@@ -104,8 +104,8 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     void Reset() {
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        m_pInstance->SetData(TYPE_VALKIRIES, NOT_STARTED);
-        memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
+        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
+              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
@@ -117,8 +117,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     bool result;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
         if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] == 0 ) m_uiSpell_Timer[m_uiSpellIdx]=urand(0,pSpell->m_uiSpellTimerMax[Difficulty]);
 
         if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
             m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
@@ -241,8 +239,8 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     {
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        m_pInstance->SetData(TYPE_VALKIRIES, NOT_STARTED);
-        memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
+        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
+              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
@@ -254,8 +252,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     bool result;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
         if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] == 0 ) m_uiSpell_Timer[m_uiSpellIdx]=urand(0,pSpell->m_uiSpellTimerMax[Difficulty]);
 
         if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
             m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
