@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Trial Of the crusader
-SD%Complete: 40%
+SD%Complete: 60%
 SDComment: event script by /dev/rsa
 SDCategory: trial_of_the_crusader
 EndScriptData */

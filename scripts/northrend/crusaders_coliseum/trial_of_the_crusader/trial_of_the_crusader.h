@@ -1,6 +1,10 @@
+/* Copyright (C) 2009 - 2010 by /dev/rsa for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software licensed under GPL version 2
+ * Please see the included DOCS/LICENSE.TXT for more information */
 
 #ifndef DEF_CRUSADER_H
 #define DEF_CRUSADER_H
+#include "sc_boss_spell_worker.h"
 
 enum
 {
@@ -94,12 +98,6 @@ enum
 
 };
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-
 static Locations SpawnLoc[]=
 {
     {559.257996, 90.266197, 395.122986},  // 0 Barrent
@@ -130,48 +128,16 @@ static Locations SpawnLoc[]=
     {586.200562, 162.145523, 394.626129}, // 25 - Light essence 2
 };
 
-struct WayPoints
-{
-    WayPoints(uint32 _id, float _x, float _y, float _z)
-    {
-        id = _id;
-        x = _x;
-        y = _y;
-        z = _z;
-    }
-    uint32 id;
-    float x, y, z;
-};
-
-enum SpellTableParameters
-{
-  DIFFICULTY_LEVELS = 4,
-  CAST_ON_SELF      = 1000,
-  CAST_ON_SUMMONS,
-  CAST_ON_VICTIM,
-  CAST_ON_RANDOM,
-  CAST_ON_BOTTOMAGGRO,
-  CAST_ON_TARGET,
-  SUMMON_INSTANT,
-  SUMMON_TEMP,
-};
-
-struct SpellTable
-{
-    uint32 id;
-    uint32 m_uiSpellEntry[DIFFICULTY_LEVELS];          // Stores spell entry for difficulty levels
-    uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
-    uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
-    uint32 m_uiStageMask;                              // The mask of stages where spell is casted
-    uint32 m_CastTarget;                              // Target on casting spell
-    bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
-    bool   m_IsBugged;                                 // Need override for this spell
-};
-
 enum uiWorldStates
 {
     UPDATE_STATE_UI_SHOW            = 4390,
     UPDATE_STATE_UI_COUNT           = 4389,
+};
+
+enum NorthrendBeasts
+{
+    DREADSCALE_SUBMERGED            = 2000,
+    ACIDMAW_SUBMERGED               = 2001,
 };
 
 #endif

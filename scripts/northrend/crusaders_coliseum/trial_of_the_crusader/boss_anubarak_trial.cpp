@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_anubarak_trial
-SD%Complete: 1%
+SD%Complete: 40%
 SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
@@ -90,6 +90,8 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     Unit* currentTarget;
     bool intro;
 
+#include "sc_boss_spell_worker.cpp"
+
     void Reset() {
         if(!m_pInstance) return;
         stage = 0;
@@ -99,75 +101,6 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
               m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
     }
 
-    bool QuerySpellPeriod(uint32 m_uiSpellIdx, uint32 diff)
-    {
-    if(!m_pInstance) return false;
-    bool result;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
-            m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
-            result = true;
-            } else {
-            m_uiSpell_Timer[m_uiSpellIdx] -= diff;
-            result = false;
-            };
-        return result;
-    }
-
-    CanCastResult CastBossSpell(uint32 m_uiSpellIdx)
-    {
-    if(!m_pInstance) return CAST_FAIL_OTHER;
-    Unit* pTarget = NULL;
-    Creature* pSummon = NULL;
-    bool isSummon = false;
-    float fPosX, fPosY, fPosZ;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        // Find spell index - temporary direct insert from spelltable
-        if (m_uiSpellIdx != pSpell->id) return CAST_FAIL_OTHER;
-
-        switch (pSpell->m_CastTarget) {
-            case CAST_ON_SELF:
-                   pTarget = m_creature;
-                   break;
-            case CAST_ON_SUMMONS:
-                   pTarget = m_creature->getVictim(); //CHANGE IT!!!
-                   break;
-            case CAST_ON_VICTIM:
-                   pTarget = m_creature->getVictim();
-                   break;
-            case CAST_ON_TARGET:
-                   pTarget = currentTarget;
-                   if (!pTarget) pTarget = m_creature->getVictim();
-                   break;
-            case CAST_ON_RANDOM:
-                   pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                   break;
-            case CAST_ON_BOTTOMAGGRO:
-                   pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
-                   break;
-            case SUMMON_INSTANT:
-                   isSummon = true;
-                   m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                   m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(50, 120), fPosX, fPosY, fPosZ);
-                   pSummon = m_creature->SummonCreature(pSpell->m_uiSpellEntry[Difficulty], fPosX, fPosY, fPosZ, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-                   break;
-            case SUMMON_TEMP:
-                   isSummon = true;
-                   m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                   m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(50, 120), fPosX, fPosY, fPosZ);
-                   pSummon = m_creature->SummonCreature(pSpell->m_uiSpellEntry[Difficulty], fPosX, fPosY, fPosZ, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
-                   if(pSummon) pSummon->SetInCombatWithZone();
-                   break;
-
-            };
-            currentTarget = pTarget;
-            if (pTarget && !isSummon && !pSpell->m_IsBugged) return DoCastSpellIfCan(pTarget,pSpell->m_uiSpellEntry[Difficulty]);
-                else if (pTarget && !isSummon && pSpell->m_IsBugged) {DoCast(pTarget,pSpell->m_uiSpellEntry[Difficulty]); return CAST_OK;}
-                     else if (isSummon) return pSummon ?  CAST_OK :  CAST_FAIL_OTHER;
-            return CAST_FAIL_OTHER;
-    }
 
     void KilledUnit(Unit* pVictim)
     {
@@ -291,6 +224,8 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
     uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     Unit* currentTarget;
 
+#include "sc_boss_spell_worker.cpp"
+
     void Reset()
     {
         for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
@@ -298,47 +233,6 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-    }
-
-    bool QuerySpellPeriod(uint32 m_uiSpellIdx, uint32 diff)
-    {
-    if(!m_pInstance) return false;
-    bool result;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
-            m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
-            result = true;
-            } else {
-            m_uiSpell_Timer[m_uiSpellIdx] -= diff;
-            result = false;
-            };
-        return result;
-    }
-
-    CanCastResult CastBossSpell(uint32 m_uiSpellIdx)
-    {
-    if(!m_pInstance) return CAST_FAIL_OTHER;
-    Unit* pTarget;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        // Find spell index - temporary direct insert from spelltable
-        if (m_uiSpellIdx != pSpell->id) return CAST_FAIL_OTHER;
-
-        switch (pSpell->m_CastTarget) {
-            case CAST_ON_SELF:
-                   pTarget = m_creature;
-                   break;
-            case CAST_ON_VICTIM:
-                   pTarget = m_creature->getVictim();
-                   break;
-            case CAST_ON_RANDOM:
-                   pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                   break;
-
-            };
-            currentTarget = pTarget;
-            if (pTarget) return DoCastSpellIfCan(pTarget,pSpell->m_uiSpellEntry[Difficulty]);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -392,6 +286,8 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
     Unit* currentTarget;
     bool submerged;
 
+#include "sc_boss_spell_worker.cpp"
+
     void Reset()
     {
         for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
@@ -400,55 +296,6 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         submerged = false;
-    }
-
-    bool QuerySpellPeriod(uint32 m_uiSpellIdx, uint32 diff)
-    {
-    if(!m_pInstance) return false;
-    bool result;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        if (m_uiSpellIdx != pSpell->id) return false;
-
-        if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
-            m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]);
-            result = true;
-            } else {
-            m_uiSpell_Timer[m_uiSpellIdx] -= diff;
-            result = false;
-            };
-        return result;
-    }
-
-    CanCastResult CastBossSpell(uint32 m_uiSpellIdx)
-    {
-    if(!m_pInstance) return CAST_FAIL_OTHER;
-    Unit* pTarget = NULL;
-    Creature* pSummon = NULL;
-    bool isSummon = false;
-    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
-        // Find spell index - temporary direct insert from spelltable
-        if (m_uiSpellIdx != pSpell->id) return CAST_FAIL_OTHER;
-
-        switch (pSpell->m_CastTarget) {
-            case CAST_ON_SELF:
-                   pTarget = m_creature;
-                   break;
-            case CAST_ON_VICTIM:
-                   pTarget = m_creature->getVictim();
-                   break;
-            case CAST_ON_RANDOM:
-                   pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                   break;
-            case CAST_ON_TARGET:
-                   pTarget = currentTarget;
-                   if (!pTarget) pTarget = m_creature->getVictim();
-                   break;
-            };
-            currentTarget = pTarget;
-            if (pTarget && !isSummon && !pSpell->m_IsBugged) return DoCastSpellIfCan(pTarget,pSpell->m_uiSpellEntry[Difficulty]);
-                else if (pTarget && !isSummon && pSpell->m_IsBugged) {DoCast(pTarget,pSpell->m_uiSpellEntry[Difficulty]); return CAST_OK;}
-                     else if (isSummon) return pSummon ?  CAST_OK :  CAST_FAIL_OTHER;
-            return CAST_FAIL_OTHER;
     }
 
     void KilledUnit(Unit* pVictim)

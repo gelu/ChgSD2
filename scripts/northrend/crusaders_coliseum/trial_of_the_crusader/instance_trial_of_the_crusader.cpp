@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: instance_trial_of_the_crusader
-SD%Complete: 70%
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Trial of the Crusader
 EndScriptData */
