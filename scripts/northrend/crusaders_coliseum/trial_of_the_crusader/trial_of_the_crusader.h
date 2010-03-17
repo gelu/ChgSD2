@@ -136,8 +136,12 @@ enum uiWorldStates
 
 enum NorthrendBeasts
 {
+    GORMOK_IN_PROGRESS              = 1000,
+    GORMOK_DONE                     = 1001,
     DREADSCALE_SUBMERGED            = 2000,
     ACIDMAW_SUBMERGED               = 2001,
+    ICEHOWL_IN_PROGRESS             = 1000,
+    ICEHOWL_DONE                    = 1001,
 };
 
 #endif

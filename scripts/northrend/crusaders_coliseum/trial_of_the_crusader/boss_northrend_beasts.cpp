@@ -13,10 +13,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+// Gormok - Firebomb not implemented, timers need correct
+// Snakes - Underground phase not worked, timers need correct
+// Icehowl - Trample&Crash event not implemented, timers need correct
 
 /* ScriptData
 SDName: northrend_beasts
-SD%Complete: 60%
+SD%Complete: 60% 
 SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
@@ -36,6 +39,7 @@ enum Summons
 {
     NPC_SNOBOLD_VASSAL   = 34800,
     NPC_SLIME_POOL       = 35176,
+    NPC_FIRE_BOMB        = 34854,
 };
 
 enum BossSpells
@@ -75,7 +79,7 @@ static SpellTable m_BossSpell[]=
 // Name                  10     25     10H    25H
 {SPELL_IMPALE,           66331, 67477, 67478, 67479, 20000, 20000, 20000, 20000, 40000, 40000, 40000, 40000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_STAGGERING_STOMP, 67648, 67648, 67648, 66648, 15000, 15000, 15000, 15000, 40000, 40000, 40000, 40000, 65535, CAST_ON_SELF, false, false},
-{SPELL_RISING_ANGER,     66636, 66636, 66636, 66636, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, true},
+{SPELL_RISING_ANGER,     66636, 66636, 66636, 66636, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, APPLY_AURA_SELF, false, true},
 {SPELL_ACID_SPIT,        66880, 67606, 67607, 67608, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_PARALYTIC_SPRAY,  66901, 67615, 67616, 66617, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_ACID_SPEW,        66819, 66819, 66819, 66819, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
@@ -92,8 +96,8 @@ static SpellTable m_BossSpell[]=
 {SPELL_WHIRL,            67345, 67663, 67664, 67665, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
 {SPELL_ARCTIC_BREATH,    66689, 67650, 67651, 67652, 25000, 25000, 25000, 25000, 40000, 40000, 40000, 40000, 65535, CAST_ON_RANDOM, false, false},
 {SPELL_TRAMPLE,          66734, 66734, 66734, 66734, 30000, 30000, 30000, 30000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, false, false},
-{SUMMON_SNOBOLD,         NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, 40000, 40000, 40000, 40000, 60000, 60000, 60000, 60000, 65535, SUMMON_TEMP, false, false},
-{SPELL_SNOBOLLED,        66406, 66406, 66406, 66406, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, true},
+{SUMMON_SNOBOLD,         NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, NPC_SNOBOLD_VASSAL, 40000, 40000, 40000, 40000, 60000, 60000, 60000, 60000, 65535, SUMMON_NORMAL, false, false},
+{SPELL_SNOBOLLED,        66406, 66406, 66406, 66406, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, APPLY_AURA_TARGET, false, true},
 {SPELL_BATTER,           66408, 66408, 66408, 66408, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
 {SPELL_FIRE_BOMB,        66313, 66313, 66313, 66313, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
 {SPELL_HEAD_CRACK,       66407, 66407, 66407, 66407, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
@@ -131,7 +135,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SPECIAL);
+            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_DONE);
     }
 
     void JustReachedHome()
@@ -143,7 +147,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         m_creature->SetInCombatWithZone();
-        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, IN_PROGRESS);
+        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_IN_PROGRESS);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -185,6 +189,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     uint8 Difficulty;
     uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     Unit* currentTarget;
+    Unit* defaultTarget;
 
 #include "sc_boss_spell_worker.cpp"
 
@@ -200,14 +205,26 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         if (!m_pInstance) return;
-        currentTarget = who;
+        defaultTarget = who;
         CastBossSpell(SPELL_SNOBOLLED);
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+    if (defaultTarget && defaultTarget->isAlive())
+                  defaultTarget->RemoveAurasDueToSpell(m_BossSpell[SPELL_SNOBOLLED].m_uiSpellEntry[Difficulty]);
+    if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK)))
+        if (pTemp->isAlive() && pTemp->GetAura(m_BossSpell[SPELL_RISING_ANGER].m_uiSpellEntry[Difficulty], EFFECT_INDEX_0)->modStackAmount(-1))
+                  pTemp->RemoveAurasDueToSpell(m_BossSpell[SPELL_RISING_ANGER].m_uiSpellEntry[Difficulty]);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != IN_PROGRESS) 
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != GORMOK_IN_PROGRESS) {
+                if (defaultTarget && defaultTarget->isAlive())
+                      defaultTarget->RemoveAurasDueToSpell(m_BossSpell[SPELL_SNOBOLLED].m_uiSpellEntry[Difficulty]);
             m_creature->ForcedDespawn();
+            }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -492,7 +509,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SPECIAL);
+            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ICEHOWL_DONE);
     }
 
     void JustReachedHome()
@@ -504,7 +521,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         m_creature->SetInCombatWithZone();
-        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, IN_PROGRESS);
+        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ICEHOWL_IN_PROGRESS);
     }
 
     void UpdateAI(const uint32 uiDiff)

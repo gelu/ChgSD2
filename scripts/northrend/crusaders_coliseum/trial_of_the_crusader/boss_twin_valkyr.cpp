@@ -21,6 +21,11 @@ SDComment: by /dev/rsa
 SDCategory: Crusader Coliseum
 EndScriptData */
 
+// Twin pact && shields not implemented
+// Shared health not fully correct worked
+// timers need correct
+// Portals not moving
+
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
 

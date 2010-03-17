@@ -67,9 +67,9 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
     flag25 = true;
     DelayTimer = 0;
     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_THRALL, 200.0f))
+    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_THRALL, 300.0f))
                       pAlly->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_PROUDMOORE, 200.0f))
+    if(Creature *pAlly = GetClosestCreatureWithEntry(m_creature, NPC_PROUDMOORE, 300.0f))
                       pAlly->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
@@ -87,8 +87,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
         switch (pInstance->GetData(TYPE_STAGE)) {
         case 0: break;
         case 1: {
-            if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_GORMOK)))
-                        if (!pTemp->isAlive()) {
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == GORMOK_DONE) {
                          pInstance->SetData(TYPE_STAGE,2);
                          pInstance->SetData(TYPE_EVENT,200);
                          }
@@ -106,20 +105,16 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                  break;
                  }
         case 3: {
-            if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ICEHOWL))) {
-                 if (!pTemp->isAlive()) {
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == ICEHOWL_DONE) {
                         pInstance->SetData(TYPE_STAGE,0);
                         pInstance->SetData(TYPE_BEASTS,DONE);
                         pInstance->SetData(TYPE_EVENT,400);
                         }
-                 }
                  break;
                  };
-
         case 4: {
                  break;
                  };
-
         case 5: {
                 Creature* pTemp1 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_1));
                 Creature* pTemp2 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_2));
@@ -637,18 +632,14 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                 m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
                 if (pInstance->GetData(TYPE_BEASTS) == NOT_STARTED || 
                      pInstance->GetData(TYPE_BEASTS) == FAIL) 
-                         pInstance->SetData(TYPE_STAGE,1);
-                pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_GORMOK)))
-                    { if(!pTemp->isAlive()) pTemp->Respawn(); }
-                    else {
-                          m_creature->SummonCreature(NPC_GORMOK, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                 pInstance->SetData(TYPE_STAGE,1);
+                 pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
+                      m_creature->SummonCreature(NPC_GORMOK, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_GORMOK))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                                 pTemp->SetInCombatWithZone();
                                 }
-                          }
                 UpdateTimer = 10000;
                 pInstance->SetData(TYPE_EVENT,160);
                 break;

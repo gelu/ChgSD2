@@ -13,10 +13,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+// Jaraxxus - Magic aura (from start?) not fully offlike implemented.
+// Legion flame visual effect not imlemented
 
 /* ScriptData
 SDName: trial_of_the_crusader
-SD%Complete: 70%
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Crusader Coliseum
 EndScriptData */

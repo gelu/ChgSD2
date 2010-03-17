@@ -21,7 +21,7 @@
         return result;
     }
 
-    CanCastResult CastBossSpell(uint32 m_uiSpellIdx)
+    CanCastResult CastBossSpell(uint32 m_uiSpellIdx, BossSpellFlag spellfag = CAST_NORMAL)
     {
     if(!m_pInstance) return CAST_FAIL_OTHER;
     Unit* pTarget = NULL;
@@ -59,20 +59,41 @@
                           m_creature->AddAura(new BossAura(spell, EFFECT_INDEX_0, &bp, m_creature, m_creature));
                               return CAST_OK;
                    break;
+
             case APPLY_AURA_TARGET:
                    pTarget = currentTarget;
                    if (!pTarget) pTarget = m_creature->getVictim();
                    if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[Difficulty]))
-                          m_creature->AddAura(new BossAura(spell, EFFECT_INDEX_0, &bp, m_creature, pTarget));
+                          pTarget->AddAura(new BossAura(spell, EFFECT_INDEX_0, &bp, pTarget, pTarget));
                               return CAST_OK;
                    break;
-            case SUMMON_TEMP:
+
+            case SUMMON_NORMAL:
                    isSummon = true;
                    m_creature->GetPosition(fPosX, fPosY, fPosZ);
                    m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(30, 60), fPosX, fPosY, fPosZ);
                    pSummon = m_creature->SummonCreature(pSpell->m_uiSpellEntry[Difficulty], fPosX, fPosY, fPosZ, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
                    if(pSummon) pSummon->SetInCombatWithZone();
                    break;
+
+            case SUMMON_TEMP:
+                   isSummon = true;
+                   m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                   m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(30, 60), fPosX, fPosY, fPosZ);
+                   pSummon = m_creature->SummonCreature(pSpell->m_uiSpellEntry[Difficulty], fPosX, fPosY, fPosZ, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,
+                              urand(pSpell->m_uiSpellTimerMin[Difficulty],pSpell->m_uiSpellTimerMax[Difficulty]));
+                   if(pSummon) pSummon->SetInCombatWithZone();
+                   break;
+
+            case SUMMON_INSTANT:
+                   isSummon = true;
+                   m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                   m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(30, 60), fPosX, fPosY, fPosZ);
+                   pSummon = m_creature->SummonCreature(pSpell->m_uiSpellEntry[Difficulty], fPosX, fPosY, fPosZ, 0, TEMPSUMMON_MANUAL_DESPAWN,0);
+                   break;
+
+            default:
+                   return CAST_FAIL_OTHER;
             };
             currentTarget = pTarget;
             if (pTarget && !isSummon && !pSpell->m_IsBugged) return DoCastSpellIfCan(pTarget,pSpell->m_uiSpellEntry[Difficulty]);

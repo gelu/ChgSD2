@@ -4,6 +4,10 @@
 
 #ifndef DEF_BOSS_SPELL_WORKER_H
 #define DEF_BOSS_SPELL_WORKER_H
+enum
+{
+  DIFFICULTY_LEVELS = 4,
+};
 
 struct Locations
 {
@@ -24,10 +28,17 @@ struct WayPoints
     float x, y, z;
 };
 
-enum SpellTableParameters
+enum BossSpellFlag
 {
-  DIFFICULTY_LEVELS = 4,
-  CAST_ON_SELF      = 1000,
+  CAST_NORMAL,
+  CAST_REMOVE,
+  CAST_OVERRIDE,
+  SPELLFLAG_NUMBER
+};
+
+enum BossSpellTableParameters
+{
+  CAST_ON_SELF,
   CAST_ON_SUMMONS,
   CAST_ON_VICTIM,
   CAST_ON_RANDOM,
@@ -35,9 +46,13 @@ enum SpellTableParameters
   CAST_ON_TARGET,
   APPLY_AURA_SELF,
   APPLY_AURA_TARGET,
+  SUMMON_NORMAL,
   SUMMON_INSTANT,
   SUMMON_TEMP,
+  SPELLTABLEPARM_NUMBER
 };
+
+
 
 struct SpellTable
 {
@@ -46,7 +61,7 @@ struct SpellTable
     uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
     uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
     uint32 m_uiStageMask;                              // The mask of stages where spell is casted
-    uint32 m_CastTarget;                              // Target on casting spell
+    BossSpellTableParameters  m_CastTarget;            // Target on casting spell
     bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
     bool   m_IsBugged;                                 // Need override for this spell
 };
