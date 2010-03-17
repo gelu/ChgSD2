@@ -189,6 +189,7 @@ struct MANGOS_DLL_DECL boss_ionarAI : public ScriptedAI
                         pSpark->GetMotionMaster()->MovementExpired();
 
                     pSpark->SetSpeedRate(MOVE_RUN,2);
+
                     pSpark->GetMotionMaster()->MovePoint(POINT_CALLBACK, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ());
                 }
             }
