@@ -125,7 +125,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     if (m_uiBoneStrike_Timer < diff)
                     { if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
                           if (DoCastSpellIfCan(pTarget, SPELL_BONE_STRIKE))
-                                CallSpike(pTarget, MOB_BONE_SPIKE, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
+                                CallSpike(pTarget, MOB_BONE_SPIKE, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
                     m_uiBoneStrike_Timer=urand(17000,29000);
                     } else m_uiBoneStrike_Timer -= diff;
                     break;}
@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     } else m_uiSaberLash_Timer -= diff;
 
                     if (m_uiColdFlame_Timer < diff) {
-                    CallGuard(MOB_COLDFLAME, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    CallGuard(MOB_COLDFLAME, TEMPSUMMON_TIMED_DESPAWN, 60000);
                     m_uiColdFlame_Timer=urand(10000,30000);
                     } else m_uiColdFlame_Timer -= diff;
 
@@ -257,7 +257,7 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
     void Reset()
     {
         m_uiRangeCheck_Timer = 1000;
-        m_creature->SetSpeedRate(MOVE_RUN, 5);
+        m_creature->SetSpeedRate(MOVE_RUN, 5.0f);
         _diff = 1000;
         m_creature->SetInCombatWithZone();
     }
@@ -303,6 +303,8 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 
         if (m_uiRangeCheck_Timer < uiDiff)
         {
+        if (m_creature->IsWithinDist(m_creature->getVictim(), 1.0f, false))
+                m_creature->SetSpeedRate(MOVE_RUN, 0.0f);
         }
         else m_uiRangeCheck_Timer -= uiDiff;
     }

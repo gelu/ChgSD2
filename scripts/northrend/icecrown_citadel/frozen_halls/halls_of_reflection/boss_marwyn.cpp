@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
                              m_creature->SetVisibility(VISIBILITY_ON);
                              m_creature->SetInCombatWithZone();
                              }
-                    else CallGuards(TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 5000);
+                    else CallGuards(TEMPSUMMON_CORPSE_TIMED_DESPAWN, 60000);
                     m_uiSummon_Timer = MOB_WAVES_DELAY_1;
                     } else m_uiSummon_Timer -= diff;
         }
