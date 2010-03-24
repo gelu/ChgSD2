@@ -473,6 +473,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\scripts\eastern_kingdoms\redridge_mountains.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\scripts\eastern_kingdoms\searing_gorge.cpp"
 					>
 				</File>
