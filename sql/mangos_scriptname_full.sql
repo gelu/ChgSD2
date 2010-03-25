@@ -642,7 +642,7 @@ UPDATE creature_template SET ScriptName='boss_roar' WHERE entry=17546;
 UPDATE creature_template SET ScriptName='boss_crone' WHERE entry=18168;
 UPDATE creature_template SET ScriptName='boss_terestian_illhoof' WHERE entry=15688;
 UPDATE creature_template SET ScriptName='boss_shade_of_aran' WHERE entry=16524;
--- UPDATE creature_template SET ScriptName='boss_netherspite' WHERE entry=15689;
+UPDATE creature_template SET ScriptName='boss_netherspite' WHERE entry=15689;
 UPDATE creature_template SET ScriptName='boss_malchezaar' WHERE entry=15690;
 -- UPDATE creature_template SET ScriptName='boss_nightbane' WHERE entry=17225;
 UPDATE creature_template SET ScriptName='boss_baroness_dorothea_millstipe' WHERE entry=19875;
@@ -1067,6 +1067,8 @@ UPDATE creature_template SET ScriptName='npc_calvin_montague' WHERE entry=6784;
 UPDATE creature_template SET ScriptName='boss_ironaya' WHERE entry=7228;
 UPDATE creature_template SET ScriptName='mob_jadespine_basilisk' WHERE entry=4863;
 UPDATE creature_template SET ScriptName='npc_lore_keeper_of_norgannon' WHERE entry=7172;
+UPDATE gameobject_template SET ScriptName='go_altar_of_keepers' WHERE entry=130511;
+UPDATE instance_template SET script='instance_uldaman' WHERE map=70;
 
 /*  */
 /* ULDUAR */

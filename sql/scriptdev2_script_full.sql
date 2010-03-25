@@ -584,7 +584,7 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1000560,'Enough! I will teach you some manners, wench!',0,0,0,0,'exhausted vrykul SAY_RAND_ATTACK3'),
 
 (-1000561,'My wounds are grave. Forgive my slow pace but my injuries won''t allow me to walk any faster.',0,0,0,0,'SAY_CORPORAL_KEESHAN_1'),
-(-1000562,'Ah, fresh air, at last! I need a moment to reset.',0,0,0,0,'SAY_CORPORAL_KEESHAN_2'),
+(-1000562,'Ah, fresh air, at last! I need a moment to rest.',0,0,0,0,'SAY_CORPORAL_KEESHAN_2'),
 (-1000563,'The Blackrock infestation is thick in these parts. I will do my best to keep the pace. Let''s go!',0,0,0,0,'SAY_CORPORAL_KEESHAN_3'),
 (-1000564,'Marshal Marris, sir. Corporal Keeshan of the 12th Sabre Regiment returned from battle and reporting for duty!',0,0,0,0,'SAY_CORPORAL_KEESHAN_4'),
 (-1000565,'Brave adventurer, thank you for rescuing me! I am sure Marshal Marris will reward your kind deed.',0,0,0,0,'SAY_CORPORAL_KEESHAN_5');
@@ -1203,8 +1203,8 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1533129,'An honorable... death...',8860,1,0,0,'razuvious SAY_DEATH'),
 
 (-1533130,'%s summons forth Skeletal Warriors!',0,3,0,0,'noth EMOTE_WARRIOR'),
-(-1533131,'%s teleports to the balcony above!',0,3,0,0,'noth EMOTE_SKELETON'),
-(-1533132,'%s raises more skeletons!',0,3,0,0,'noth EMOTE_TELEPORT'),
+(-1533131,'%s raises more skeletons!',0,3,0,0,'noth EMOTE_SKELETON'),
+(-1533132,'%s teleports to the balcony above!',0,3,0,0,'noth EMOTE_TELEPORT'),
 (-1533133,'%s teleports back into the battle!',0,3,0,0,'noth EMOTE_TELEPORT_RETURN'),
 
 (-1533134,'A Guardian of Icecrown enters the fight!',0,3,0,0,'kelthuzad EMOTE_GUARDIAN'),
