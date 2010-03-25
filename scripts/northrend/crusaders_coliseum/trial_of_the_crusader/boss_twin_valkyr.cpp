@@ -48,44 +48,22 @@ enum Summons
 
 enum BossSpells
 {
-    SPELL_TWIN_SPIKE_L,
-    SPELL_LIGHT_SURGE,
-    SPELL_SHIELD_LIGHT,
-    SPELL_TWIN_PACT_L,
-    SPELL_LIGHT_VORTEX,
-    SPELL_LIGHT_TOUCH,
-    SPELL_TWIN_SPIKE_H,
-    SPELL_DARK_SURGE,
-    SPELL_SHIELD_DARK,
-    SPELL_TWIN_PACT_H,
-    SPELL_DARK_VORTEX,
-    SPELL_DARK_TOUCH,
-    SPELL_TWIN_POWER,
-    SPELL_LIGHT_ESSENCE,
-    SPELL_DARK_ESSENCE,
-    SPELL_BERSERK,
-    BOSS_SPELL_COUNT
-};
-
-static SpellTable m_BossSpell[]=
-{
-// Name                  10     25     10H    25H
-{SPELL_TWIN_SPIKE_L,     66075, 67312, 67313, 67314, 10000, 10000, 10000, 10000, 20000, 20000, 20000, 20000, 65535, CAST_ON_VICTIM, false, false},
-{SPELL_LIGHT_SURGE,      65766, 67270, 67271, 67272, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_SHIELD_LIGHT,     65858, 67259, 67260, 67261, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_TWIN_PACT_L,      65876, 67306, 67307, 67308, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_LIGHT_VORTEX,     66046, 67206, 67207, 67208, 30000, 30000, 30000, 30000, 90000, 90000, 90000, 90000, 65535, CAST_ON_SELF, false, false},
-{SPELL_LIGHT_TOUCH,      67297, 67297, 67298, 67298, 10000, 10000, 10000, 10000, 15000, 15000, 15000, 15000, 65535, CAST_ON_SELF, false, false},
-{SPELL_TWIN_SPIKE_H,     66069, 67309, 67310, 67311, 10000, 10000, 10000, 10000, 20000, 20000, 20000, 20000, 65535, CAST_ON_VICTIM, false, false},
-{SPELL_DARK_SURGE,       65768, 67262, 67263, 67264, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_SHIELD_DARK,      65874, 67256, 67257, 67258, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_TWIN_PACT_H,      65879, 67244, 67245, 67246, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_DARK_VORTEX,      66058, 67182, 67183, 67184, 30000, 30000, 30000, 30000, 90000, 90000, 90000, 90000, 65535, CAST_ON_SELF, false, false},
-{SPELL_DARK_TOUCH,       67282, 67282, 67283, 67283, 10000, 10000, 10000, 10000, 15000, 15000, 15000, 15000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_TWIN_POWER,       65916, 67248, 67249, 67250, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_LIGHT_ESSENCE,    65686, 65686, 65686, 65686, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_DARK_ESSENCE,     65684, 65684, 65684, 65684, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_BERSERK,          64238, 64238, 64238, 64238, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 65535, CAST_ON_SELF, false, false},
+    SPELL_TWIN_SPIKE_L     = 66075,
+    SPELL_LIGHT_SURGE      = 65766,
+    SPELL_SHIELD_LIGHT     = 65858,
+    SPELL_TWIN_PACT_L      = 65876,
+    SPELL_LIGHT_VORTEX     = 66046,
+    SPELL_LIGHT_TOUCH      = 67297,
+    SPELL_TWIN_SPIKE_H     = 66069,
+    SPELL_DARK_SURGE       = 65768,
+    SPELL_SHIELD_DARK      = 65874,
+    SPELL_TWIN_PACT_H      = 65879,
+    SPELL_DARK_VORTEX      = 66058,
+    SPELL_DARK_TOUCH       = 67282,
+    SPELL_TWIN_POWER       = 65916,
+    SPELL_LIGHT_ESSENCE    = 65686,
+    SPELL_DARK_ESSENCE     = 65684,
+    SPELL_BERSERK          = 64238,
 };
 
 /*######
@@ -102,20 +80,17 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     uint8 stage;
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset() {
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void JustReachedHome()
@@ -156,14 +131,12 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_LIGHT_SURGE, uiDiff))
-                    CastBossSpell(SPELL_LIGHT_SURGE);
-        if (QuerySpellPeriod(SPELL_LIGHT_TOUCH, uiDiff))
-                    CastBossSpell(SPELL_LIGHT_TOUCH);
-        if (QuerySpellPeriod(SPELL_LIGHT_VORTEX, uiDiff)) {
+        bsw->timedCast(SPELL_LIGHT_SURGE, uiDiff);
+        bsw->timedCast(SPELL_LIGHT_TOUCH, uiDiff);
+        if (bsw->timedQuery(SPELL_LIGHT_VORTEX, uiDiff)) {
             if (m_pInstance->GetData(DATA_CASTING_EYDIS) != SPELL_DARK_VORTEX) {
                     DoScriptText(-1713538,m_creature);
-                    CastBossSpell(SPELL_LIGHT_VORTEX);
+                    bsw->doCast(SPELL_LIGHT_VORTEX);
                     m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_LIGHT_VORTEX);
                     } else m_pInstance->SetData(DATA_CASTING_EYDIS, 0);
                     }
@@ -191,21 +164,18 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     uint8 stage;
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset() 
     {
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void JustReachedHome()
@@ -213,6 +183,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_VALKIRIES, FAIL);
     }
+
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
@@ -246,14 +217,12 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_DARK_SURGE, uiDiff))
-                    CastBossSpell(SPELL_DARK_SURGE);
-        if (QuerySpellPeriod(SPELL_DARK_TOUCH, uiDiff))
-                    CastBossSpell(SPELL_DARK_TOUCH);
-        if (QuerySpellPeriod(SPELL_DARK_VORTEX, uiDiff)) {
+        bsw->timedCast(SPELL_DARK_SURGE, uiDiff);
+        bsw->timedCast(SPELL_DARK_TOUCH, uiDiff);
+        if (bsw->timedQuery(SPELL_DARK_VORTEX, uiDiff)) {
             if (m_pInstance->GetData(DATA_CASTING_FJOLA) != SPELL_LIGHT_VORTEX) {
                     DoScriptText(-1713540,m_creature);
-                    CastBossSpell(SPELL_DARK_VORTEX);
+                    bsw->doCast(SPELL_DARK_VORTEX);
                     m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_DARK_VORTEX);
                     } else m_pInstance->SetData(DATA_CASTING_FJOLA, 0);
                     };
@@ -293,7 +262,7 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
                         Unit* pPlayer = itr->getSource();
                         if (!pPlayer) continue;
                         if (pPlayer->isAlive())
-                             pPlayer->RemoveAurasDueToSpell(m_BossSpell[SPELL_LIGHT_ESSENCE].m_uiSpellEntry[Difficulty]);
+                             pPlayer->RemoveAurasDueToSpell(SPELL_LIGHT_ESSENCE);
                     }
 
             m_creature->ForcedDespawn();
@@ -313,8 +282,8 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
     uint8 Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
         player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
-        player->RemoveAurasDueToSpell(m_BossSpell[SPELL_DARK_ESSENCE].m_uiSpellEntry[Difficulty]);
-        player->CastSpell(player,m_BossSpell[SPELL_LIGHT_ESSENCE].m_uiSpellEntry[Difficulty],false);
+        player->RemoveAurasDueToSpell(SPELL_DARK_ESSENCE);
+        player->CastSpell(player,SPELL_LIGHT_ESSENCE,false);
         player->CLOSE_GOSSIP_MENU();
     return true;
 };
@@ -345,9 +314,8 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
                         Unit* pPlayer = itr->getSource();
                         if (!pPlayer) continue;
                         if (pPlayer->isAlive())
-                             pPlayer->RemoveAurasDueToSpell(m_BossSpell[SPELL_DARK_ESSENCE].m_uiSpellEntry[Difficulty]);
+                             pPlayer->RemoveAurasDueToSpell(SPELL_DARK_ESSENCE);
                     }
-
             m_creature->ForcedDespawn();
             }
         return;
@@ -365,8 +333,8 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
     uint8 Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
-        player->RemoveAurasDueToSpell(m_BossSpell[SPELL_LIGHT_ESSENCE].m_uiSpellEntry[Difficulty]);
-        player->CastSpell(player,m_BossSpell[SPELL_DARK_ESSENCE].m_uiSpellEntry[Difficulty],false);
+        player->RemoveAurasDueToSpell(SPELL_LIGHT_ESSENCE);
+        player->CastSpell(player,SPELL_DARK_ESSENCE,false);
         player->CLOSE_GOSSIP_MENU();
     return true;
 }

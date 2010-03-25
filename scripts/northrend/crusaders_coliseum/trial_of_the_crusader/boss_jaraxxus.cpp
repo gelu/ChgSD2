@@ -44,46 +44,22 @@ enum Summons
 
 enum BossSpells
 {
-    SPELL_NETHER_POWER,
-    SPELL_INFERNAL,
-    SPELL_INFERNAL_ERUPTION,
-    SPELL_FEL_FIREBALL,
-    SPELL_FEL_LIGHTING,
-    SPELL_INCINERATE_FLESH,
-    SPELL_BURNING_INFERNO,
-    SPELL_NETHER_PORTAL,
-    SPELL_LEGION_FLAME_0,
-    SPELL_LEGION_FLAME_1,
-    SPELL_SHIVAN_SLASH,
-    SPELL_SPINNING_STRIKE,
-    SPELL_FEL_INFERNO,
-    SPELL_FEL_STREAK,
-    SPELL_BERSERK,
-    BOSS_SPELL_COUNT
+SPELL_NETHER_POWER      = 67108,
+SPELL_INFERNAL          = 66258,
+SPELL_INFERNAL_ERUPTION = 66255,
+SPELL_FEL_FIREBALL      = 66532,
+SPELL_FEL_LIGHTING      = 66528,
+SPELL_INCINERATE_FLESH  = 66237,
+SPELL_BURNING_INFERNO   = 66242,
+SPELL_NETHER_PORTAL     = 66264,
+SPELL_LEGION_FLAME_0    = 66199,
+SPELL_LEGION_FLAME_1    = 66197,
+SPELL_SHIVAN_SLASH      = 67098,
+SPELL_SPINNING_STRIKE   = 66316,
+SPELL_FEL_INFERNO       = 67047,
+SPELL_FEL_STREAK        = 66494,
+SPELL_BERSERK           = 26662,
 };
-
-static SpellTable m_BossSpell[]=
-{
-// Name                  10     25     10H    25H
-{SPELL_NETHER_POWER,     67108, 67108, 67108, 67108, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_INFERNAL,         66258, 66258, 66258, 66258, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, true, false},
-{SPELL_INFERNAL_ERUPTION,66255, 66255, 66255, 66255, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_FEL_FIREBALL,     66532, 66963, 66964, 66965, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_FEL_LIGHTING,     66528, 66528, 67029, 67029, 15000, 15000, 15000, 15000, 25000, 25000, 25000, 25000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_INCINERATE_FLESH, 66237, 67049, 67050, 67051, 40000, 40000, 40000, 40000, 90000, 90000, 40000, 90000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_BURNING_INFERNO,  66242, 67060, 67060, 67060, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_NETHER_PORTAL,    66264, 66264, 68405, 68405, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 60000, 65535, CAST_ON_RANDOM, true, true},
-{SPELL_LEGION_FLAME_0,   66199, 68127, 68126, 68128, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_LEGION_FLAME_1,   66197, 68123, 68124, 68125, 30000, 30000, 30000, 30000, 45000, 45000, 45000, 45000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_SHIVAN_SLASH,     67098, 67098, 67098, 67098, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_VICTIM, false, false},
-{SPELL_SPINNING_STRIKE,  66316, 66316, 66316, 66316, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_FEL_INFERNO,      67047, 67047, 67047, 67047, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, false, false},
-{SPELL_FEL_STREAK,       66494, 66494, 66494, 66494, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_BERSERK,          26662, 26662, 26662, 26662, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 65535, CAST_ON_SELF, false, false},
-};
-
-
-
 
 /*######
 ## boss_jaraxxus
@@ -99,21 +75,16 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     uint8 stage;
     uint8 substage;
     uint8 m_portalsCount;
     uint8 m_volcanoCount;
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset() {
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_pInstance->SetData(TYPE_JARAXXUS, NOT_STARTED);
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_portalsCount = 1;
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) 
@@ -124,20 +95,10 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
             m_portalsCount = 1;
             m_volcanoCount = 4;
         }
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
         DoScriptText(-1713517,m_creature);
     }
-
-    uint64 CallGuard(uint64 npctype, TempSummonType type, uint32 _summontime )
-    {
-        float fPosX, fPosY, fPosZ;
-        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(10, 20), fPosX, fPosY, fPosZ);
-        Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
-        if(pSummon) pSummon->SetInCombatWithZone();
-//        DoScriptText(EMOTE_SUMMON, m_creature);
-        return pSummon ? pSummon->GetGUID() : 0;
-    }
-
 
     void JustReachedHome()
     {
@@ -160,7 +121,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_JARAXXUS, IN_PROGRESS);
         DoScriptText(-1713514,m_creature);
-        CastBossSpell(SPELL_NETHER_POWER);
+        bsw->doCast(SPELL_NETHER_POWER);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -168,37 +129,32 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_FEL_FIREBALL, uiDiff))
-                    CastBossSpell(SPELL_FEL_FIREBALL);
+        bsw->timedCast(SPELL_FEL_FIREBALL, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_FEL_LIGHTING, uiDiff))
-                    CastBossSpell(SPELL_FEL_LIGHTING);
+        bsw->timedCast(SPELL_FEL_LIGHTING, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_INCINERATE_FLESH, uiDiff)) {
-                    DoScriptText(-1713522,m_creature,currentTarget);
-                    CastBossSpell(SPELL_INCINERATE_FLESH);
+        if (bsw->timedQuery(SPELL_INCINERATE_FLESH, uiDiff)) {
+                    DoScriptText(-1713522,m_creature);
+                    bsw->doCast(SPELL_INCINERATE_FLESH);
                     }
 
-        if (QuerySpellPeriod(SPELL_LEGION_FLAME_1, uiDiff)) {
-                    DoScriptText(-1713518,m_creature,currentTarget);
-                    CastBossSpell(SPELL_LEGION_FLAME_1);
+        if (bsw->timedQuery(SPELL_LEGION_FLAME_1, uiDiff)) {
+                    DoScriptText(-1713518,m_creature);
+                    bsw->doCast(SPELL_LEGION_FLAME_1);
                     };
 
-        if (QuerySpellPeriod(SPELL_INFERNAL_ERUPTION, uiDiff)
+        if (bsw->timedQuery(SPELL_INFERNAL_ERUPTION, uiDiff)
                              && m_volcanoCount > 0) {
-                    DoScriptText(-1713520,m_creature);
-//                    CastBossSpell(SPELL_INFERNAL_ERUPTION);
-                if (CallGuard(NPC_INFERNAL_VOLCANO, TEMPSUMMON_MANUAL_DESPAWN, 5000))
-                    --m_volcanoCount;
+                DoScriptText(-1713520,m_creature);
+                if (bsw->doCast(NPC_INFERNAL_VOLCANO) == CAST_OK) --m_volcanoCount;
                     };
 
-        if (QuerySpellPeriod(SPELL_NETHER_PORTAL, uiDiff) 
+        if (bsw->timedQuery(SPELL_NETHER_PORTAL, uiDiff)
                              && m_portalsCount > 0
                              &&  m_creature->GetHealthPercent() <= 90.0f)
                              {
                 DoScriptText(-1713519,m_creature);
-                if (CallGuard(NPC_NETHER_PORTAL, TEMPSUMMON_MANUAL_DESPAWN, 5000))
-                    --m_portalsCount;
+                if (bsw->doCast(NPC_NETHER_PORTAL) == CAST_OK) --m_portalsCount;
                 };
 
         DoMeleeAttackIfReady();
@@ -266,7 +222,7 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
             {
                     if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f, false))
                     {
-//                        DoCast(m_creature,m_BossSpell[SPELL_LEGION_FLAME_0].m_uiSpellEntry[Difficulty]);
+                        DoCast(m_creature,SPELL_LEGION_FLAME_0);
                     }
             }
             m_uiRangeCheck_Timer = 1000;
@@ -297,6 +253,7 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
     uint8 Difficulty;
     uint8 m_Count;
     uint32 m_Timer;
+    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -313,7 +270,8 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_Count = 6;
         }
-
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void AttackStart(Unit *who)
@@ -340,12 +298,11 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
 
-        if (m_Timer < diff && m_Count > 0) {
-            DoCast(m_creature,m_BossSpell[SPELL_INFERNAL_ERUPTION].m_uiSpellEntry[Difficulty]);
-            m_Timer=urand(m_BossSpell[SPELL_INFERNAL_ERUPTION].m_uiSpellTimerMin[Difficulty],m_BossSpell[SPELL_INFERNAL_ERUPTION].m_uiSpellTimerMax[Difficulty]);
+        if (bsw->timedQuery(SPELL_INFERNAL_ERUPTION,diff) && m_Count > 0) {
+            bsw->doCast(SPELL_INFERNAL_ERUPTION);
             DoScriptText(-1713524,m_creature);
             --m_Count;
-            } else m_Timer -= diff;
+            }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -368,16 +325,15 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset()
     {
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -402,11 +358,9 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_FEL_INFERNO, uiDiff))
-                    CastBossSpell(SPELL_FEL_INFERNO);
+        bsw->timedCast(SPELL_FEL_INFERNO, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_FEL_STREAK, uiDiff))
-                    CastBossSpell(SPELL_FEL_STREAK);
+        bsw->timedCast(SPELL_FEL_STREAK, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -433,7 +387,7 @@ struct MANGOS_DLL_DECL mob_nether_portalAI : public ScriptedAI
     void Reset()
     {
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        m_Timer = 5000;
+        m_Timer = 10000;
         m_creature->SetRespawnDelay(DAY);
         if (Difficulty != RAID_DIFFICULTY_10MAN_HEROIC && Difficulty != RAID_DIFFICULTY_25MAN_HEROIC) 
         {
@@ -472,7 +426,7 @@ struct MANGOS_DLL_DECL mob_nether_portalAI : public ScriptedAI
             m_creature->ForcedDespawn();
 
         if (m_Timer < diff && m_Count > 0) {
-            DoCast(m_creature,m_BossSpell[SPELL_NETHER_PORTAL].m_uiSpellEntry[Difficulty]);
+            DoCast(m_creature,SPELL_NETHER_PORTAL,false);
             DoScriptText(-1713521,m_creature);
             --m_Count;
             m_Timer = 60000;
@@ -499,18 +453,15 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset()
     {
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -536,11 +487,9 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_SHIVAN_SLASH, uiDiff))
-                    CastBossSpell(SPELL_SHIVAN_SLASH);
+        bsw->timedCast(SPELL_SHIVAN_SLASH, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_SPINNING_STRIKE, uiDiff))
-                    CastBossSpell(SPELL_SPINNING_STRIKE);
+        bsw->timedCast(SPELL_SPINNING_STRIKE, uiDiff);
 
         DoMeleeAttackIfReady();
     }

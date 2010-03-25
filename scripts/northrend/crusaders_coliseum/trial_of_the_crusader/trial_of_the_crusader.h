@@ -140,8 +140,8 @@ enum NorthrendBeasts
     GORMOK_DONE                     = 1001,
     DREADSCALE_SUBMERGED            = 2000,
     ACIDMAW_SUBMERGED               = 2001,
-    ICEHOWL_IN_PROGRESS             = 1000,
-    ICEHOWL_DONE                    = 1001,
+    ICEHOWL_IN_PROGRESS             = 3000,
+    ICEHOWL_DONE                    = 3001,
 };
 
 #endif
