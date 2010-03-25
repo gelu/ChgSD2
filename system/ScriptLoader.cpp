@@ -69,6 +69,7 @@ extern void AddSC_boss_attumen();                           //karazhan
 extern void AddSC_boss_curator();
 extern void AddSC_boss_maiden_of_virtue();
 extern void AddSC_boss_shade_of_aran();
+extern void AddSC_boss_netherspite();
 extern void AddSC_boss_malchezaar();
 extern void AddSC_boss_terestian_illhoof();
 extern void AddSC_netherspite_infernal();
@@ -141,6 +142,7 @@ extern void AddSC_boss_kalecgos();
 extern void AddSC_instance_sunwell_plateau();
 extern void AddSC_boss_ironaya();                           //uldaman
 extern void AddSC_uldaman();
+extern void AddSC_instance_uldaman();
 extern void AddSC_boss_akilzon();                           //zulaman
 extern void AddSC_boss_halazzi();
 extern void AddSC_boss_janalai();
@@ -544,6 +546,7 @@ void AddScripts()
     AddSC_boss_curator();
     AddSC_boss_maiden_of_virtue();
     AddSC_boss_shade_of_aran();
+    AddSC_boss_netherspite();
     AddSC_boss_malchezaar();
     AddSC_boss_terestian_illhoof();
     AddSC_netherspite_infernal();
@@ -616,6 +619,7 @@ void AddScripts()
     AddSC_instance_sunwell_plateau();
     AddSC_boss_ironaya();                                   //uldaman
     AddSC_uldaman();
+    AddSC_instance_uldaman();
     AddSC_boss_akilzon();                                   //zulaman
     AddSC_boss_halazzi();
     AddSC_boss_janalai();
