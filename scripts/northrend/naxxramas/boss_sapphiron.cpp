@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: Boss_Sapphiron
-SD%Complete: 0
+SD%Complete: 60
 SDComment: Place Holder
 SDCategory: Naxxramas
 EndScriptData */
@@ -26,15 +26,30 @@ EndScriptData */
 
 enum
 {
-    EMOTE_BREATH       = -1533082,
-    EMOTE_ENRAGE       = -1533083,
+    EMOTE_BREATH         = -1533082,
+    EMOTE_FLY            = -1533083,
+    EMOTE_GROUND         = -1533160,
+    EMOTE_ENRAGE         = -1533161,
 
-    SPELL_ICEBOLT      = 28522,
-    SPELL_FROST_BREATH = 29318,
-    SPELL_FROST_AURA   = 28531,
-    SPELL_LIFE_DRAIN   = 28542,
-    SPELL_BLIZZARD     = 28547,
-    SPELL_BESERK       = 26662
+    SPELL_ICEBOLT        = 28522,
+    SPELL_FROST_BREATH   = 29318,
+
+    SPELL_FROST_AURA     = 28531,
+    H_SPELL_FROST_AURA   = 55799,
+
+    SPELL_LIFE_DRAIN     = 28542,
+    H_SPELL_LIFE_DRAIN   = 55665,
+
+    SPELL_TAIL_SWEEP     = 55697,
+    H_SPELL_TAIL_SWEEP   = 55696,
+
+    SPELL_BLIZZARD       = 28547,
+    H_SPELL_BLIZZARD     = 55699,
+
+    SPELL_CLEAVE         = 19983,
+    SPELL_BESERK         = 26662,
+
+    GO_ICE_BLOCK         = 181247, // Not sure
 };
 
 struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
@@ -43,45 +58,67 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
     {
         m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        m_uiIceboltCountMax = m_bIsRegularMode ? 2 : 3;
         Reset();
     }
 
     instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
 
-    uint32 Icebolt_Count;
-    uint32 Icebolt_Timer;
-    uint32 FrostBreath_Timer;
-    uint32 FrostAura_Timer;
-    uint32 LifeDrain_Timer;
-    uint32 Blizzard_Timer;
-    uint32 Fly_Timer;
-    uint32 Beserk_Timer;
-    uint32 phase;
-    bool landoff;
-    uint32 land_Timer;
+    uint32 m_uiIceboltCount;
+    uint32 m_uiIceboltCountMax;
+    uint32 m_uiIceboltTimer;
+    uint32 m_uiFrostBreathTimer;
+    uint32 m_uiLifeDrainTimer;
+    uint32 m_uiBlizzardTimer;
+    uint32 m_uiTailSweepTimer;
+    uint32 m_uiCleaveTimer;
+    uint32 m_uiFlyTimer;
+    uint32 m_uiBeserkTimer;
+    uint32 m_uiPhase;
+    uint32 m_uiLandTimer;
+    bool m_bLandoff;
+    std::set<uint64> m_lIceBlocks;
 
     void Reset()
     {
-        FrostAura_Timer = 2000;
-        FrostBreath_Timer = 2500;
-        LifeDrain_Timer = 24000;
-        Blizzard_Timer = 20000;
-        Fly_Timer = 45000;
-        Icebolt_Timer = 4000;
-        land_Timer = 2000;
-        Beserk_Timer = 0;
-        phase = 1;
-        Icebolt_Count = 0;
-        landoff = false;
+        m_uiFrostBreathTimer = 7000;
+        m_uiLifeDrainTimer = 24000;
+        m_uiBlizzardTimer = 20000;
+        m_uiTailSweepTimer = 10000;
+        m_uiCleaveTimer = 10000;
+        m_uiFlyTimer = 45000;
+        m_uiIceboltTimer = 4000;
+        m_uiLandTimer = 2000;
+        m_uiBeserkTimer = 15*MINUTE*IN_MILISECONDS;
+        m_uiPhase = 1;
+        m_uiIceboltCount = 0;
+        m_bLandoff = false;
 
-        //m_creature->ApplySpellMod(SPELL_FROST_AURA, SPELLMOD_DURATION, -1);
+        DespawnIceBlocks();
+    }
+
+    void DespawnIceBlocks()
+    {
+        if (m_pInstance)
+        {
+            for (std::set<uint64>::const_iterator itr = m_lIceBlocks.begin(); itr != m_lIceBlocks.end(); ++itr)
+            {
+                if (GameObject* pIceBlock = m_pInstance->instance->GetGameObject(*itr))
+                    pIceBlock->Delete();
+            }
+        }
+
+        m_lIceBlocks.clear();
     }
 
     void Aggro(Unit* pWho)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_SAPPHIRON, IN_PROGRESS);
+
+        m_creature->SetInCombatWithZone();
+        DoCastSpellIfCan(m_creature->getVictim(), m_bIsRegularMode ? SPELL_FROST_AURA : H_SPELL_FROST_AURA);
     }
 
     void JustDied(Unit* pKiller)
@@ -96,40 +133,74 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             m_pInstance->SetData(TYPE_SAPPHIRON, FAIL);
     }
 
+    void SpellHitTarget(Unit *target, const SpellEntry *spell)
+    {
+        if (spell->Id == SPELL_FROST_BREATH)
+            if (target->HasAura(SPELL_ICEBOLT))
+                target->RemoveAurasDueToSpell(SPELL_ICEBOLT);
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (phase == 1)
+        if (m_uiBeserkTimer < uiDiff)
         {
-            if (FrostAura_Timer < uiDiff)
+            if (DoCastSpellIfCan(m_creature, SPELL_BESERK) == CAST_OK)
             {
-                DoCastSpellIfCan(m_creature->getVictim(),SPELL_FROST_AURA);
-                FrostAura_Timer = 5000;
-            }else FrostAura_Timer -= uiDiff;
+                m_uiBeserkTimer = 300000;
+                DoScriptText(EMOTE_ENRAGE, m_creature);
+            }
+        }
+        else
+            m_uiBeserkTimer -= uiDiff;
 
-            if (LifeDrain_Timer < uiDiff)
+        if (m_uiPhase == 1)
+        {
+            if (m_uiLifeDrainTimer < uiDiff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCastSpellIfCan(target,SPELL_LIFE_DRAIN);
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                {
+                    if (DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_LIFE_DRAIN : H_SPELL_LIFE_DRAIN) == CAST_OK)
+                        m_uiLifeDrainTimer = 24000;
+                }
+            }
+            else
+                m_uiLifeDrainTimer -= uiDiff;
 
-                LifeDrain_Timer = 24000;
-            }else LifeDrain_Timer -= uiDiff;
-
-            if (Blizzard_Timer < uiDiff)
+            if (m_uiBlizzardTimer < uiDiff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCastSpellIfCan(target,SPELL_BLIZZARD);
+                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                {
+                    if (DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_BLIZZARD : H_SPELL_BLIZZARD) == CAST_OK)
+                        m_uiBlizzardTimer = 20000;
+                }
+            }
+            else
+                m_uiBlizzardTimer -= uiDiff;
 
-                Blizzard_Timer = 20000;
-            }else Blizzard_Timer -= uiDiff;
+            if (m_uiCleaveTimer < uiDiff)
+            {
+                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CLEAVE) == CAST_OK)
+                    m_uiCleaveTimer = urand(7000, 10000);
+            }
+            else
+                m_uiCleaveTimer -= uiDiff;
+
+            if (m_uiTailSweepTimer < uiDiff)
+            {
+                if (DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_TAIL_SWEEP : H_SPELL_TAIL_SWEEP) == CAST_OK)
+                    m_uiTailSweepTimer = urand(10000, 15000);
+            }
+            else
+                m_uiTailSweepTimer -= uiDiff;
 
             if (m_creature->GetHealthPercent() > 10.0f)
             {
-                if (Fly_Timer < uiDiff)
+                if (m_uiFlyTimer < uiDiff)
                 {
-                    phase = 2;
+                    m_uiPhase = 2;
                     m_creature->InterruptNonMeleeSpells(false);
                     m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LIFTOFF);
                     m_creature->GetMotionMaster()->Clear(false);
@@ -137,62 +208,79 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     DoCastSpellIfCan(m_creature,11010);
                     m_creature->SetHover(true);
                     DoCastSpellIfCan(m_creature,18430);
-                    Icebolt_Timer = 4000;
-                    Icebolt_Count = 0;
-                    landoff = false;
-                }else Fly_Timer -= uiDiff;
-            }
-        }
-
-        if (phase == 2)
-        {
-            if (Icebolt_Timer < uiDiff && Icebolt_Count < 5)
-            {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCastSpellIfCan(target,SPELL_ICEBOLT);
-
-                ++Icebolt_Count;
-                Icebolt_Timer = 4000;
-            }else Icebolt_Timer -= uiDiff;
-
-            if (Icebolt_Count == 5 && !landoff)
-            {
-                if (FrostBreath_Timer < uiDiff)
-                {
-                    DoScriptText(EMOTE_BREATH, m_creature);
-                    DoCastSpellIfCan(m_creature->getVictim(),SPELL_FROST_BREATH);
-                    land_Timer = 2000;
-                    landoff = true;
-                    FrostBreath_Timer = 6000;
-                }else FrostBreath_Timer -= uiDiff;
+                    m_uiIceboltTimer = 4000;
+                    m_uiIceboltCount = 0;
+                    m_bLandoff = false;
+                    DoScriptText(EMOTE_FLY, m_creature);
+                }
+                else
+                    m_uiFlyTimer -= uiDiff;
             }
 
-            if (landoff)
-            {
-                if (land_Timer < uiDiff)
-                {
-                    phase = 1;
-                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
-                    m_creature->SetHover(false);
-                    m_creature->GetMotionMaster()->Clear(false);
-                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                    Fly_Timer = 67000;
-                }else land_Timer -= uiDiff;
-            }
-        }
-
-        if (m_creature->GetHealthPercent() <= 10.0f)
-        {
-            if (Beserk_Timer < uiDiff)
-            {
-                DoScriptText(EMOTE_ENRAGE, m_creature);
-                DoCastSpellIfCan(m_creature,SPELL_BESERK);
-                Beserk_Timer = 300000;
-            }else Beserk_Timer -= uiDiff;
-        }
-
-        if (phase!=2)
             DoMeleeAttackIfReady();
+        }
+        else // Phase 2
+        {
+            if (m_uiIceboltCount < m_uiIceboltCountMax)
+            {
+                if (m_uiIceboltTimer < uiDiff)
+                {
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    {
+                        if (DoCastSpellIfCan(pTarget, SPELL_ICEBOLT) == CAST_OK)
+                        {
+                            if (pTarget->HasAura(SPELL_ICEBOLT))
+                                if (GameObject *pIceBlock = pTarget->SummonGameobject(GO_ICE_BLOCK, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), pTarget->GetOrientation(), 0))
+                                    m_lIceBlocks.insert(pIceBlock->GetGUID());
+
+                            ++m_uiIceboltCount;
+
+                            if (m_uiIceboltCount == m_uiIceboltCountMax)
+                            {
+                                DoScriptText(EMOTE_BREATH, m_creature);
+                                m_uiFrostBreathTimer = 7000;
+                            }
+
+                            m_uiIceboltTimer = 4000;
+                        }
+                    }
+                }
+                else
+                    m_uiIceboltTimer -= uiDiff;
+            }
+            else
+            {
+                if (m_bLandoff)
+                {
+                    if (m_uiLandTimer < uiDiff)
+                    {
+                        m_uiPhase = 1;
+                        m_creature->HandleEmoteCommand(EMOTE_ONESHOT_LAND);
+                        m_creature->SetHover(false);
+                        m_creature->GetMotionMaster()->Clear(false);
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                        m_uiFlyTimer = 45000;
+                        DoScriptText(EMOTE_GROUND, m_creature);
+                    }
+                    else
+                        m_uiLandTimer -= uiDiff;
+                }
+                else
+                {
+                    if (m_uiFrostBreathTimer < uiDiff)
+                    {
+                        if (DoCastSpellIfCan(m_creature, SPELL_FROST_BREATH) == CAST_OK)
+                        {
+                            DespawnIceBlocks();
+                            m_uiLandTimer = 4000;
+                            m_bLandoff = true;
+                        }
+                    }
+                    else
+                        m_uiFrostBreathTimer -= uiDiff;
+                }
+            }
+        }
     }
 };
 
