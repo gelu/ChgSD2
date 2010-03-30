@@ -229,9 +229,8 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
                     {
                         if (DoCastSpellIfCan(pTarget, SPELL_ICEBOLT) == CAST_OK)
                         {
-                            if (pTarget->HasAura(SPELL_ICEBOLT))
-                                if (GameObject *pIceBlock = pTarget->SummonGameobject(GO_ICE_BLOCK, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), pTarget->GetOrientation(), 0))
-                                    m_lIceBlocks.insert(pIceBlock->GetGUID());
+                            if (GameObject *pIceBlock = pTarget->SummonGameobject(GO_ICE_BLOCK, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), pTarget->GetOrientation(), 0))
+                                m_lIceBlocks.insert(pIceBlock->GetGUID());
 
                             ++m_uiIceboltCount;
 
