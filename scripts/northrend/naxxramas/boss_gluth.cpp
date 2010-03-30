@@ -142,7 +142,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         m_uiEnrageTimer = 60000;
         Summon_Timer = 10000;
 
-        m_uiBerserkTimer = MINUTE*8*IN_MILISECONDS;
+        m_uiBerserkTimer = MINUTE*8*IN_MILLISECONDS;
 
         RangeCheck_Timer = 1000;
         m_lZombieGUIDList.clear();
@@ -275,7 +275,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         if (m_uiBerserkTimer < uiDiff)
         {
             DoCast(m_creature, SPELL_BERSERK, true);
-            m_uiBerserkTimer = MINUTE*5*IN_MILISECONDS;
+            m_uiBerserkTimer = MINUTE*5*IN_MILLISECONDS;
         }
         else
             m_uiBerserkTimer -= uiDiff;

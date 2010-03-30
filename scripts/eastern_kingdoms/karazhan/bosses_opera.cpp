@@ -92,7 +92,7 @@ void SummonCroneIfReady(ScriptedInstance* pInstance, Creature* pCreature)
 
     if (pInstance->GetData(DATA_OPERA_OZ_DEATHCOUNT) == 4)
     {
-        if (Creature* pCrone = pCreature->SummonCreature(CREATURE_CRONE, -10891.96f, -1755.95f, pCreature->GetPositionZ(), 4.64f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILISECONDS))
+        if (Creature* pCrone = pCreature->SummonCreature(CREATURE_CRONE, -10891.96f, -1755.95f, pCreature->GetPositionZ(), 4.64f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS))
         {
             if (pCreature->getVictim())
                 pCrone->AI()->AttackStart(pCreature->getVictim());
@@ -605,16 +605,7 @@ struct MANGOS_DLL_DECL boss_croneAI : public ScriptedAI
         DoScriptText(SAY_CRONE_DEATH, m_creature);
 
         if (m_pInstance)
-        {
             m_pInstance->SetData(TYPE_OPERA, DONE);
-
-            if (GameObject* pLDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORLEFT)))
-                pLDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pRDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORRIGHT)))
-                pRDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pSideEntrance = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_SIDE_ENTRANCE_DOOR)))
-                pSideEntrance->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
-        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -743,7 +734,7 @@ bool GossipSelect_npc_grandmother(Player* pPlayer, Creature* pCreature, uint32 u
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF)
     {
-        if (Creature* pBigBadWolf = pCreature->SummonCreature(CREATURE_BIG_BAD_WOLF, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILISECONDS))
+        if (Creature* pBigBadWolf = pCreature->SummonCreature(CREATURE_BIG_BAD_WOLF, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS))
             pBigBadWolf->AI()->AttackStart(pPlayer);
 
         pCreature->ForcedDespawn();
@@ -798,16 +789,7 @@ struct MANGOS_DLL_DECL boss_bigbadwolfAI : public ScriptedAI
         DoPlaySoundToSet(m_creature, SOUND_WOLF_DEATH);
 
         if (m_pInstance)
-        {
             m_pInstance->SetData(TYPE_OPERA, DONE);
-
-            if (GameObject* pLDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORLEFT)))
-                pLDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pRDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORRIGHT)))
-                pRDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pSideEntrance = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_SIDE_ENTRANCE_DOOR)))
-                pSideEntrance->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
-        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -1043,16 +1025,7 @@ struct MANGOS_DLL_DECL boss_julianneAI : public ScriptedAI
         DoScriptText(SAY_JULIANNE_DEATH02, m_creature);
 
         if (m_pInstance)
-        {
             m_pInstance->SetData(TYPE_OPERA, DONE);
-
-            if (GameObject* pLDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORLEFT)))
-                pLDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pRDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORRIGHT)))
-                pRDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pSideEntrance = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_SIDE_ENTRANCE_DOOR)))
-                pSideEntrance->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
-        }
     }
 
     void KilledUnit(Unit* victim)
@@ -1138,16 +1111,7 @@ struct MANGOS_DLL_DECL boss_romuloAI : public ScriptedAI
         DoScriptText(SAY_ROMULO_DEATH, m_creature);
 
         if (m_pInstance)
-        {
             m_pInstance->SetData(TYPE_OPERA, DONE);
-
-            if (GameObject* pLDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORLEFT)))
-                pLDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pRDoor = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_STAGEDOORRIGHT)))
-                pRDoor->SetGoState(GO_STATE_ACTIVE);
-            if (GameObject* pSideEntrance = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_SIDE_ENTRANCE_DOOR)))
-                pSideEntrance->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
-        }
     }
 
     void KilledUnit(Unit* victim)
@@ -1311,7 +1275,7 @@ void boss_julianneAI::UpdateAI(const uint32 diff)
     {
         if (SummonRomuloTimer < diff)
         {
-            if (Creature* pRomulo = m_creature->SummonCreature(CREATURE_ROMULO, ROMULO_X, ROMULO_Y, m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILISECONDS))
+            if (Creature* pRomulo = m_creature->SummonCreature(CREATURE_ROMULO, ROMULO_X, ROMULO_Y, m_creature->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS))
             {
                 RomuloGUID = pRomulo->GetGUID();
                 ((boss_romuloAI*)pRomulo->AI())->JulianneGUID = m_creature->GetGUID();
