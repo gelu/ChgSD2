@@ -37,6 +37,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint32 m_auiNorthrendBeasts;
     uint8 Difficulty;
     std::string m_strInstData;
+    bool needsave;
 
     uint32 m_uiDataDamageFjola;
     uint32 m_uiDataDamageFjola_t;
@@ -129,6 +130,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     m_auiNorthrendBeasts = NOT_STARTED;
 
     m_auiEventTimer = 1000;
+
+    needsave = false;
     }
 
     void OnPlayerEnter(Player *m_player)
@@ -289,7 +292,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
         case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
-        case TYPE_NORTHREND_BEASTS: m_auiNorthrendBeasts = uiData; break;
+        case TYPE_NORTHREND_BEASTS: if (m_auiNorthrendBeasts = SNAKES_SPECIAL 
+                                         && uiData == SNAKES_SPECIAL ) uiData = SNAKES_DONE;
+                                         m_auiNorthrendBeasts = uiData;
+                                         break;
         case DATA_DAMAGE_FJOLA:    m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
         case DATA_DAMAGE_EYDIS:    m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
@@ -301,12 +307,15 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                            && uiType != TYPE_COUNTER
                            && uiType != TYPE_EVENT_TIMER)
         { if (IsRaidWiped()) { --m_auiEncounter[7];
-                               uiData = DONE;}
+                               needsave = true;
+                             }
+                               uiData = NOT_STARTED;
         }
 
-        if (uiData == DONE && uiType != TYPE_STAGE
+        if ((uiData == DONE && uiType != TYPE_STAGE
                            && uiType != TYPE_EVENT
                            && uiType != TYPE_EVENT_TIMER)
+                           || needsave == true)
         {
             OUT_SAVE_INST_DATA;
 
@@ -319,6 +328,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
 
             SaveToDB();
             OUT_SAVE_INST_DATA_COMPLETE;
+        needsave = false;
         }
     }
 

@@ -97,7 +97,9 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_VALKIRIES, FAIL);
+            m_creature->ForcedDespawn();
     }
+
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
@@ -182,6 +184,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_VALKIRIES, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void JustDied(Unit* pKiller)

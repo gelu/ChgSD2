@@ -104,6 +104,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_JARAXXUS, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void JustDied(Unit* pKiller)

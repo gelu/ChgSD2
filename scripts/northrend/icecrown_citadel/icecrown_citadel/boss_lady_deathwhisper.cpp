@@ -123,10 +123,10 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         if (!m_creature || !m_creature->isAlive())
             return;
          if (isManaBarrier) {
-            m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-uiDamage*4);
+            m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-uiDamage);
             uiDamage = 0;
             if(m_creature->GetHealth() <= m_creature->GetMaxHealth()) {
-                        m_uiMana = m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth()- m_creature->GetHealth())*2;
+                        m_uiMana = m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth()- m_creature->GetHealth());
                         if (m_uiMana <= 0) m_uiMana =0;
                                  m_creature->SetPower(POWER_MANA,m_uiMana);
                                  m_creature->SetHealth(m_creature->GetMaxHealth());
@@ -160,7 +160,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                                  CallGuard(NPC_FANATIC, TEMPSUMMON_TIMED_DESPAWN, 60000);
                                  CallGuard(NPC_ADHERENT, TEMPSUMMON_TIMED_DESPAWN, 60000);
                                  };
-                    m_uiSummon_Timer=60000;
+                    m_uiSummon_Timer=40000;
                     } else m_uiSummon_Timer -= diff;
 
                     if (m_uiDarkEmpowerment_Timer < diff)
@@ -190,7 +190,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                     { 
                     CallGuard(NPC_VENGEFUL_SHADE, TEMPSUMMON_TIMED_DESPAWN, 30000);
                     if(!Regular) CallGuard(NPC_VENGEFUL_SHADE, TEMPSUMMON_TIMED_DESPAWN, 30000);
-                    m_uiSummon2_Timer=20000;
+                    m_uiSummon2_Timer=10000;
                     } else m_uiSummon2_Timer -= diff;
 
                     if (m_uiDominateMind_Timer < diff)

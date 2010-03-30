@@ -166,7 +166,8 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
         switch (pSpell->m_CastTarget) {
 
             case CAST_ON_SELF:
-                   return _DoCastSpellIfCan(boss, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (!pSpell->m_IsBugged) return _DoCastSpellIfCan(boss, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   else return _BSWDoCast(m_uiSpellIdx, boss);
                    break;
 
             case CAST_ON_SUMMONS:
@@ -175,24 +176,28 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
 
             case CAST_ON_VICTIM:
                    pTarget = boss->getVictim();
-                   if (pTarget) return _DoCastSpellIfCan(boss->getVictim(), pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(boss->getVictim(), pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, boss->getVictim());
                    break;
 
             case CAST_ON_TARGET:
                    if (!pTarget) pTarget = boss->getVictim();
-                   if (pTarget) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
                    break;
 
             case CAST_ON_RANDOM:
                    pTarget = SelectUnit(SELECT_TARGET_RANDOM);
                    if (!pTarget) pTarget = boss->getVictim();
-                   if (pTarget) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
                    break;
 
             case CAST_ON_BOTTOMAGGRO:
                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1);
                    if (!pTarget) pTarget = boss->getVictim();
-                   if (pTarget) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
                    break;
 
             case APPLY_AURA_SELF:

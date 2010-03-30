@@ -35,10 +35,10 @@ struct _Messages
 static _Messages _GossipMessage[]=
 {
 {"Вы готовы пройти Испытание Крестоносца?",GOSSIP_ACTION_INFO_DEF+1,false,TYPE_BEASTS}, //
-{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+2,false,TYPE_JARAXXUS},  //
-{"Вы готовы драться с крестоносцами альянса?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_CRUSADERS}, //
-{"Вы готовы драться с крестоносцами орды?",GOSSIP_ACTION_INFO_DEF+4,false,TYPE_CRUSADERS}, //
-{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_VALKIRIES}, //
+{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+2,true,TYPE_BEASTS},  //
+{"Вы готовы драться с крестоносцами альянса?",GOSSIP_ACTION_INFO_DEF+3,true,TYPE_JARAXXUS}, //
+{"Вы готовы драться с крестоносцами орды?",GOSSIP_ACTION_INFO_DEF+4,true,TYPE_JARAXXUS}, //
+{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+5,true,TYPE_CRUSADERS}, //
 {"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+6,true,TYPE_LICH_KING}, //
 {"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+7,true,TYPE_ANUBARAK}, //
 };
@@ -90,18 +90,24 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == GORMOK_DONE) {
                          pInstance->SetData(TYPE_STAGE,2);
                          pInstance->SetData(TYPE_EVENT,200);
-                         }
+                         };
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
+                         pInstance->SetData(TYPE_STAGE,0);
+                         pInstance->SetData(TYPE_EVENT,0);
+                         pInstance->SetData(TYPE_BEASTS,NOT_STARTED);
+                         };
                  break;
                  };
         case 2: {
-                Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DREADSCALE));
-                Creature* pTemp1 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ACIDMAW));
-                if (pTemp && pTemp1){
-                 if (!pTemp->isAlive() && !pTemp1->isAlive()) {
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_DONE) {
                  pInstance->SetData(TYPE_STAGE,3);
                  pInstance->SetData(TYPE_EVENT,300);
-                 }
-                 }
+                 };
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
+                         pInstance->SetData(TYPE_STAGE,0);
+                         pInstance->SetData(TYPE_EVENT,0);
+                         pInstance->SetData(TYPE_BEASTS,NOT_STARTED);
+                         };
                  break;
                  }
         case 3: {
@@ -110,6 +116,11 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                         pInstance->SetData(TYPE_BEASTS,DONE);
                         pInstance->SetData(TYPE_EVENT,400);
                         }
+            if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
+                         pInstance->SetData(TYPE_STAGE,0);
+                         pInstance->SetData(TYPE_EVENT,0);
+                         pInstance->SetData(TYPE_BEASTS,NOT_STARTED);
+                         };
                  break;
                  };
         case 4: {
@@ -193,7 +204,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                  };
         case 9: {
              if (pInstance->GetData(TYPE_ANUBARAK) == DONE) {
-                                 pInstance->SetData(TYPE_STAGE,0);
+                                 pInstance->SetData(TYPE_STAGE,10);
                                  pInstance->SetData(TYPE_EVENT,6000);
                                  }
                  break;
@@ -224,9 +235,8 @@ bool GossipHello_npc_toc_announcer(Player* pPlayer, Creature* pCreature)
     if(!pPlayer->getAttackers().empty()) return true;
 
     for(uint8 i = 0; i < NUM_MESSAGES; i++) {
-    if (!_GossipMessage[i].state && (pInstance->GetData(_GossipMessage[i].encounter) == NOT_STARTED || pInstance->GetData(_GossipMessage[i].encounter) == IN_PROGRESS)) {
+    if (!_GossipMessage[i].state && (pInstance->GetData(_GossipMessage[i].encounter) != DONE )) {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[i].name, GOSSIP_SENDER_MAIN,_GossipMessage[i].id);
-        if (_GossipMessage[i].encounter == TYPE_CRUSADERS) pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[3].name, GOSSIP_SENDER_MAIN,_GossipMessage[3].id);
         break;
         }
     if (_GossipMessage[i].state && pInstance->GetData(_GossipMessage[i].encounter) == DONE)

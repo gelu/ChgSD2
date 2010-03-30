@@ -106,6 +106,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void Aggro(Unit* pWho)
@@ -230,13 +231,14 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SPECIAL);
+            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void Aggro(Unit* pWho)
@@ -340,13 +342,14 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SPECIAL);
+            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void Aggro(Unit* pWho)
@@ -450,6 +453,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void Aggro(Unit* pWho)
