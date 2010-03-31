@@ -111,10 +111,10 @@ struct MANGOS_DLL_DECL boss_netherspiteAI : public ScriptedAI
     {
         m_bIsEnraged    = false;
         m_uiActivePhase = BEAM_PHASE;
-        
-        m_uiEnrageTimer       = 540000;
+
+        m_uiEnrageTimer       = MINUTE*9*IN_MILLISECONDS;
         m_uiVoidZoneTimer     = 15000;
-        m_uiPhaseSwitchTimer  = 60000;
+        m_uiPhaseSwitchTimer  = MINUTE*IN_MILLISECONDS;
     }
 
     void Aggro(Unit* pWho)

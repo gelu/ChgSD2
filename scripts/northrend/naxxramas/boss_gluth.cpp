@@ -274,7 +274,7 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         // Berserk
         if (m_uiBerserkTimer < uiDiff)
         {
-            DoCast(m_creature, SPELL_BERSERK, true);
+            DoCastSpellIfCan(m_creature, SPELL_BERSERK, CAST_TRIGGERED);
             m_uiBerserkTimer = MINUTE*5*IN_MILLISECONDS;
         }
         else
