@@ -91,6 +91,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustReachedHome()
@@ -178,6 +179,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustReachedHome()

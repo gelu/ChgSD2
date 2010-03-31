@@ -94,12 +94,14 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
+        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetInCombatWithZone();
     }
 
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_DONE);
+        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_DONE);
     }
 
     void JustReachedHome()
@@ -111,7 +113,6 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, GORMOK_IN_PROGRESS);
     }
 
@@ -225,13 +226,15 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
-
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
+            if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL)
+                m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+                else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
@@ -295,8 +298,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                     break;}
         }
 
-        if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DREADSCALE)))
-                 if (!pSister->isAlive() && !enraged)
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, IN_PROGRESS);
                         bsw->doRemove(SPELL_SUBMERGE_0);
@@ -337,12 +339,15 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
+            if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL)
+                m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+                else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
@@ -405,10 +410,8 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                     break;}
         }
 
-        if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_ACIDMAW)))
-                 if (!pSister->isAlive() && !enraged)
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
-                        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, IN_PROGRESS);
                         bsw->doRemove(SPELL_SUBMERGE_0);
                         bsw->doCast(SPELL_ENRAGE);
                         enraged = true;
@@ -441,6 +444,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustDied(Unit* pKiller)

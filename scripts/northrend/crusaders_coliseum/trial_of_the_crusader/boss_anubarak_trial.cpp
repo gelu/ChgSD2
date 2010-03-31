@@ -79,6 +79,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
 

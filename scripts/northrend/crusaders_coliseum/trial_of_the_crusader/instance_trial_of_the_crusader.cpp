@@ -88,7 +88,6 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint64 m_uiCrusader01Guid;
     uint64 m_uiCrusader02Guid;
 
-
     uint64 m_uiCrusadersCacheGUID;
     uint64 m_uiFloorGUID;
 
@@ -106,6 +105,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint64 m_uiTributeChest2GUID;
     uint64 m_uiTributeChest3GUID;
     uint64 m_uiTributeChest4GUID;
+
+    uint64 m_uiMainGateDoorGUID;
 
     void Initialize()
     {
@@ -229,6 +230,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case GO_ARGENT_COLISEUM_FLOOR: 
                                   m_uiFloorGUID = pGo->GetGUID(); 
                                   break;
+        case GO_MAIN_GATE_DOOR:
+                                  m_uiMainGateDoorGUID = pGo->GetGUID();
+                                  break;
+
         case GO_TRIBUTE_CHEST_10H_25: m_uiTC10h25GUID = pGo->GetGUID(); break;
         case GO_TRIBUTE_CHEST_10H_45: m_uiTC10h45GUID = pGo->GetGUID(); break;
         case GO_TRIBUTE_CHEST_10H_50: m_uiTC10h50GUID = pGo->GetGUID(); break;
@@ -379,6 +384,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case NPC_CRUSADER_0_2: return m_uiCrusader02Guid;
 
          case GO_ARGENT_COLISEUM_FLOOR: return m_uiFloorGUID;
+         case GO_MAIN_GATE_DOOR:        return m_uiMainGateDoorGUID;
+
         }
         return 0;
     }

@@ -83,6 +83,7 @@ enum
     GO_TRIBUTE_CHEST_25H_99     = 195672,
 
     GO_ARGENT_COLISEUM_FLOOR    = 195527, //20943
+    GO_MAIN_GATE_DOOR           = 195647,
 
     TYPE_DIFFICULTY             = 101,
     TYPE_EVENT_TIMER            = 102,
@@ -138,10 +139,11 @@ enum NorthrendBeasts
 {
     GORMOK_IN_PROGRESS              = 1000,
     GORMOK_DONE                     = 1001,
-    DREADSCALE_SUBMERGED            = 2000,
-    ACIDMAW_SUBMERGED               = 2001,
-    SNAKES_SPECIAL                  = 2002,
-    SNAKES_DONE                     = 2003,
+    SNAKES_IN_PROGRESS              = 2000,
+    DREADSCALE_SUBMERGED            = 2001,
+    ACIDMAW_SUBMERGED               = 2002,
+    SNAKES_SPECIAL                  = 2003,
+    SNAKES_DONE                     = 2004,
     ICEHOWL_IN_PROGRESS             = 3000,
     ICEHOWL_DONE                    = 3001,
 };
