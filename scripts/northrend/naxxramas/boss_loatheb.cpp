@@ -63,8 +63,8 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiInevitableDoomTimer = 2*MINUTE*IN_MILISECONDS;
-        m_ui5MinTimer = 5*MINUTE*IN_MILISECONDS;
+        m_uiInevitableDoomTimer = 2*MINUTE*IN_MILLISECONDS;
+        m_ui5MinTimer = 5*MINUTE*IN_MILLISECONDS;
         m_uiNecroticAuraTimer = 10000;
         m_uiDeathbloomTimer = 15000;
         m_uiNecroticAuraCount = 0;

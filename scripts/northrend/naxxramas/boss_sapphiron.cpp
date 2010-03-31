@@ -90,7 +90,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         m_uiFlyTimer = 45000;
         m_uiIceboltTimer = 4000;
         m_uiLandTimer = 2000;
-        m_uiBeserkTimer = 15*MINUTE*IN_MILISECONDS;
+        m_uiBeserkTimer = 15*MINUTE*IN_MILLISECONDS;
         m_uiPhase = 1;
         m_uiIceboltCount = 0;
         m_bLandoff = false;
