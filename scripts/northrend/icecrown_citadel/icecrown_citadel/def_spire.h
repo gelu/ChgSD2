@@ -76,10 +76,16 @@ enum
     GO_SAURFANG_CACHE_10_H      = 202241, // 2910
     GO_SAURFANG_CACHE_25_H      = 202238, // 2724
 
-    GO_GUNSHIP_ARMORY_10        = 201873,
-    GO_GUNSHIP_ARMORY_25        = 201874,
-    GO_GUNSHIP_ARMORY_10_H      = 202178,
-    GO_GUNSHIP_ARMORY_25_H      = 202180,
+
+    GO_GUNSHIP_ARMORY_A_10        = 201872, //
+    GO_GUNSHIP_ARMORY_A_25        = 201873, //
+    GO_GUNSHIP_ARMORY_A_10H       = 201874, //
+    GO_GUNSHIP_ARMORY_A_25H       = 201875, //
+
+    GO_GUNSHIP_ARMORY_H_10        = 202177, //
+    GO_GUNSHIP_ARMORY_H_25        = 202178, //
+    GO_GUNSHIP_ARMORY_H_10H       = 202179, //
+    GO_GUNSHIP_ARMORY_H_25H       = 202180, //
 };
 
 struct Locations

@@ -38,45 +38,23 @@ enum Summons
 
 enum BossSpells
 {
-    SPELL_COLD,
-    SPELL_MARK,
-    SPELL_LEECHING_SWARM,
-    SPELL_IMPALE,
-    SPELL_POUND,
-    SPELL_SHOUT,
-    SPELL_SUBMERGE_0,
-    SPELL_SUBMERGE_1,
-    SPELL_SUMMON_BEATLES,
-    SPELL_DETERMINATION,
-    SPELL_ACID_MANDIBLE,
-    SPELL_SPIDER_FRENZY,
-    SPELL_EXPOSE_WEAKNESS,
-    SUMMON_SCARAB,
-    SUMMON_BORROWER,
-    SUMMON_FROSTSPHERE,
-    SPELL_BERSERK,
-    BOSS_SPELL_COUNT
-};
-static SpellTable m_BossSpell[]=
-{
-// Name                  10     25     10H    25H
-{SPELL_COLD,             66013, 67700, 68509, 68510, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_MARK,             67574, 67574, 67574, 67574, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_TARGET, false, true},
-{SPELL_LEECHING_SWARM,   67630, 68646, 66118, 68647, 10000, 10000, 10000, 10000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, true},
-{SPELL_IMPALE,           65922, 65922, 65922, 65922, 10000, 10000, 10000, 10000, 15000, 15000, 15000, 15000, 65535, CAST_ON_RANDOM, false, true},
-{SPELL_POUND,            66012, 66012, 66012, 66012, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_SHOUT,            67730, 67730, 67730, 67730, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_RANDOM, false, false},
-{SPELL_SUBMERGE_0,       53421, 53421, 53421, 53421, 45000, 45000, 45000, 45000, 60000, 60000, 60000, 60000, 65535, CAST_ON_SELF, true, false},
-{SPELL_SUBMERGE_1,       67322, 67322, 67322, 67322, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 65535, CAST_ON_SELF, true, true},
-{SPELL_SUMMON_BEATLES,   66339, 66339, 66339, 66339, 5000,  5000,  5000,  5000,  10000, 10000, 10000, 10000, 65535, CAST_ON_RANDOM, true, false},
-{SPELL_DETERMINATION,    66092, 66092, 66092, 66092, 5000,  5000,  5000,  5000,  20000, 20000, 20000, 20000, 65535, CAST_ON_SELF, false, false},
-{SPELL_ACID_MANDIBLE,    67861, 66092, 66092, 66092, 5000,  5000,  5000,  5000,  20000, 20000, 20000, 20000, 65535, CAST_ON_VICTIM, false, false},
-{SPELL_SPIDER_FRENZY,    66129, 66129, 66129, 66129, 10000, 10000, 10000, 10000,  20000, 20000, 20000, 20000, 65535, CAST_ON_TARGET, false, false},
-{SPELL_EXPOSE_WEAKNESS,  67847, 67847, 67847, 67847, 5000,  5000,  5000,  5000,  20000, 20000, 20000, 20000, 65535, CAST_ON_VICTIM, false, false},
-{SUMMON_SCARAB,          NPC_SCARAB, NPC_SCARAB, NPC_SCARAB, NPC_SCARAB, 90000, 90000, 90000, 90000, 90000, 90000, 90000, 90000, 65535, SUMMON_NORMAL, true, false},
-{SUMMON_BORROWER,        NPC_BURROWER, NPC_BURROWER, NPC_BURROWER, NPC_BURROWER, 70000, 70000, 70000, 70000, 100000, 100000, 100000, 100000, 65535, SUMMON_NORMAL, true, false},
-{SUMMON_FROSTSPHERE,     NPC_FROST_SPHERE, NPC_FROST_SPHERE, NPC_FROST_SPHERE, NPC_FROST_SPHERE, 5000, 5000, 5000, 5000, 10000, 10000, 10000, 10000, 65535, SUMMON_NORMAL, true, false},
-{SPELL_BERSERK,          26662, 26662, 26662, 26662, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 600000, 65535, CAST_ON_SELF, false, false},
+SPELL_COLD              = 66013,
+SPELL_MARK              = 67574,
+SPELL_LEECHING_SWARM    = 67630,
+SPELL_IMPALE            = 65922,
+SPELL_POUND             = 66012,
+SPELL_SHOUT             = 67730,
+SPELL_SUBMERGE_0        = 53421,
+SPELL_SUBMERGE_1        = 67322,
+SPELL_SUMMON_BEATLES    = 66339,
+SPELL_DETERMINATION     = 66092,
+SPELL_ACID_MANDIBLE     = 67861,
+SPELL_SPIDER_FRENZY     = 66129,
+SPELL_EXPOSE_WEAKNESS   = 67847,
+SUMMON_SCARAB           = NPC_SCARAB,
+SUMMON_BORROWER         = NPC_BURROWER,
+SUMMON_FROSTSPHERE      = NPC_FROST_SPHERE,
+SPELL_BERSERK           = 26662,
 };
 
 struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
@@ -89,21 +67,19 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
     uint8 stage;
     uint32 SubmergeTimer;
-    Unit* currentTarget;
     bool intro;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset() {
         if(!m_pInstance) return;
         stage = 0;
         intro = true;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
+        m_creature->SetRespawnDelay(DAY);
     }
 
 
@@ -151,61 +127,55 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         switch(stage)
         {
             case 0: {
-                if (QuerySpellPeriod(SPELL_POUND, uiDiff))
-                        CastBossSpell(SPELL_POUND);
-                if (QuerySpellPeriod(SPELL_COLD, uiDiff))
-                        CastBossSpell(SPELL_COLD);
-                if (QuerySpellPeriod(SUMMON_BORROWER, uiDiff)) {
-                        CastBossSpell(SUMMON_BORROWER);
+                bsw->timedCast(SPELL_POUND, uiDiff);
+                bsw->timedCast(SPELL_COLD, uiDiff);
+                if (bsw->timedQuery(SUMMON_BORROWER, uiDiff)) {
+                        bsw->doCast(SUMMON_BORROWER);
                         DoScriptText(-1713556,m_creature);
                         };
-                if (QuerySpellPeriod(SPELL_SUBMERGE_0, uiDiff)) stage = 1;
+                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 1;
+
                     break;}
             case 1: {
-                    CastBossSpell(SPELL_SUBMERGE_0);
+                    bsw->doCast(SPELL_SUBMERGE_0);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     break;}
             case 2: {
-                    if (QuerySpellPeriod(SPELL_IMPALE, uiDiff)) {
-                         CastBossSpell(SPELL_IMPALE);
-                         CastBossSpell(SPELL_MARK);
-                         DoScriptText(-1713558,m_creature,currentTarget);
+                    if (bsw->timedQuery(SPELL_IMPALE, uiDiff)) {
+                         bsw->doCast(SPELL_IMPALE);
+                         bsw->doCast(SPELL_MARK);
+                         DoScriptText(-1713558,m_creature);
                          };
-                    if (QuerySpellPeriod(SPELL_SUMMON_BEATLES, uiDiff)) {
-                            CastBossSpell(SPELL_SUMMON_BEATLES);
-                            CastBossSpell(SUMMON_SCARAB);
+                    if (bsw->timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
+                            bsw->doCast(SPELL_SUMMON_BEATLES);
+                            bsw->doCast(SUMMON_SCARAB);
                             DoScriptText(-1713560,m_creature);
                          };
-                    if (QuerySpellPeriod(SPELL_SUBMERGE_0, uiDiff)) stage = 3;
+                    if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 3;
                     break;}
             case 3: {
                     stage = 0;
                     DoScriptText(-1713559,m_creature);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    m_creature->RemoveAurasDueToSpell(m_BossSpell[SPELL_SUBMERGE_0].m_uiSpellEntry[Difficulty]);
+                    bsw->doRemove(SPELL_SUBMERGE_0,m_creature);
                     break;}
             case 4: {
-                    if (QuerySpellPeriod(SPELL_POUND, uiDiff))
-                            CastBossSpell(SPELL_POUND);
-                    if (QuerySpellPeriod(SPELL_COLD, uiDiff))
-                            CastBossSpell(SPELL_COLD);
-                    if (QuerySpellPeriod(SPELL_LEECHING_SWARM, uiDiff)) {
-                            CastBossSpell(SPELL_LEECHING_SWARM);
+                    bsw->timedCast(SPELL_POUND, uiDiff);
+                    bsw->timedCast(SPELL_COLD, uiDiff);
+                    if (bsw->timedQuery(SPELL_LEECHING_SWARM, uiDiff)) {
+                            bsw->doCast(SPELL_LEECHING_SWARM);
                             DoScriptText(-1713561,m_creature);
                             }
                         break;}
 
         }
-        if (QuerySpellPeriod(SUMMON_FROSTSPHERE, uiDiff))
-                    CastBossSpell(SUMMON_FROSTSPHERE);
+        bsw->timedCast(SUMMON_FROSTSPHERE, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_BERSERK, uiDiff))
-                    CastBossSpell(SPELL_BERSERK);
+        bsw->timedCast(SPELL_BERSERK, uiDiff);
 
         if (m_creature->GetHealthPercent() < 30.0f && stage == 0) stage = 4;
-
 
         DoMeleeAttackIfReady();
     }
@@ -226,18 +196,15 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
-    Unit* currentTarget;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
 
     void Reset()
     {
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -262,11 +229,9 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_DETERMINATION, uiDiff))
-                    CastBossSpell(SPELL_DETERMINATION);
+        bsw->timedCast(SPELL_DETERMINATION, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_ACID_MANDIBLE, uiDiff))
-                    CastBossSpell(SPELL_ACID_MANDIBLE);
+        bsw->timedCast(SPELL_ACID_MANDIBLE, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -287,20 +252,18 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
-    uint32 m_uiSpell_Timer[BOSS_SPELL_COUNT];
-    Unit* currentTarget;
     bool submerged;
-
-#include "sc_boss_spell_worker.cpp"
+    BossSpellWorker* bsw;
+    Unit* currentTarget;
 
     void Reset()
     {
-        for (uint8 i = 0; i < BOSS_SPELL_COUNT; ++i)
-              m_uiSpell_Timer[i] = urand(m_BossSpell[i].m_uiSpellTimerMin[Difficulty],m_BossSpell[i].m_uiSpellTimerMax[Difficulty]);
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         submerged = false;
+        bsw = new BossSpellWorker(this);
+        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -325,26 +288,25 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (QuerySpellPeriod(SPELL_EXPOSE_WEAKNESS, uiDiff))
-                    CastBossSpell(SPELL_EXPOSE_WEAKNESS);
+        bsw->timedCast(SPELL_EXPOSE_WEAKNESS, uiDiff);
 
-        if (QuerySpellPeriod(SPELL_SPIDER_FRENZY, uiDiff))
+        if (bsw->timedQuery(SPELL_SPIDER_FRENZY, uiDiff))
             if(Creature *pTemp = GetClosestCreatureWithEntry(m_creature, NPC_BURROWER, 50.0f))
             {
             currentTarget = pTemp;
-            CastBossSpell(SPELL_SPIDER_FRENZY);
+            bsw->doCast(SPELL_SPIDER_FRENZY);
             };
 
-        if (m_creature->GetHealthPercent() < 20.0f && QuerySpellPeriod(SPELL_SUBMERGE_1, uiDiff) && !submerged)
+        if (m_creature->GetHealthPercent() < 20.0f && bsw->timedQuery(SPELL_SUBMERGE_1, uiDiff) && !submerged)
            {
-            CastBossSpell(SPELL_SUBMERGE_1);
+            bsw->doCast(SPELL_SUBMERGE_1);
             submerged = true;
             DoScriptText(-1713557,m_creature);
             };
 
         if (m_creature->GetHealthPercent() > 50.0f && submerged)
             {
-             m_creature->RemoveAurasDueToSpell(m_BossSpell[SPELL_SUBMERGE_1].m_uiSpellEntry[Difficulty]);
+             bsw->doRemove(SPELL_SUBMERGE_1,m_creature);
              submerged = false;
              DoScriptText(-1713559,m_creature);
              };

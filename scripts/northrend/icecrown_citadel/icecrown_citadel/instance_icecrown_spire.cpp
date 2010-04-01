@@ -66,7 +66,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiValithriaDoor4GUID;
 
     uint64 m_uiSaurfangCacheGUID;
-    uint64 m_uiGunshipArmoryGUID;
+    uint64 m_uiGunshipArmoryAGUID;
+    uint64 m_uiGunshipArmoryHGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -93,7 +94,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         m_uiDeathWhisperGUID =0;
         m_uiSaurfangGUID = 0;
         m_uiSaurfangCacheGUID = 0;
-        m_uiGunshipArmoryGUID = 0;
+        m_uiGunshipArmoryAGUID = 0;
+        m_uiGunshipArmoryHGUID = 0;
 
     }
 
@@ -220,21 +222,37 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiSaurfangCacheGUID = pGo->GetGUID();
                                   break;
-            case GO_GUNSHIP_ARMORY_10:
+            case GO_GUNSHIP_ARMORY_A_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
-                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  m_uiGunshipArmoryAGUID = pGo->GetGUID(); 
                                   break;
-            case GO_GUNSHIP_ARMORY_25:
+            case GO_GUNSHIP_ARMORY_A_25:
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
-                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  m_uiGunshipArmoryAGUID = pGo->GetGUID(); 
                                   break;
-            case GO_GUNSHIP_ARMORY_10_H:
+            case GO_GUNSHIP_ARMORY_A_10H:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
-                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  m_uiGunshipArmoryAGUID = pGo->GetGUID(); 
                                   break;
-            case GO_GUNSHIP_ARMORY_25_H:
+            case GO_GUNSHIP_ARMORY_A_25H:
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
-                                  m_uiGunshipArmoryGUID = pGo->GetGUID(); 
+                                  m_uiGunshipArmoryAGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_H_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_H_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_H_10H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_GUNSHIP_ARMORY_H_25H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
                                   break;
         }
     }
@@ -269,10 +287,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_FLIGHT_WAR:
                 if (uiData == DONE && m_auiEncounter[4] != DONE  ) {
-                                 if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryGUID))
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryAGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
-//                                        pChest->SetGoState(GO_STATE_ACTIVE);
+                                      };
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryHGUID))
+                                     if (pChest && !pChest->isSpawned()) {
+                                          pChest->SetRespawnTime(7*DAY);
                                       };
                                 m_auiEncounter[4] = uiData; 
                                 };
@@ -288,7 +309,6 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                  if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
-//                                        pChest->SetGoState(GO_STATE_ACTIVE);
                                       };
                                 };
                 break;

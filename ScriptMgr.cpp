@@ -17,11 +17,19 @@ Script *m_scripts[MAX_SCRIPTS];
 
 Config SD2Config;
 
+std::string _strSD2DBinfoString;
+std::string strSD2DBinfoString()
+{
+return _strSD2DBinfoString;
+}
+
 void FillSpellSummary();
 
 void LoadDatabase()
 {
+
     std::string strSD2DBinfo = SD2Config.GetStringDefault("ScriptDev2DatabaseInfo", "");
+    _strSD2DBinfoString = strSD2DBinfo;
 
     if (strSD2DBinfo.empty())
     {
