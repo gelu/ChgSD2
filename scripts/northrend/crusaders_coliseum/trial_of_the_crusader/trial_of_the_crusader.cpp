@@ -36,15 +36,14 @@ static _Messages _GossipMessage[]=
 {
 {"Вы готовы пройти Испытание Крестоносца?",GOSSIP_ACTION_INFO_DEF+1,false,TYPE_BEASTS}, //
 {"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+2,false,TYPE_JARAXXUS},  //
-{"Вы готовы драться с крестоносцами альянса?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_CRUSADERS}, //
-{"Вы готовы драться с крестоносцами орды?",GOSSIP_ACTION_INFO_DEF+4,false,TYPE_CRUSADERS}, //
-{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_VALKIRIES}, //
-{"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+6,false,TYPE_LICH_KING}, //
-{"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+7,true,TYPE_ANUBARAK}, //
+{"Вы готовы драться с чемпионами Серебряного авангарда?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_CRUSADERS}, //
+{"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+4,false,TYPE_VALKIRIES}, //
+{"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_LICH_KING}, //
+{"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+6,true,TYPE_ANUBARAK}, //
 };
 enum
 {
-         NUM_MESSAGES = 7,
+         NUM_MESSAGES = 6,
 };
 
 
@@ -90,6 +89,8 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == GORMOK_DONE) {
                          pInstance->SetData(TYPE_STAGE,2);
                          pInstance->SetData(TYPE_EVENT,200);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                          };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
                          pInstance->SetData(TYPE_STAGE,0);
@@ -100,8 +101,10 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                  };
         case 2: {
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_DONE) {
-                 pInstance->SetData(TYPE_STAGE,3);
-                 pInstance->SetData(TYPE_EVENT,300);
+                         pInstance->SetData(TYPE_STAGE,3);
+                         pInstance->SetData(TYPE_EVENT,300);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                  };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
                          pInstance->SetData(TYPE_STAGE,0);
@@ -112,14 +115,16 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
                  }
         case 3: {
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == ICEHOWL_DONE) {
-                        pInstance->SetData(TYPE_STAGE,0);
-                        pInstance->SetData(TYPE_BEASTS,DONE);
-                        pInstance->SetData(TYPE_EVENT,400);
+                         pInstance->SetData(TYPE_STAGE,0);
+                         pInstance->SetData(TYPE_BEASTS,DONE);
+                         pInstance->SetData(TYPE_EVENT,400);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,DONE);
                         }
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
                          pInstance->SetData(TYPE_STAGE,0);
                          pInstance->SetData(TYPE_EVENT,0);
                          pInstance->SetData(TYPE_BEASTS,NOT_STARTED);
+                         pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                          };
                  break;
                  };
@@ -237,7 +242,6 @@ bool GossipHello_npc_toc_announcer(Player* pPlayer, Creature* pCreature)
     for(uint8 i = 0; i < NUM_MESSAGES; i++) {
     if (!_GossipMessage[i].state && (pInstance->GetData(_GossipMessage[i].encounter) != DONE )) {
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[i].name, GOSSIP_SENDER_MAIN,_GossipMessage[i].id);
-        if ( i==2 ) pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _GossipMessage[i+1].name, GOSSIP_SENDER_MAIN,_GossipMessage[i+1].id);
         break;
         }
     if (_GossipMessage[i].state && pInstance->GetData(_GossipMessage[i].encounter) == DONE) {
@@ -259,8 +263,10 @@ pPlayer->CLOSE_GOSSIP_MENU();
 
 switch(uiAction) {
     case GOSSIP_ACTION_INFO_DEF+1: {
-    if (pInstance->GetData(TYPE_BEASTS) != DONE)
+    if (pInstance->GetData(TYPE_BEASTS) != DONE) {
            pInstance->SetData(TYPE_EVENT,110);
+           pInstance->SetData(TYPE_NORTHREND_BEASTS,NOT_STARTED);
+           };
     break;
     };
 
@@ -271,25 +277,20 @@ switch(uiAction) {
     };
 
     case GOSSIP_ACTION_INFO_DEF+3: {
-    if (pInstance->GetData(TYPE_CRUSADERS) != DONE) 
-           pInstance->SetData(TYPE_EVENT,3001);
-
+    if (pInstance->GetData(TYPE_CRUSADERS) != DONE) {
+                  if (pPlayer->GetTeam() == ALLIANCE) pInstance->SetData(TYPE_EVENT,3000);
+                  else pInstance->SetData(TYPE_EVENT,3001);
+                  };
     break;
     };
 
     case GOSSIP_ACTION_INFO_DEF+4: {
-    if (pInstance->GetData(TYPE_CRUSADERS) != DONE) 
-           pInstance->SetData(TYPE_EVENT,3000);
-    break;
-    };
-
-    case GOSSIP_ACTION_INFO_DEF+5: {
     if (pInstance->GetData(TYPE_VALKIRIES) != DONE)
            pInstance->SetData(TYPE_EVENT,4000);
     break;
     };
 
-    case GOSSIP_ACTION_INFO_DEF+6: {
+    case GOSSIP_ACTION_INFO_DEF+5: {
        if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARGENT_COLISEUM_FLOOR)))
           {
            pGoFloor->SetUInt32Value(GAMEOBJECT_DISPLAYID,9060);
@@ -311,7 +312,7 @@ switch(uiAction) {
     break;
     };
 
-    case GOSSIP_ACTION_INFO_DEF+7: {
+    case GOSSIP_ACTION_INFO_DEF+6: {
     pInstance->SetData(TYPE_STAGE,9);
     break;
     };
@@ -346,6 +347,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
         event_state_lich_king = 0;
         Event = false;
         MovementStarted = false;
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void AttackStart(Unit *who)
@@ -514,6 +516,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
 
     void Reset()
     {
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void UpdateAI(const uint32 diff)
@@ -543,6 +546,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     UpdateTimer = 8000;
                     break;
                case 1140:
+                    m_creature->GetMap()->CreatureRelocation(m_creature, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z,0);
                     pInstance->SetData(TYPE_STAGE,4);
                     pInstance->SetData(TYPE_JARAXXUS,IN_PROGRESS);
                           m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -631,19 +635,19 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                break;
         case 150:
                 m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
-                if (pInstance->GetData(TYPE_BEASTS) == NOT_STARTED || 
-                     pInstance->GetData(TYPE_BEASTS) == FAIL) 
-                 pInstance->SetData(TYPE_STAGE,1);
-                 pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
+                if (pInstance->GetData(TYPE_BEASTS) != DONE) {
                       m_creature->SummonCreature(NPC_GORMOK, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_GORMOK))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                                 pTemp->SetInCombatWithZone();
                                 }
+                        }
                 UpdateTimer = 10000;
                 pInstance->SetData(TYPE_EVENT,160);
                 pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
+                pInstance->SetData(TYPE_STAGE,1);
+                pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                 break;
 
         case 200:
@@ -653,6 +657,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                break;
 
         case 210:
+                        if (pInstance->GetData(TYPE_BEASTS) != DONE){
                         m_creature->SummonCreature(NPC_DREADSCALE, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                         m_creature->SummonCreature(NPC_ACIDMAW, SpawnLoc[4].x, SpawnLoc[4].y, SpawnLoc[4].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DREADSCALE))) {
@@ -665,6 +670,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                                 pTemp->SetInCombatWithZone();
                                 }
+                        }
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,220);
                break;
@@ -674,12 +680,14 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                pInstance->SetData(TYPE_EVENT,310);
                break;
         case 310:
+                if (pInstance->GetData(TYPE_BEASTS) != DONE) {
                         m_creature->SummonCreature(NPC_ICEHOWL, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ICEHOWL))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                                 pTemp->SetInCombatWithZone();
                                 }
+                        }
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,320);
                break;

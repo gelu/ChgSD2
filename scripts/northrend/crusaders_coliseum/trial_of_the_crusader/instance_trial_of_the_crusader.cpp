@@ -267,9 +267,9 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_ANUBARAK:  m_auiEncounter[6] = uiData; 
                             if (uiData == DONE) {
                             if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC){
-                                if ( m_auiEncounter[7] <= 25) m_uiTributeChest1GUID = m_uiTC10h25GUID;
-                                if ( m_auiEncounter[7] <= 45) m_uiTributeChest2GUID = m_uiTC10h45GUID;
-                                if ( m_auiEncounter[7] <= 50) m_uiTributeChest3GUID = m_uiTC10h50GUID;
+                                if ( m_auiEncounter[7] >= 25) m_uiTributeChest1GUID = m_uiTC10h25GUID;
+                                if ( m_auiEncounter[7] >= 45) m_uiTributeChest2GUID = m_uiTC10h45GUID;
+                                if ( m_auiEncounter[7] >= 49) m_uiTributeChest3GUID = m_uiTC10h50GUID;
                                 m_uiTributeChest4GUID = m_uiTC10h99GUID;
                             }
                             if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC){
@@ -296,13 +296,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         break;
         case TYPE_COUNTER:   m_auiEncounter[7] = uiData; uiData = DONE; break;
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
-        case TYPE_EVENT_TIMER:     m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
-        case TYPE_NORTHREND_BEASTS: if (m_auiNorthrendBeasts = SNAKES_SPECIAL 
-                                         && uiData == SNAKES_SPECIAL ) uiData = SNAKES_DONE;
-                                         m_auiNorthrendBeasts = uiData;
-                                         break;
-        case DATA_DAMAGE_FJOLA:    m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
-        case DATA_DAMAGE_EYDIS:    m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
+        case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+        case TYPE_NORTHREND_BEASTS: m_auiNorthrendBeasts = uiData; break;
+        case DATA_DAMAGE_FJOLA:     m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
+        case DATA_DAMAGE_EYDIS:     m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_EYDIS:    m_uiEydisCasting = uiData; uiData = NOT_STARTED; break;
         }

@@ -102,12 +102,11 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _QuerySpellPeriod(FindSpellIDX(SpellID), diff);
              };
 
-        bool timedCast(uint32 SpellID, uint32 diff)
+        CanCastResult timedCast(uint32 SpellID, uint32 diff, Unit* pTarget = NULL)
              {
              uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
-             if (!_QuerySpellPeriod(FindSpellIDX(SpellID), diff)) return false;
-                else _BSWSpellSelector(m_uiSpellIdx);
-                  return true;
+             if (!_QuerySpellPeriod(FindSpellIDX(SpellID), diff)) return CAST_FAIL_STATE;
+                  else return _BSWSpellSelector(m_uiSpellIdx, pTarget);
              };
 
         CanCastResult doCast(uint32 SpellID, Unit* pTarget = NULL)

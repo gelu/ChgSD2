@@ -67,6 +67,8 @@ SPELL_TRAMPLE          = 66734,
 SPELL_SNOBOLLED        = 66406,
 SPELL_BATTER           = 66408,
 SPELL_FIRE_BOMB        = 66313,
+SPELL_FIRE_BOMB_1      = 66317,
+SPELL_FIRE_BOMB_DOT    = 66318,
 SPELL_HEAD_CRACK       = 66407,
 SPELL_SUBMERGE_0       = 53421,
 SPELL_BERSERK          = 26662,
@@ -89,13 +91,13 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     void Reset() {
 
         if(!m_pInstance) return;
-        SnoboldsCount = 4;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetInCombatWithZone();
+        SnoboldsCount = 4;
     }
 
     void JustDied(Unit* pKiller)
@@ -106,7 +108,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (m_pInstance)
+        if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
@@ -191,7 +193,10 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
         bsw->timedCast(SPELL_BATTER, uiDiff);
 
-        bsw->timedCast(SPELL_FIRE_BOMB, uiDiff);
+        if (bsw->timedCast(SPELL_FIRE_BOMB, uiDiff, m_creature->getVictim()) == CAST_OK) {
+        bsw->doCast(SPELL_FIRE_BOMB_1, m_creature->getVictim());
+        bsw->doCast(SPELL_FIRE_BOMB_DOT, m_creature->getVictim());
+        }
 
         bsw->timedCast(SPELL_HEAD_CRACK, uiDiff);
 
@@ -232,15 +237,17 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL)
-                m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DREADSCALE)))
+               if (!pSister->isAlive())
+                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
                 else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+        if (!m_pInstance) return;
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
+                        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
 
@@ -300,10 +307,10 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
-                        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, IN_PROGRESS);
                         bsw->doRemove(SPELL_SUBMERGE_0);
                         bsw->doCast(SPELL_ENRAGE);
                         enraged = true;
+                        stage = 0;
                         DoScriptText(-1713504,m_creature);
                         };
 
@@ -345,15 +352,17 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL)
-                m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
+            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_ACIDMAW)))
+               if (!pSister->isAlive())
+                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
                 else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
     }
 
     void JustReachedHome()
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
+        if (!m_pInstance) return;
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
+                        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
 
@@ -415,6 +424,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                         bsw->doRemove(SPELL_SUBMERGE_0);
                         bsw->doCast(SPELL_ENRAGE);
                         enraged = true;
+                        stage = 0;
                         DoScriptText(-1713504,m_creature);
                         };
 
@@ -455,7 +465,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (m_pInstance)
+        if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
@@ -483,8 +493,8 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                         DoScriptText(-1713506,m_creature,bsw->currentTarget);
                         }
 
-        if (bsw->timedCast(SPELL_TRAMPLE, uiDiff) != CAST_OK)
-                                DoScriptText(-1713507,m_creature);
+//        if (bsw->timedCast(SPELL_TRAMPLE, uiDiff) != CAST_OK)
+//                                DoScriptText(-1713507,m_creature);
 
         DoMeleeAttackIfReady();
     }

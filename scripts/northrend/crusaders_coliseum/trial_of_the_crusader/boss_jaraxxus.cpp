@@ -98,6 +98,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
         DoScriptText(-1713517,m_creature);
+        m_creature->SetRespawnDelay(DAY);
     }
 
     void JustReachedHome()

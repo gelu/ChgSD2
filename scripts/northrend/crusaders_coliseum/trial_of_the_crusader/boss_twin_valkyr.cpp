@@ -105,7 +105,10 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     {
         if (!m_pInstance) return;
             DoScriptText(-1713547,m_creature);
-            m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DARKBANE)))
+               if (!pSister->isAlive())
+                         m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+                else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -193,7 +196,10 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     {
         if (!m_pInstance) return;
             DoScriptText(-1713547,m_creature);
-            m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_LIGHTBANE)))
+               if (!pSister->isAlive())
+                         m_pInstance->SetData(TYPE_VALKIRIES, DONE);
+                else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -254,6 +260,8 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
     {
     Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
     m_creature->SetRespawnDelay(DAY);
+    m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+    m_creature->GetMotionMaster()->MoveRandom();
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -306,6 +314,8 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
     {
     Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
     m_creature->SetRespawnDelay(DAY);
+    m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+    m_creature->GetMotionMaster()->MoveRandom();
     }
 
     void UpdateAI(const uint32 uiDiff)

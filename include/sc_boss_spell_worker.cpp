@@ -350,7 +350,7 @@ Unit* BossSpellWorker::_doSummon(uint8 m_uiSpellIdx, TempSummonType summontype, 
     if (pSpell->LocData.z <= 1.0f) {
     float fPosX, fPosY, fPosZ;
     boss->GetPosition(fPosX, fPosY, fPosZ);
-    boss->GetRandomPoint(fPosX, fPosY, fPosZ, urand(pSpell->LocData.x, pSpell->LocData.y), fPosX, fPosY, fPosZ);
+    boss->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
     return boss->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ, 0, summontype, delay);
     } else return boss->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z, 0, summontype, delay);
 };

@@ -88,14 +88,14 @@ enum
     TYPE_DIFFICULTY             = 101,
     TYPE_EVENT_TIMER            = 102,
     TYPE_EVENT_NPC              = 103,
-    TYPE_NORTHREND_BEASTS       = 110,
+    TYPE_NORTHREND_BEASTS       = 104,
 
     DATA_DAMAGE_EYDIS           = 201,
     DATA_DAMAGE_FJOLA           = 202,
     DATA_CASTING_EYDIS          = 203,
     DATA_CASTING_FJOLA          = 204,
 
-    DESPAWN_TIME                = 300000
+    DESPAWN_TIME                = 300000,
 
 };
 
