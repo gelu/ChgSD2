@@ -10,12 +10,13 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
 {
      boss = bossAI->m_creature;
      bossID = boss->GetEntry();
+     debug_log("BSW: Initializing BossSpellWorker object for boss %u",bossID);
      bossSpellCount = 0;
      currentTarget = NULL;
-     currentDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
      memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
      memset(&m_BossSpell,0,sizeof(m_BossSpell));
-     debug_log("BSW: Initializing BossSpellWorker object for boss %u",bossID);
+     Map* pMap = boss->GetMap();
+     currentDifficulty = pMap->GetDifficulty();
      LoadSpellTable();
 };
 

@@ -40,7 +40,8 @@ enum BossSpells
 {
 SPELL_COLD              = 66013,
 SPELL_MARK              = 67574,
-SPELL_LEECHING_SWARM    = 67630,
+SPELL_LEECHING_SWARM    = 66118,
+SPELL_LEECHING_HEAL     = 66125,
 SPELL_IMPALE            = 65922,
 SPELL_POUND             = 66012,
 SPELL_SHOUT             = 67730,
@@ -166,6 +167,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
                     bsw->timedCast(SPELL_COLD, uiDiff);
                     if (bsw->timedQuery(SPELL_LEECHING_SWARM, uiDiff)) {
                             bsw->doCast(SPELL_LEECHING_SWARM);
+                            bsw->doCast(SPELL_LEECHING_HEAL);
                             DoScriptText(-1713561,m_creature);
                             }
                         break;}

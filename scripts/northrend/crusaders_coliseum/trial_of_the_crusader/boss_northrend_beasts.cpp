@@ -71,8 +71,9 @@ SPELL_FIRE_BOMB_1      = 66317,
 SPELL_FIRE_BOMB_DOT    = 66318,
 SPELL_HEAD_CRACK       = 66407,
 SPELL_SUBMERGE_0       = 53421,
-SPELL_BERSERK          = 26662,
 SPELL_ENRAGE           = 68335,
+SPELL_FROTHING_RAGE    = 66759,
+SPELL_STAGGERED_DAZE   = 66758,
 };
 
 struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
@@ -308,6 +309,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
                         bsw->doRemove(SPELL_SUBMERGE_0);
+                        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         bsw->doCast(SPELL_ENRAGE);
                         enraged = true;
                         stage = 0;
@@ -422,6 +424,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
                         bsw->doRemove(SPELL_SUBMERGE_0);
+                        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         bsw->doCast(SPELL_ENRAGE);
                         enraged = true;
                         stage = 0;
@@ -448,6 +451,13 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     uint8 Difficulty;
     BossSpellWorker* bsw;
+    bool MovementStarted;
+    bool TrampleCasted;
+    uint8 stage;
+    float fPosX, fPosY, fPosZ;
+    std::list<WayPoints> WayPointList;
+    std::list<WayPoints>::iterator WayPoint;
+    Unit* pTarget;
 
     void Reset() {
         if(!m_pInstance) return;
@@ -455,12 +465,40 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         bsw = new BossSpellWorker(this);
         bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
+        MovementStarted = false;
+        stage = 0;
     }
 
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ICEHOWL_DONE);
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if(!m_pInstance) return;
+        if(type != POINT_MOTION_TYPE) return;
+        if(WayPoint->id == id) 
+        {
+              ++WayPoint;
+              if (WayPoint != WayPointList.end()) 
+                    m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
+        }
+    }
+
+    void StartMovement()
+    {
+        if(!WayPointList.empty() || MovementStarted) return;
+        WayPoint = WayPointList.begin();
+        MovementStarted = true;
+        m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
+    }
+
+    void AddWaypoint(uint32 id, float x, float y, float z)
+    {
+        WayPoints wp(id, x, y, z);
+        WayPointList.push_back(wp);
     }
 
     void JustReachedHome()
@@ -481,22 +519,90 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_FEROCIOUS_BUTT, uiDiff);
+        switch (stage) 
+        {
+        case 0: {
+                 bsw->timedCast(SPELL_FEROCIOUS_BUTT, uiDiff);
 
-        bsw->timedCast(SPELL_ARCTIC_BREATH, uiDiff);
+                 bsw->timedCast(SPELL_ARCTIC_BREATH, uiDiff);
 
-        bsw->timedCast(SPELL_WHIRL, uiDiff);
+                 bsw->timedCast(SPELL_WHIRL, uiDiff);
 
-        if (bsw->timedQuery(SPELL_MASSIVE_CRASH, uiDiff))
-                        {
+                if (bsw->timedQuery(SPELL_MASSIVE_CRASH, uiDiff)) stage = 1;
+
+                bsw->timedCast(SPELL_FROTHING_RAGE, uiDiff);
+
+                DoMeleeAttackIfReady();
+
+                break;
+                }
+        case 1: {
                         bsw->doCast(SPELL_MASSIVE_CRASH);
                         DoScriptText(-1713506,m_creature,bsw->currentTarget);
+                        stage = 2;
+                 break;
+                }
+        case 2: {
+                        if (pTarget = bsw->SelectUnit()) {
+                        bsw->doCast(SPELL_MASSIVE_CRASH);
+                        m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                        AddWaypoint(0, fPosX, fPosY, fPosZ);
+                        pTarget->GetPosition(fPosX, fPosY, fPosZ);
+                        AddWaypoint(1, fPosX, fPosY, fPosZ);
+                        TrampleCasted = false;
+                        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        SetCombatMovement(false);
+//                        m_creature->GetMotionMaster()->MovementExpired(true);
+//                        m_creature->GetMotionMaster()->Clear();
+//                        m_creature->GetMotionMaster()->MoveIdle();
+                        stage = 3;
                         }
+                 break;
+                }
+        case 3: {
+                if (bsw->timedQuery(SPELL_TRAMPLE,uiDiff)) {
+                                    StartMovement();
+                                    DoScriptText(-1713506,m_creature,pTarget);
+                                    stage = 4;
+                                    }
+                break;
+                }
+        case 4: {
+                if (WayPoint != WayPointList.end())
+                    {
+                    Map* pMap = m_creature->GetMap();
+                    Map::PlayerList const &lPlayers = pMap->GetPlayers();
+                    for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+                    {
+                        Unit* pPlayer = itr->getSource();
+                        if (!pPlayer) continue;
+                        if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 5.0f)) {
+                                bsw->timedCast(SPELL_TRAMPLE, uiDiff, pPlayer);
+                                TrampleCasted = true;
+                                }
+                    }
 
-//        if (bsw->timedCast(SPELL_TRAMPLE, uiDiff) != CAST_OK)
-//                                DoScriptText(-1713507,m_creature);
+                    } else { stage = 5;
+                             MovementStarted = false;
+                           }
+                    if (TrampleCasted) stage = 5;
+                break;
+                }
+        case 5: {
+                if (!TrampleCasted) {
+                                    bsw->doCast(SPELL_STAGGERED_DAZE);
+                                    DoScriptText(-1713507,m_creature);
+                                    }
+                WayPointList.clear();
+//                m_creature->GetMotionMaster()->Clear();
+//                m_creature->GetMotionMaster()->MovementExpired(false);
+                SetCombatMovement(true);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                stage = 0;
+                break;
+                }
+        }
 
-        DoMeleeAttackIfReady();
     }
 };
 
