@@ -424,7 +424,7 @@ CanCastResult BossSpellWorker::_CanCastSpell(Unit* pTarget, const SpellEntry *pS
             return CAST_FAIL_POWER;
     }
 
-    if (const SpellRangeEntry *pSpellRange = sSpellRangeStore.LookupEntry(pSpell->rangeIndex))
+    if (const SpellRangeEntry *pSpellRange = GetSpellRangeStore()->LookupEntry(pSpell->rangeIndex))
     {
         if (pTarget != boss)
         {
@@ -457,7 +457,7 @@ CanCastResult BossSpellWorker::_DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, 
     // Allowed to cast only if not casting (unless we interrupt ourself) or if spell is triggered
     if (!pCaster->IsNonMeleeSpellCasted(false) || (uiCastFlags & (CAST_TRIGGERED | CAST_INTERRUPT_PREVIOUS)))
     {
-        if (const SpellEntry* pSpell = sSpellStore.LookupEntry(uiSpell))
+        if (const SpellEntry* pSpell = GetSpellStore()->LookupEntry(uiSpell))
         {
             // If cast flag CAST_AURA_NOT_PRESENT is active, check if target already has aura on them
             if (uiCastFlags & CAST_AURA_NOT_PRESENT)
@@ -484,7 +484,7 @@ CanCastResult BossSpellWorker::_DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, 
         }
         else
         {
-            sLog.outErrorDb("DoCastSpellIfCan by creature entry %u attempt to cast spell %u but spell does not exist.", boss->GetEntry(), uiSpell);
+            error_log("bsw->DoCastSpellIfCan by creature entry %u attempt to cast spell %u but spell does not exist.", boss->GetEntry(), uiSpell);
             return CAST_FAIL_OTHER;
         }
     }
