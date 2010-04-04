@@ -53,7 +53,7 @@ SPELL_PARALYTIC_SPRAY  = 66901,
 SPELL_ACID_SPEW        = 66819,
 SPELL_PARALYTIC_BITE   = 66824,
 SPELL_SWEEP_0          = 66794,
-SPELL_SLIME_POOL       = 67642,
+SPELL_SLIME_POOL       = 66883,
 SPELL_FIRE_SPIT        = 66796,
 SPELL_MOLTEN_SPEW      = 66821,
 SPELL_BURNING_BITE     = 66879,
@@ -277,8 +277,8 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
                     break;}
         case 1: {
-                    bsw->doCast(SPELL_SUBMERGE_0);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    bsw->doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
@@ -299,8 +299,8 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     bsw->doRemove(SPELL_SUBMERGE_0);
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 0;
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
                     break;}
@@ -392,8 +392,8 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
 
                     break;}
         case 1: {
-                    bsw->doCast(SPELL_SUBMERGE_0);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    bsw->doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
@@ -414,8 +414,8 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
-                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     bsw->doRemove(SPELL_SUBMERGE_0);
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 0;
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
                     break;}
@@ -484,6 +484,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
               ++WayPoint;
               if (WayPoint != WayPointList.end()) 
                     m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
+                    else  MovementStarted = false;
         }
     }
 
@@ -568,7 +569,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 break;
                 }
         case 4: {
-                if (WayPoint != WayPointList.end())
+                if (MovementStarted = true)
                     {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
@@ -582,9 +583,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                                 }
                     }
 
-                    } else { stage = 5;
-                             MovementStarted = false;
-                           }
+                    } else stage = 5;
                     if (TrampleCasted) stage = 5;
                 break;
                 }

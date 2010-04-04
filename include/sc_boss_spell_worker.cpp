@@ -20,6 +20,7 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
         else currentDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
      debug_log("BSW: Initializing BossSpellWorker object for boss %u difficulty %u",bossID,currentDifficulty);
      LoadSpellTable();
+     Reset(currentDifficulty);
 };
 
 BossSpellWorker::~BossSpellWorker()
@@ -30,10 +31,15 @@ BossSpellWorker::~BossSpellWorker()
 void BossSpellWorker::Reset(uint8 _Difficulty)
 {
     currentDifficulty = setDifficulty(_Difficulty);
-    for (uint8 i = 0; i < bossSpellCount; ++i)
-        if (m_BossSpell[i].m_uiSpellTimerMin[currentDifficulty] != m_BossSpell[i].m_uiSpellTimerMax[currentDifficulty])
-                m_uiSpell_Timer[i] = urand(0,m_BossSpell[i].m_uiSpellTimerMax[currentDifficulty]);
-                else m_uiSpell_Timer[i] = m_BossSpell[i].m_uiSpellTimerMin[currentDifficulty];
+    resetTimers();
+};
+
+void BossSpellWorker::_resetTimer(uint8 m_uiSpellIdx)
+{
+    if (m_uiSpellIdx > bossSpellCount) return;
+    if (m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMin[currentDifficulty] != m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMax[currentDifficulty])
+            m_uiSpell_Timer[m_uiSpellIdx] = urand(0,m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMax[currentDifficulty]);
+                else m_uiSpell_Timer[m_uiSpellIdx] = m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMin[currentDifficulty];
 };
 
 void BossSpellWorker::LoadSpellTable()
@@ -277,7 +283,7 @@ uint8 BossSpellWorker::FindSpellIDX(uint32 SpellID)
       for(uint8 i = 0; i < bossSpellCount; ++i)
         if (m_BossSpell[i].m_uiSpellEntry[RAID_DIFFICULTY_10MAN_NORMAL] == SpellID) return i;
 
-    error_log("BSW: spell not found in spelltable. Memory or database error?");
+    error_log("BSW: spell %u not found  in boss %u spelltable. Memory or database error?", SpellID, bossID);
     return SPELL_INDEX_ERROR;
 }
 

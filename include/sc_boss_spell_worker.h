@@ -97,6 +97,17 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         void Reset(uint8 _Difficulty = 0);
 
+        void resetTimer(uint32 SpellID)
+             {
+             return _resetTimer(FindSpellIDX(SpellID));
+             };
+
+        void resetTimers()
+             {
+             for (uint8 i = 0; i < bossSpellCount; ++i)
+                  _resetTimer(i);
+             };
+
         bool timedQuery(uint32 SpellID, uint32 diff)
              {
              return _QuerySpellPeriod(FindSpellIDX(SpellID), diff);
@@ -147,6 +158,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         uint8         FindSpellIDX(uint32 SpellID);
 
         void          LoadSpellTable();
+
+        void          _resetTimer(uint8 m_uiSpellIdx);
 
         bool          isSummon(uint8 m_uiSpellIdx);
 
