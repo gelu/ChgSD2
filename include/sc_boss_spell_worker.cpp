@@ -2,6 +2,7 @@
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 #include "sc_boss_spell_worker.h"
+#include "precompiled.h"
 #ifdef DEF_BOSS_SPELL_WORKER_H
 
 extern DatabaseType SD2Database;
@@ -10,13 +11,14 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
 {
      boss = bossAI->m_creature;
      bossID = boss->GetEntry();
-     debug_log("BSW: Initializing BossSpellWorker object for boss %u",bossID);
      bossSpellCount = 0;
      currentTarget = NULL;
      memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
      memset(&m_BossSpell,0,sizeof(m_BossSpell));
-     Map* pMap = boss->GetMap();
-     currentDifficulty = pMap->GetDifficulty();
+     if (Map* pMap = boss->GetMap())
+              currentDifficulty = pMap->GetDifficulty();
+        else currentDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
+     debug_log("BSW: Initializing BossSpellWorker object for boss %u difficulty %u",bossID,currentDifficulty);
      LoadSpellTable();
 };
 
@@ -318,9 +320,11 @@ BossSpellTableParameters BossSpellWorker::getBSWCastType(uint32 pTemp)
 CanCastResult BossSpellWorker::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 {
     if (!pTarget) return CAST_FAIL_OTHER;
+    if (!pTarget->isAlive()) return CAST_FAIL_OTHER;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
     debug_log("BSW: Casting bugged spell number %u type %u",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
     pTarget->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
+         return CAST_OK;
 };
 
 void BossSpellWorker::_fillEmptyDataField()
@@ -484,7 +488,7 @@ CanCastResult BossSpellWorker::_DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, 
         }
         else
         {
-            error_log("bsw->DoCastSpellIfCan by creature entry %u attempt to cast spell %u but spell does not exist.", boss->GetEntry(), uiSpell);
+            error_log("BSW: DoCastSpellIfCan by creature entry %u attempt to cast spell %u but spell does not exist.", boss->GetEntry(), uiSpell);
             return CAST_FAIL_OTHER;
         }
     }
@@ -522,6 +526,7 @@ Unit*  BossSpellWorker::_SelectUnit(SelectAggroTarget target, uint32 uiPosition)
             break;
     }
 
+    error_log("BSW: Cannot find target for spell :(");
     return NULL;
 }
 
