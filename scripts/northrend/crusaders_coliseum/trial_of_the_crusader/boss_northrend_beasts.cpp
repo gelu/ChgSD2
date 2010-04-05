@@ -524,7 +524,6 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 if (bsw->timedQuery(SPELL_TRAMPLE,uiDiff)) {
                                     pTarget->GetPosition(fPosX, fPosY, fPosZ);
                                     TrampleCasted = false;
-                                    StartMovement();
                                     MovementStarted = true;
                                     m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
                                     DoScriptText(-1713508,m_creature);
