@@ -17,10 +17,9 @@ Script *m_scripts[MAX_SCRIPTS];
 
 Config SD2Config;
 
-std::string _strSD2DBinfoString;
-std::string strSD2DBinfoString()
+QueryResult* strSD2Pquery(char* str)
 {
-return _strSD2DBinfoString;
+return SD2Database.Query(str);
 }
 
 void FillSpellSummary();
@@ -29,7 +28,6 @@ void LoadDatabase()
 {
 
     std::string strSD2DBinfo = SD2Config.GetStringDefault("ScriptDev2DatabaseInfo", "");
-    _strSD2DBinfoString = strSD2DBinfo;
 
     if (strSD2DBinfo.empty())
     {
@@ -53,9 +51,6 @@ void LoadDatabase()
         error_log("SD2: Unable to connect to Database. Load database aborted.");
         return;
     }
-
-    SD2Database.HaltDelayThread();
-
 }
 
 struct TSpellSummary {
@@ -74,6 +69,7 @@ void ScriptsFree()
         delete m_scripts[i];
 
     num_sc_scripts = 0;
+    SD2Database.HaltDelayThread();
 }
 
 MANGOS_DLL_EXPORT
