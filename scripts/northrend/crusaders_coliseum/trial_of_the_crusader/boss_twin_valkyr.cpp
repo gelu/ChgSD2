@@ -78,18 +78,15 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     uint8 stage;
     BossSpellWorker* bsw;
 
     void Reset() {
         if(!m_pInstance) return;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -168,19 +165,16 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     uint8 stage;
     BossSpellWorker* bsw;
 
     void Reset() 
     {
         if(!m_pInstance) return;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -253,11 +247,9 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
     Reset();
     }
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
 
     void Reset() 
     {
-    Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
     m_creature->SetRespawnDelay(DAY);
     m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     m_creature->GetMotionMaster()->MoveRandom();
@@ -292,7 +284,6 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
     if(!pInstance) return true;
-    uint8 Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
         player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_DARK_ESSENCE);
         player->CastSpell(player,SPELL_LIGHT_ESSENCE,false);
@@ -307,11 +298,9 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
     Reset();
     }
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
 
     void Reset() 
     {
-    Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
     m_creature->SetRespawnDelay(DAY);
     m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     m_creature->GetMotionMaster()->MoveRandom();
@@ -345,7 +334,6 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
     if(!pInstance) return true;
-    uint8 Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_LIGHT_ESSENCE);
         player->CastSpell(player,SPELL_DARK_ESSENCE,false);

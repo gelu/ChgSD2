@@ -546,7 +546,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     UpdateTimer = 8000;
                     break;
                case 1140:
-                    m_creature->GetMap()->CreatureRelocation(m_creature, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z,0);
+                    m_creature->GetMotionMaster()->MovementExpired();
                     pInstance->SetData(TYPE_STAGE,4);
                     pInstance->SetData(TYPE_JARAXXUS,IN_PROGRESS);
                           m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -636,7 +636,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
         case 150:
                 m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
                 if (pInstance->GetData(TYPE_BEASTS) != DONE) {
-                      m_creature->SummonCreature(NPC_GORMOK, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                      m_creature->SummonCreature(NPC_GORMOK, SpawnLoc[26].x, SpawnLoc[26].y, SpawnLoc[26].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_GORMOK))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
@@ -654,6 +654,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                DoScriptText(-1713503, m_creature);
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,210);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
 
         case 210:
@@ -673,15 +674,17 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                         }
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,220);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
         case 300:
                DoScriptText(-1713505, m_creature);
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,310);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
         case 310:
                 if (pInstance->GetData(TYPE_BEASTS) != DONE) {
-                        m_creature->SummonCreature(NPC_ICEHOWL, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                        m_creature->SummonCreature(NPC_ICEHOWL, SpawnLoc[26].x, SpawnLoc[26].y, SpawnLoc[26].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ICEHOWL))) {
                                 pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
@@ -690,6 +693,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                         }
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,320);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
         case 400:
                DoScriptText(-1713509, m_creature);
@@ -872,6 +876,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                             }
                UpdateTimer = 3000;
                pInstance->SetData(TYPE_EVENT,3095);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
 
 //summoning crusaders
@@ -1006,6 +1011,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                               }
                UpdateTimer = 3000;
                pInstance->SetData(TYPE_EVENT,3095);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
 
 //Crusaders battle end
@@ -1024,6 +1030,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                DoScriptText(-1713537, m_creature);
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,4015);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
 
         case 4015:
@@ -1043,6 +1050,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                                 }
                UpdateTimer = 10000;
                pInstance->SetData(TYPE_EVENT,4016);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
 
         case 4040:
@@ -1105,7 +1113,7 @@ struct MANGOS_DLL_DECL npc_garrosh_tocAI : public ScriptedAI
         Reset();
     }
 
-    InstanceData* pInstance;
+    ScriptedInstance* pInstance;
     uint32 UpdateTimer;
 
     void Reset()
@@ -1159,6 +1167,7 @@ struct MANGOS_DLL_DECL npc_garrosh_tocAI : public ScriptedAI
                DoScriptText(-1713734, m_creature);
                UpdateTimer = 5000;
                pInstance->SetData(TYPE_EVENT,3091);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
         case 4030:
                DoScriptText(-1713748, m_creature);
@@ -1184,7 +1193,7 @@ struct MANGOS_DLL_DECL npc_rinn_tocAI : public ScriptedAI
         Reset();
     }
 
-    InstanceData* pInstance;
+    ScriptedInstance* pInstance;
     uint32 UpdateTimer;
 
     void Reset()
@@ -1238,6 +1247,7 @@ struct MANGOS_DLL_DECL npc_rinn_tocAI : public ScriptedAI
                DoScriptText(-1713534, m_creature);
                UpdateTimer = 5000;
                pInstance->SetData(TYPE_EVENT,3090);
+               pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
         case 4020:
                DoScriptText(-1713548, m_creature);

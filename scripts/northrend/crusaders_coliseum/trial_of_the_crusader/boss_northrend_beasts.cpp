@@ -85,16 +85,13 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     uint8 SnoboldsCount;
     BossSpellWorker* bsw; 
 
     void Reset() {
 
         if(!m_pInstance) return;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetInCombatWithZone();
@@ -152,7 +149,6 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
     Unit* pBoss;
     Unit* defaultTarget;
@@ -160,8 +156,6 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     void Reset()
     {
         bsw = new BossSpellWorker(this);
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        bsw->Reset(Difficulty);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));
@@ -219,19 +213,16 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
     uint8 stage;
     bool enraged;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         stage = 1;
         enraged = false;
         m_creature->SetInCombatWithZone();
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -290,12 +281,8 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
                 bsw->timedCast(SPELL_SWEEP_0, uiDiff);
 
-                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED) 
-                    m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
-
-                if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != ACIDMAW_SUBMERGED) 
+                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
                         stage = 3;
-
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
@@ -308,6 +295,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
+                        DoScriptText(-1713559,m_creature);
                         bsw->doRemove(SPELL_SUBMERGE_0);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         bsw->doCast(SPELL_ENRAGE);
@@ -315,7 +303,6 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                         stage = 0;
                         DoScriptText(-1713504,m_creature);
                         };
-
 
         DoMeleeAttackIfReady();
     }
@@ -335,19 +322,16 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
     uint8 stage;
     bool enraged;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         stage = 0;
         enraged = false;
         m_creature->SetInCombatWithZone();
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -399,6 +383,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
                     break;}
         case 2: {
+
                 bsw->timedCast(SPELL_FIRE_SPIT, uiDiff);
 
                 bsw->timedCast(SPELL_BURNING_SPRAY, uiDiff);
@@ -406,11 +391,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                 bsw->timedCast(SPELL_SWEEP_0, uiDiff);
 
                 if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED) 
-                    m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
-
-                if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != DREADSCALE_SUBMERGED)
-                    stage = 3;
-
+                         stage = 3;
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
@@ -423,6 +404,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
 
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
+                        DoScriptText(-1713559,m_creature);
                         bsw->doRemove(SPELL_SUBMERGE_0);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         bsw->doCast(SPELL_ENRAGE);
@@ -449,21 +431,16 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
     bool MovementStarted;
     bool TrampleCasted;
     uint8 stage;
     float fPosX, fPosY, fPosZ;
-    std::list<WayPoints> WayPointList;
-    std::list<WayPoints>::iterator WayPoint;
     Unit* pTarget;
 
     void Reset() {
         if(!m_pInstance) return;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
         MovementStarted = false;
         stage = 0;
@@ -479,27 +456,16 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     {
         if(!m_pInstance) return;
         if(type != POINT_MOTION_TYPE) return;
-        if(WayPoint->id == id) 
+        if(id != 1 && MovementStarted) 
         {
-              ++WayPoint;
-              if (WayPoint != WayPointList.end()) 
-                    m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
-                    else  MovementStarted = false;
+             m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
         }
-    }
-
-    void StartMovement()
-    {
-        if(!WayPointList.empty() || MovementStarted) return;
-        WayPoint = WayPointList.begin();
-        MovementStarted = true;
-        m_creature->GetMotionMaster()->MovePoint(WayPoint->id, WayPoint->x, WayPoint->y,WayPoint->z);
-    }
-
-    void AddWaypoint(uint32 id, float x, float y, float z)
-    {
-        WayPoints wp(id, x, y, z);
-        WayPointList.push_back(wp);
+        else    {
+                m_creature->GetMotionMaster()->MovementExpired();
+                MovementStarted = false;
+                SetCombatMovement(true);
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                }
     }
 
     void JustReachedHome()
@@ -538,38 +504,36 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 break;
                 }
         case 1: {
-                        bsw->doCast(SPELL_MASSIVE_CRASH);
-                        DoScriptText(-1713506,m_creature,bsw->currentTarget);
-                        stage = 2;
+                         if (bsw->doCast(SPELL_MASSIVE_CRASH) == CAST_OK);
+                             stage = 2;
                  break;
                 }
         case 2: {
                         if (pTarget = bsw->SelectUnit()) {
-                        bsw->doCast(SPELL_MASSIVE_CRASH);
-                        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                        AddWaypoint(0, fPosX, fPosY, fPosZ);
-                        pTarget->GetPosition(fPosX, fPosY, fPosZ);
-                        AddWaypoint(1, fPosX, fPosY, fPosZ);
                         TrampleCasted = false;
                         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        SetCombatMovement(false);
-//                        m_creature->GetMotionMaster()->MovementExpired(true);
-//                        m_creature->GetMotionMaster()->Clear();
-//                        m_creature->GetMotionMaster()->MoveIdle();
                         stage = 3;
+                        bsw->resetTimer(SPELL_TRAMPLE);
+                        DoScriptText(-1713506,m_creature,pTarget);
+                        SetCombatMovement(false);
+                        m_creature->GetMotionMaster()->MoveIdle();
                         }
                  break;
                 }
         case 3: {
                 if (bsw->timedQuery(SPELL_TRAMPLE,uiDiff)) {
+                                    pTarget->GetPosition(fPosX, fPosY, fPosZ);
+                                    TrampleCasted = false;
                                     StartMovement();
-                                    DoScriptText(-1713506,m_creature,pTarget);
+                                    MovementStarted = true;
+                                    m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
+                                    DoScriptText(-1713508,m_creature);
                                     stage = 4;
                                     }
                 break;
                 }
         case 4: {
-                if (MovementStarted = true)
+                if (MovementStarted)
                     {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
@@ -578,9 +542,12 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                         Unit* pPlayer = itr->getSource();
                         if (!pPlayer) continue;
                         if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 5.0f)) {
-                                bsw->timedCast(SPELL_TRAMPLE, uiDiff, pPlayer);
+                                bsw->doCast(SPELL_TRAMPLE, pPlayer);
                                 TrampleCasted = true;
-                                }
+                                MovementStarted = false;
+                                m_creature->GetMotionMaster()->MovementExpired();
+                                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                            }
                     }
 
                     } else stage = 5;
@@ -592,9 +559,9 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                                     bsw->doCast(SPELL_STAGGERED_DAZE);
                                     DoScriptText(-1713507,m_creature);
                                     }
-                WayPointList.clear();
-//                m_creature->GetMotionMaster()->Clear();
-//                m_creature->GetMotionMaster()->MovementExpired(false);
+                MovementStarted = false;
+                m_creature->GetMotionMaster()->MovementExpired();
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                 SetCombatMovement(true);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 stage = 0;

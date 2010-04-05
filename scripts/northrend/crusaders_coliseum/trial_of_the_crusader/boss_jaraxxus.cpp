@@ -96,7 +96,6 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
             m_volcanoCount = 4;
         }
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         DoScriptText(-1713517,m_creature);
         m_creature->SetRespawnDelay(DAY);
     }
@@ -273,7 +272,6 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
             m_Count = 6;
         }
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
     }
 
     void AttackStart(Unit *who)
@@ -326,16 +324,13 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -454,16 +449,13 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)

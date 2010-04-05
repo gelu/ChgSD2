@@ -67,7 +67,6 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     uint8 stage;
     uint32 SubmergeTimer;
     bool intro;
@@ -77,9 +76,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         if(!m_pInstance) return;
         stage = 0;
         intro = true;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -197,16 +194,13 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     BossSpellWorker* bsw;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -253,19 +247,16 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     bool submerged;
     BossSpellWorker* bsw;
     Unit* currentTarget;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         submerged = false;
         bsw = new BossSpellWorker(this);
-        bsw->Reset(Difficulty);
     }
 
     void KilledUnit(Unit* pVictim)
