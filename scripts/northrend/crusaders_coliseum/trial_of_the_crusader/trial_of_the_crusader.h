@@ -29,6 +29,7 @@ enum
 
     NPC_THRALL                  = 34994,
     NPC_PROUDMOORE              = 34992,
+    NPC_PORTAL                  = 19224,
 
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 34796,
@@ -128,6 +129,7 @@ static Locations SpawnLoc[]=
     {541.021118, 117.262932, 395.314819}, // 24 - Light essence 1
     {586.200562, 162.145523, 394.626129}, // 25 - Light essence 2
     {563.833008, 195.244995, 394.585561}, // 26 - outdoor
+    {548.610596, 139.807800, 394.321838}, // 27 - fizzlebang end
 };
 
 enum uiWorldStates

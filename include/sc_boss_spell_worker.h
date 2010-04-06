@@ -41,6 +41,7 @@ enum BossSpellTableParameters
   SUMMON_NORMAL             =  9,
   SUMMON_INSTANT            = 10,
   SUMMON_TEMP               = 11,
+  CAST_ON_ALLPLAYERS        = 12,
   SPELLTABLEPARM_NUMBER
 };
 
@@ -191,6 +192,7 @@ class MANGOS_DLL_DECL BossSpellWorker
            Difficulty currentDifficulty;
            uint32 m_uiSpell_Timer[MAX_BOSS_SPELLS];
            SpellTable m_BossSpell[MAX_BOSS_SPELLS];
+           Map* pMap;
 };
 
 #endif

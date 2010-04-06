@@ -471,6 +471,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 1110:
                                  case 1120:
                                  case 1130:
+                                 case 1135:
                                  case 1140:
                                  case 1150:
                                  case 1160:

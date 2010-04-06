@@ -19,10 +19,15 @@
 
 /* ScriptData
 SDName: northrend_beasts
-SD%Complete: 60% 
+SD%Complete: 90% 
 SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
+
+// not implemented:
+// snobolds link
+// snakes underground cast (not support in core)
+// aura 31 (SPELL_ADRENALINE) not applyed by undefined reason
 
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
@@ -64,6 +69,7 @@ SPELL_MASSIVE_CRASH    = 66683,
 SPELL_WHIRL            = 67345,
 SPELL_ARCTIC_BREATH    = 66689,
 SPELL_TRAMPLE          = 66734,
+SPELL_ADRENALINE       = 68667,
 SPELL_SNOBOLLED        = 66406,
 SPELL_BATTER           = 66408,
 SPELL_FIRE_BOMB        = 66313,
@@ -180,7 +186,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
     if (defaultTarget && defaultTarget->isAlive()) bsw->doRemove(SPELL_SNOBOLLED, defaultTarget);
-      if (pBoss && pBoss->isAlive()) bsw->doRemove(SPELL_RISING_ANGER,pBoss);
+//      if (pBoss && pBoss->isAlive()) bsw->doRemove(SPELL_RISING_ANGER,pBoss);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -443,7 +449,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
     {
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetInCombatWithZone();
-        m_creature->SetSpeedRate(MOVE_RUN, 0.1);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.08f);
         bsw = new BossSpellWorker(this);
         bsw->doCast(SPELL_SLIME_POOL_2);
         m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
@@ -455,7 +461,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
             if (bsw->timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
-                m_Size = m_Size*1.025;
+                m_Size = m_Size*1.035;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }
     }
@@ -572,6 +578,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                                     MovementStarted = true;
                                     m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
                                     DoScriptText(-1713508,m_creature);
+                                    bsw->doCast(SPELL_ADRENALINE);
                                     stage = 4;
                                     }
                 break;

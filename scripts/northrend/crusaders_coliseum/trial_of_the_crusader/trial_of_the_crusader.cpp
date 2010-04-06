@@ -502,21 +502,23 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
     {
         pInstance = (ScriptedInstance*)m_creature->GetInstanceData();
         Reset();
-        m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
     }
 
     InstanceData* pInstance;
     uint32 UpdateTimer;
+    Creature* pPortal;
 
     void JustDied(Unit* pKiller)
     {
         DoScriptText(-1713715, m_creature, pKiller);
         pInstance->SetData(TYPE_EVENT, 1180);
+        pPortal->ForcedDespawn();
     }
 
     void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
+        m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[27].x, SpawnLoc[27].y, SpawnLoc[27].z);
     }
 
     void UpdateAI(const uint32 diff)
@@ -532,8 +534,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
               {
                case 1110:
                     pInstance->SetData(TYPE_EVENT, 1120);
-                    m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                    UpdateTimer = 7000;
+                    UpdateTimer = 4000;
                     break;
                case 1120:
                     DoScriptText(-1713511, m_creature);
@@ -541,18 +542,24 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     UpdateTimer = 12000;
                     break;
                case 1130:
+                    m_creature->GetMotionMaster()->MovementExpired();
+                    pPortal = m_creature->SummonCreature(NPC_PORTAL, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                     DoScriptText(-1713512, m_creature);
+                    pInstance->SetData(TYPE_EVENT, 1135);
+                    UpdateTimer = 4000;
+                    break;
+               case 1135:
+                    m_creature->GetMotionMaster()->MovementExpired();
+                    pPortal->SetDisplayId(15900);
                     pInstance->SetData(TYPE_EVENT, 1140);
-                    UpdateTimer = 8000;
+                    UpdateTimer = 4000;
                     break;
                case 1140:
-                    m_creature->GetMotionMaster()->MovementExpired();
+                    m_creature->CastSpell(pPortal,69016,false);
                     pInstance->SetData(TYPE_STAGE,4);
                     pInstance->SetData(TYPE_JARAXXUS,IN_PROGRESS);
-                          m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                          m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_JARAXXUS))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                                 pTemp->SetInCombatWithZone();
                                 m_creature->SetInCombatWith(pTemp);
                                 pTemp->AddThreat(m_creature, 1000.0f);
@@ -569,11 +576,9 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                case 1160:
                     DoScriptText(-1713515, m_creature);
                     pInstance->SetData(TYPE_EVENT, 1170);
-                    DoCast(m_creature, 58291);
                     UpdateTimer = 1000;
                     break;
                case 1170:
-                    DoCastSpellIfCan(m_creature, 58291);
                     pInstance->SetData(TYPE_EVENT, 1175);
                     UpdateTimer = 1000;
                     break;

@@ -15,7 +15,7 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
      currentTarget = NULL;
      memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
      memset(&m_BossSpell,0,sizeof(m_BossSpell));
-     if (Map* pMap = boss->GetMap())
+     if (pMap = boss->GetMap())
               currentDifficulty = pMap->GetDifficulty();
         else currentDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
      debug_log("BSW: Initializing BossSpellWorker object for boss %u difficulty %u",bossID,currentDifficulty);
@@ -128,7 +128,7 @@ bool BossSpellWorker::_QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff)
     };
 
 CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget)
-    {
+{
     if (bossSpellCount == 0) return CAST_FAIL_OTHER;
     SpellEntry const *spell;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
@@ -212,11 +212,32 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                           else return CAST_FAIL_OTHER;
                    break;
 
+            case CAST_ON_ALLPLAYERS:
+            {
+                    CanCastResult res1 = CAST_FAIL_OTHER;
+                    Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                    for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                    {
+                        pTarget = itr->getSource();
+                        if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(boss, pSpell->LocData.x))
+                                    if (!pSpell->m_IsBugged) {
+                                         res1 = _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                                         }
+                                         else {
+                                          _BSWDoCast(m_uiSpellIdx, pTarget);
+                                          res1 = CAST_OK;
+                                          };
+                            return res1;
+                     }
+                   break;
+            }
+
             default:
                    return CAST_FAIL_OTHER;
+                   break;
             };
     return CAST_FAIL_OTHER;
-    };
+};
 
 bool BossSpellWorker::isSummon(uint8 m_uiSpellIdx)
 {
@@ -273,7 +294,8 @@ BossSpellTableParameters BossSpellWorker::getBSWCastType(uint32 pTemp)
                 case 9:  return SUMMON_NORMAL;
                 case 10: return SUMMON_INSTANT;
                 case 11: return SUMMON_TEMP;
-                case 12: return SPELLTABLEPARM_NUMBER;
+                case 12: return CAST_ON_ALLPLAYERS;
+                case 13: return SPELLTABLEPARM_NUMBER;
      default: return DO_NOTHING;
      };
 };
@@ -348,6 +370,19 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget)
                 case APPLY_AURA_TARGET:
                      if (!pTarget) return false;
                      break;
+
+                case CAST_ON_ALLPLAYERS:
+                  {
+                    Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                    for(Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                      {
+                        pTarget = itr->getSource();
+                        if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(boss, pSpell->LocData.x))
+                            pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+                       }
+                        return true;
+                   break;
+                   }
 
                   default: return false;
           }
