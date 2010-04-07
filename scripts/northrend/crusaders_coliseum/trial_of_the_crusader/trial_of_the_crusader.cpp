@@ -340,6 +340,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
     std::list<WayPoints>::iterator WayPoint;
     uint32 WalkTimer;
     bool IsWalking;
+    Creature* pPortal;
 
     void Reset()
     {
@@ -348,6 +349,8 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
         Event = false;
         MovementStarted = false;
         m_creature->SetRespawnDelay(DAY);
+        pPortal = m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+        pPortal->CastSpell(pPortal, 51807, false);
     }
 
     void AttackStart(Unit *who)
@@ -466,6 +469,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
                pInstance->SetData(TYPE_STAGE,9);
                Event=false;
                m_creature->ForcedDespawn();
+               pPortal->ForcedDespawn();
                pInstance->SetData(TYPE_EVENT,5090);
                UpdateTimer = 20000;
                break;
@@ -544,6 +548,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                case 1130:
                     m_creature->GetMotionMaster()->MovementExpired();
                     pPortal = m_creature->SummonCreature(NPC_PORTAL, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                    pPortal->SetRespawnDelay(DAY);
                     DoScriptText(-1713512, m_creature);
                     pInstance->SetData(TYPE_EVENT, 1135);
                     UpdateTimer = 4000;

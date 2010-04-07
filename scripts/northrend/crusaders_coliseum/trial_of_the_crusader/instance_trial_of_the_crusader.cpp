@@ -40,9 +40,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     bool needsave;
 
     uint32 m_uiDataDamageFjola;
-    uint32 m_uiDataDamageFjola_t;
     uint32 m_uiDataDamageEydis;
-    uint32 m_uiDataDamageEydis_t;
     uint32 m_uiFjolaCasting;
     uint32 m_uiEydisCasting;
 
@@ -122,9 +120,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     m_uiTributeChest3GUID = 0;
     m_uiTributeChest4GUID = 0;
     m_uiDataDamageFjola = 0;
-    m_uiDataDamageFjola_t = 0;
     m_uiDataDamageEydis = 0;
-    m_uiDataDamageEydis_t = 0;
     m_uiLich0GUID = 0;
     m_uiLich1GUID = 0;
 
@@ -298,8 +294,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_EVENT:     m_auiEncounter[8] = uiData; uiData = NOT_STARTED; break;
         case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         case TYPE_NORTHREND_BEASTS: m_auiNorthrendBeasts = uiData; break;
-        case DATA_DAMAGE_FJOLA:     m_uiDataDamageFjola += uiData; uiData = NOT_STARTED; break;
-        case DATA_DAMAGE_EYDIS:     m_uiDataDamageEydis += uiData; uiData = NOT_STARTED; break;
+        case DATA_HEALTH_FJOLA:     m_uiDataDamageFjola = uiData; uiData = NOT_STARTED; break;
+        case DATA_HEALTH_EYDIS:     m_uiDataDamageEydis = uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_EYDIS:    m_uiEydisCasting = uiData; uiData = NOT_STARTED; break;
         }
@@ -486,12 +482,8 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  };
                                  return m_auiEventNPCId;
 
-        case DATA_DAMAGE_FJOLA: m_uiDataDamageFjola_t = m_uiDataDamageFjola;
-                                m_uiDataDamageFjola = 0;
-                                return m_uiDataDamageFjola_t;
-        case DATA_DAMAGE_EYDIS: m_uiDataDamageEydis_t = m_uiDataDamageEydis;
-                                m_uiDataDamageEydis = 0;
-                                return m_uiDataDamageEydis_t;
+        case DATA_HEALTH_FJOLA: return m_uiDataDamageFjola;
+        case DATA_HEALTH_EYDIS: return m_uiDataDamageEydis;
         case DATA_CASTING_FJOLA: return m_uiFjolaCasting;
         case DATA_CASTING_EYDIS: return m_uiEydisCasting;
         }

@@ -30,6 +30,7 @@ enum
     NPC_THRALL                  = 34994,
     NPC_PROUDMOORE              = 34992,
     NPC_PORTAL                  = 19224,
+    NPC_TRIGGER                 = 22517,
 
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 34796,
@@ -91,8 +92,8 @@ enum
     TYPE_EVENT_NPC              = 103,
     TYPE_NORTHREND_BEASTS       = 104,
 
-    DATA_DAMAGE_EYDIS           = 201,
-    DATA_DAMAGE_FJOLA           = 202,
+    DATA_HEALTH_EYDIS           = 201,
+    DATA_HEALTH_FJOLA           = 202,
     DATA_CASTING_EYDIS          = 203,
     DATA_CASTING_FJOLA          = 204,
 

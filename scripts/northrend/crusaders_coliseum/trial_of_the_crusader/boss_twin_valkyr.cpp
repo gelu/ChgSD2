@@ -21,8 +21,7 @@ SDComment: by /dev/rsa
 SDCategory: Crusader Coliseum
 EndScriptData */
 
-// Twin pact && shields not implemented
-// Shared health not fully correct worked
+// Twin pact && shields not worked now
 // timers need correct
 
 #include "precompiled.h"
@@ -50,19 +49,20 @@ enum BossSpells
     SPELL_TWIN_SPIKE_L     = 66075,
     SPELL_LIGHT_SURGE      = 65766,
     SPELL_SHIELD_LIGHT     = 65858,
-    SPELL_TWIN_PACT_L      = 65876,
+    SPELL_TWIN_PACT_L      = 65875,
     SPELL_LIGHT_VORTEX     = 66046,
     SPELL_LIGHT_TOUCH      = 67297,
     SPELL_TWIN_SPIKE_H     = 66069,
     SPELL_DARK_SURGE       = 65768,
     SPELL_SHIELD_DARK      = 65874,
-    SPELL_TWIN_PACT_H      = 65879,
+    SPELL_TWIN_PACT_H      = 65876,
     SPELL_DARK_VORTEX      = 66058,
     SPELL_DARK_TOUCH       = 67282,
     SPELL_TWIN_POWER       = 65916,
     SPELL_LIGHT_ESSENCE    = 65686,
     SPELL_DARK_ESSENCE     = 65684,
     SPELL_BERSERK          = 64238,
+    SPELL_NONE             = 0,
 };
 
 /*######
@@ -84,10 +84,9 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     void Reset() {
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
+        stage = 1;
     }
 
     void JustReachedHome()
@@ -105,6 +104,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_VALKIRIES, DONE);
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
+        m_pInstance->SetData(DATA_HEALTH_FJOLA, 0);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -117,31 +117,85 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         if (!m_pInstance) return;
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_VALKIRIES, IN_PROGRESS);
+        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[24].x, SpawnLoc[24].y, SpawnLoc[24].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         DoScriptText(-1713541,m_creature);
+        m_pInstance->SetData(DATA_HEALTH_FJOLA, m_creature->GetHealth());
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (!m_creature || !m_creature->isAlive())
             return;
-            m_pInstance->SetData(DATA_DAMAGE_FJOLA, uiDamage);
-            uiDamage += m_pInstance->GetData(DATA_DAMAGE_EYDIS);
+
+        if(pDoneBy->GetGUID() == m_creature->GetGUID()) return;
+
+        if(pDoneBy->GetTypeId() == TYPEID_PLAYER)
+        {
+            if(pDoneBy->HasAura(SPELL_LIGHT_ESSENCE))
+                uiDamage /= 2;
+            else if(pDoneBy->HasAura(SPELL_DARK_ESSENCE))
+                uiDamage += uiDamage/2;
+        }
+
+        uiDamage /= 2;
+
+        m_pInstance->SetData(DATA_HEALTH_FJOLA, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_LIGHT_SURGE, uiDiff);
-        bsw->timedCast(SPELL_LIGHT_TOUCH, uiDiff);
-        if (bsw->timedQuery(SPELL_LIGHT_VORTEX, uiDiff)) {
-            if (m_pInstance->GetData(DATA_CASTING_EYDIS) != SPELL_DARK_VORTEX) {
+        if (m_creature->GetHealth() > m_pInstance->GetData(DATA_HEALTH_EYDIS) &&
+                                      m_pInstance->GetData(DATA_HEALTH_EYDIS) != 0)
+                m_creature->SetHealth(m_pInstance->GetData(DATA_HEALTH_EYDIS));
+
+    switch (stage)
+        {
+         case 0:
+                break;
+         case 1:
+                if (bsw->timedQuery(SPELL_LIGHT_VORTEX, uiDiff)) {
+                    m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_LIGHT_VORTEX);
                     DoScriptText(-1713538,m_creature);
                     bsw->doCast(SPELL_LIGHT_VORTEX);
-                    m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_LIGHT_VORTEX);
-                    } else m_pInstance->SetData(DATA_CASTING_EYDIS, 0);
-                    }
+                    stage = 0;
+                    };
+                 break;
+          case 2:
+                 if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff) 
+                     && m_creature->GetHealthPercent() <= 30.0f
+                     && bsw->doCast(SPELL_SHIELD_LIGHT) == CAST_OK ) 
+                     {
+                            m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
+                            DoScriptText(-1713539,m_creature);
+                            bsw->doCast(SPELL_TWIN_PACT_L);
+                            stage = 0;
+                      }
+                 break;
+          default:
+                 break;
+         }
+
+    if (m_pInstance->GetData(DATA_CASTING_EYDIS) == SPELL_DARK_VORTEX && stage==0 )
+    {
+     m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_NONE);
+        stage = 1;
+    }
+
+    if (m_pInstance->GetData(DATA_CASTING_EYDIS) == SPELL_TWIN_PACT_H && stage== 0)
+    {
+        bsw->doCast(SPELL_TWIN_POWER);
+        m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_NONE);
+        stage = 2;
+    }
+
+        bsw->timedCast(SPELL_LIGHT_SURGE, uiDiff);
+
+        bsw->timedCast(SPELL_LIGHT_TOUCH, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -172,10 +226,9 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     {
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
+        stage = 0;
     }
 
     void JustReachedHome()
@@ -193,6 +246,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_VALKIRIES, DONE);
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
+        m_pInstance->SetData(DATA_HEALTH_EYDIS, 0);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -206,14 +260,29 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_VALKIRIES, IN_PROGRESS);
         DoScriptText(-1713741,m_creature);
+        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        m_pInstance->SetData(DATA_HEALTH_EYDIS, m_creature->GetHealth());
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (!m_creature || !m_creature->isAlive())
             return;
-            m_pInstance->SetData(DATA_DAMAGE_EYDIS, uiDamage);
-            uiDamage += m_pInstance->GetData(DATA_DAMAGE_FJOLA);
+
+        if(pDoneBy->GetGUID() == m_creature->GetGUID()) return;
+
+        if(pDoneBy->GetTypeId() == TYPEID_PLAYER)
+        {
+            if(pDoneBy->HasAura(SPELL_DARK_ESSENCE))
+                uiDamage /= 2;
+            else if(pDoneBy->HasAura(SPELL_LIGHT_ESSENCE))
+                uiDamage += uiDamage/2;
+        }
+
+        uiDamage /= 2;
+
+        m_pInstance->SetData(DATA_HEALTH_EYDIS, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -221,15 +290,54 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_DARK_SURGE, uiDiff);
-        bsw->timedCast(SPELL_DARK_TOUCH, uiDiff);
-        if (bsw->timedQuery(SPELL_DARK_VORTEX, uiDiff)) {
-            if (m_pInstance->GetData(DATA_CASTING_FJOLA) != SPELL_LIGHT_VORTEX) {
+        if (m_creature->GetHealth() > m_pInstance->GetData(DATA_HEALTH_FJOLA) &&
+                                      m_pInstance->GetData(DATA_HEALTH_FJOLA) != 0)
+                m_creature->SetHealth(m_pInstance->GetData(DATA_HEALTH_FJOLA));
+
+    switch (stage)
+        {
+         case 0:
+                break;
+         case 1:
+                if (bsw->timedQuery(SPELL_DARK_VORTEX, uiDiff)) {
+                    m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_DARK_VORTEX);
                     DoScriptText(-1713540,m_creature);
                     bsw->doCast(SPELL_DARK_VORTEX);
-                    m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_DARK_VORTEX);
-                    } else m_pInstance->SetData(DATA_CASTING_FJOLA, 0);
+                    if (m_creature->GetHealthPercent() <= 30.0f) stage == 2;
+                    else stage = 0;
                     };
+                 break;
+          case 2:
+                 if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff) 
+                     && m_creature->GetHealthPercent() <= 30.0f
+                     && bsw->doCast(SPELL_SHIELD_DARK) == CAST_OK ) 
+                     {
+                            m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
+                            DoScriptText(-1713539,m_creature);
+                            bsw->doCast(SPELL_TWIN_PACT_H);
+                            stage = 0;
+                      }
+                 break;
+          default:
+                 break;
+         }
+
+    if (m_pInstance->GetData(DATA_CASTING_FJOLA) == SPELL_LIGHT_VORTEX && stage==0 )
+    {
+     m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_NONE);
+        stage = 1;
+    }
+
+    if (m_pInstance->GetData(DATA_CASTING_FJOLA) == SPELL_TWIN_PACT_L && stage== 0)
+    {
+     bsw->doCast(SPELL_TWIN_POWER);
+     m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_NONE);
+        stage = 2;
+    }
+
+        bsw->timedCast(SPELL_DARK_SURGE, uiDiff);
+
+        bsw->timedCast(SPELL_DARK_TOUCH, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -258,7 +366,7 @@ struct MANGOS_DLL_DECL mob_light_essenceAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance) m_creature->ForcedDespawn();
-        if (m_pInstance->GetData(TYPE_VALKIRIES) == DONE || m_pInstance->GetData(TYPE_VALKIRIES) == NOT_STARTED) {
+        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
@@ -309,7 +417,7 @@ struct MANGOS_DLL_DECL mob_dark_essenceAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance) m_creature->ForcedDespawn();
-        if (m_pInstance->GetData(TYPE_VALKIRIES) == DONE || m_pInstance->GetData(TYPE_VALKIRIES) == NOT_STARTED) {
+        if (m_pInstance->GetData(TYPE_VALKIRIES) != IN_PROGRESS) {
                     Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)

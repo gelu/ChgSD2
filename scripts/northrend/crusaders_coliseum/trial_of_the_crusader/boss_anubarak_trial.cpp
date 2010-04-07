@@ -16,14 +16,14 @@
 
 /* ScriptData
 SDName: boss_anubarak_trial
-SD%Complete: 40%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory:
 EndScriptData */
 
-// Anubarak - underground phase not worked, timers need correct
+// Anubarak - underground phase partially not worked, timers need correct
 // Burrower - underground phase not implemented
-// Leecheng Swarm spell need override
+// Leecheng Swarm spell not worked - awaiting core support
 // Frost Sphere - realised by EventAI
 
 #include "precompiled.h"
@@ -34,6 +34,7 @@ enum Summons
     NPC_FROST_SPHERE     = 34606,
     NPC_BURROWER         = 34607,
     NPC_SCARAB           = 34605,
+    NPC_SPIKE            = 34660,
 };
 
 enum BossSpells
@@ -42,7 +43,9 @@ SPELL_COLD              = 66013,
 SPELL_MARK              = 67574,
 SPELL_LEECHING_SWARM    = 66118,
 SPELL_LEECHING_HEAL     = 66125,
+SPELL_LEECHING_DAMAGE   = 66240,
 SPELL_IMPALE            = 65922,
+SPELL_SPIKE_CALL        = 66169,
 SPELL_POUND             = 66012,
 SPELL_SHOUT             = 67730,
 SPELL_SUBMERGE_0        = 53421,
@@ -71,6 +74,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     uint32 SubmergeTimer;
     bool intro;
     BossSpellWorker* bsw;
+    Unit* pTarget;
 
     void Reset() {
         if(!m_pInstance) return;
@@ -142,9 +146,12 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
                     break;}
             case 2: {
                     if (bsw->timedQuery(SPELL_IMPALE, uiDiff)) {
-                         bsw->doCast(SPELL_IMPALE);
-                         bsw->doCast(SPELL_MARK);
-                         DoScriptText(-1713558,m_creature);
+                         pTarget = bsw->SelectUnit();
+//                         bsw->doCast(SPELL_IMPALE);
+                         bsw->doCast(SPELL_SPIKE_CALL);
+                         bsw->doCast(NPC_SPIKE);
+                         bsw->doCast(SPELL_MARK,pTarget);
+                         DoScriptText(-1713558,pTarget);
                          };
                     if (bsw->timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
                             bsw->doCast(SPELL_SUMMON_BEATLES);
@@ -160,13 +167,13 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
                     bsw->doRemove(SPELL_SUBMERGE_0,m_creature);
                     break;}
             case 4: {
-                    bsw->timedCast(SPELL_POUND, uiDiff);
-                    bsw->timedCast(SPELL_COLD, uiDiff);
-                    if (bsw->timedQuery(SPELL_LEECHING_SWARM, uiDiff)) {
                             bsw->doCast(SPELL_LEECHING_SWARM);
-                            bsw->doCast(SPELL_LEECHING_HEAL);
                             DoScriptText(-1713561,m_creature);
-                            }
+                    stage = 5;
+                    break;}
+            case 5: {
+                        bsw->timedCast(SPELL_POUND, uiDiff);
+                        bsw->timedCast(SPELL_COLD, uiDiff);
                         break;}
 
         }
