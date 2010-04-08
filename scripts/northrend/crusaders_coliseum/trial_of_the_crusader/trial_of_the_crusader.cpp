@@ -352,6 +352,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
         pPortal = m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
         pPortal->SetRespawnDelay(DAY);
         pPortal->CastSpell(pPortal, 51807, false);
+        pPortal->SetDisplayId(17612);
     }
 
     void AttackStart(Unit *who)

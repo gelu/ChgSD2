@@ -253,6 +253,16 @@ bool BossSpellWorker::isSummon(uint8 m_uiSpellIdx)
         };
 };
 
+bool BossSpellWorker::_hasAura(uint8 m_uiSpellIdx, Unit* pTarget)
+{
+    if (!pTarget) return false;
+
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    return (pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty]));
+
+};
+
 uint8 BossSpellWorker::FindSpellIDX(uint32 SpellID)
 {
     if (bossSpellCount != 0)

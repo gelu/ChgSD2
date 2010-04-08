@@ -331,6 +331,7 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     BossSpellWorker* bsw;
+    bool striked;
 
     void Reset()
     {
@@ -339,22 +340,26 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
         m_creature->SetSpeedRate(MOVE_RUN, 0.1f);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->GetMotionMaster()->MoveRandom();
+        striked = false;
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (!m_creature || !m_creature->isAlive())
             return;
-        if(pDoneBy->GetTypeId() != TYPEID_PLAYER) return;
-
-           uiDamage = m_creature->GetHealth();
-           bsw->doCast(SPELL_PERMAFROST);
+           striked = true;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
-            m_creature->ForcedDespawn();
+           m_creature->ForcedDespawn();
+
+        if (!striked) return;
+
+           bsw->doCast(SPELL_PERMAFROST);
+//           m_creature->ForcedDespawn();
+
     }
 };
 
@@ -379,7 +384,11 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
         m_creature->SetRespawnDelay(DAY);
         bsw = new BossSpellWorker(this);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
-        bsw->doCast(SPELL_IMPALE);
+        m_creature->SetDisplayId(31224);
+//        m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5f);
+//        bsw->doCast(SPELL_IMPALE);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void Aggro(Unit *who)
@@ -391,8 +400,15 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
     {
         if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (m_creature->IsWithinDist(m_creature->getVictim(), 10.0f)
+            && !bsw->hasAura(SPELL_PERMAFROST,m_creature->getVictim()))
+           {
+              bsw->doCast(SPELL_IMPALE);
+           }  else bsw->doRemove(SPELL_IMPALE);
     }
 };
 

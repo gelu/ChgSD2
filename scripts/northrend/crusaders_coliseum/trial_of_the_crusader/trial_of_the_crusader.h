@@ -29,7 +29,7 @@ enum
 
     NPC_THRALL                  = 34994,
     NPC_PROUDMOORE              = 34992,
-    NPC_PORTAL                  = 1,
+    NPC_PORTAL                  = 19224,
     NPC_TRIGGER                 = 22517,
 
     NPC_ICEHOWL                 = 34797,

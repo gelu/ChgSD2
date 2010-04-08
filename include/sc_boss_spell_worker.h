@@ -132,6 +132,12 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _doRemove(FindSpellIDX(SpellID),pTarget);
              };
 
+        bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
+             {
+             if (!pTarget) pTarget = boss;
+             return _hasAura(FindSpellIDX(SpellID),pTarget);
+             };
+
         Unit* doSummon(uint32 SpellID, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
              return _doSummon(FindSpellIDX(SpellID), type, delay);
@@ -181,6 +187,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         Unit*         _SelectUnit(SelectAggroTarget target, uint32 uiPosition);
 
         bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
+
+        bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 
         void          _fillEmptyDataField();
 
