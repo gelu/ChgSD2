@@ -44,7 +44,7 @@ SPELL_MARK              = 67574,
 SPELL_LEECHING_SWARM    = 66118,
 SPELL_LEECHING_HEAL     = 66125,
 SPELL_LEECHING_DAMAGE   = 66240,
-SPELL_IMPALE            = 65922,
+SPELL_IMPALE            = 65920,
 SPELL_SPIKE_CALL        = 66169,
 SPELL_POUND             = 66012,
 SPELL_SHOUT             = 67730,
@@ -59,6 +59,7 @@ SUMMON_SCARAB           = NPC_SCARAB,
 SUMMON_BORROWER         = NPC_BURROWER,
 SUMMON_FROSTSPHERE      = NPC_FROST_SPHERE,
 SPELL_BERSERK           = 26662,
+SPELL_PERMAFROST        = 66193,
 };
 
 struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
@@ -145,12 +146,12 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
                     DoScriptText(-1713557,m_creature);
                     break;}
             case 2: {
-                    if (bsw->timedQuery(SPELL_IMPALE, uiDiff)) {
+                    if (bsw->timedQuery(SPELL_SPIKE_CALL, uiDiff)) {
                          pTarget = bsw->SelectUnit();
-//                         bsw->doCast(SPELL_IMPALE);
                          bsw->doCast(SPELL_SPIKE_CALL);
-                         bsw->doCast(NPC_SPIKE);
                          bsw->doCast(SPELL_MARK,pTarget);
+                         Unit* spike = bsw->doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,20000);
+                         spike->AddThreat(pTarget, 1000.0f);
                          DoScriptText(-1713558,pTarget);
                          };
                     if (bsw->timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
@@ -226,7 +227,7 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -243,7 +244,7 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
 CreatureAI* GetAI_mob_swarm_scarab(Creature* pCreature)
 {
     return new mob_swarm_scarabAI(pCreature);
-}
+};
 
 struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
 {
@@ -282,7 +283,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -318,7 +319,87 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
 CreatureAI* GetAI_mob_nerubian_borrower(Creature* pCreature)
 {
     return new mob_nerubian_borrowerAI(pCreature);
-}
+};
+
+struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
+{
+    mob_frost_sphereAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(DAY);
+        bsw = new BossSpellWorker(this);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.1f);
+        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        m_creature->GetMotionMaster()->MoveRandom();
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (!m_creature || !m_creature->isAlive())
+            return;
+        if(pDoneBy->GetTypeId() != TYPEID_PLAYER) return;
+
+           uiDamage = m_creature->GetHealth();
+           bsw->doCast(SPELL_PERMAFROST);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+            m_creature->ForcedDespawn();
+    }
+};
+
+CreatureAI* GetAI_mob_frost_sphere(Creature* pCreature)
+{
+    return new mob_frost_sphereAI(pCreature);
+};
+
+struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
+{
+    mob_anubarak_spikeAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(DAY);
+        bsw = new BossSpellWorker(this);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
+        bsw->doCast(SPELL_IMPALE);
+    }
+
+    void Aggro(Unit *who)
+    {
+        if (!m_pInstance) return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+            m_creature->ForcedDespawn();
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+    }
+};
+
+CreatureAI* GetAI_mob_anubarak_spike(Creature* pCreature)
+{
+    return new mob_anubarak_spikeAI(pCreature);
+};
 
 void AddSC_boss_anubarak_trial()
 {
@@ -337,6 +418,16 @@ void AddSC_boss_anubarak_trial()
     newscript = new Script;
     newscript->Name = "mob_nerubian_borrower";
     newscript->GetAI = &GetAI_mob_nerubian_borrower;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_anubarak_spike";
+    newscript->GetAI = &GetAI_mob_anubarak_spike;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_frost_sphere";
+    newscript->GetAI = &GetAI_mob_frost_sphere;
     newscript->RegisterSelf();
 
 }

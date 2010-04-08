@@ -38,7 +38,7 @@ static _Messages _GossipMessage[]=
 {"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+2,false,TYPE_JARAXXUS},  //
 {"Вы готовы драться с чемпионами Серебряного авангарда?",GOSSIP_ACTION_INFO_DEF+3,false,TYPE_CRUSADERS}, //
 {"Вы готовы к следующему этапу?",GOSSIP_ACTION_INFO_DEF+4,false,TYPE_VALKIRIES}, //
-{"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_LICH_KING}, //
+{"Вы готовы продолжить бой с Ануб-Араком?",GOSSIP_ACTION_INFO_DEF+5,false,TYPE_ANUBARAK}, //
 {"Не надо сюда тыкать. На сегодня арена закрыта.",GOSSIP_ACTION_INFO_DEF+6,true,TYPE_ANUBARAK}, //
 };
 enum
@@ -349,7 +349,8 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
         Event = false;
         MovementStarted = false;
         m_creature->SetRespawnDelay(DAY);
-        pPortal = m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+        pPortal = m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+        pPortal->SetRespawnDelay(DAY);
         pPortal->CastSpell(pPortal, 51807, false);
     }
 

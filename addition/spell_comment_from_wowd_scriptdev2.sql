@@ -15,5 +15,5 @@ INNER JOIN `mangos`.`wowd_spell` ON `mangos`.`wowd_spell`.`id` = `scriptdev2`.`b
 UPDATE `scriptdev2`.`boss_spell_table` SET `comment` =  (SELECT DISTINCT `commentlist`.`comment`
 FROM `commentlist` WHERE `scriptdev2`.`boss_spell_table`.`entry` = `commentlist`.`entry` 
 AND `scriptdev2`.`boss_spell_table`.`spellID_N10` = `commentlist`.`spell`
-AND `scriptdev2`.`boss_spell_table`.`comment` = NULL);
+AND `scriptdev2`.`boss_spell_table`.`comment` IS NULL);
 DROP VIEW `commentlist`;

@@ -21,7 +21,7 @@ SDComment: by /dev/rsa
 SDCategory: Crusader Coliseum
 EndScriptData */
 
-// Twin pact && shields not worked now
+// Twin pact - heal part not worked now by undefined reason. Need override?
 // timers need correct
 
 #include "precompiled.h"
@@ -80,6 +80,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     uint8 stage;
     BossSpellWorker* bsw;
+    bool TwinPactCasted;
 
     void Reset() {
         if(!m_pInstance) return;
@@ -87,6 +88,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
         stage = 1;
+        TwinPactCasted = false;
     }
 
     void JustReachedHome()
@@ -167,13 +169,13 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                  break;
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff) 
-                     && m_creature->GetHealthPercent() <= 30.0f
                      && bsw->doCast(SPELL_SHIELD_LIGHT) == CAST_OK ) 
                      {
                             m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
                             DoScriptText(-1713539,m_creature);
                             bsw->doCast(SPELL_TWIN_PACT_L);
                             stage = 0;
+                            TwinPactCasted = true;
                       }
                  break;
           default:
@@ -186,16 +188,24 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         stage = 1;
     }
 
-    if (m_pInstance->GetData(DATA_CASTING_EYDIS) == SPELL_TWIN_PACT_H && stage== 0)
+    if ( m_creature->GetHealthPercent() <= 50.0f 
+    && stage == 0
+    && !TwinPactCasted)
     {
-        bsw->doCast(SPELL_TWIN_POWER);
-        m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_NONE);
         stage = 2;
+    }
+
+    if (m_pInstance->GetData(DATA_CASTING_EYDIS) == SPELL_TWIN_PACT_H)
+    {
+     bsw->doCast(SPELL_TWIN_POWER);
+     m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_NONE);
     }
 
         bsw->timedCast(SPELL_LIGHT_SURGE, uiDiff);
 
         bsw->timedCast(SPELL_LIGHT_TOUCH, uiDiff);
+
+        bsw->timedCast(SPELL_BERSERK, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -221,6 +231,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     uint8 stage;
     BossSpellWorker* bsw;
+    bool TwinPactCasted;
 
     void Reset() 
     {
@@ -229,6 +240,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
         stage = 0;
+        TwinPactCasted = false;
     }
 
     void JustReachedHome()
@@ -309,13 +321,13 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                  break;
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff) 
-                     && m_creature->GetHealthPercent() <= 30.0f
                      && bsw->doCast(SPELL_SHIELD_DARK) == CAST_OK ) 
                      {
                             m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
                             DoScriptText(-1713539,m_creature);
                             bsw->doCast(SPELL_TWIN_PACT_H);
                             stage = 0;
+                            TwinPactCasted = true;
                       }
                  break;
           default:
@@ -328,16 +340,21 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         stage = 1;
     }
 
-    if (m_pInstance->GetData(DATA_CASTING_FJOLA) == SPELL_TWIN_PACT_L && stage== 0)
+    if ( m_creature->GetHealthPercent() <= 50.0f 
+    && m_pInstance->GetData(DATA_CASTING_FJOLA) == SPELL_TWIN_PACT_L
+    && !TwinPactCasted
+    && stage == 0)
     {
      bsw->doCast(SPELL_TWIN_POWER);
      m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_NONE);
-        stage = 2;
+     stage = 2;
     }
 
         bsw->timedCast(SPELL_DARK_SURGE, uiDiff);
 
         bsw->timedCast(SPELL_DARK_TOUCH, uiDiff);
+
+        bsw->timedCast(SPELL_BERSERK, uiDiff);
 
         DoMeleeAttackIfReady();
     }
