@@ -555,7 +555,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 break;
                 }
         case 1: {
-                         if (bsw->doCast(SPELL_MASSIVE_CRASH) == CAST_OK);
+                         if (bsw->doCast(SPELL_MASSIVE_CRASH) == CAST_OK)
                              stage = 2;
                  break;
                 }

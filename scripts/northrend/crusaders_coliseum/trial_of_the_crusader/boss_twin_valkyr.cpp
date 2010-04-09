@@ -315,8 +315,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                     m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_DARK_VORTEX);
                     DoScriptText(-1713540,m_creature);
                     bsw->doCast(SPELL_DARK_VORTEX);
-                    if (m_creature->GetHealthPercent() <= 30.0f) stage == 2;
-                    else stage = 0;
+                    stage = 0;
                     };
                  break;
           case 2:

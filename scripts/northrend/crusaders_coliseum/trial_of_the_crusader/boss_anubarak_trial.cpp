@@ -116,8 +116,9 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-//        CastBossSpell(SPELL_MARK);
         if (!intro) DoScriptText(-1713555,m_creature);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
         m_pInstance->SetData(TYPE_ANUBARAK, IN_PROGRESS);
     }
@@ -148,11 +149,14 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
             case 2: {
                     if (bsw->timedQuery(SPELL_SPIKE_CALL, uiDiff)) {
                          pTarget = bsw->SelectUnit();
-                         bsw->doCast(SPELL_SPIKE_CALL);
-                         bsw->doCast(SPELL_MARK,pTarget);
-                         Unit* spike = bsw->doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,20000);
-                         spike->AddThreat(pTarget, 1000.0f);
-                         DoScriptText(-1713558,pTarget);
+//                         bsw->doCast(SPELL_SPIKE_CALL);
+                         Unit* spike = bsw->doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,60000);
+//                         Creature* spike = GetClosestCreatureWithEntry(m_creature, NPC_SPIKE, 50.0f);
+                         if (spike) { spike->AddThreat(pTarget, 1000.0f);
+                                      DoScriptText(-1713558,m_creature,pTarget);
+                                      bsw->doCast(SPELL_MARK,pTarget);
+                                      spike->GetMotionMaster()->MoveChase(pTarget);
+                                     }
                          };
                     if (bsw->timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
                             bsw->doCast(SPELL_SUMMON_BEATLES);
@@ -331,7 +335,6 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     BossSpellWorker* bsw;
-    bool striked;
 
     void Reset()
     {
@@ -340,26 +343,17 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
         m_creature->SetSpeedRate(MOVE_RUN, 0.1f);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->GetMotionMaster()->MoveRandom();
-        striked = false;
     }
 
-    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    void EnterCombat(Unit* attacker)
     {
-        if (!m_creature || !m_creature->isAlive())
-            return;
-           striked = true;
+        bsw->doCast(SPELL_PERMAFROST);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
+        if (!m_pInstance || m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
            m_creature->ForcedDespawn();
-
-        if (!striked) return;
-
-           bsw->doCast(SPELL_PERMAFROST);
-//           m_creature->ForcedDespawn();
-
     }
 };
 
@@ -384,16 +378,14 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
         m_creature->SetRespawnDelay(DAY);
         bsw = new BossSpellWorker(this);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
-        m_creature->SetDisplayId(31224);
-//        m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, 0.5f);
-//        bsw->doCast(SPELL_IMPALE);
-//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 //        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void Aggro(Unit *who)
     {
         if (!m_pInstance) return;
+        bsw->doCast(SPELL_IMPALE);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -401,14 +393,13 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
         if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        if (m_creature->IsWithinDist(m_creature->getVictim(), 10.0f)
+/*        if (bsw->timedQuery(SPELL_IMPALE,uiDiff)) {
+        if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f)
             && !bsw->hasAura(SPELL_PERMAFROST,m_creature->getVictim()))
            {
               bsw->doCast(SPELL_IMPALE);
            }  else bsw->doRemove(SPELL_IMPALE);
+        }*/
     }
 };
 
