@@ -1,4 +1,8 @@
-﻿DELETE FROM `script_texts` WHERE `entry` BETWEEN -1713799 AND -1713499;
+-- TOC original texts/sounds (thanks to griffonheart)
+-- english translation by Cristy
+-- reworked by rsa
+
+DELETE FROM `script_texts` WHERE `entry` BETWEEN -1713799 AND -1713499;
 INSERT INTO `script_texts`
 (`comment`,`sound`, `entry`,`content_loc8`,`type`,`language`,`emote`,`content_default`) VALUES
 ('34996','16036','-1713500','Добро пожаловать, герои! Вы услышали призыв Серебряного Авангарда и без колебаний откликнулись на него! В этом колизее вам предстоит сразиться с опаснейшими противниками. Те из вас, кто смогут пережить испытания, войдут в ряды Серебряного Авангарда, который направится в Цитадель Ледяной Короны.','6','0','0','Welcome champions, you have heard the call of the argent crusade and you have boldly answered. It is here in the crusaders coliseum that you will face your greatest challenges. Those of you who survive the rigors of the coliseum will join the Argent Crusade on its marsh to ice crown citadel.'),
