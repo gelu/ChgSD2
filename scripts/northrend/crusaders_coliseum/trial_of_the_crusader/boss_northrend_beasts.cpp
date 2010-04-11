@@ -89,6 +89,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     boss_gormokAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -99,7 +100,6 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
     void Reset() {
 
         if(!m_pInstance) return;
-        bsw = new BossSpellWorker(this);
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetInCombatWithZone();
@@ -153,6 +153,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     mob_snobold_vassalAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -163,7 +164,6 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void Reset()
     {
-        bsw = new BossSpellWorker(this);
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));
@@ -218,6 +218,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     boss_acidmawAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -231,7 +232,6 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         stage = 1;
         enraged = false;
         m_creature->SetInCombatWithZone();
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -328,6 +328,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     boss_dreadscaleAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -341,7 +342,6 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         stage = 0;
         enraged = false;
         m_creature->SetInCombatWithZone();
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -438,6 +438,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
     mob_slime_poolAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -450,7 +451,6 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetInCombatWithZone();
         m_creature->SetSpeedRate(MOVE_RUN, 0.08f);
-        bsw = new BossSpellWorker(this);
         bsw->doCast(SPELL_SLIME_POOL_2);
         m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
     }
@@ -478,6 +478,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
     boss_icehowlAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -491,7 +492,6 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
 
     void Reset() {
         if(!m_pInstance) return;
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
         MovementStarted = false;
         stage = 0;

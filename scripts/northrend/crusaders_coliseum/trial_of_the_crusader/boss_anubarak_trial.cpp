@@ -67,6 +67,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     boss_anubarak_trialAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -81,7 +82,6 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         if(!m_pInstance) return;
         stage = 0;
         intro = true;
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
     }
 
@@ -202,6 +202,7 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
     mob_swarm_scarabAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -212,7 +213,6 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
     {
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-        bsw = new BossSpellWorker(this);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -255,6 +255,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
     mob_nerubian_borrowerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -268,7 +269,6 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         submerged = false;
-        bsw = new BossSpellWorker(this);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -330,6 +330,7 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
     mob_frost_sphereAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -339,7 +340,6 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
     void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
-        bsw = new BossSpellWorker(this);
         m_creature->SetSpeedRate(MOVE_RUN, 0.1f);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->GetMotionMaster()->MoveRandom();
@@ -367,6 +367,7 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
     mob_anubarak_spikeAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -376,7 +377,6 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
     void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
-        bsw = new BossSpellWorker(this);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 //        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);

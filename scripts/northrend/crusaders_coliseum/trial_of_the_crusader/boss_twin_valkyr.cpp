@@ -74,6 +74,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     boss_fjolaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
     m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    bsw = new BossSpellWorker(this);
     Reset();
     }
 
@@ -85,7 +86,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
     void Reset() {
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN_1, EQUIP_OFFHAND_1, EQUIP_RANGED_1);
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
         stage = 1;
         TwinPactCasted = false;
@@ -225,6 +225,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     boss_eydisAI(Creature* pCreature) : ScriptedAI(pCreature) 
     {
     m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    bsw = new BossSpellWorker(this);
     Reset();
     }
 
@@ -237,7 +238,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
     {
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN_2, EQUIP_OFFHAND_2, EQUIP_RANGED_2);
-        bsw = new BossSpellWorker(this);
         m_creature->SetRespawnDelay(DAY);
         stage = 0;
         TwinPactCasted = false;

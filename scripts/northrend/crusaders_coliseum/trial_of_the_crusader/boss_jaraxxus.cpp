@@ -70,6 +70,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
     boss_jaraxxusAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -95,7 +96,6 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
             m_portalsCount = 1;
             m_volcanoCount = 4;
         }
-        bsw = new BossSpellWorker(this);
         DoScriptText(-1713517,m_creature);
         m_creature->SetRespawnDelay(DAY);
     }
@@ -247,6 +247,7 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
     mob_infernal_volcanoAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -271,7 +272,6 @@ struct MANGOS_DLL_DECL mob_infernal_volcanoAI : public ScriptedAI
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_Count = 6;
         }
-        bsw = new BossSpellWorker(this);
     }
 
     void AttackStart(Unit *who)
@@ -320,6 +320,7 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
     mob_fel_infernalAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -330,7 +331,6 @@ struct MANGOS_DLL_DECL mob_fel_infernalAI : public ScriptedAI
     {
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-        bsw = new BossSpellWorker(this);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -445,6 +445,7 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
     mob_mistress_of_painAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
@@ -455,7 +456,6 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
     {
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-        bsw = new BossSpellWorker(this);
     }
 
     void KilledUnit(Unit* pVictim)
