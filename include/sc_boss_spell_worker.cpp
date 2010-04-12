@@ -153,29 +153,21 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
 
             case CAST_ON_VICTIM:
                    pTarget = boss->getVictim();
-                   if (!pTarget) return CAST_FAIL_OTHER;
-                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(boss->getVictim(), pSpell->m_uiSpellEntry[currentDifficulty]);
-                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, boss->getVictim());
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case CAST_ON_RANDOM:
                    pTarget = SelectUnit(SELECT_TARGET_RANDOM);
-                   if (!pTarget) return CAST_FAIL_OTHER;
-                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
-                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case CAST_ON_BOTTOMAGGRO:
                    pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0);
-                   if (!pTarget) return CAST_FAIL_OTHER;
-                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
-                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case CAST_ON_TARGET:
-                   if (!pTarget) return CAST_FAIL_OTHER;
-                   if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
-                   if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case APPLY_AURA_SELF:
@@ -232,12 +224,38 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                    break;
             }
 
+            case CAST_ON_FRENDLY:
+                   pTarget = SelectLowHPFriendly();
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
+                   break;
+
+            case CAST_ON_FRENDLY_LOWHP:
+                   pTarget = SelectLowHPFriendly();
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
+                   break;
+
             default:
                    return CAST_FAIL_OTHER;
                    break;
             };
     return CAST_FAIL_OTHER;
 };
+
+CanCastResult BossSpellWorker::_BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx)
+{
+    if (bossSpellCount == 0) return CAST_FAIL_OTHER;
+    if (!pTarget)            return CAST_FAIL_OTHER;
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    debug_log("BSW: Casting (on target) spell number %u type %u",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
+
+       if (pTarget && !pSpell->m_IsBugged) return _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+       if (pTarget && pSpell->m_IsBugged) return _BSWDoCast(m_uiSpellIdx, pTarget);
+
+    return CAST_FAIL_OTHER;
+};
+
+
 
 bool BossSpellWorker::isSummon(uint8 m_uiSpellIdx)
 {

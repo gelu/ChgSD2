@@ -124,8 +124,17 @@ class MANGOS_DLL_DECL BossSpellWorker
              };
 
         CanCastResult doCast(uint32 SpellID, Unit* pTarget = NULL)
-             {    uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             {
+                  uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
                   if ( m_uiSpellIdx != SPELL_INDEX_ERROR) return _BSWSpellSelector(m_uiSpellIdx, pTarget);
+                  else return CAST_FAIL_OTHER;
+             };
+
+        CanCastResult doCast(Unit* pTarget, uint32 SpellID)
+             {
+                  if (!pTarget) return CAST_FAIL_OTHER;
+                  uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+                  if ( m_uiSpellIdx != SPELL_INDEX_ERROR) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                   else return CAST_FAIL_OTHER;
              };
 
@@ -179,6 +188,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         CanCastResult _BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget);
 
         CanCastResult _BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
+
+        CanCastResult _BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx);
 
         Difficulty    setDifficulty(uint8 _Difficulty = 0);
 
