@@ -105,6 +105,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ANUBARAK, FAIL);
+            m_creature->ForcedDespawn();
     }
 
     void JustDied(Unit* pKiller)
@@ -296,7 +297,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         bsw->timedCast(SPELL_EXPOSE_WEAKNESS, uiDiff);
 
         if (bsw->timedQuery(SPELL_SPIDER_FRENZY, uiDiff))
-            if(Creature *pTemp = GetClosestCreatureWithEntry(m_creature, NPC_BURROWER, 50.0f))
+            if(Creature* pTemp = GetClosestCreatureWithEntry(m_creature, NPC_BURROWER, 50.0f))
             {
             currentTarget = pTemp;
             bsw->doCast(SPELL_SPIDER_FRENZY);

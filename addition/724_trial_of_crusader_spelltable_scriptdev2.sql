@@ -153,3 +153,92 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_
 (35176, 66881, 67638, 67639, 67640, 20000, 20000, 20000, 20000, 30000, 30000, 30000, 30000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, NULL),
 (35176, 66883, 67641, 67642, 67643, 15000, 15000, 15000, 15000, 30000, 30000, 30000, 30000, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, NULL),
 (35176, 66882, 0, 0, 0, 500, 0, 0, 0, 500, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, NULL);
+
+-- Retro Paladins
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34471,34456);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(34471, 66011, 0, 180000, 180000, 3),
+(34471, 66003, 0, 6000, 18000, 3),
+(34471, 66010, 0, 300000, 300000, 1),
+(34471, 66006, 0, 10000, 10000, 3),
+(34471, 66007, 0, 40000, 40000, 3),
+(34471, 66009, 0, 300000, 300000, 1),
+(34471, 66005, 68018, 8000, 15000, 3),
+(34471, 66008, 0, 60000, 60000, 4),
+(34471, 66004, 68021, 10000, 15000, 1);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(34456, 66011, 0, 180000, 180000, 3),
+(34456, 66003, 0, 6000, 18000, 3),
+(34456, 66010, 0, 300000, 300000, 1),
+(34456, 66006, 0, 10000, 10000, 3),
+(34456, 66007, 0, 40000, 40000, 3),
+(34456, 66009, 0, 300000, 300000, 1),
+(34456, 66005, 68018, 8000, 15000, 3),
+(34456, 66008, 0, 60000, 60000, 4),
+(34456, 66004, 68021, 10000, 15000, 1);
+
+-- Pet's
+DELETE FROM `boss_spell_table` WHERE `entry` IN (35465,35610);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(35465, 67518, 0, 15000, 30000, 3),
+(35465, 67519, 0, 15000, 30000, 3);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(35610, 67793, 67980, 67981, 67982, 5000, 10000, 3);
+
+-- Druids
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34460,34451);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(35460, 66093, 67957, 10000, 20000, 6),
+(35460, 66066, 67965, 10000, 20000, 6),
+(35460, 66067, 67968, 10000, 20000, 6),
+(35460, 66065, 67971, 10000, 20000, 6),
+(35460, 66086, 67974, 40000, 90000, 1),
+(35460, 65860, 0, 45000, 90000, 1),
+(35460, 66068, 0, 15000, 30000, 6),
+(35460, 66071, 0, 40000, 80000, 1);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
+(34451, 66093, 67957, 10000, 20000, 6),
+(34451, 66066, 67965, 10000, 20000, 6),
+(34451, 66067, 67968, 10000, 20000, 6),
+(34451, 66065, 67971, 10000, 20000, 6),
+(34451, 66086, 67974, 40000, 90000, 1),
+(34451, 65860, 0, 45000, 90000, 1),
+(34451, 66068, 0, 15000, 30000, 6),
+(34451, 66071, 0, 40000, 80000, 1);
+
+-- Warriors
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34475,34453);
+
+-- Mage
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34468,34449);
+
+-- Shaman
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34463,34455);
+
+-- Enh shaman
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34470,34444);
+
+-- Hunter
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34467,34448);
+
+-- Rogue
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34472,34454);
+
+-- Priest
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34466,34456);
+
+-- Shadow priest
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34473,34441);
+
+-- Death knight
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34461,34458);
+
+-- Paladin
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34465,34445);
+
+-- Boomkin (druid in moonkin form)
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34469,34459);
+
+-- Warlock
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34474,34450);
+

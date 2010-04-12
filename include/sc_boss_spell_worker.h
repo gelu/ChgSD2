@@ -42,6 +42,8 @@ enum BossSpellTableParameters
   SUMMON_INSTANT            = 10,
   SUMMON_TEMP               = 11,
   CAST_ON_ALLPLAYERS        = 12,
+  CAST_ON_FRENDLY           = 13,
+  CAST_ON_FRENDLY_LOWHP     = 14,
   SPELLTABLEPARM_NUMBER
 };
 
@@ -157,6 +159,8 @@ class MANGOS_DLL_DECL BossSpellWorker
              {
              return  _SelectUnit(target, uiPosition);
              };
+
+        Unit* SelectLowHPFriendly(float fRange = 50.0f, uint32 uiMinHPDiff = 0);
 
     private:
 

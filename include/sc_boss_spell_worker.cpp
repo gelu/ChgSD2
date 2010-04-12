@@ -536,4 +536,24 @@ Unit*  BossSpellWorker::_SelectUnit(SelectAggroTarget target, uint32 uiPosition)
     return NULL;
 }
 
+Unit* BossSpellWorker::SelectLowHPFriendly(float fRange, uint32 uiMinHPDiff)
+{
+    CellPair p(MaNGOS::ComputeCellPair(boss->GetPositionX(), boss->GetPositionY()));
+    Cell cell(p);
+    cell.data.Part.reserved = ALL_DISTRICT;
+    cell.SetNoCreate();
+
+    Unit* pUnit = NULL;
+
+    MaNGOS::MostHPMissingInRange u_check(boss, fRange, uiMinHPDiff);
+    MaNGOS::UnitLastSearcher<MaNGOS::MostHPMissingInRange> searcher(boss, pUnit, u_check);
+
+    TypeContainerVisitor<MaNGOS::UnitLastSearcher<MaNGOS::MostHPMissingInRange>, GridTypeMapContainer >  grid_unit_searcher(searcher);
+
+    cell.Visit(p, grid_unit_searcher, *(pMap), *boss, fRange);
+
+    return pUnit;
+}
+
+
 #endif

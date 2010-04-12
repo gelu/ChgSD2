@@ -91,6 +91,7 @@ enum
     TYPE_EVENT_TIMER            = 102,
     TYPE_EVENT_NPC              = 103,
     TYPE_NORTHREND_BEASTS       = 104,
+    TYPE_CHAMPIONS_COUNT        = 105,
 
     DATA_HEALTH_EYDIS           = 201,
     DATA_HEALTH_FJOLA           = 202,

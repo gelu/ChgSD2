@@ -13,19 +13,23 @@ UPDATE `creature_template` SET `scriptname`='npc_garrosh_toc' WHERE `entry`=3499
 UPDATE `creature_template` SET `scriptname`='npc_rinn_toc' WHERE `entry`=34990;
 
 -- grand crusaders
--- UPDATE `creature_template` SET `scriptname`='mob_toc_warrior' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_mage' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_shaman' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_hunter' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_rogue' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_priest' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_dk' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_paladin' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_druid' WHERE entry IN ();
--- UPDATE `creature_template` SET `scriptname`='mob_toc_warlock' WHERE entry IN ();
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_warrior' WHERE `entry` IN (34475,34453);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_mage' WHERE `entry` IN (34468,34449);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_shaman' WHERE `entry` IN (34463,34455);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_enh_shaman' WHERE `entry` IN (34470,34444);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_hunter' WHERE `entry` IN (34467,34448);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_rogue' WHERE `entry` IN (34472,34454);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_priest' WHERE `entry` IN (34466,34456);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_shadow_priest' WHERE `entry` IN (34473,34441);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_dk' WHERE `entry` IN (34461,34458);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_paladin' WHERE `entry` IN (34465,34445);
+UPDATE `creature_template` SET `scriptname`='mob_toc_retro_paladin' WHERE `entry` IN (34471,34456);
+UPDATE `creature_template` SET `scriptname`='mob_toc_druid' WHERE `entry` IN (34460,34451);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_boomkin' WHERE `entry` IN (34469,34459);
+-- UPDATE `creature_template` SET `scriptname`='mob_toc_warlock' WHERE `entry` IN (34474,34450);
 
--- UPDATE `creature_template` SET `scriptname`='mob_toc_pet_cat' WHERE `entry` = 35465;
--- UPDATE `creature_template` SET `scriptname`='mob_toc_pet_dog' WHERE `entry` = 35610;
+UPDATE `creature_template` SET `scriptname`='mob_toc_pet_warlock' WHERE `entry` IN (35465);
+UPDATE `creature_template` SET `scriptname`='mob_toc_pet_hunter' WHERE `entry` IN (35610);
 
 UPDATE `creature_template` SET `lootid`= 0 WHERE  `entry` IN
 (34460,34463,34461,34471,34475,34472,34453,34455,34458,34454,34451,34456,34467,35465,34468,35610,34473,34474,34441,34449,34448,34450);
