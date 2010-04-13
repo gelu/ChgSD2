@@ -35,7 +35,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     uint64 m_uiMarwynGUID;
     uint64 m_uiLichKingGUID;
     uint64 m_uiFrostGeneralGUID;
-    uint64 m_uiCaptainsChestGUID;
+    uint64 m_uiCaptainsChestHordeGUID;
+    uint64 m_uiCaptainsChestAllianceGUID;
     uint64 m_uiIcecrownDoorGUID;
     uint64 m_uiImpenetrableDoorGUID;
     uint64 m_uiFrostmourneGUID;
@@ -59,6 +60,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
+    m_uiCaptainsChestHordeGUID = 0;
+    m_uiCaptainsChestAllianceGUID = 0;
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -85,16 +88,16 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         switch(pGo->GetEntry())
         {
         case GO_CAPTAIN_CHEST_1:
-                               if(Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                               if(Regular) m_uiCaptainsChestHordeGUID = pGo->GetGUID();
                                   break;
         case GO_CAPTAIN_CHEST_2:
-                               if(Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                               if(Regular) m_uiCaptainsChestAllianceGUID = pGo->GetGUID();
                                   break;
         case GO_CAPTAIN_CHEST_3:
-                               if(!Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                               if(!Regular) m_uiCaptainsChestHordeGUID = pGo->GetGUID();
                                   break;
         case GO_CAPTAIN_CHEST_4:
-                               if(!Regular) m_uiCaptainsChestGUID = pGo->GetGUID();
+                               if(!Regular) m_uiCaptainsChestAllianceGUID = pGo->GetGUID();
                                   break;
         case GO_ICECROWN_DOOR:     m_uiIcecrownDoorGUID = pGo->GetGUID(); break;
         case GO_IMPENETRABLE_DOOR: m_uiImpenetrableDoorGUID = pGo->GetGUID(); break;
@@ -119,6 +122,12 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
                                      if (uiData == DONE) {
                                          OpenDoor(m_uiImpenetrableDoorGUID);
                                          OpenDoor(m_uiIcecrownDoorGUID);
+                            if (m_uiCaptainsChestHordeGUID)
+                                if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
+                                    if (pChest && !pChest->isSpawned()) pChest->SetRespawnTime(7*DAY);
+                            if (m_uiCaptainsChestAllianceGUID)
+                                if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
+                                    if (pChest && !pChest->isSpawned()) pChest->SetRespawnTime(7*DAY);
                                      }; break;
             case TYPE_LICH_KING_1:   m_auiEncounter[3] = uiData; break;
             case TYPE_FROST_GENERAL: m_auiEncounter[4] = uiData; break;

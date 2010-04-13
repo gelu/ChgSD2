@@ -45,7 +45,7 @@ enum
     GO_CAPTAIN_CHEST_4           = 202336, //3333
 
     MOB_WAVES_NUM_1              = 4,
-    MOB_WAVES_DELAY_1            = 30000,  //in milliseconds
+    MOB_WAVES_DELAY_1            = 25000,  //in milliseconds
 
 };
 
