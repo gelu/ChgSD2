@@ -107,7 +107,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         void resetTimers()
              {
-             for (uint8 i = 0; i < bossSpellCount; ++i)
+             for (uint8 i = 0; i < _bossSpellCount; ++i)
                   _resetTimer(i);
              };
 
@@ -169,7 +169,12 @@ class MANGOS_DLL_DECL BossSpellWorker
              return  _SelectUnit(target, uiPosition);
              };
 
-        Unit* SelectLowHPFriendly(float fRange = 50.0f, uint32 uiMinHPDiff = 0);
+        Unit* SelectLowHPFriendly(float fRange = 40.0f, uint32 uiMinHPDiff = 0);
+
+        uint8 bossSpellCount()
+             {
+             return _bossSpellCount;
+             };
 
     private:
 
@@ -211,7 +216,7 @@ class MANGOS_DLL_DECL BossSpellWorker
            ScriptedAI* bossAI;
            Creature* boss;
            uint32 bossID;
-           uint8 bossSpellCount;
+           uint8 _bossSpellCount;
            Difficulty currentDifficulty;
            uint32 m_uiSpell_Timer[MAX_BOSS_SPELLS];
            SpellTable m_BossSpell[MAX_BOSS_SPELLS];

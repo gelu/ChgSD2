@@ -12,24 +12,24 @@ UPDATE `creature_template` SET `scriptname`='npc_tirion_toc' WHERE `entry`=34996
 UPDATE `creature_template` SET `scriptname`='npc_garrosh_toc' WHERE `entry`=34995;
 UPDATE `creature_template` SET `scriptname`='npc_rinn_toc' WHERE `entry`=34990;
 
--- grand crusaders
--- UPDATE `creature_template` SET `scriptname`='mob_toc_warrior' WHERE `entry` IN (34475,34453);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_mage' WHERE `entry` IN (34468,34449);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_shaman' WHERE `entry` IN (34463,34455);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_enh_shaman' WHERE `entry` IN (34470,34444);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_hunter' WHERE `entry` IN (34467,34448);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_rogue' WHERE `entry` IN (34472,34454);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_priest' WHERE `entry` IN (34466,34456);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_shadow_priest' WHERE `entry` IN (34473,34441);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_dk' WHERE `entry` IN (34461,34458);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_paladin' WHERE `entry` IN (34465,34445);
-UPDATE `creature_template` SET `scriptname`='mob_toc_retro_paladin' WHERE `entry` IN (34471,34456);
-UPDATE `creature_template` SET `scriptname`='mob_toc_druid' WHERE `entry` IN (34460,34451);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_boomkin' WHERE `entry` IN (34469,34459);
--- UPDATE `creature_template` SET `scriptname`='mob_toc_warlock' WHERE `entry` IN (34474,34450);
+-- Grand crusaders
+UPDATE `creature_template` SET `scriptname`='mob_toc_warrior', `AIName` ='' WHERE `entry` IN (34475,34453);
+UPDATE `creature_template` SET `scriptname`='mob_toc_mage', `AIName` ='' WHERE `entry` IN (34468,34449);
+UPDATE `creature_template` SET `scriptname`='mob_toc_shaman', `AIName` ='' WHERE `entry` IN (34463,34455);
+UPDATE `creature_template` SET `scriptname`='mob_toc_enh_shaman', `AIName` ='' WHERE `entry` IN (34470,34444);
+UPDATE `creature_template` SET `scriptname`='mob_toc_hunter', `AIName` ='' WHERE `entry` IN (34467,34448);
+UPDATE `creature_template` SET `scriptname`='mob_toc_rogue', `AIName` ='' WHERE `entry` IN (34472,34454);
+UPDATE `creature_template` SET `scriptname`='mob_toc_priest', `AIName` ='' WHERE `entry` IN (34466,34456);
+UPDATE `creature_template` SET `scriptname`='mob_toc_shadow_priest', `AIName` ='' WHERE `entry` IN (34473,34441);
+UPDATE `creature_template` SET `scriptname`='mob_toc_dk', `AIName` ='' WHERE `entry` IN (34461,34458);
+UPDATE `creature_template` SET `scriptname`='mob_toc_paladin', `AIName` ='' WHERE `entry` IN (34465,34445);
+UPDATE `creature_template` SET `scriptname`='mob_toc_retro_paladin', `AIName` ='' WHERE `entry` IN (34471,34456);
+UPDATE `creature_template` SET `scriptname`='mob_toc_druid', `AIName` ='' WHERE `entry` IN (34460,34451);
+UPDATE `creature_template` SET `scriptname`='mob_toc_boomkin', `AIName` ='' WHERE `entry` IN (34469,34459);
+UPDATE `creature_template` SET `scriptname`='mob_toc_warlock' WHERE `entry` IN (34474,34450);
 
-UPDATE `creature_template` SET `scriptname`='mob_toc_pet_warlock' WHERE `entry` IN (35465);
-UPDATE `creature_template` SET `scriptname`='mob_toc_pet_hunter' WHERE `entry` IN (35610);
+UPDATE `creature_template` SET `scriptname`='mob_toc_pet_warlock', `AIName` ='' WHERE `entry` IN (35465);
+UPDATE `creature_template` SET `scriptname`='mob_toc_pet_hunter', `AIName` ='' WHERE `entry` IN (35610);
 
 UPDATE `creature_template` SET `lootid`= 0 WHERE  `entry` IN
 (34460,34463,34461,34471,34475,34472,34453,34455,34458,34454,34451,34456,34467,35465,34468,35610,34473,34474,34441,34449,34448,34450);
@@ -60,7 +60,7 @@ UPDATE `creature_template` SET `scriptname`='mob_snobold_vassal', `AIName` ='' W
 
 UPDATE `creature_template` SET `scriptname`='boss_dreadscale', `AIName` ='' WHERE `entry`=34799;
 UPDATE `creature_template` SET `scriptname`='boss_acidmaw', `AIName` ='' WHERE `entry`=35144;
-UPDATE `creature_template` SET `scriptname`='mob_slime_pool', `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `modelid_A` = 12349, `modelid_H` = 12349 WHERE `entry` = 35176;
+UPDATE `creature_template` SET `scriptname`='mob_slime_pool', `minlevel` = 80, `maxlevel` = 80, `minhealth`= 20000, `maxhealth` = 20000,`AIName` ='', `faction_A`= 14, `faction_H` = 14, `modelid_A` = 12349, `modelid_H` = 12349 WHERE `entry` = 35176;
 -- Model id for slime_pool need change!
 
 UPDATE `creature_template` SET `scriptname`='boss_icehowl', `AIName` ='' WHERE `entry`=34797;

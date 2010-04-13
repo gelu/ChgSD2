@@ -135,8 +135,11 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         bsw->timedCast(SPELL_FEL_LIGHTING, uiDiff);
 
         if (bsw->timedQuery(SPELL_INCINERATE_FLESH, uiDiff)) {
-                    DoScriptText(-1713522,m_creature);
-                    bsw->doCast(SPELL_INCINERATE_FLESH);
+                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                           {
+                           DoScriptText(-1713522,m_creature,pTarget);
+                           bsw->doCast(SPELL_INCINERATE_FLESH,pTarget);
+                           }
                     }
 
         if (bsw->timedQuery(SPELL_LEGION_FLAME_1, uiDiff)) {

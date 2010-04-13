@@ -448,9 +448,9 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetInCombatWithZone();
-        m_creature->SetSpeedRate(MOVE_RUN, 0.08f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.05f);
         bsw->doCast(SPELL_SLIME_POOL_2);
         m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
     }
@@ -461,7 +461,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
             if (bsw->timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
-                m_Size = m_Size*1.035;
+                m_Size = m_Size*1.03;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }
     }

@@ -11,7 +11,7 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
 {
      boss = bossAI->m_creature;
      bossID = boss->GetEntry();
-     bossSpellCount = 0;
+     _bossSpellCount = 0;
      currentTarget = NULL;
      memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
      memset(&m_BossSpell,0,sizeof(m_BossSpell));
@@ -36,10 +36,13 @@ void BossSpellWorker::Reset(uint8 _Difficulty)
 
 void BossSpellWorker::_resetTimer(uint8 m_uiSpellIdx)
 {
-    if (m_uiSpellIdx > bossSpellCount) return;
+    if (m_uiSpellIdx > _bossSpellCount) return;
     if (m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMin[currentDifficulty] != m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMax[currentDifficulty])
             m_uiSpell_Timer[m_uiSpellIdx] = urand(0,m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMax[currentDifficulty]);
                 else m_uiSpell_Timer[m_uiSpellIdx] = m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMin[currentDifficulty];
+    if (m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMin[currentDifficulty] == 0 
+        && m_BossSpell[m_uiSpellIdx].m_uiSpellTimerMax[currentDifficulty] >= HOUR*IN_MILLISECONDS)
+            m_uiSpell_Timer[m_uiSpellIdx] = 0;
 };
 
 void BossSpellWorker::LoadSpellTable()
@@ -98,7 +101,7 @@ void BossSpellWorker::LoadSpellTable()
 
         } while (Result->NextRow());
 
-        bossSpellCount = uiCount;
+        _bossSpellCount = uiCount;
 
         delete Result;
 
@@ -109,17 +112,18 @@ void BossSpellWorker::LoadSpellTable()
     else
     {
         error_db_log("BSW: Boss spell table for boss %u is empty.", bossID);
-        bossSpellCount = 0;
+        _bossSpellCount = 0;
     };
 }
 
 bool BossSpellWorker::_QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff)
     {
-    if (bossSpellCount == 0) return false;
+    if (_bossSpellCount == 0) return false;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
     if (m_uiSpell_Timer[m_uiSpellIdx] < diff) {
-            m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]);
+            if (pSpell->m_uiSpellTimerMax[currentDifficulty] >= HOUR*IN_MILLISECONDS) m_uiSpell_Timer[m_uiSpellIdx]=HOUR*IN_MILLISECONDS;
+            else m_uiSpell_Timer[m_uiSpellIdx]=urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]);
             return true;
             } else {
             m_uiSpell_Timer[m_uiSpellIdx] -= diff;
@@ -129,7 +133,7 @@ bool BossSpellWorker::_QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff)
 
 CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget)
 {
-    if (bossSpellCount == 0) return CAST_FAIL_OTHER;
+    if (_bossSpellCount == 0) return CAST_FAIL_OTHER;
     SpellEntry const *spell;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
     Unit* pSummon = NULL;
@@ -243,7 +247,7 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
 
 CanCastResult BossSpellWorker::_BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx)
 {
-    if (bossSpellCount == 0) return CAST_FAIL_OTHER;
+    if (_bossSpellCount == 0) return CAST_FAIL_OTHER;
     if (!pTarget)            return CAST_FAIL_OTHER;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
@@ -259,7 +263,7 @@ CanCastResult BossSpellWorker::_BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellId
 
 bool BossSpellWorker::isSummon(uint8 m_uiSpellIdx)
 {
-    if (bossSpellCount == 0) return false;
+    if (_bossSpellCount == 0) return false;
 
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
     switch (pSpell->m_CastTarget) {
@@ -283,8 +287,8 @@ bool BossSpellWorker::_hasAura(uint8 m_uiSpellIdx, Unit* pTarget)
 
 uint8 BossSpellWorker::FindSpellIDX(uint32 SpellID)
 {
-    if (bossSpellCount != 0)
-      for(uint8 i = 0; i < bossSpellCount; ++i)
+    if (_bossSpellCount != 0)
+      for(uint8 i = 0; i < _bossSpellCount; ++i)
         if (m_BossSpell[i].m_uiSpellEntry[RAID_DIFFICULTY_10MAN_NORMAL] == SpellID) return i;
 
     error_log("BSW: spell %u not found  in boss %u spelltable. Memory or database error?", SpellID, bossID);
@@ -323,7 +327,9 @@ BossSpellTableParameters BossSpellWorker::getBSWCastType(uint32 pTemp)
                 case 10: return SUMMON_INSTANT;
                 case 11: return SUMMON_TEMP;
                 case 12: return CAST_ON_ALLPLAYERS;
-                case 13: return SPELLTABLEPARM_NUMBER;
+                case 13: return CAST_ON_FRENDLY;
+                case 14: return CAST_ON_FRENDLY_LOWHP;
+                case 15: return SPELLTABLEPARM_NUMBER;
      default: return DO_NOTHING;
      };
 };
@@ -340,7 +346,7 @@ CanCastResult BossSpellWorker::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 
 void BossSpellWorker::_fillEmptyDataField()
 {
-    for (uint8 i = 0; i < bossSpellCount; ++i)
+    for (uint8 i = 0; i < _bossSpellCount; ++i)
         for (uint8 j = 1; j < DIFFICULTY_LEVELS; ++j)
         {
             if (m_BossSpell[i].m_uiSpellEntry[j] == 0)
