@@ -254,14 +254,15 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case TYPE_STAGE:     m_auiEncounter[0] = uiData; break;
         case TYPE_BEASTS:    m_auiEncounter[1] = uiData; break;
         case TYPE_JARAXXUS:  m_auiEncounter[2] = uiData; break;
-        case TYPE_CRUSADERS: m_auiEncounter[3] = uiData;
-                            if (uiData == DONE) {
-                             if (GameObject* pChest = instance->GetGameObject(m_uiCrusadersCacheGUID))
-                             if (pChest && !pChest->isSpawned()) {
-                                      pChest->SetRespawnTime(7*DAY);
-                              };
-                            };
-                           break;
+        case TYPE_CRUSADERS: if (uiData == FAIL && (m_auiEncounter[3] == FAIL || m_auiEncounter[3] == NOT_STARTED))
+                             m_auiEncounter[3] = NOT_STARTED;
+                             else  m_auiEncounter[3] = uiData;
+                             if (uiData == DONE) {
+                                   if (GameObject* pChest = instance->GetGameObject(m_uiCrusadersCacheGUID))
+                                       if (pChest && !pChest->isSpawned())
+                                             pChest->SetRespawnTime(7*DAY);
+                                   };
+                             break;
         case TYPE_CRUSADERS_COUNT:  m_auiCrusadersCount = uiData; break;
         case TYPE_VALKIRIES: if (m_auiEncounter[4] == SPECIAL && uiData == SPECIAL) uiData = DONE;
                              m_auiEncounter[4] = uiData; break;
@@ -412,8 +413,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 140:
                                  case 150:
                                  case 200:
+                                 case 205:
                                  case 210:
                                  case 300:
+                                 case 305:
                                  case 310:
                                  case 400:
                                  case 1010:

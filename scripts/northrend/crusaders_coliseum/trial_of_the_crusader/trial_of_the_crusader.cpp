@@ -616,6 +616,11 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
         case 200:
                DoScriptText(-1713503, m_creature);
                UpdateTimer = 10000;
+               pInstance->SetData(TYPE_EVENT,205);
+               break;
+
+        case 205:
+               UpdateTimer = 8000;
                pInstance->SetData(TYPE_EVENT,210);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
@@ -641,7 +646,11 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                break;
         case 300:
                DoScriptText(-1713505, m_creature);
-               UpdateTimer = 10000;
+               UpdateTimer = 15000;
+               pInstance->SetData(TYPE_EVENT,305);
+               break;
+        case 305:
+               UpdateTimer = 8000;
                pInstance->SetData(TYPE_EVENT,310);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                break;
@@ -902,7 +911,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                break;
 
         case 4040:
-               UpdateTimer = 30000;
+               UpdateTimer = 60000;
                pInstance->SetData(TYPE_EVENT,5000);
                break;
 
@@ -920,19 +929,19 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                break;
         case 6000:
                m_creature->NearTeleportTo(SpawnLoc[19].x, SpawnLoc[19].y, SpawnLoc[19].z, 4.0f);
-               UpdateTimer = 5000;
+               UpdateTimer = 20000;
                pInstance->SetData(TYPE_EVENT,6005);
                break;
         case 6005:
                DoScriptText(-1713565, m_creature);
-               UpdateTimer = 5000;
+               UpdateTimer = 20000;
                pInstance->SetData(TYPE_EVENT,6010);
                break;
         case 6010:
               if (pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_10MAN_HEROIC 
                   ||  pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_HEROIC)
                DoScriptText(-1713566, m_creature);
-               UpdateTimer = 20000;
+               UpdateTimer = 60000;
                pInstance->SetData(TYPE_EVENT,6020);
                break;
         case 6020:

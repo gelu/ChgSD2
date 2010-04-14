@@ -55,9 +55,6 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
         bsw->resetTimers();
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-        if (mAIType == AI_MELEE)  SetEquipmentSlots(false, 47427, 46964, EQUIP_NO_CHANGE);
-        if (mAIType == AI_RANGED) SetEquipmentSlots(false, 47156, EQUIP_NO_CHANGE, 48711);
-        if (mAIType == AI_HEALER) SetEquipmentSlots(false, 51799, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
     }
 
     void JustReachedHome()
@@ -183,6 +180,9 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
                 DoStartMovement(pWho);
             else
                 DoStartMovement(pWho, 20.0f);
+
+        SetCombatMovement(true);
+
         }
     }
 
@@ -202,9 +202,6 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
             CCTimer = 8000+rand()%2000;
         }
         else CCTimer -= diff;
-
-        if(mAIType != AI_MELEE && EnemiesInRange(40.0f) < 1)
-               DoStartMovement(m_creature->getVictim(), 20.0f);
 
         if(mAIType == AI_MELEE) DoMeleeAttackIfReady();
     }
@@ -226,6 +223,11 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
 struct MANGOS_DLL_DECL mob_toc_druidAI : public boss_faction_championsAI
 {
     mob_toc_druidAI(Creature* pCreature) : boss_faction_championsAI(pCreature, AI_HEALER) {Init();}
+
+   void Init()
+   {
+        SetEquipmentSlots(false, 51799, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
 
     void UpdateAI(const uint32 diff)
     {
@@ -277,6 +279,11 @@ struct MANGOS_DLL_DECL mob_toc_shamanAI : public boss_faction_championsAI
 {
     mob_toc_shamanAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_HEALER) {Init();}
 
+   void Init()
+   {
+        SetEquipmentSlots(false, 49992, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
+
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
@@ -324,6 +331,11 @@ struct MANGOS_DLL_DECL mob_toc_shamanAI : public boss_faction_championsAI
 struct MANGOS_DLL_DECL mob_toc_paladinAI : public boss_faction_championsAI
 {
     mob_toc_paladinAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_HEALER) {Init();}
+
+   void Init()
+   {
+        SetEquipmentSlots(false, 50771, 47079, EQUIP_NO_CHANGE);
+   }
 
     void UpdateAI(const uint32 diff)
     {
@@ -375,6 +387,11 @@ struct MANGOS_DLL_DECL mob_toc_priestAI : public boss_faction_championsAI
 {
     mob_toc_priestAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_HEALER) {Init();}
 
+   void Init()
+   {
+        SetEquipmentSlots(false, 49992, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
+
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
@@ -425,6 +442,11 @@ struct MANGOS_DLL_DECL mob_toc_priestAI : public boss_faction_championsAI
 struct MANGOS_DLL_DECL mob_toc_shadow_priestAI : public boss_faction_championsAI
 {
     mob_toc_shadow_priestAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_RANGED) {Init();}
+
+   void Init()
+   {
+        SetEquipmentSlots(false, 50040, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
 
     void Aggro(Unit *who)
     {
@@ -483,6 +505,11 @@ struct MANGOS_DLL_DECL mob_toc_warlockAI : public boss_faction_championsAI
 {
     mob_toc_warlockAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_RANGED) {Init();}
 
+   void Init()
+   {
+        SetEquipmentSlots(false, 49992, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
+
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
@@ -532,6 +559,11 @@ struct MANGOS_DLL_DECL mob_toc_warlockAI : public boss_faction_championsAI
 struct MANGOS_DLL_DECL mob_toc_mageAI : public boss_faction_championsAI
 {
     mob_toc_mageAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_RANGED) {Init();}
+
+   void Init()
+   {
+        SetEquipmentSlots(false, 47524, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
 
     void UpdateAI(const uint32 diff)
     {
@@ -586,29 +618,9 @@ struct MANGOS_DLL_DECL mob_toc_hunterAI : public boss_faction_championsAI
 {
     mob_toc_hunterAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_RANGED) {Init();}
 
-        uint32 AimedShotTimer;
-    uint32 CallPetTimer;
-        uint32 DeterrenceTimer;
-        uint32 DisengageTimer;
-        uint32 ExplosiveShotTimer;
-        uint32 FrostTrapTimer;
-        uint32 AutoShootTimer;
-        uint32 SteadyShotTimer;
-        uint32 WingClipTimer;
-        uint32 WyvernStingTimer;
-    uint32 GCDTimer;
-
     void Init()
     {
-                AimedShotTimer = 1000+rand()%2000;
-                DeterrenceTimer = 20000;
-                DisengageTimer = 10000+rand()%3000;
-                ExplosiveShotTimer = 2000+rand()%3000;
-                FrostTrapTimer = 11000+rand()%5000;
-                SteadyShotTimer = 3200+rand()%2000;
-                WingClipTimer =  6000+rand()%2000;
-                WyvernStingTimer = 7000+rand()%3000;
-                GCDTimer = 1000;
+        SetEquipmentSlots(false, 47156, EQUIP_NO_CHANGE, 48711);
     }
 
     void UpdateAI(const uint32 diff)
@@ -659,6 +671,11 @@ struct MANGOS_DLL_DECL mob_toc_hunterAI : public boss_faction_championsAI
 struct MANGOS_DLL_DECL mob_toc_boomkinAI : public boss_faction_championsAI
 {
     mob_toc_boomkinAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_RANGED) {Init();}
+
+   void Init()
+   {
+        SetEquipmentSlots(false, 50966, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+   }
 
     void UpdateAI(const uint32 diff)
     {
@@ -713,6 +730,11 @@ struct MANGOS_DLL_DECL mob_toc_warriorAI : public boss_faction_championsAI
 {
     mob_toc_warriorAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_MELEE) {Init();}
 
+    void Init()
+    {
+        SetEquipmentSlots(false, 47427, 46964, EQUIP_NO_CHANGE);
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
@@ -751,6 +773,11 @@ struct MANGOS_DLL_DECL mob_toc_dkAI : public boss_faction_championsAI
 {
     mob_toc_dkAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_MELEE) {Init();}
 
+    void Init()
+    {
+        SetEquipmentSlots(false, 47518, 51021, EQUIP_NO_CHANGE);
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
@@ -788,23 +815,9 @@ struct MANGOS_DLL_DECL mob_toc_rogueAI : public boss_faction_championsAI
 {
     mob_toc_rogueAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_MELEE) {Init();}
 
-        uint32 FanOfKnivesTimer;
-        uint32 BlindTimer;
-        uint32 CloakTimer;
-        uint32 BladeFlurryTimer;
-        uint32 ShadowstepTimer;
-        uint32 HemorrhageTimer;
-        uint32 EviscerateTimer;
-
     void Init()
     {
-        FanOfKnivesTimer = 7000 + rand()%1000;
-            BlindTimer = 6000 + rand()%3000;
-            CloakTimer = 20000 + rand()%20000;
-            BladeFlurryTimer = 10000 + rand()%1000;
-            ShadowstepTimer = 9000 + rand()%2000;
-            HemorrhageTimer = 5000 + rand()%1000;
-            EviscerateTimer = 14000 + rand()%2000;
+        SetEquipmentSlots(false, 47422, 49982, EQUIP_NO_CHANGE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -842,6 +855,10 @@ struct MANGOS_DLL_DECL mob_toc_enh_shamanAI : public boss_faction_championsAI
 {
     mob_toc_enh_shamanAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_MELEE) {Init();}
 
+    void Init()
+    {
+        SetEquipmentSlots(false, 51803, 48013, EQUIP_NO_CHANGE);
+    }
 
     void UpdateAI(const uint32 diff)
     {
@@ -872,6 +889,11 @@ struct MANGOS_DLL_DECL mob_toc_enh_shamanAI : public boss_faction_championsAI
 struct MANGOS_DLL_DECL mob_toc_retro_paladinAI : public boss_faction_championsAI
 {
     mob_toc_retro_paladinAI(Creature *pCreature) : boss_faction_championsAI(pCreature, AI_MELEE) {Init();}
+
+    void Init()
+    {
+        SetEquipmentSlots(false, 47519, EQUIP_NO_CHANGE, EQUIP_NO_CHANGE);
+    }
 
     void Aggro(Unit *who)
     {
