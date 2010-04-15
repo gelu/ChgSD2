@@ -398,13 +398,13 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget)
 
                 case CAST_ON_SUMMONS:
                 case CAST_ON_VICTIM:
-                case CAST_ON_RANDOM:
                 case CAST_ON_BOTTOMAGGRO:
                 case CAST_ON_TARGET:
                 case APPLY_AURA_TARGET:
                      if (!pTarget) return false;
                      break;
 
+                case CAST_ON_RANDOM:
                 case CAST_ON_ALLPLAYERS:
                   {
                     Map::PlayerList const& pPlayers = pMap->GetPlayers();

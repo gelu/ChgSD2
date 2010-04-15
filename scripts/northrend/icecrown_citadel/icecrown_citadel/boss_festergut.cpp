@@ -31,12 +31,11 @@ enum BossSpells
     SPELL_INHALE_BLIGHT      = 69165,
     SPELL_INHALED_BLIGHT     = 71912,
     SPELL_PUNGENT_BLIGHT     = 69195,
-    SPELL_GAS_SPORE          = 69279,
+    SPELL_GAS_SPORE          = 69278,
     SPELL_INOCULATE          = 72103,
     SPELL_GASTRIC_BLOAT      = 72219,
     SPELL_GASTRIC_EXPLOSION  = 72227,
     SPELL_VILE_GAS           = 72272,
-    SPELL_BERSERK            = 47008,
 };
 
 struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
@@ -86,17 +85,17 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                         }
                     break;
             case 1: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_1, diff))
+                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_0, diff))
                         {
-                        bsw->doCast(SPELL_GASEOUS_BLIGHT_1);
+                        bsw->doCast(SPELL_GASEOUS_BLIGHT_0);
                         bsw->doCast(SPELL_INHALE_BLIGHT);
                         stage = 2;
                         }
                     break;
             case 2: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_2, diff))
+                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_0, diff))
                         {
-                        bsw->doCast(SPELL_GASEOUS_BLIGHT_2);
+                        bsw->doCast(SPELL_GASEOUS_BLIGHT_0);
                         bsw->doCast(SPELL_INHALE_BLIGHT);
                         stage = 3;
                         }
@@ -109,6 +108,11 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                         }
                     break;
         }
+        bsw->timedCast(SPELL_GAS_SPORE, diff);
+
+        bsw->timedCast(SPELL_GASTRIC_BLOAT, diff);
+
+        bsw->timedCast(SPELL_VILE_GAS, diff);
 
         DoMeleeAttackIfReady();
     }

@@ -26,7 +26,31 @@ EndScriptData */
 
 enum BossSpells
 {
-    SPELL_BERSERK            = 47008,
+    SPELL_SLIME_PUDDLE            = 70346,
+    SPELL_UNSTABLE_EXPERIMENT     = 71968,
+    SPELL_TEAR_GAS                = 71617,
+    SPELL_TEAR_GAS_1              = 71618,
+    SPELL_CREATE_CONCOCTION       = 71621,
+    SPELL_CHOKING_GAS             = 71278,
+    SPELL_CHOKING_GAS_EXPLODE     = 71279,
+    SPELL_MALLEABLE_GOO           = 72296,
+    SPELL_GUZZLE_POTIONS          = 73122,
+    SPELL_MUTATED_STRENGTH        = 71603,
+    SPELL_MUTATED_PLAGUE          = 72672,
+//
+    NPC_GAS_CLOUD                 = 37562,
+    SPELL_GASEOUS_BLOAT           = 70672,
+    SPELL_EXPUNGED_GAS            = 70701,
+//
+    NPC_VOLATILE_OOZE             = 37697,
+    SPELL_OOZE_ADHESIVE           = 70447, 
+//
+    NPC_MUTATED_ABOMINATION       = 37672,
+    SPELL_MUTATED_TRANSFORMATION  = 70311,
+    SPELL_EAT_OOZE                = 72527,
+    SPELL_REGURGITATED_OOZE       = 70539,
+    SPELL_MUTATED_SLASH           = 70542,
+    SPELL_MUTATED_AURA            = 70405,
 };
 
 struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
@@ -65,12 +89,73 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
         switch(stage)
         {
-            case 0: {
-                    bsw->timedCast(SPELL_BERSERK, diff);
-                    break;}
-            case 1: {
-                    break;}
+            case 0: 
+                    bsw->timedCast(SPELL_SLIME_PUDDLE, diff);
+
+                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                        switch(urand(0,1))
+                          {
+                          case 0:
+                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 break;
+                          case 1:
+                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 break;
+                          }
+
+                    break;
+            case 1: 
+                    bsw->doCast(SPELL_TEAR_GAS);
+                    bsw->doCast(SPELL_CREATE_CONCOCTION);
+                    stage = 2;
+                    break;
+            case 2: 
+                    bsw->timedCast(SPELL_SLIME_PUDDLE, diff);
+
+                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                        switch(urand(0,1))
+                          {
+                          case 0:
+                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 break;
+                          case 1:
+                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 break;
+                          }
+
+                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+
+                    bsw->timedCast(SPELL_MALLEABLE_GOO, diff);
+
+                    break;
+            case 3: 
+                    bsw->doCast(SPELL_TEAR_GAS);
+                    bsw->doCast(SPELL_GUZZLE_POTIONS);
+                    bsw->doCast(SPELL_MUTATED_STRENGTH);
+                    bsw->doCast(SPELL_MUTATED_PLAGUE);
+                    stage = 4;
+                    break;
+            case 4: 
+                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                        switch(urand(0,1))
+                          {
+                          case 0:
+                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 break;
+                          case 1:
+                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 break;
+                          }
+
+                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+
+                    bsw->timedCast(SPELL_MALLEABLE_GOO, diff);
+
+                    break;
         }
+
+        if ( stage ==0 && m_creature->GetHealthPercent() < 80.0f ) stage = 1;
+        if ( stage ==2 && m_creature->GetHealthPercent() < 35.0f ) stage = 3;
 
         DoMeleeAttackIfReady();
     }

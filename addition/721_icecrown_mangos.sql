@@ -84,8 +84,10 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201372);
 -- UPDATE `creature_template` SET `ScriptName`='boss_valanar' WHERE `entry`= 37970;
 -- Keleseth
 -- UPDATE `creature_template` SET `ScriptName`='boss_keleseth' WHERE `entry`= 37972;
-UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201376,201377,201378);
-UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201376,201377,201378);
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201920,201377,201378);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201920,201377,201378);
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201376);
+UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 
 -- Qween Lana'thel
 -- UPDATE `creature_template` SET `ScriptName`='boss_lanathel' WHERE `entry`= 37955;
