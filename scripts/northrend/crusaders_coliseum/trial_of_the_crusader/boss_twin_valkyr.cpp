@@ -111,6 +111,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
+        if (!m_pInstance) return;
         DoScriptText(-1713544,pVictim);
     }
 
@@ -127,6 +128,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
+        if (!m_pInstance) return;
         if (!m_creature || !m_creature->isAlive())
             return;
 
@@ -147,7 +149,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-
+        if (!m_pInstance) return;
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
@@ -279,6 +281,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
+        if (!m_pInstance) return;
         if (!m_creature || !m_creature->isAlive())
             return;
 

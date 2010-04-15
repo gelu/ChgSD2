@@ -179,13 +179,10 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint8 Difficulty;
     uint32 m_uiRangeCheck_Timer;
 
     void Reset()
     {
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
@@ -195,7 +192,6 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
                 m_creature->GetMotionMaster()->MoveChase(pTarget);
                 m_creature->SetSpeedRate(MOVE_RUN, 0.5);
                 }
-
     }
 
     void KilledUnit(Unit* pVictim)
@@ -478,6 +474,7 @@ struct MANGOS_DLL_DECL mob_mistress_of_painAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
+        if (!m_pInstance) return;
         if (m_pInstance->GetData(TYPE_JARAXXUS) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
 

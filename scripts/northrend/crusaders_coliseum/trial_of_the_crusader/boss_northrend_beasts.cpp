@@ -164,6 +164,8 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void Reset()
     {
+        pBoss = NULL;
+        defaultTarget = NULL;
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));

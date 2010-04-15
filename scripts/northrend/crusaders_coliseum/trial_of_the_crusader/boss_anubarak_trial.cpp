@@ -73,7 +73,6 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
-    uint32 SubmergeTimer;
     bool intro;
     BossSpellWorker* bsw;
     Unit* pTarget;
@@ -83,6 +82,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         stage = 0;
         intro = true;
         m_creature->SetRespawnDelay(DAY);
+        pTarget = NULL;
     }
 
 
@@ -270,6 +270,7 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         submerged = false;
+        currentTarget = NULL;
     }
 
     void KilledUnit(Unit* pVictim)
