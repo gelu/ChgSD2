@@ -17,6 +17,11 @@ Script *m_scripts[MAX_SCRIPTS];
 
 Config SD2Config;
 
+QueryResult* strSD2Pquery(char* str)
+{
+return SD2Database.Query(str);
+}
+
 void FillSpellSummary();
 
 void LoadDatabase()
@@ -46,8 +51,6 @@ void LoadDatabase()
         return;
     }
 
-    SD2Database.HaltDelayThread();
-
 }
 
 struct TSpellSummary {
@@ -66,6 +69,7 @@ void ScriptsFree()
         delete m_scripts[i];
 
     num_sc_scripts = 0;
+    SD2Database.HaltDelayThread();
 }
 
 MANGOS_DLL_EXPORT
