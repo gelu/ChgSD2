@@ -95,16 +95,15 @@ enum
     GO_BLOODWING_SIGIL            = 202183,
 };
 
-struct _SpellTable
+static Locations SpawnLoc[]=
 {
-    uint32 id;
-    uint32 m_uiSpellEntry[DIFFICULTY_LEVELS];          // Stores spell entry for difficulty levels
-    uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
-    uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
-    uint32 m_uiStageMask;                              // The mask of stages where spell is casted
-    uint32 m_CastTarget;                              // Target on casting spell
-    bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
-    bool   m_IsBugged;                                 // Need override for this spell
+    {-446.788971, 2003.362915, 191.233948},  // 0 Horde ship enter
+    {-428.140503, 2421.336914, 191.233078},  // 1 Alliance ship enter
+    {4203.470215, 2484.500000, 364.872009},  // 2 Valithria
+    {4240.688477, 2405.794678, 364.868591},  // 3 Valithria Room 1
+    {4165.112305, 2405.872559, 364.872925},  // 4 Valithria Room 2
+    {4166.216797, 2564.197266, 364.873047},  // 5 Valithria Room 3
+    {4239.579102, 2566.753418, 364.868439},  // 6 Valithria Room 4
 };
 
 #endif
