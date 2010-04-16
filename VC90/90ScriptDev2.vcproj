@@ -33,7 +33,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 			/>
-			Tool
+			<Tool
 				Name="VCXMLDataGeneratorTool"
 			/>
 			<Tool
