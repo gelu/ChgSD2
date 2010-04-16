@@ -22,9 +22,9 @@ SDCategory:
 EndScriptData */
 
 // Anubarak - underground phase partially not worked, timers need correct
-// Burrower - underground phase not implemented
+// Burrower - underground phase not implemented, buff not worked.
 // Leecheng Swarm spell not worked - awaiting core support
-// Frost Sphere - realised by EventAI
+// Anubarak spike aura worked only after 9750
 
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
@@ -105,7 +105,7 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ANUBARAK, FAIL);
-            m_creature->ForcedDespawn();
+//            m_creature->ForcedDespawn();
     }
 
     void JustDied(Unit* pKiller)
@@ -151,8 +151,8 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
                     if (bsw->timedQuery(SPELL_SPIKE_CALL, uiDiff)) {
                          pTarget = bsw->SelectUnit();
 //                         bsw->doCast(SPELL_SPIKE_CALL);
+//                         This summon not supported in database. Temporary override.
                          Unit* spike = bsw->doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,60000);
-//                         Creature* spike = GetClosestCreatureWithEntry(m_creature, NPC_SPIKE, 50.0f);
                          if (spike) { spike->AddThreat(pTarget, 1000.0f);
                                       DoScriptText(-1713558,m_creature,pTarget);
                                       bsw->doCast(SPELL_MARK,pTarget);
@@ -375,6 +375,7 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     BossSpellWorker* bsw;
+    Unit* defaultTarget;
 
     void Reset()
     {
@@ -382,18 +383,23 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
         m_creature->SetSpeedRate(MOVE_RUN, 0.5f);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        defaultTarget = NULL;
     }
 
     void Aggro(Unit *who)
     {
         if (!m_pInstance) return;
         bsw->doCast(SPELL_IMPALE);
+        defaultTarget = who;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
+        if (defaultTarget)
+            if (!defaultTarget->isAlive() || !bsw->hasAura(SPELL_MARK,defaultTarget))
+                 m_creature->ForcedDespawn();
 
 /*        if (bsw->timedQuery(SPELL_IMPALE,uiDiff)) {
         if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f)

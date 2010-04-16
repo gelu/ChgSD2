@@ -209,6 +209,7 @@ bool GossipSelect_npc_toc_announcer(Player* pPlayer, Creature* pCreature, uint32
 {
     ScriptedInstance* pInstance;
     pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    if (!pInstance) return false;
 
 pPlayer->CLOSE_GOSSIP_MENU();
 
@@ -242,6 +243,7 @@ switch(uiAction) {
     };
 
     case GOSSIP_ACTION_INFO_DEF+5: {
+       if (pInstance->GetData(TYPE_LICH_KING) != DONE) return false;
        if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARGENT_COLISEUM_FLOOR)))
           {
            pGoFloor->SetUInt32Value(GAMEOBJECT_DISPLAYID,9060);
@@ -250,21 +252,23 @@ switch(uiAction) {
            }
            pCreature->CastSpell(pCreature,69016,false);
 
-           pInstance->SetData(TYPE_ANUBARAK,IN_PROGRESS);
-                pCreature->SummonCreature(NPC_ANUBARAK, SpawnLoc[19].x, SpawnLoc[19].y, SpawnLoc[19].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),pInstance->GetData64(NPC_ANUBARAK))) {
+           Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),pInstance->GetData64(NPC_ANUBARAK));
+           if (!pTemp || !pTemp->isAlive())
+                         pCreature->SummonCreature(NPC_ANUBARAK, SpawnLoc[19].x, SpawnLoc[19].y, SpawnLoc[19].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+           if (pTemp) {
                         pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[20].x, SpawnLoc[20].y, SpawnLoc[20].z);
                         pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
                         pTemp->SetInCombatWithZone();
                         }
-               pInstance->SetData(TYPE_STAGE,9);
-               if (pCreature->GetVisibility() == VISIBILITY_ON)
+           pInstance->SetData(TYPE_STAGE,9);
+           pInstance->SetData(TYPE_ANUBARAK,IN_PROGRESS);
+           if (pCreature->GetVisibility() == VISIBILITY_ON)
                    pCreature->SetVisibility(VISIBILITY_OFF);
     break;
     };
 
     case GOSSIP_ACTION_INFO_DEF+6: {
-    pInstance->SetData(TYPE_STAGE,9);
+    pInstance->SetData(TYPE_STAGE,10);
     break;
     };
 
@@ -304,6 +308,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
         pPortal->SetRespawnDelay(DAY);
         pPortal->CastSpell(pPortal, 51807, false);
         pPortal->SetDisplayId(17612);
+        if(pInstance) pInstance->SetData(TYPE_LICH_KING,IN_PROGRESS);
     }
 
     void AttackStart(Unit *who)

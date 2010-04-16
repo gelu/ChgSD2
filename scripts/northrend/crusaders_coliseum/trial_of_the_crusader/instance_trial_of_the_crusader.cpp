@@ -263,7 +263,9 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                              pChest->SetRespawnTime(7*DAY);
                                    };
                              break;
-        case TYPE_CRUSADERS_COUNT:  m_auiCrusadersCount = uiData; break;
+        case TYPE_CRUSADERS_COUNT:  if (uiData == 0) --m_auiCrusadersCount;
+                                         else m_auiCrusadersCount = uiData;
+                                    break;
         case TYPE_VALKIRIES: if (m_auiEncounter[4] == SPECIAL && uiData == SPECIAL) uiData = DONE;
                              m_auiEncounter[4] = uiData; break;
         case TYPE_LICH_KING: m_auiEncounter[5] = uiData; break;

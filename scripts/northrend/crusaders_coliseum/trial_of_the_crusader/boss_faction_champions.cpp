@@ -113,7 +113,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(m_pInstance) m_pInstance->SetData(TYPE_CRUSADERS_COUNT, m_pInstance->GetData(TYPE_CRUSADERS_COUNT)-1);
+        if(m_pInstance) m_pInstance->SetData(TYPE_CRUSADERS_COUNT, 0);
     }
 
     void Aggro(Unit *who)
