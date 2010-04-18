@@ -7,6 +7,7 @@
 
 #include "Common.h"
 #include "DBCStructure.h"
+#include "Database/DatabaseEnv.h"
 
 class Player;
 class Creature;
