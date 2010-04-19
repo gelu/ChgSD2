@@ -97,7 +97,6 @@ struct MANGOS_DLL_DECL boss_ouroAI : public ScriptedAI
             // Sand Blast
             if (m_uiSandBlastTimer < uiDiff)
             {
-                m_creature->MonsterMove(target->GetPositionX(), target->GetPositionY(), target->GetPositionZ(), 1);
                 DoCastSpellIfCan(m_creature->getVictim(), SPELL_SANDBLAST);
                 m_uiSandBlastTimer = urand(20000, 35000);
             }
