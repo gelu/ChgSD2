@@ -264,7 +264,7 @@ extern void AddSC_instance_azjol_nerub();
 extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
 extern void AddSC_boss_jaraxxus();
 extern void AddSC_boss_anubarak_trial();
-EXTERN VOID AddSC_boss_faction_champions();
+extern void AddSC_boss_faction_champions();
 extern void AddSC_twin_valkyr();
 extern void AddSC_instance_trial_of_the_crusader();
 extern void AddSC_trial_of_the_crusader();
@@ -670,7 +670,7 @@ void AddScripts()
     AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
     AddSC_boss_jaraxxus();
     AddSC_boss_anubarak_trial();
-
+    AddSC_boss_faction_champions();
     AddSC_twin_valkyr();
     AddSC_instance_trial_of_the_crusader();
     AddSC_trial_of_the_crusader();
