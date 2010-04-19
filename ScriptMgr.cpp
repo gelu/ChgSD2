@@ -51,6 +51,10 @@ void LoadDatabase()
         error_log("SD2: Unable to connect to Database. Load database aborted.");
         return;
     }
+<<<<<<< HEAD:ScriptMgr.cpp
+=======
+
+>>>>>>> offlike:ScriptMgr.cpp
 }
 
 struct TSpellSummary {
