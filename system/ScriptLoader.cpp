@@ -753,12 +753,6 @@ void AddScripts()
     AddSC_boss_hadronox();
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
-    AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
-    AddSC_boss_jaraxxus();
-    AddSC_boss_anubarak_trial();
-    AddSC_twin_valkyr();
-    AddSC_instance_trial_of_the_crusader();
-    AddSC_trial_of_the_crusader();
     AddSC_boss_novos();                                     //draktharon_keep
     AddSC_boss_dred();
     AddSC_boss_tharonja();
