@@ -31,6 +31,8 @@ enum BossSpells
     SPELL_INHALE_BLIGHT      = 69165,
     SPELL_INHALED_BLIGHT     = 71912,
     SPELL_PUNGENT_BLIGHT     = 69195,
+    SPELL_PUNGENT_BLIGHT_1   = 69157,
+    SPELL_PUNGENT_BLIGHT_2   = 69126,
     SPELL_GAS_SPORE          = 69278,
     SPELL_INOCULATE          = 72103,
     SPELL_GASTRIC_BLOAT      = 72219,
@@ -67,6 +69,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT);
+        bsw->doRemove(SPELL_PUNGENT_BLIGHT_1);
+        bsw->doRemove(SPELL_PUNGENT_BLIGHT_2);
     }
 
     void UpdateAI(const uint32 diff)

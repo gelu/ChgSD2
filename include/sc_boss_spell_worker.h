@@ -138,9 +138,9 @@ class MANGOS_DLL_DECL BossSpellWorker
                   else return CAST_FAIL_OTHER;
              };
 
-        bool doRemove(uint32 SpellID, Unit* pTarget = NULL)
+        bool doRemove(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-             return _doRemove(FindSpellIDX(SpellID),pTarget);
+             return _doRemove(FindSpellIDX(SpellID),pTarget, index);
              };
 
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
@@ -206,7 +206,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         Unit*         _SelectUnit(SelectAggroTarget target, uint32 uiPosition);
 
-        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
+        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 
