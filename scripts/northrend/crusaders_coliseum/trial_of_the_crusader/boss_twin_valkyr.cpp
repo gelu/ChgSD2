@@ -142,8 +142,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                 uiDamage += uiDamage/2;
         }
 
-        uiDamage /= 2;
-
         m_pInstance->SetData(DATA_HEALTH_FJOLA, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
@@ -294,8 +292,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
             else if(pDoneBy->HasAura(SPELL_LIGHT_ESSENCE))
                 uiDamage += uiDamage/2;
         }
-
-        uiDamage /= 2;
 
         m_pInstance->SetData(DATA_HEALTH_EYDIS, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
