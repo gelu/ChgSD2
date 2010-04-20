@@ -81,6 +81,21 @@ bool GOGossipHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
     return true;
 }
 
+bool GOGossipHello_go_plague_sigil(Player *player, GameObject* pGo)
+{
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return true;
+
+    if (pInstance->GetData(TYPE_FESTERGUT) == DONE
+        && pInstance->GetData(TYPE_ROTFACE) == DONE)
+        {
+        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_GREEN));
+        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_ORANGE));
+        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_COLLISION));
+        }
+    return true;
+}
+
 
 void AddSC_icecrown_teleporter()
 {
@@ -90,5 +105,10 @@ void AddSC_icecrown_teleporter()
     newscript->Name = "go_icecrown_teleporter";
     newscript->pGOGossipHello  = &GOGossipHello_go_icecrown_teleporter;
     newscript->pGOGossipSelect = &GOGossipSelect_go_icecrown_teleporter;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_plague_sigil";
+    newscript->pGOGossipHello  = &GOGossipHello_go_plague_sigil;
     newscript->RegisterSelf();
 }

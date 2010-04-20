@@ -6,7 +6,7 @@ DELETE FROM `gameobject` WHERE `guid` = 913334;
 INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
 (913334, 202244, 631, 3, 1, -209.5, 2211.91, 199.97, 3.07661, 0, 0, 0.999472, 0.0324833, 0, 0, 1);
 
-UPDATE `gameobject_template` SET `flags` = 0, ScriptName = 'go_icecrown_teleporter' WHERE `entry`  IN (202242,202243,202244,202245,202235,202223,202246);
+UPDATE `gameobject_template` SET `flags` = 0, `ScriptName` = 'go_icecrown_teleporter' WHERE `entry`  IN (202242,202243,202244,202245,202235,202223,202246);
 DELETE FROM `areatrigger_teleport` WHERE `id` = 5718 AND `target_map` = 631;
 
 DELETE FROM `creature` WHERE `id` = 99322;
@@ -41,6 +41,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_spire_frostwyrm', `AIName`='' W
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` = 37230;
 UPDATE `creature_template` SET `ScriptName`='mob_frost_giant', `AIName`='' WHERE `entry` IN (38490, 38494) ;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (38490, 38494);
+
 -- Gunship armory (override)
 DELETE FROM `gameobject` WHERE `id` IN (201872,201873,201874,201875,202177,202178,202179,202180);
 INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
@@ -68,6 +69,9 @@ UPDATE `creature_template` SET `ScriptName`='boss_proffesor_putricide', `AIName`
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201372,201614,201613, 201612);
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201612,201614,201613);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201372);
+UPDATE `creature_template` SET `ScriptName`='mob_icc_gas_cloud', `AIName`='' WHERE `entry`= 37562;
+UPDATE `creature_template` SET `ScriptName`='mob_icc_volatile_ooze', `AIName`='' WHERE `entry`= 37697;
+UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_plague_sigil' WHERE `gameobject_template`.`entry` IN (202182);
 
 -- Taldaram
 -- UPDATE `creature_template` SET `ScriptName`='boss_taldaram' WHERE `entry`= 37973;

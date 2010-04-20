@@ -41,9 +41,11 @@ enum BossSpells
     NPC_GAS_CLOUD                 = 37562,
     SPELL_GASEOUS_BLOAT           = 70672,
     SPELL_EXPUNGED_GAS            = 70701,
+    SPELL_SOUL_FEAST              = 71203,
 //
     NPC_VOLATILE_OOZE             = 37697,
-    SPELL_OOZE_ADHESIVE           = 70447, 
+    SPELL_OOZE_ADHESIVE           = 70447,
+    SPELL_OOZE_ERUPTION           = 70492,
 //
     NPC_MUTATED_ABOMINATION       = 37672,
     SPELL_MUTATED_TRANSFORMATION  = 70311,
@@ -166,11 +168,122 @@ CreatureAI* GetAI_boss_proffesor_putricide(Creature* pCreature)
     return new boss_proffesor_putricideAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
+{
+    mob_icc_gas_cloudAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+        m_creature->SetInCombatWithZone();
+        m_creature->SetRespawnDelay(DAY);
+    }
+
+    void Aggro(Unit *who)
+    {
+        if (!m_pInstance) return;
+    }
+
+    void JustReachedHome()
+    {
+        if (!m_pInstance) return;
+            m_creature->ForcedDespawn();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        bsw->timedCast(SPELL_GASEOUS_BLOAT, uiDiff);
+        bsw->timedCast(SPELL_SOUL_FEAST, uiDiff);
+        if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 1.0f)
+            && bsw->hasAura(SPELL_GASEOUS_BLOAT, m_creature->getVictim()))
+            {
+               bsw->doCast(SPELL_EXPUNGED_GAS);
+               m_creature->ForcedDespawn();
+            };
+    }
+};
+
+CreatureAI* GetAI_mob_icc_gas_cloud(Creature* pCreature)
+{
+    return new mob_icc_gas_cloudAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
+{
+    mob_icc_volatile_oozeAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+        m_creature->SetInCombatWithZone();
+        m_creature->SetRespawnDelay(DAY);
+    }
+
+    void Aggro(Unit *who)
+    {
+        if (!m_pInstance) return;
+    }
+
+    void JustReachedHome()
+    {
+        if (!m_pInstance) return;
+            m_creature->ForcedDespawn();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        bsw->timedCast(SPELL_OOZE_ADHESIVE, uiDiff, m_creature->getVictim());
+        bsw->timedCast(SPELL_SOUL_FEAST, uiDiff);
+        if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 1.0f))
+            {
+               bsw->doCast(SPELL_OOZE_ERUPTION);
+               m_creature->ForcedDespawn();
+            };
+    }
+};
+
+CreatureAI* GetAI_mob_icc_volatile_ooze(Creature* pCreature)
+{
+    return new mob_icc_volatile_oozeAI(pCreature);
+}
+
 void AddSC_boss_proffesor_putricide()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "boss_proffesor_putricide";
     newscript->GetAI = &GetAI_boss_proffesor_putricide;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_icc_volatile_ooze";
+    newscript->GetAI = &GetAI_mob_icc_volatile_ooze;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_icc_gas_cloud";
+    newscript->GetAI = &GetAI_mob_icc_gas_cloud;
     newscript->RegisterSelf();
 }

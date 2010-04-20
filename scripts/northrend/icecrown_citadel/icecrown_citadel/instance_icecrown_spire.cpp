@@ -478,6 +478,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case NPC_LICH_KING:
                                      return m_uiLichKingGUID;
 
+            case GO_SCIENTIST_DOOR_ORANGE:    return m_uiSDoorOrangeGUID;
+            case GO_SCIENTIST_DOOR_GREEN:     return m_uiSDoorGreenGUID;
+            case GO_SCIENTIST_DOOR_COLLISION: return m_uiSDoorCollisionGUID;
+            case GO_BLOODWING_DOOR:           return m_uiBloodwingDoorGUID;
         }
         return 0;
     }
