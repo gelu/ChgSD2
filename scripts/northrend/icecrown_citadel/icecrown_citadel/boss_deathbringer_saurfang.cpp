@@ -34,19 +34,14 @@ enum
         //Abilities
         SPELL_BLOOD_LINK                        = 72178,
         SPELL_BLOOD_POWER                       = 72371,
-        SPELL_MARK_N                            = 72293,
+        SPELL_MARK                              = 72293,
         SPELL_FRENZY                            = 72737,
-        SPELL_BOILING_BLOOD_N                   = 72385,
-        SPELL_BLOOD_NOVA_N                      = 72380,
-        SPELL_RUNE_OF_BLOOD_N                   = 72408,
+        SPELL_BOILING_BLOOD                     = 72385,
+        SPELL_BLOOD_NOVA                        = 72380,
+        SPELL_RUNE_OF_BLOOD                     = 72408,
         SPELL_CALL_BLOOD_BEASTS                 = 72173,
         SPELL_SCENT_OF_BLOOD                    = 72769,
         SPELL_RESISTANT_SKIN                    = 72723,
-
-        SPELL_MARK_H                            = 72444,
-        SPELL_BOILING_BLOOD_H                   = 72442,
-        SPELL_BLOOD_NOVA_H                      = 72438,
-        SPELL_RUNE_OF_BLOOD_H                   = 72448,
 
         SPELL_BEAST_1                           = 72176,
         SPELL_BEAST_2                           = 72723,
@@ -59,56 +54,47 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     boss_deathbringer_saurfangAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
-    bool Regular;
-    bool m_uiIsFrenzy;
     ScriptedInstance *pInstance;
-    uint32 m_uiBerserk_Timer;
-    uint32 m_uiBloodLink_Timer;
-    uint32 m_uiBloodNova_Timer;
-    uint32 m_uiBoilingBlood_Timer;
-    uint32 m_uiRuneOfBlood_Timer;
-    uint32 m_uiSummon_Timer;
-
-    uint8 health;
+    BossSpellWorker* bsw;
+    bool m_uiIsFrenzy;
     uint8 stage;
+    uint8 Difficulty;
 
     void Reset()
     {
-    if(pInstance) pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
-    m_uiBerserk_Timer = 480000;
-    m_uiIsFrenzy = false;
-    stage = 0;
-
-    uint32 m_uiBloodLink_Timer = 10000;
-    uint32 m_uiBloodNova_Timer = 20000;
-    uint32 m_uiBoilingBlood_Timer = 25000;
-    uint32 m_uiRuneOfBlood_Timer = 35000;
-    uint32 m_uiSummon_Timer =30000;
-
-    }
-    uint64 CallGuard(uint64 npctype,TempSummonType type, uint32 _summontime )
-    {
-        float fPosX, fPosY, fPosZ;
-        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(15, 25), fPosX, fPosY, fPosZ);
-        Creature* pSummon = m_creature->SummonCreature(npctype, fPosX, fPosY, fPosZ, 0, type, _summontime);
-        if(pSummon) pSummon->SetInCombatWithZone();
-//        DoScriptText(EMOTE_SUMMON, m_creature);
-        return pSummon ? pSummon->GetGUID() : 0;
+        if(!pInstance) return;
+        Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
+        pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
+        m_uiIsFrenzy = false;
+        stage = 0;
     }
 
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
+        DoScriptText(-1631100,m_creature);
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631103,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631104,m_creature,pVictim);
+               break;
+        };
     }
 
     void JustDied(Unit *killer)
     {
         if(pInstance) pInstance->SetData(TYPE_SAURFANG, DONE);
+        DoScriptText(-1631106,m_creature);
     }
 
     void UpdateAI(const uint32 diff)
@@ -122,9 +108,10 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     break;}
             case 1: {
                     if (!m_uiIsFrenzy) {
-                    DoCast(m_creature, SPELL_FRENZY);
+                    bsw->doCast(SPELL_FRENZY);
                     m_uiIsFrenzy = true;
                     stage = 2;
+                    DoScriptText(-1631101,m_creature);
                     }
                     break;}
 
@@ -132,46 +119,46 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     break;}
         }
 
-                    if (m_uiBloodLink_Timer < diff) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget, SPELL_BLOOD_LINK);
-                    m_uiBloodLink_Timer=urand(8000,15000);
-                    } else m_uiBloodLink_Timer -= diff;
+                    bsw->timedCast(SPELL_BLOOD_LINK, diff);
 
-                    if (m_uiBloodNova_Timer < diff) {
-                    DoCast(m_creature->getVictim(), Regular ? SPELL_BLOOD_NOVA_N : SPELL_BLOOD_NOVA_H);
-                    m_uiBloodNova_Timer=urand(25000,30000);
-                    } else m_uiBloodNova_Timer -= diff;
+                    bsw->timedCast(SPELL_BLOOD_NOVA, diff);
 
-                    if (m_uiBoilingBlood_Timer < diff) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget, Regular ? SPELL_BOILING_BLOOD_N : SPELL_BOILING_BLOOD_H);
-                    m_uiBoilingBlood_Timer=urand(20000,40000);
-                    } else m_uiBoilingBlood_Timer -= diff;
+                    bsw->timedCast(SPELL_BOILING_BLOOD, diff);
 
-                    if (m_uiRuneOfBlood_Timer < diff) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
-                    DoCast(pTarget, Regular ? SPELL_RUNE_OF_BLOOD_N : SPELL_RUNE_OF_BLOOD_H);
-                    m_uiRuneOfBlood_Timer=urand(20000,40000);
-                    } else m_uiRuneOfBlood_Timer -= diff;
+                    bsw->timedCast(SPELL_RUNE_OF_BLOOD, diff);
 
-                    if (m_uiSummon_Timer < diff)
+                    if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
                     {
-                    CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
-                    CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
-                    if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
-                    if(!Regular) CallGuard(NPC_BLOOD_BEASTS, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 5000);
-                    m_uiSummon_Timer=60000;
-                    } else m_uiSummon_Timer -= diff;
+                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                        DoScriptText(-1631102,m_creature);
+                        if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL
+                            || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                            {
+                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                            }
+                    }
 
-        health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();
-        if (health <= 30 && stage == 0) stage = 1;
+            if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;
 
-        if (m_uiBerserk_Timer < diff)
-        {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserk_Timer = 600000;
-        } else  m_uiBerserk_Timer -= diff;
+            bsw->timedCast(SPELL_BERSERK, diff);
 
         DoMeleeAttackIfReady();
     }

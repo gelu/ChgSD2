@@ -17,6 +17,12 @@
 #include "precompiled.h"
 #include "def_spire.h"
 
+static Locations SpawnLoc[]=
+{
+    {-446.788971, 2003.362915, 191.233948},  // 0 Horde ship enter
+    {-428.140503, 2421.336914, 191.233078},  // 1 Alliance ship enter
+};
+
 struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 {
     instance_icecrown_spire(Map* pMap) : ScriptedInstance(pMap) 
@@ -54,8 +60,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiGreenPlagueGUID;
     uint64 m_uiSDoorGreenGUID;
     uint64 m_uiSDoorOrangeGUID;
+    uint64 m_uiSDoorCollisionGUID;
     uint64 m_uiScientistDoorGUID;
     uint64 m_uiCrimsonDoorGUID;
+    uint64 m_uiBloodwingDoorGUID;
     uint64 m_uiCounsilDoor1GUID;
     uint64 m_uiCounsilDoor2GUID;
     uint64 m_uiGreenDragonDoor1GUID;
@@ -68,6 +76,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
+
+    uint64 m_uiGunshipArmoryH_ID;
+    uint64 m_uiGunshipArmoryA_ID;
 
     void OpenDoor(uint64 guid)
     {
@@ -83,6 +94,19 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if(pGo) pGo->SetGoState(GO_STATE_READY);
     }
 
+    void OpenAllDoors()
+    {
+        if (m_auiEncounter[1] == DONE) {
+                OpenDoor(m_uiIcewall1GUID);
+                OpenDoor(m_uiIcewall2GUID);
+                }
+        if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
+        if (m_auiEncounter[7] == DONE) OpenDoor(m_uiSDoorGreenGUID);
+        if (m_auiEncounter[7] == DONE && m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+//        if (m_auiEncounter[8] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+
+    }
+
     void Initialize()
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
@@ -96,7 +120,39 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         m_uiSaurfangCacheGUID = 0;
         m_uiGunshipArmoryAGUID = 0;
         m_uiGunshipArmoryHGUID = 0;
+        m_uiIcewall1GUID = 0;
+        m_uiIcewall2GUID = 0;
+        m_uiSDoorOrangeGUID = 0;
+        m_uiSDoorGreenGUID = 0;
+        m_uiBloodwingDoorGUID = 0;
+        m_uiSDoorCollisionGUID = 0;
+        switch (Difficulty) {
+                             case RAID_DIFFICULTY_10MAN_NORMAL:
+                                       m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_10;
+                                       m_uiGunshipArmoryA_ID = GO_GUNSHIP_ARMORY_A_10;
+                                       break;
+                             case RAID_DIFFICULTY_10MAN_HEROIC:
+                                       m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_10H;
+                                       m_uiGunshipArmoryA_ID = GO_GUNSHIP_ARMORY_A_10H;
+                                       break;
+                             case RAID_DIFFICULTY_25MAN_NORMAL:
+                                       m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_25;
+                                       m_uiGunshipArmoryA_ID = GO_GUNSHIP_ARMORY_A_25;
+                                       break;
+                             case RAID_DIFFICULTY_25MAN_HEROIC:
+                                       m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_25H;
+                                       m_uiGunshipArmoryA_ID = GO_GUNSHIP_ARMORY_A_25H;
+                                       break;
+                             default:
+                                       m_uiGunshipArmoryH_ID = 0;
+                                       m_uiGunshipArmoryA_ID = 0;
+                                       break;
+                             };
+    }
 
+    void OnPlayerEnter(Player *m_player)
+    {
+        OpenAllDoors();
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -176,11 +232,17 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_SCIENTIST_DOOR_ORANGE: 
                          m_uiSDoorOrangeGUID = pGo->GetGUID();
                          break;
-            case GO_SCIENTIST_DOOR: 
+            case GO_SCIENTIST_DOOR_COLLISION: 
+                         m_uiSDoorCollisionGUID = pGo->GetGUID();
+                         break;
+            case GO_SCIENTIST_DOOR:
                          m_uiScientistDoorGUID = pGo->GetGUID();
                          break;
             case GO_CRIMSON_HALL_DOOR: 
                          m_uiCrimsonDoorGUID = pGo->GetGUID();
+                         break;
+            case GO_BLOODWING_DOOR: 
+                         m_uiBloodwingDoorGUID = pGo->GetGUID();
                          break;
             case GO_COUNCIL_DOOR_1: 
                          m_uiCounsilDoor1GUID = pGo->GetGUID();
@@ -255,7 +317,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
                                   break;
         }
+        OpenAllDoors();
     }
+
     void SetData(uint32 uiType, uint32 uiData)
     {
         if (uiType > m_auiEncounter[0] && uiData == DONE) m_auiEncounter[0] = uiType;
@@ -267,23 +331,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[1] = uiData; 
                 if (uiData == DONE) {
                 OpenDoor(m_uiIcewall1GUID);
-                OpenDoor(m_uiIcewall1GUID);
-                m_auiEncounter[0] = TYPE_MARROWGAR;
+                OpenDoor(m_uiIcewall2GUID);
                 }
                 break;
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
                 if (uiData == DONE) {
-                m_auiEncounter[0] = TYPE_DEATHWHISPER;
                     if (GameObject* pGOTemp = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
                         pGOTemp->SetRespawnTime(25000);
                 }
                 break;
              case TYPE_SKULLS_PLATO:
                 m_auiEncounter[3] = uiData; 
-                if (uiData == DONE) {
-                m_auiEncounter[0] = TYPE_SKULLS_PLATO; 
-                }
                 break;
              case TYPE_FLIGHT_WAR:
                 if (uiData == DONE && m_auiEncounter[4] != DONE  ) {
@@ -291,21 +350,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
                                       };
+
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryHGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
                                       };
-                                m_auiEncounter[4] = uiData; 
                                 };
-                break;
-             case TYPE_FROSTWIRM_COUNT:
-                m_auiEncounter[15] = uiData;
-                uiData = NOT_STARTED;
+                m_auiEncounter[4] = uiData; 
                 break;
              case TYPE_SAURFANG:
                 m_auiEncounter[5] = uiData; 
                 if (uiData == DONE) {
-//                OpenDoor(m_uiSaurfangDoorGUID);
+                OpenDoor(m_uiSaurfangDoorGUID);
                                  if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
@@ -314,12 +370,27 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_FESTERGUT:
                 m_auiEncounter[6] = uiData;
+                if (uiData == IN_PROGRESS) CloseDoor(m_uiOrangePlagueGUID);
+                                      else OpenDoor(m_uiOrangePlagueGUID);
+                if (uiData == DONE)  {
+                                     OpenDoor(m_uiSDoorOrangeGUID);
+                                     if (m_auiEncounter[7] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     }
                 break;
              case TYPE_ROTFACE:
                 m_auiEncounter[7] = uiData;
+                if (uiData == IN_PROGRESS) CloseDoor(m_uiGreenPlagueGUID);
+                                      else OpenDoor(m_uiGreenPlagueGUID);
+                if (uiData == DONE) {
+                                     OpenDoor(m_uiSDoorGreenGUID);
+                                     if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     }
                 break;
              case TYPE_PUTRICIDE:
                 m_auiEncounter[8] = uiData;
+                if (uiData == IN_PROGRESS) CloseDoor(m_uiScientistDoorGUID);
+                                      else OpenDoor(m_uiScientistDoorGUID);
+//                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
                 break;
              case TYPE_BLOOD_COUNCIL:
                 m_auiEncounter[9] = uiData;
@@ -335,6 +406,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_LICH_KING:
                 m_auiEncounter[13] = uiData;
+                break;
+             case TYPE_ICECROWN_QUESTS:
+                m_auiEncounter[14] = uiData;
+                break;
+             case TYPE_COUNT:
+                m_auiEncounter[15] = uiData;
+                uiData = NOT_STARTED;
                 break;
         }
 
@@ -363,14 +441,23 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiType)
         {
-             case DIFFICULTY:         return Difficulty;
+             case TYPE_DIFFICULTY:    return Difficulty;
              case TYPE_TELEPORT:      return m_auiEncounter[0];
              case TYPE_MARROWGAR:     return m_auiEncounter[1];
              case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
              case TYPE_SKULLS_PLATO:  return m_auiEncounter[3];
              case TYPE_FLIGHT_WAR:    return m_auiEncounter[4];
              case TYPE_SAURFANG:      return m_auiEncounter[5];
-             case TYPE_FROSTWIRM_COUNT:      return m_auiEncounter[15];
+             case TYPE_FESTERGUT:     return m_auiEncounter[6];
+             case TYPE_ROTFACE:       return m_auiEncounter[7];
+             case TYPE_PUTRICIDE:     return m_auiEncounter[8];
+             case TYPE_BLOOD_COUNCIL: return m_auiEncounter[9];
+             case TYPE_LANATHEL:      return m_auiEncounter[10];
+             case TYPE_VALITHRIA:     return m_auiEncounter[11];
+             case TYPE_SINDRAGOSA:    return m_auiEncounter[12];
+             case TYPE_LICH_KING:     return m_auiEncounter[13];
+             case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[14];
+             case TYPE_COUNT:         return m_auiEncounter[15];
         }
         return 0;
     }
@@ -406,6 +493,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case NPC_LICH_KING:
                                      return m_uiLichKingGUID;
 
+            case GO_SCIENTIST_DOOR_ORANGE:    return m_uiSDoorOrangeGUID;
+            case GO_SCIENTIST_DOOR_GREEN:     return m_uiSDoorGreenGUID;
+            case GO_SCIENTIST_DOOR_COLLISION: return m_uiSDoorCollisionGUID;
+            case GO_BLOODWING_DOOR:           return m_uiBloodwingDoorGUID;
         }
         return 0;
     }
@@ -431,6 +522,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         }
 
         OUT_LOAD_INST_DATA_COMPLETE;
+        OpenAllDoors();
     }
 };
 

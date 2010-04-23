@@ -1,12 +1,12 @@
 
 #ifndef DEF_ICECROWN_SPIRE_H
 #define DEF_ICECROWN_SPIRE_H
+#include "sc_boss_spell_worker.h"
 
 enum
 {
-    DIFFICULTY                  = 1001,
+    TYPE_DIFFICULTY             = 1001,
     MAP_NUM                     = 631,
-    MAX_ENCOUNTERS              = 16,
 
     TYPE_TELEPORT               = 0,
     TYPE_MARROWGAR              = 1,
@@ -22,7 +22,9 @@ enum
     TYPE_VALITHRIA              = 11,
     TYPE_SINDRAGOSA             = 12,
     TYPE_LICH_KING              = 13,
-    TYPE_FROSTWIRM_COUNT        = 15,
+    TYPE_ICECROWN_QUESTS        = 14,
+    TYPE_COUNT                  = 15,
+    MAX_ENCOUNTERS,
 
     NPC_LORD_MARROWGAR          = 36612,
     NPC_LADY_DEATHWHISPER       = 36855,
@@ -35,8 +37,8 @@ enum
     NPC_KELESETH                = 37972,
     NPC_LANATHEL                = 37955,
     NPC_VALITHRIA               = 36789,
-    NPC_SINDRAGOSA              = 37755,
-    NPC_LICH_KING               = 29983,
+    NPC_SINDRAGOSA              = 36853,
+    NPC_LICH_KING               = 36597,
 
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
@@ -54,8 +56,10 @@ enum
 
     GO_SCIENTIST_DOOR_GREEN     = 201614, //72530
     GO_SCIENTIST_DOOR_ORANGE    = 201613, //72531
+    GO_SCIENTIST_DOOR_COLLISION = 201612,
     GO_SCIENTIST_DOOR           = 201372, //72541
 
+    GO_BLOODWING_DOOR           = 201920, //72532
     GO_CRIMSON_HALL_DOOR        = 201376, //72532
     GO_COUNCIL_DOOR_1           = 201377, //72533
     GO_COUNCIL_DOOR_2           = 201378, //72534
@@ -76,44 +80,19 @@ enum
     GO_SAURFANG_CACHE_10_H      = 202238,
     GO_SAURFANG_CACHE_25_H      = 202241,
 
-    GO_GUNSHIP_ARMORY_A_10        = 201872, //
-    GO_GUNSHIP_ARMORY_A_25        = 201873, //
-    GO_GUNSHIP_ARMORY_A_10H       = 201874, //
-    GO_GUNSHIP_ARMORY_A_25H       = 201875, //
+    GO_GUNSHIP_ARMORY_A_10      = 201872, //
+    GO_GUNSHIP_ARMORY_A_25      = 201873, //
+    GO_GUNSHIP_ARMORY_A_10H     = 201874, //
+    GO_GUNSHIP_ARMORY_A_25H     = 201875, //
 
-    GO_GUNSHIP_ARMORY_H_10        = 202177, //
-    GO_GUNSHIP_ARMORY_H_25        = 202178, //
-    GO_GUNSHIP_ARMORY_H_10H       = 202179, //
-    GO_GUNSHIP_ARMORY_H_25H       = 202180, //
-};
+    GO_GUNSHIP_ARMORY_H_10      = 202177, //
+    GO_GUNSHIP_ARMORY_H_25      = 202178, //
+    GO_GUNSHIP_ARMORY_H_10H     = 202179, //
+    GO_GUNSHIP_ARMORY_H_25H     = 202180, //
 
-struct Locations
-{
-    float x, y, z;
-    uint32 id;
-};
-
-enum SpellTableParameters
-{
-  DIFFICULTY_LEVELS = 4,
-  CAST_ON_SELF      = 1000,
-  CAST_ON_SUMMONS,
-  CAST_ON_VICTIM,
-  CAST_ON_RANDOM,
-  CAST_ON_BOTTOMAGGRO,
-
-};
-
-struct SpellTable
-{
-    uint32 id;
-    uint32 m_uiSpellEntry[DIFFICULTY_LEVELS];          // Stores spell entry for difficulty levels
-    uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
-    uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
-    uint32 m_uiStageMask;                              // The mask of stages where spell is casted
-    uint32 m_CastTarget;                              // Target on casting spell
-    bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
-    bool   m_IsBugged;                                 // Need override for this spell
+    GO_PLAGUE_SIGIL             = 202182,
+    GO_FROSTWING_SIGIL          = 202181,
+    GO_BLOODWING_SIGIL          = 202183,
 };
 
 #endif
