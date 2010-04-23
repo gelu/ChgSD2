@@ -34,7 +34,7 @@ UPDATE `creature_template` SET `faction_A`=14, `faction_H`=14,`ScriptName`='mob_
 UPDATE `creature_template` SET `ScriptName`='boss_lord_marrowgar' WHERE `entry`= 36612;
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201910,201911);
 UPDATE `gameobject` SET `state` = '1' WHERE `guid` IN (72526,72525);
-UPDATE `creature_template` SET `ScriptName`='mob_coldflame', `minlevel` = 80, `maxlevel` = 80, `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686, `faction_A` = 35, `faction_H` = 35  WHERE `entry`= 36672;
+UPDATE `creature_template` SET `ScriptName`='mob_coldflame', `minlevel` = 82, `maxlevel` = 82, `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686, `faction_A` = 14, `faction_H` = 14  WHERE `entry`= 36672;
 UPDATE `creature_template` SET `ScriptName`='mob_bone_spike' WHERE `entry`= 38711;
 
 -- Gunship battle
@@ -56,7 +56,7 @@ INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `positi
 (972555, 202179, 631, 4, 1, -447.493, 2003.5, 191.235, 0.153939, 0, 0, 0.0768933, 0.997039, -604800, 100, 1),
 (972557, 202180, 631, 8, 1, -447.493, 2003.5, 191.235, 0.153939, 0, 0, 0.0768933, 0.997039, -604800, 100, 1);
 
-
+-- Plague wing
 -- Rotface
 UPDATE `creature_template` SET `ScriptName`='boss_rotface', `AIName`=''  WHERE `entry`= 36627;
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201370);
@@ -75,6 +75,8 @@ UPDATE `creature_template` SET `ScriptName`='mob_icc_gas_cloud', `AIName`='' WHE
 UPDATE `creature_template` SET `ScriptName`='mob_icc_volatile_ooze', `AIName`='' WHERE `entry`= 37697;
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_plague_sigil' WHERE `gameobject_template`.`entry` IN (202182);
 
+-- Blood wing
+UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_bloodwing_sigil' WHERE `gameobject_template`.`entry` IN (202181);
 -- Taldaram
 -- UPDATE `creature_template` SET `ScriptName`='boss_taldaram' WHERE `entry`= 37973;
 -- Valanar

@@ -62,10 +62,13 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     BossSpellWorker* bsw;
     bool m_uiIsFrenzy;
     uint8 stage;
+    uint8 Difficulty;
 
     void Reset()
     {
-        if(pInstance) pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
+        if(!pInstance) return;
+        Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
+        pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
         m_uiIsFrenzy = false;
         stage = 0;
     }
@@ -124,11 +127,33 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
                     bsw->timedCast(SPELL_RUNE_OF_BLOOD, diff);
 
-                    if (bsw->timedQuery(NPC_BLOOD_BEASTS, diff))
+                    if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
                     {
-                        bsw->doCast(NPC_BLOOD_BEASTS);
-                        bsw->doCast(NPC_BLOOD_BEASTS);
+                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
                         DoScriptText(-1631102,m_creature);
+                        if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL
+                            || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                            {
+                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
+                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                                   pTemp->AddThreat(pTarget, 100.0f);
+                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
+                                };
+                            }
                     }
 
             if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;

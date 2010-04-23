@@ -84,15 +84,24 @@ bool GOGossipHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
 bool GOGossipHello_go_plague_sigil(Player *player, GameObject* pGo)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
-    if(!pInstance) return true;
+    if(!pInstance) return false;
 
-    if (pInstance->GetData(TYPE_FESTERGUT) == DONE
-        && pInstance->GetData(TYPE_ROTFACE) == DONE)
-        {
-        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_GREEN));
-        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_ORANGE));
-        pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_SCIENTIST_DOOR_COLLISION));
-        }
+    if (pInstance->GetData(TYPE_FESTERGUT) == DONE)
+           pInstance->SetData(TYPE_FESTERGUT, DONE);
+    if (pInstance->GetData(TYPE_ROTFACE) == DONE)
+           pInstance->SetData(TYPE_ROTFACE, DONE);
+
+    return true;
+}
+
+bool GOGossipHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
+{
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return false;
+
+    if (pInstance->GetData(TYPE_PUTRICIDE) == DONE)
+           pInstance->SetData(TYPE_PUTRICIDE, DONE);
+
     return true;
 }
 
@@ -110,5 +119,10 @@ void AddSC_icecrown_teleporter()
     newscript = new Script;
     newscript->Name = "go_plague_sigil";
     newscript->pGOGossipHello  = &GOGossipHello_go_plague_sigil;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_bloodwing_sigil";
+    newscript->pGOGossipHello  = &GOGossipHello_go_bloodwing_sigil;
     newscript->RegisterSelf();
 }
