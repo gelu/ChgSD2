@@ -103,7 +103,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
         if (m_auiEncounter[7] == DONE) OpenDoor(m_uiSDoorGreenGUID);
         if (m_auiEncounter[7] == DONE && m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
-        if (m_auiEncounter[8] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+//        if (m_auiEncounter[8] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
 
     }
 
@@ -390,7 +390,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[8] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiScientistDoorGUID);
                                       else OpenDoor(m_uiScientistDoorGUID);
-                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+//                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
                 break;
              case TYPE_BLOOD_COUNCIL:
                 m_auiEncounter[9] = uiData;
