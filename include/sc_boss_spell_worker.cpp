@@ -377,6 +377,14 @@ Unit* BossSpellWorker::_doSummon(uint8 m_uiSpellIdx, TempSummonType summontype, 
     } else return boss->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z, 0, summontype, delay);
 };
 
+Unit* BossSpellWorker::_doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType summontype, uint32 delay, float fPosX, float fPosY, float fPosZ)
+{
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    debug_log("BSW: Summoning creature number %u type %u despawn delay %u at position %f %f %f",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget, delay, fPosX, fPosY, fPosZ);
+    return boss->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ, 0, summontype, delay);
+};
+
 bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
 {
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];

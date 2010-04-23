@@ -154,6 +154,11 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _doSummon(FindSpellIDX(SpellID), type, delay);
              };
 
+        Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
+             {
+             return _doSummonAtPosition(FindSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ);
+             };
+
         CanCastResult BSWSpellSelector(uint32 SpellID, Unit* pTarget = NULL)
              {
              return _BSWSpellSelector(FindSpellIDX(SpellID), pTarget);
@@ -189,6 +194,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         bool          isSummon(uint8 m_uiSpellIdx);
 
         Unit*         _doSummon(uint8 m_uiSpellIdx, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000);
+
+        Unit*         _doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType type, uint32 delay, float fPosX, float fPosY, float fPosZ);
 
         CanCastResult _BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget);
 

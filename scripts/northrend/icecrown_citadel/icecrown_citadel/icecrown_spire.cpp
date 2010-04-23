@@ -50,6 +50,7 @@ struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
 
     void Reset()
     {
+        m_creature->SetRespawnDelay(DAY);
         stage = 0;
     }
 
@@ -124,6 +125,7 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
 
     void Reset()
     {
+        m_creature->SetRespawnDelay(DAY);
         stage = 0;
     }
 

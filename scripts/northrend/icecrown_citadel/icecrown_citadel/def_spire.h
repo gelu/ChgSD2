@@ -5,7 +5,7 @@
 
 enum
 {
-    DIFFICULTY                  = 1001,
+    TYPE_DIFFICULTY             = 1001,
     MAP_NUM                     = 631,
 
     TYPE_TELEPORT               = 0,
@@ -23,7 +23,7 @@ enum
     TYPE_SINDRAGOSA             = 12,
     TYPE_LICH_KING              = 13,
     TYPE_ICECROWN_QUESTS        = 14,
-    TYPE_FROSTWIRM_COUNT        = 15,
+    TYPE_COUNT                  = 15,
     MAX_ENCOUNTERS,
 
     NPC_LORD_MARROWGAR          = 36612,
@@ -80,30 +80,19 @@ enum
     GO_SAURFANG_CACHE_10_H      = 202238,
     GO_SAURFANG_CACHE_25_H      = 202241,
 
-    GO_GUNSHIP_ARMORY_A_10        = 201872, //
-    GO_GUNSHIP_ARMORY_A_25        = 201873, //
-    GO_GUNSHIP_ARMORY_A_10H       = 201874, //
-    GO_GUNSHIP_ARMORY_A_25H       = 201875, //
+    GO_GUNSHIP_ARMORY_A_10      = 201872, //
+    GO_GUNSHIP_ARMORY_A_25      = 201873, //
+    GO_GUNSHIP_ARMORY_A_10H     = 201874, //
+    GO_GUNSHIP_ARMORY_A_25H     = 201875, //
 
-    GO_GUNSHIP_ARMORY_H_10        = 202177, //
-    GO_GUNSHIP_ARMORY_H_25        = 202178, //
-    GO_GUNSHIP_ARMORY_H_10H       = 202179, //
-    GO_GUNSHIP_ARMORY_H_25H       = 202180, //
+    GO_GUNSHIP_ARMORY_H_10      = 202177, //
+    GO_GUNSHIP_ARMORY_H_25      = 202178, //
+    GO_GUNSHIP_ARMORY_H_10H     = 202179, //
+    GO_GUNSHIP_ARMORY_H_25H     = 202180, //
 
-    GO_PLAGUE_SIGIL               = 202182,
-    GO_FROSTWING_SIGIL            = 202181,
-    GO_BLOODWING_SIGIL            = 202183,
-};
-
-static Locations SpawnLoc[]=
-{
-    {-446.788971, 2003.362915, 191.233948},  // 0 Horde ship enter
-    {-428.140503, 2421.336914, 191.233078},  // 1 Alliance ship enter
-    {4203.470215, 2484.500000, 364.872009},  // 2 Valithria
-    {4240.688477, 2405.794678, 364.868591},  // 3 Valithria Room 1
-    {4165.112305, 2405.872559, 364.872925},  // 4 Valithria Room 2
-    {4166.216797, 2564.197266, 364.873047},  // 5 Valithria Room 3
-    {4239.579102, 2566.753418, 364.868439},  // 6 Valithria Room 4
+    GO_PLAGUE_SIGIL             = 202182,
+    GO_FROSTWING_SIGIL          = 202181,
+    GO_BLOODWING_SIGIL          = 202183,
 };
 
 #endif
