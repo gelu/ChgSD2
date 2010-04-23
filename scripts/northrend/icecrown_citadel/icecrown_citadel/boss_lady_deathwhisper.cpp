@@ -96,7 +96,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,2)) {
+    switch (urand(0,1)) {
         case 0:
                DoScriptText(-1631029,m_creature,pVictim);
                break;
