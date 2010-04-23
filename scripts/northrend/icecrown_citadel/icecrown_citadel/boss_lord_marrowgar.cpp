@@ -139,10 +139,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     break;}
 
             case 2: {
-                    if (bsw->hasAura(SPELL_BONE_STORM, m_creature))
-//                             bsw->timedCast(SPELL_BONE_STORM_STRIKE, diff);
+                    if (!bsw->hasAura(SPELL_BONE_STORM, m_creature)) stage = 3;
+//                             else bsw->timedCast(SPELL_BONE_STORM_STRIKE, diff);
 // insert to this damage override from bone storm
-                             else stage = 3;
                     break;}
 
             case 3: break;
