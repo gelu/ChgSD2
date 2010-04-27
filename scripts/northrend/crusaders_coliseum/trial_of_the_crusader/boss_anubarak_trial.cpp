@@ -83,6 +83,8 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         intro = true;
         m_creature->SetRespawnDelay(DAY);
         pTarget = NULL;
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
 
@@ -96,8 +98,6 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         if (!intro) return;
         DoScriptText(-1713554,m_creature);
         intro = false;
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
     }
 

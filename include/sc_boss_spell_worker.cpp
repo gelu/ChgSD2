@@ -1,9 +1,11 @@
 /* Copyright (C) 2009 - 2010 by /dev/rsa for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
-#include "precompiled.h"
 #include "sc_boss_spell_worker.h"
+#include "precompiled.h"
 #ifdef DEF_BOSS_SPELL_WORKER_H
+
+//extern DatabaseType SD2Database;
 
 BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
 {
@@ -338,6 +340,7 @@ CanCastResult BossSpellWorker::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
     if (!pTarget->isAlive()) return CAST_FAIL_OTHER;
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
     debug_log("BSW: Casting bugged spell number %u type %u",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
+    pTarget->InterruptNonMeleeSpells(false);
     pTarget->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
          return CAST_OK;
 };
