@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         if(!m_pInstance) return;
         Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
         m_pInstance->SetData(TYPE_JARAXXUS, NOT_STARTED);
-        SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
+//        SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         m_portalsCount = 1;
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) 
         {

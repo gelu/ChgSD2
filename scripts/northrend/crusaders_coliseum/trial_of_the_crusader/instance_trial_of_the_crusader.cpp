@@ -108,6 +108,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
 
     uint64 m_uiMainGateDoorGUID;
 
+    uint64 m_uiWestPortcullisGUID;
+    uint64 m_uiNorthPortcullisGUID;
+    uint64 m_uiSouthPortcullisGUID;
+
 
     void Initialize()
     {
@@ -136,6 +140,14 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     needsave = false;
     }
 
+    bool IsEncounterInProgress() const
+    {
+        for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS) return true;
+
+        return false;
+    }
+
     void OnPlayerEnter(Player *m_player)
     {
         if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
@@ -159,6 +171,20 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                }
         return true;
      }
+
+    void OpenDoor(uint64 guid)
+    {
+        if(!guid) return;
+        GameObject* pGo = instance->GetGameObject(guid);
+        if(pGo) pGo->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
+    }
+
+    void CloseDoor(uint64 guid)
+    {
+        if(!guid) return;
+        GameObject* pGo = instance->GetGameObject(guid);
+        if(pGo) pGo->SetGoState(GO_STATE_READY);
+    }
 
      void OnCreatureCreate(Creature* pCreature)
      {
@@ -231,9 +257,11 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case GO_ARGENT_COLISEUM_FLOOR: 
                                   m_uiFloorGUID = pGo->GetGUID(); 
                                   break;
-        case GO_MAIN_GATE_DOOR:
-                                  m_uiMainGateDoorGUID = pGo->GetGUID();
-                                  break;
+        case GO_MAIN_GATE_DOOR:   m_uiMainGateDoorGUID = pGo->GetGUID(); break;
+
+        case GO_SOUTH_PORTCULLIS:  m_uiSouthPortcullisGUID = pGo->GetGUID(); break;
+        case GO_WEST_PORTCULLIS:   m_uiWestPortcullisGUID = pGo->GetGUID(); break;
+        case GO_NORTH_PORTCULLIS:  m_uiNorthPortcullisGUID = pGo->GetGUID(); break;
 
         case GO_TRIBUTE_CHEST_10H_25: m_uiTC10h25GUID = pGo->GetGUID(); break;
         case GO_TRIBUTE_CHEST_10H_45: m_uiTC10h45GUID = pGo->GetGUID(); break;
@@ -308,6 +336,17 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
         case DATA_CASTING_FJOLA:    m_uiFjolaCasting = uiData; uiData = NOT_STARTED; break;
         case DATA_CASTING_EYDIS:    m_uiEydisCasting = uiData; uiData = NOT_STARTED; break;
         }
+
+        if (IsEncounterInProgress()) {
+                                    CloseDoor(GetData64(GO_WEST_PORTCULLIS));
+                                    CloseDoor(GetData64(GO_NORTH_PORTCULLIS));
+//                                    CloseDoor(GetData64(GO_SOUTH_PORTCULLIS));
+                                    }
+                    else            {
+                                    OpenDoor(GetData64(GO_WEST_PORTCULLIS));
+                                    OpenDoor(GetData64(GO_NORTH_PORTCULLIS));
+//                                    OpenDoor(GetData64(GO_SOUTH_PORTCULLIS));
+                                    };
 
         if (uiData == FAIL && uiType != TYPE_STAGE
                            && uiType != TYPE_EVENT
@@ -388,6 +427,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case GO_ARGENT_COLISEUM_FLOOR: return m_uiFloorGUID;
          case GO_MAIN_GATE_DOOR:        return m_uiMainGateDoorGUID;
 
+         case GO_SOUTH_PORTCULLIS:       return m_uiSouthPortcullisGUID;
+         case GO_WEST_PORTCULLIS:        return m_uiWestPortcullisGUID;
+         case GO_NORTH_PORTCULLIS:       return m_uiNorthPortcullisGUID;
+
         }
         return 0;
     }
@@ -421,6 +464,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 305:
                                  case 310:
                                  case 400:
+                                 case 666:
                                  case 1010:
                                  case 1180:
                                  case 2000:
@@ -439,6 +483,7 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
                                  case 4040:
                                  case 4050:
                                  case 5000:
+                                 case 5005:
                                  case 5020:
                                  case 6000:
                                  case 6005:

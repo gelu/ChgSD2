@@ -2,15 +2,15 @@
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
+#ifndef DEF_BOSS_SPELL_WORKER_H
+#define DEF_BOSS_SPELL_WORKER_H
+
 #include "Player.h"
 #include "SpellAuras.h"
 #include "Unit.h"
 #include "precompiled.h"
 #include "Database/DatabaseEnv.h"
 #include "../ScriptMgr.h"
-
-#ifndef DEF_BOSS_SPELL_WORKER_H
-#define DEF_BOSS_SPELL_WORKER_H
 
 enum
 {
@@ -138,9 +138,9 @@ class MANGOS_DLL_DECL BossSpellWorker
                   else return CAST_FAIL_OTHER;
              };
 
-        bool doRemove(uint32 SpellID, Unit* pTarget = NULL)
+        bool doRemove(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-             return _doRemove(FindSpellIDX(SpellID),pTarget);
+             return _doRemove(FindSpellIDX(SpellID),pTarget, index);
              };
 
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
@@ -152,6 +152,11 @@ class MANGOS_DLL_DECL BossSpellWorker
         Unit* doSummon(uint32 SpellID, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
              return _doSummon(FindSpellIDX(SpellID), type, delay);
+             };
+
+        Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
+             {
+             return _doSummonAtPosition(FindSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ);
              };
 
         CanCastResult BSWSpellSelector(uint32 SpellID, Unit* pTarget = NULL)
@@ -190,6 +195,8 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         Unit*         _doSummon(uint8 m_uiSpellIdx, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000);
 
+        Unit*         _doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType type, uint32 delay, float fPosX, float fPosY, float fPosZ);
+
         CanCastResult _BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget);
 
         CanCastResult _BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
@@ -206,7 +213,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         Unit*         _SelectUnit(SelectAggroTarget target, uint32 uiPosition);
 
-        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
+        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 
