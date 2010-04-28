@@ -70,18 +70,22 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
     void Reset()
     {
-        if(!pInstance) return;
-        pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
+        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
+        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_PUTRICIDE, DONE);
+        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, FAIL);
     }
 
     void UpdateAI(const uint32 diff)

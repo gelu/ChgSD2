@@ -54,16 +54,6 @@ struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
         stage = 0;
     }
 
-    void Aggro(Unit *who) 
-    {
-        if(pInstance) pInstance->SetData(TYPE_SKULLS_PLATO, IN_PROGRESS);
-    }
-
-    void JustDied(Unit *killer)
-    {
-        if(pInstance) pInstance->SetData(TYPE_SKULLS_PLATO, DONE);
-    }
-
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -121,6 +111,11 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         if(pInstance) pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_FLIGHT_WAR, FAIL);
     }
 
     void Reset()

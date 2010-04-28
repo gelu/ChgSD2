@@ -106,6 +106,11 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         };
     }
 
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_DEATHWHISPER, FAIL);
+    }
+
     void MovementInform(uint32 type, uint32 id)
     {
         if(!pInstance) return;

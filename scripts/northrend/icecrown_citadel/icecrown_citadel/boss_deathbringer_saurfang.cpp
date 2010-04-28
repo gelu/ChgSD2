@@ -79,6 +79,11 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         DoScriptText(-1631100,m_creature);
     }
 
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_SAURFANG, FAIL);
+    }
+
     void KilledUnit(Unit* pVictim)
     {
     switch (urand(0,1)) {

@@ -60,6 +60,11 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         stage = 0;
     }
 
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_FESTERGUT, FAIL);
+    }
+
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);

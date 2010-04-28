@@ -341,11 +341,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                         pGOTemp->SetRespawnTime(25000);
                 }
                 break;
-             case TYPE_SKULLS_PLATO:
-                m_auiEncounter[3] = uiData; 
-                break;
              case TYPE_FLIGHT_WAR:
-                if (uiData == DONE && m_auiEncounter[4] != DONE  ) {
+                if (uiData == DONE && m_auiEncounter[3] != DONE  ) {
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryAGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
@@ -356,10 +353,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                           pChest->SetRespawnTime(7*DAY);
                                       };
                                 };
-                m_auiEncounter[4] = uiData; 
+                m_auiEncounter[3] = uiData; 
                 break;
              case TYPE_SAURFANG:
-                m_auiEncounter[5] = uiData; 
+                m_auiEncounter[4] = uiData; 
                 if (uiData == DONE) {
                 OpenDoor(m_uiSaurfangDoorGUID);
                                  if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
@@ -369,49 +366,49 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                 };
                 break;
              case TYPE_FESTERGUT:
-                m_auiEncounter[6] = uiData;
+                m_auiEncounter[5] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiOrangePlagueGUID);
                                       else OpenDoor(m_uiOrangePlagueGUID);
                 if (uiData == DONE)  {
                                      OpenDoor(m_uiSDoorOrangeGUID);
-                                     if (m_auiEncounter[7] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
                                      }
                 break;
              case TYPE_ROTFACE:
-                m_auiEncounter[7] = uiData;
+                m_auiEncounter[6] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiGreenPlagueGUID);
                                       else OpenDoor(m_uiGreenPlagueGUID);
                 if (uiData == DONE) {
                                      OpenDoor(m_uiSDoorGreenGUID);
-                                     if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
                                      }
                 break;
              case TYPE_PUTRICIDE:
-                m_auiEncounter[8] = uiData;
+                m_auiEncounter[7] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiScientistDoorGUID);
                                       else OpenDoor(m_uiScientistDoorGUID);
 //                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
                 break;
              case TYPE_BLOOD_COUNCIL:
-                m_auiEncounter[9] = uiData;
+                m_auiEncounter[8] = uiData;
                 break;
              case TYPE_LANATHEL:
-                m_auiEncounter[10] = uiData;
+                m_auiEncounter[9] = uiData;
                 break;
              case TYPE_VALITHRIA:
-                m_auiEncounter[11] = uiData;
+                m_auiEncounter[10] = uiData;
                 break;
              case TYPE_SINDRAGOSA:
-                m_auiEncounter[12] = uiData;
+                m_auiEncounter[11] = uiData;
                 break;
              case TYPE_LICH_KING:
-                m_auiEncounter[13] = uiData;
+                m_auiEncounter[12] = uiData;
                 break;
              case TYPE_ICECROWN_QUESTS:
-                m_auiEncounter[14] = uiData;
+                m_auiEncounter[13] = uiData;
                 break;
              case TYPE_COUNT:
-                m_auiEncounter[15] = uiData;
+                m_auiEncounter[14] = uiData;
                 uiData = NOT_STARTED;
                 break;
         }
@@ -445,19 +442,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_TELEPORT:      return m_auiEncounter[0];
              case TYPE_MARROWGAR:     return m_auiEncounter[1];
              case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
-             case TYPE_SKULLS_PLATO:  return m_auiEncounter[3];
-             case TYPE_FLIGHT_WAR:    return m_auiEncounter[4];
-             case TYPE_SAURFANG:      return m_auiEncounter[5];
-             case TYPE_FESTERGUT:     return m_auiEncounter[6];
-             case TYPE_ROTFACE:       return m_auiEncounter[7];
-             case TYPE_PUTRICIDE:     return m_auiEncounter[8];
-             case TYPE_BLOOD_COUNCIL: return m_auiEncounter[9];
-             case TYPE_LANATHEL:      return m_auiEncounter[10];
-             case TYPE_VALITHRIA:     return m_auiEncounter[11];
-             case TYPE_SINDRAGOSA:    return m_auiEncounter[12];
-             case TYPE_LICH_KING:     return m_auiEncounter[13];
-             case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[14];
-             case TYPE_COUNT:         return m_auiEncounter[15];
+             case TYPE_FLIGHT_WAR:    return m_auiEncounter[3];
+             case TYPE_SAURFANG:      return m_auiEncounter[4];
+             case TYPE_FESTERGUT:     return m_auiEncounter[5];
+             case TYPE_ROTFACE:       return m_auiEncounter[6];
+             case TYPE_PUTRICIDE:     return m_auiEncounter[7];
+             case TYPE_BLOOD_COUNCIL: return m_auiEncounter[8];
+             case TYPE_LANATHEL:      return m_auiEncounter[9];
+             case TYPE_VALITHRIA:     return m_auiEncounter[10];
+             case TYPE_SINDRAGOSA:    return m_auiEncounter[11];
+             case TYPE_LICH_KING:     return m_auiEncounter[12];
+             case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
+             case TYPE_COUNT:         return m_auiEncounter[14];
         }
         return 0;
     }
