@@ -2,6 +2,9 @@
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 
+#ifndef DEF_BOSS_SPELL_WORKER_H
+#define DEF_BOSS_SPELL_WORKER_H
+
 #include "Player.h"
 #include "SpellAuras.h"
 #include "Unit.h"
@@ -9,8 +12,6 @@
 #include "Database/DatabaseEnv.h"
 #include "../ScriptMgr.h"
 
-#ifndef DEF_BOSS_SPELL_WORKER_H
-#define DEF_BOSS_SPELL_WORKER_H
 
 enum
 {

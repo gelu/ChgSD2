@@ -8,13 +8,14 @@ enum
         //summons
         NPC_SOUL_FRAGMENT                       = 36535,
         //Abilities
-        SPELL_MAGIC_BLANE_N                     = 68793,
-        SPELL_CORRUPT_SOUL_N                    = 68839,
-        SPELL_CONSUME_SOUL_N                    = 68858,
-        SPELL_TELEPORT_N                        = 68988,
+        SPELL_MAGIC_BANE                        = 68793,
+        SPELL_CORRUPT_SOUL                      = 68839,
+        SPELL_CONSUME_SOUL                      = 68858,
+        SPELL_TELEPORT                          = 68988,
         SPELL_SOULSTORM_N                       = 68872,
-        SPELL_SOULSTORM2_N                      = 68921,
-        SPELL_FEAR                              = 68950
+        SPELL_SOULSTORM_2                       = 68921,
+        SPELL_FEAR                              = 68950,
+        SPELL_SHADOW_BOLT                       = 70043,
 };
 
 struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
@@ -62,7 +63,6 @@ struct MANGOS_DLL_DECL mob_soul_fragmentAI : public ScriptedAI
     }
 
     ScriptedInstance *m_pInstance;
-    uint32 m_uiRangeCheck_Timer;
 
     void Reset()
     {
