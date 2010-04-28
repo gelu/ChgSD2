@@ -12,6 +12,7 @@
 #include "Database/DatabaseEnv.h"
 #include "../ScriptMgr.h"
 
+
 enum
 {
   DIFFICULTY_LEVELS = 4,
