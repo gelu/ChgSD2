@@ -28,6 +28,7 @@ EndScriptData */
 // snobolds link
 // snakes underground cast (not support in core)
 // aura 31 (SPELL_ADRENALINE) not applyed by undefined reason
+// model_id (or visual effect) for slime_pool need change.
 
 #include "precompiled.h"
 #include "trial_of_the_crusader.h"
@@ -164,6 +165,8 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void Reset()
     {
+        pBoss = NULL;
+        defaultTarget = NULL;
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));
@@ -187,6 +190,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
     {
     if (defaultTarget && defaultTarget->isAlive()) bsw->doRemove(SPELL_SNOBOLLED, defaultTarget);
 //      if (pBoss && pBoss->isAlive()) bsw->doRemove(SPELL_RISING_ANGER,pBoss);
+//      This string - not offlike, in off this buff not removed! especially for small servers.
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -472,6 +476,8 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
                 m_Size = m_Size*1.036;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }
+                // Override especially for clean core
+                   if (m_Size >= 6.0f) m_creature->ForcedDespawn();
     }
 
 };

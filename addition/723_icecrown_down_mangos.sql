@@ -13,3 +13,4 @@ UPDATE `gameobject_template` SET ScriptName = 'go_frostmourne_altar' WHERE `entr
 UPDATE `gameobject_template` SET ScriptName = 'go_frostmourne' WHERE `entry` = 202302;
 DELETE FROM `creature` WHERE `map` = 668 AND `id` IN (38177,38176,38173,38172,38567,38175);
 UPDATE `creature_template` SET `ScriptName`='generic_creature' WHERE `entry` IN (38177,38176,38173,38172,38567,38175);
+UPDATE `gameobject_template` SET `faction` = '114' WHERE `entry` IN (197341, 201976);

@@ -2789,6 +2789,14 @@
 				RelativePath="..\include\sc_instance.h"
 				>
 			</File>
+			<File
+				RelativePath="..\include\sc_boss_spell_worker.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\include\sc_boss_spell_worker.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="system"
