@@ -13,7 +13,7 @@ INSERT INTO `npc_text` (`ID`, `Text0_0`) VALUES
 (724002, 'Are you ready for the next stage?'),
 (724003, 'Are you ready to fight the champions of the Silver vanguard?'),
 (724004, 'Are you ready for the next stage?'),
-(724005, 'You are ready to continue battle with Anub-Arak?'),
+(724005, 'Are you ready to continue battle with Anub-Arak?'),
 (724006, 'Today, the arena is closed. Script dungeon designed specifically for server Pandora http://wow.teletoria.ru (c) /dev/rsa 2010');
 
 DELETE FROM `locales_npc_text` WHERE `entry` IN (724001, 724002, 724003, 724004, 724005, 724006); 
@@ -22,7 +22,7 @@ INSERT INTO `locales_npc_text` (`entry`, `Text0_0_loc1`, `Text0_0_loc2`, `Text0_
 (724002, 'Are you ready for the next stage?', NULL, NULL, NULL, NULL, NULL, NULL, 'Вы готовы к следующему этапу?'),
 (724003, 'Are you ready to fight the champions of the Silver vanguard?', NULL, NULL, NULL, NULL, NULL, NULL, 'Вы готовы драться с чемпионами Серебряного авангарда?'),
 (724004, 'Are you ready for the next stage?', NULL, NULL, NULL, NULL, NULL, NULL, 'Вы готовы к следующему этапу?'),
-(724005, 'You are ready to continue battle with Anub-Arak?', NULL, NULL, NULL, NULL, NULL, NULL, 'Вы готовы продолжить бой с Ануб-Араком?'),
+(724005, 'Are you ready to continue battle with Anub-Arak?', NULL, NULL, NULL, NULL, NULL, NULL, 'Вы готовы продолжить бой с Ануб-Араком?'),
 (724006, 'Today, the arena is closed. Script dungeon designed specifically for server Pandora http://wow.teletoria.ru (c) /dev/rsa 2010', NULL, NULL, NULL, NULL, NULL, NULL, 'На сегодня арена закрыта. Скрипт инстанса разработан специально для сервера Пандора http://wow.teletoria.ru (c) /dev/rsa 2010');
 
 UPDATE `creature_template` SET `scriptname`='boss_lich_king_toc' WHERE `entry`=35877;
