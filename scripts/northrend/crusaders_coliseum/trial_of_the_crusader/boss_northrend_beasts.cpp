@@ -251,7 +251,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     void JustReachedHome()
     {
         if (!m_pInstance) return;
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == IN_PROGRESS)
                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
@@ -361,7 +361,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     void JustReachedHome()
     {
         if (!m_pInstance) return;
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) != FAIL)
+        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == IN_PROGRESS)
                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
