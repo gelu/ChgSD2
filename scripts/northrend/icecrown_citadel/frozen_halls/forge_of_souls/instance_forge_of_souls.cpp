@@ -109,7 +109,7 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
         switch(uiType)
         {
              case TYPE_BRONJAHM:     return m_auiEncounter[0];
-             case TYPE_DEVOURER:   return m_auiEncounter[1];
+             case TYPE_DEVOURER:     return m_auiEncounter[1];
         }
         return 0;
     }

@@ -69,6 +69,11 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         intro = true;
     }
 
+    void JustReachedHome()
+    {
+        if (pInstance) pInstance->SetData(TYPE_MARROWGAR, FAIL);
+    }
+
 /*
     void JustSummoned(Creature* _summoned)
     {
