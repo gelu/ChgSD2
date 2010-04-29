@@ -72,6 +72,7 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         if(pInstance) pInstance->SetData(TYPE_BRONJAHM, DONE);
+        bsw->doRemove(SPELL_SOULSTORM);
                DoScriptText(-1632004,m_creature,killer);
     }
 
@@ -167,11 +168,11 @@ struct MANGOS_DLL_DECL mob_soul_fragmentAI : public ScriptedAI
 
         if (m_uiRangeCheck_Timer < uiDiff)
         {
-            if ( m_creature->GetDistance2d(pBoss) <= 2.0f)
+            if (pBoss->IsWithinDistInMap(m_creature, 2.0f)
             {
                 pBoss->CastSpell(pBoss, SPELL_CONSUME_SOUL, false);
                 m_creature->ForcedDespawn();
-            }
+            } else m_creature->GetMotionMaster()->MoveChase(pBoss);
 
             m_uiRangeCheck_Timer = 1000;
         }
