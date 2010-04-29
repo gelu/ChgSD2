@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL mob_soul_fragmentAI : public ScriptedAI
 
         if (m_uiRangeCheck_Timer < uiDiff)
         {
-            if (pBoss->IsWithinDistInMap(m_creature, 2.0f)
+            if (pBoss->IsWithinDistInMap(m_creature, 2.0f))
             {
                 pBoss->CastSpell(pBoss, SPELL_CONSUME_SOUL, false);
                 m_creature->ForcedDespawn();
