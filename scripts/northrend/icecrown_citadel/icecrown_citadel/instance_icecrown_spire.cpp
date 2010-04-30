@@ -68,6 +68,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiCounsilDoor2GUID;
     uint64 m_uiGreenDragonDoor1GUID;
     uint64 m_uiGreenDragonDoor2GUID;
+
     uint64 m_uiValithriaDoor1GUID;
     uint64 m_uiValithriaDoor2GUID;
     uint64 m_uiValithriaDoor3GUID;
@@ -76,6 +77,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
+    uint64 m_uiValitriaCacheGUID;
 
     uint64 m_uiGunshipArmoryH_ID;
     uint64 m_uiGunshipArmoryA_ID;
@@ -315,6 +317,22 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_GUNSHIP_ARMORY_H_25H:
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_DREAMWALKER_CACHE_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_DREAMWALKER_CACHE_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
+                                  break;
+            case GO_DREAMWALKER_CACHE_10_H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
+                                  break;
+            case GO_DREAMWALKER_CACHE_25_H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
                                   break;
         }
         OpenAllDoors();

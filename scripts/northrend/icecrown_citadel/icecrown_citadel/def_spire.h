@@ -36,10 +36,16 @@ enum
     NPC_KELESETH                = 37972,
     NPC_LANATHEL                = 37955,
     NPC_VALITHRIA               = 36789,
+    NPC_VALITHRIA_H             = 38589,
     NPC_SINDRAGOSA              = 36853,
     NPC_LICH_KING               = 36597,
 
     NPC_MURADIN                 = 36948,
+
+    NPC_RIMEFANG                = 37533,
+    NPC_SPINESTALKER            = 37534,
+
+    NPC_RISEN_ARCHMAGE          = 37868,
 
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
@@ -90,6 +96,11 @@ enum
     GO_GUNSHIP_ARMORY_H_25      = 202178, //
     GO_GUNSHIP_ARMORY_H_10H     = 202179, //
     GO_GUNSHIP_ARMORY_H_25H     = 202180, //
+
+    GO_DREAMWALKER_CACHE_10      = 201959, //
+    GO_DREAMWALKER_CACHE_25      = 202338, //
+    GO_DREAMWALKER_CACHE_10_H    = 202339, //
+    GO_DREAMWALKER_CACHE_25_H    = 202340, //
 
     GO_PLAGUE_SIGIL             = 202182,
     GO_FROSTWING_SIGIL          = 202181,
