@@ -34,6 +34,7 @@ enum
         //Abilities
         SPELL_SABER_LASH                        = 71021,
         SPELL_CALL_COLD_FLAME                   = 69138,
+        SPELL_CALL_COLD_FLAME_1                 = 71580,
         SPELL_COLD_FLAME                        = 69146,
         SPELL_COLD_FLAME_0                      = 69145,
         SPELL_BONE_STRIKE                       = 69057,
@@ -154,7 +155,11 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
         bsw->timedCast(SPELL_SABER_LASH, diff);
 
-        bsw->timedCast(SPELL_CALL_COLD_FLAME, diff);
+        if (bsw->timedQuery(SPELL_CALL_COLD_FLAME, diff))
+            {
+            bsw->doCast(SPELL_CALL_COLD_FLAME);
+            bsw->doCast(SPELL_CALL_COLD_FLAME_1);
+            }
 
 //        if (bsw->timedQuery(NPC_COLDFLAME, diff))
 //                   bsw->doSummon(NPC_COLDFLAME, TEMPSUMMON_TIMED_DESPAWN, 60000);
@@ -231,59 +236,49 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
     }
 
     ScriptedInstance *m_pInstance;
-    uint64 m_uiVictimGUID;
+    Unit* pVictim;
 
 
     void Reset()
     {
         SetCombatMovement(false);
         m_creature->SetInCombatWithZone();
+        pVictim = NULL;
     }
 
     void Aggro(Unit* pWho)
     {
-        m_creature->SetInCombatWith(pWho);
-        pWho->SetInCombatWith(m_creature);
-        DoCast(pWho, SPELL_BONE_STRIKE_IMPALE);
-        m_uiVictimGUID = pWho->GetGUID();
+        if (!pVictim && pWho)  {
+                        pVictim = pWho;
+                        m_creature->SetInCombatWith(pVictim);
+                        DoCast(pVictim, SPELL_BONE_STRIKE_IMPALE);
+                        }
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-        {
-            if (m_uiVictimGUID)
-            {
-                if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
-                    pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
-            }
-        }
+            if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
     }
 
-    void KilledUnit(Unit* pVictim)
+    void KilledUnit(Unit* _Victim)
     {
         if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
     }
 
     void JustDied(Unit* Killer)
     {
-        if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
-            pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
-        if (Killer)
-            Killer->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_MARROWGAR) != IN_PROGRESS)
         {
-        if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
-            pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
             m_creature->ForcedDespawn();
         }
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
     }
 
 };

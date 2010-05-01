@@ -113,7 +113,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                         OpenDoor(m_uiCounsilDoor1GUID);
                                         OpenDoor(m_uiCounsilDoor2GUID);
                                         }
-        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
+//        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
 
     }
 

@@ -43,8 +43,6 @@ enum
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
 
-    NPC_RISEN_ARCHMAGE          = 37868,
-
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
 

@@ -33,3 +33,14 @@ static Locations SpawnLoc[]=
     {4239.579102, 2566.753418, 364.868439},  // 4 Valithria Room 4
 };
 
+enum BossSpells
+{
+    SPELL_NIGHTMARE_POTAL        = 72482,
+    SPELL_EMERALD_VIGOR          = 70873,
+    SPELL_DREAMWALKER_RAGE       = 71189,
+// Summons
+    NPC_RISEN_ARCHMAGE           = 37868,
+    NPC_BLASING_SKELETON         = 36791,
+    NPC_BLISTERING_ZOMBIE        = 37934,
+    NPC_GLUTTONOUS_ABOMINATION   = 37886,
+};
