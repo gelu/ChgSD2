@@ -1,3 +1,6 @@
+/* Copyright (C) 2010 by /dev/rsa for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software licensed under GPL version 2
+ * Please see the included DOCS/LICENSE.TXT for more information */
 
 #ifndef DEF_ICECROWN_SPIRE_H
 #define DEF_ICECROWN_SPIRE_H
@@ -39,6 +42,8 @@ enum
     NPC_LICH_KING               = 36597,
 
     NPC_MURADIN                 = 36948,
+
+    NPC_TIRION                  = 38995,
 
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
