@@ -16,13 +16,14 @@
 
 /* ScriptData
 SDName: boss_festergut
-SD%Complete: 1%
+SD%Complete: 5%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
 
 #include "precompiled.h"
 #include "def_spire.h"
+
 enum BossSpells
 {
     SPELL_GASEOUS_BLIGHT_0   = 70138,

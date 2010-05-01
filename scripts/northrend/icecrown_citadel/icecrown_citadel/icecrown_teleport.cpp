@@ -105,6 +105,17 @@ bool GOGossipHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
     return true;
 }
 
+bool GOGossipHello_go_frostwing_sigil(Player *player, GameObject* pGo)
+{
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    if(!pInstance) return false;
+
+    if (pInstance->GetData(TYPE_LANATHEL) == DONE)
+           pInstance->SetData(TYPE_LANATHEL, DONE);
+
+    return true;
+}
+
 
 void AddSC_icecrown_teleporter()
 {
@@ -124,5 +135,10 @@ void AddSC_icecrown_teleporter()
     newscript = new Script;
     newscript->Name = "go_bloodwing_sigil";
     newscript->pGOGossipHello  = &GOGossipHello_go_bloodwing_sigil;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_frostwing_sigil";
+    newscript->pGOGossipHello  = &GOGossipHello_go_frostwing_sigil;
     newscript->RegisterSelf();
 }

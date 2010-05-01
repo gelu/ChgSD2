@@ -79,18 +79,19 @@ UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_plague_sigi
 -- Blood wing
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_bloodwing_sigil' WHERE `gameobject_template`.`entry` IN (202181);
 -- Taldaram
--- UPDATE `creature_template` SET `ScriptName`='boss_taldaram' WHERE `entry`= 37973;
+UPDATE `creature_template` SET `ScriptName`='boss_taldaram_icc', `AIName`='' WHERE `entry`= 37973;
 -- Valanar
--- UPDATE `creature_template` SET `ScriptName`='boss_valanar' WHERE `entry`= 37970;
+UPDATE `creature_template` SET `ScriptName`='boss_valanar_icc', `AIName`='' WHERE `entry`= 37970;
 -- Keleseth
--- UPDATE `creature_template` SET `ScriptName`='boss_keleseth' WHERE `entry`= 37972;
+UPDATE `creature_template` SET `ScriptName`='boss_keleseth_icc', `AIName`='' WHERE `entry`= 37972;
+
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201920,201377,201378);
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201920,201377,201378);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201376);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 
 -- Qween Lana'thel
--- UPDATE `creature_template` SET `ScriptName`='boss_lanathel' WHERE `entry`= 37955;
+UPDATE `creature_template` SET `ScriptName`='boss_blood_queen_lanathel', `AIName`='' WHERE `entry`= 37955;
 
 -- Valithria dreamwalker
 -- UPDATE `creature_template` SET `ScriptName`='boss_valithria' WHERE `entry`= 36789;

@@ -68,6 +68,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiCounsilDoor2GUID;
     uint64 m_uiGreenDragonDoor1GUID;
     uint64 m_uiGreenDragonDoor2GUID;
+    uint64 m_uiFrostwingDoorGUID;
+
     uint64 m_uiValithriaDoor1GUID;
     uint64 m_uiValithriaDoor2GUID;
     uint64 m_uiValithriaDoor3GUID;
@@ -76,9 +78,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
+    uint64 m_uiValitriaCacheGUID;
 
     uint64 m_uiGunshipArmoryH_ID;
     uint64 m_uiGunshipArmoryA_ID;
+
+    uint32 m_uiDataCouncilHealth;
 
     void OpenDoor(uint64 guid)
     {
@@ -97,13 +102,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     void OpenAllDoors()
     {
         if (m_auiEncounter[1] == DONE) {
-                OpenDoor(m_uiIcewall1GUID);
-                OpenDoor(m_uiIcewall2GUID);
-                }
-        if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
-        if (m_auiEncounter[7] == DONE) OpenDoor(m_uiSDoorGreenGUID);
-        if (m_auiEncounter[7] == DONE && m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
-//        if (m_auiEncounter[8] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+                                        OpenDoor(m_uiIcewall1GUID);
+                                        OpenDoor(m_uiIcewall2GUID);
+                                        }
+        if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
+        if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorGreenGUID);
+        if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+        if (m_auiEncounter[7] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+        if (m_auiEncounter[8] == DONE) {
+                                        OpenDoor(m_uiCounsilDoor1GUID);
+                                        OpenDoor(m_uiCounsilDoor2GUID);
+                                        }
+        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
 
     }
 
@@ -250,6 +260,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_COUNCIL_DOOR_2: 
                          m_uiCounsilDoor2GUID = pGo->GetGUID();
                          break;
+            case GO_FROSTWING_DOOR: 
+                         m_uiFrostwingDoorGUID = pGo->GetGUID();
+                         break;
             case GO_GREEN_DRAGON_DOOR_1: 
                          m_uiGreenDragonDoor1GUID = pGo->GetGUID();
                          break;
@@ -316,6 +329,22 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
                                   break;
+            case GO_DREAMWALKER_CACHE_10:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID(); 
+                                  break;
+            case GO_DREAMWALKER_CACHE_25:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
+                                  break;
+            case GO_DREAMWALKER_CACHE_10_H:
+                                  if(Difficulty == RAID_DIFFICULTY_10MAN_HEROIC)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
+                                  break;
+            case GO_DREAMWALKER_CACHE_25_H:
+                                  if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+                                  m_uiValitriaCacheGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -330,9 +359,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case TYPE_MARROWGAR:
                 m_auiEncounter[1] = uiData; 
                 if (uiData == DONE) {
-                OpenDoor(m_uiIcewall1GUID);
-                OpenDoor(m_uiIcewall2GUID);
-                }
+                                     OpenDoor(m_uiIcewall1GUID);
+                                     OpenDoor(m_uiIcewall2GUID);
+                                    }
                 break;
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
@@ -387,13 +416,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[7] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiScientistDoorGUID);
                                       else OpenDoor(m_uiScientistDoorGUID);
-//                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
                 break;
              case TYPE_BLOOD_COUNCIL:
                 m_auiEncounter[8] = uiData;
+                if (uiData == DONE) {
+                                     OpenDoor(m_uiCounsilDoor1GUID);
+                                     OpenDoor(m_uiCounsilDoor2GUID);
+                                    }
                 break;
              case TYPE_LANATHEL:
                 m_auiEncounter[9] = uiData;
+//                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
                 break;
              case TYPE_VALITHRIA:
                 m_auiEncounter[10] = uiData;
@@ -411,6 +445,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[14] = uiData;
                 uiData = NOT_STARTED;
                 break;
+             case DATA_BLOOD_COUNCIL_HEALTH:     m_uiDataCouncilHealth = uiData; 
+                                                 uiData = NOT_STARTED; 
+                                                 break;
+
         }
 
         if (uiData == DONE)
@@ -454,6 +492,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_LICH_KING:     return m_auiEncounter[12];
              case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
              case TYPE_COUNT:         return m_auiEncounter[14];
+             case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
         }
         return 0;
     }
