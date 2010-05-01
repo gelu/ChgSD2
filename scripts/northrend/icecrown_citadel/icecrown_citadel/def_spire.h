@@ -5,8 +5,6 @@
 
 enum
 {
-    TYPE_DIFFICULTY             = 1001,
-    MAP_NUM                     = 631,
 
     TYPE_TELEPORT               = 0,
     TYPE_MARROWGAR              = 1,
@@ -71,6 +69,7 @@ enum
     GO_COUNCIL_DOOR_1           = 201377, //72533
     GO_COUNCIL_DOOR_2           = 201378, //72534
 
+    GO_FROSTWING_DOOR           = 201919,
     GO_GREEN_DRAGON_DOOR_1      = 201375, //1202
     GO_GREEN_DRAGON_DOOR_2      = 201374, //1200
     GO_VALITHRIA_DOOR_1         = 201380, //1618
@@ -105,6 +104,10 @@ enum
     GO_PLAGUE_SIGIL             = 202182,
     GO_FROSTWING_SIGIL          = 202181,
     GO_BLOODWING_SIGIL          = 202183,
+
+    TYPE_DIFFICULTY             = 1001,
+    MAP_NUM                     = 631,
+    DATA_BLOOD_COUNCIL_HEALTH   = 1002,
 };
 
 #endif

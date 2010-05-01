@@ -23,7 +23,7 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "def_spire.h"
-enum
+enum BossSpells
 {
         //common
         SPELL_BERSERK                           = 47008,
