@@ -33,7 +33,7 @@ enum BossSpells
     SPELL_CREATE_CONCOCTION       = 71621,
     SPELL_CHOKING_GAS             = 71278,
     SPELL_CHOKING_GAS_EXPLODE     = 71279,
-    SPELL_MALLEABLE_GOO           = 72296,
+    SPELL_MALLEABLE_GOO           = 70852,
     SPELL_GUZZLE_POTIONS          = 73122,
     SPELL_MUTATED_STRENGTH        = 71603,
     SPELL_MUTATED_PLAGUE          = 72672,
@@ -71,6 +71,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
     void Reset()
     {
         if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
+        stage = 0;
     }
 
     void Aggro(Unit *who) 
@@ -153,12 +154,17 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
                                  break;
                           }
 
+                    break;
+            }
+
                     bsw->timedCast(SPELL_CHOKING_GAS, diff);
 
-                    bsw->timedCast(SPELL_MALLEABLE_GOO, diff);
+                    if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
+                       {
+                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                              bsw->doCast(SPELL_MALLEABLE_GOO, pTarget);
+                       }
 
-                    break;
-        }
 
         if ( stage ==0 && m_creature->GetHealthPercent() < 80.0f ) stage = 1;
         if ( stage ==2 && m_creature->GetHealthPercent() < 35.0f ) stage = 3;
@@ -249,7 +255,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
     void JustReachedHome()
     {
         if (!m_pInstance) return;
-            m_creature->ForcedDespawn();
+             m_creature->ForcedDespawn();
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -260,11 +266,12 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
 
         bsw->timedCast(SPELL_OOZE_ADHESIVE, uiDiff, m_creature->getVictim());
         bsw->timedCast(SPELL_SOUL_FEAST, uiDiff);
-        if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 1.0f))
-            {
-               bsw->doCast(SPELL_OOZE_ERUPTION);
-               m_creature->ForcedDespawn();
-            };
+        if (bsw->timedQuery(SPELL_OOZE_ERUPTION, uiDiff))
+             if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 1.0f))
+                {
+                 bsw->doCast(SPELL_OOZE_ERUPTION);
+//               m_creature->ForcedDespawn();
+                };
     }
 };
 
