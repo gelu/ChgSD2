@@ -574,7 +574,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                  break;
                 }
         case 2: {
-                        if (pTarget = bsw->SelectUnit()) {
+                        if (pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0)) {
                         TrampleCasted = false;
                         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         stage = 3;
