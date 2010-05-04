@@ -108,9 +108,14 @@ enum
     GO_FROSTWING_SIGIL          = 202181,
     GO_BLOODWING_SIGIL          = 202183,
 
-    TYPE_DIFFICULTY             = 1001,
+    TYPE_EVENT_TIMER            = 99,
+    TYPE_EVENT                  = 100,
+    TYPE_EVENT_NPC              = 101,
     MAP_NUM                     = 631,
+    TYPE_DIFFICULTY             = 1001,
     DATA_BLOOD_COUNCIL_HEALTH   = 1002,
+    DESPAWN_TIME                = 300000,
+
 };
 
 #endif

@@ -101,6 +101,9 @@ UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobje
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201380,201381,201382,201383);
 
 -- Sindragosa
--- UPDATE `creature_template` SET `ScriptName`='boss_sindragosa' WHERE `entry`= 37755;
+-- UPDATE `creature_template` SET `ScriptName`='boss_sindragosa' WHERE `entry`= 36853;
+UPDATE `creature_template` SET `ScriptName`='mob_rimefang', `AIName`='' WHERE `entry`= 37533;
+UPDATE `creature_template` SET `ScriptName`='mob_spinestalker', `AIName`='' WHERE `entry`= 37534;
+
 -- Lich King
 -- UPDATE `creature_template` SET `ScriptName`='boss_lich_king' WHERE `entry`= 29983;
