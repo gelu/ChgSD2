@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
             int i;
             for(i=0; i< flames; ++i)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                 if(target) DoCast(target, Regular ? SP_CINDER : H_SP_CINDER);
             }
             FlamesTimer = 20000;

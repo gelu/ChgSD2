@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL boss_brundirAI : public iron_councilAI
 
         if(LightningTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target && target->isAlive())
                 DoCast(target, Regular ? SP_CHAIN_LIGHTNING : H_SP_CHAIN_LIGHTNING);
             LightningTimer = 5000 + rand()%5000;
@@ -223,7 +223,7 @@ struct MANGOS_DLL_DECL boss_molgeimAI : public iron_councilAI
         /*if(ElementalTimer < diff)
         {
             Creature *elem = DoSpawnCreature(CR_LIGHTNING_ELEMENTAL, 0,0,0,0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(elem && target && target->isAlive())
                 elem->AddThreat(target, 1.0f);
             ElementalTimer = 15000 + rand()%10000;
@@ -234,7 +234,7 @@ struct MANGOS_DLL_DECL boss_molgeimAI : public iron_councilAI
         {
             if(DeathRuneTimer < diff)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                 if(target) DoCast(target, Regular ? SP_RUNE_OF_DEATH : H_SP_RUNE_OF_DEATH);
             }
         }

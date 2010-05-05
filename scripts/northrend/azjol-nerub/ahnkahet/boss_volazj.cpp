@@ -240,7 +240,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             {
                 if(m_uiShiverJumpTimer == 3)
                 {
-                    if(Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                     {
                         DoCast(pTarget, m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
                         m_pLastShiverTarget = ((Player*)pTarget);
@@ -249,7 +249,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
                 }else m_uiShiverJumpTimer++;
             }
         }else{
-            if(Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
             {
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
                 m_pLastShiverTarget = ((Player*)pTarget);

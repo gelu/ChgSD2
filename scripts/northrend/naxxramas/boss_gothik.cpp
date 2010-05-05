@@ -200,7 +200,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public Scripted_NoMovementAI
 
     void JustSummoned(Creature* pSummon)
     {
-        pSummon->AI()->AttackStart(SelectUnit(SELECT_TARGET_RANDOM,0));
+        pSummon->AI()->AttackStart(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0));
     }
 
     void UpdateAI(const uint32 diff)

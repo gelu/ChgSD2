@@ -146,7 +146,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
                 {
                     add = m_creature->SummonCreature(CR_PUMMELER, AddX[rnd], AddY[rnd], AddZ[rnd], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     add->SetActiveObjectState(true);
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                     if(add && target && target->isAlive())
                         add->AddThreat(target, 1.0f);
                 }
@@ -154,7 +154,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
                 {
                     add = m_creature->SummonCreature(CR_SCRAPBOT, AddX[rnd], AddY[rnd], AddZ[rnd], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     add->SetActiveObjectState(true);
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                     if(add && target && target->isAlive())
                         add->AddThreat(target, 1.0f);
                 }
@@ -162,7 +162,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
                 {
                     add = m_creature->SummonCreature(CR_BOOMBOT, AddX[rnd], AddY[rnd], AddZ[rnd], 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
                     add->SetActiveObjectState(true);
-                    target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                    target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                     if(add && target && target->isAlive())
                         add->AddThreat(target, 1.0f);
                 }
@@ -196,7 +196,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
 
             if(LightTimer < diff)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                 if(target && target->isAlive())
                     DoCast(target, Regular ? SP_SEARING_LIGHT : H_SP_SEARING_LIGHT);
                 LightTimer = 10000;
@@ -205,7 +205,7 @@ struct MANGOS_DLL_DECL boss_xt002 : public ScriptedAI
 
             if(GravityTimer < diff)
             {
-                Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                 if(target && target->isAlive())
                     DoCast(target, Regular ? SP_GRAVITY : H_SP_GRAVITY);
                 GravityTimer = 15000 + rand()%5000;

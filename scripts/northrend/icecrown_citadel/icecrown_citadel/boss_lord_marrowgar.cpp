@@ -78,7 +78,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 /*
     void JustSummoned(Creature* _summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,1))
+        if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
             _summoned->AddThreat(target);
     }
 */
@@ -116,7 +116,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         {
             case 0: {
                     if (bsw->timedQuery(SPELL_BONE_STRIKE, diff))
-                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 1))
+                        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1))
                             if (bsw->doCast(SPELL_BONE_STRIKE, pTarget) == CAST_OK)
                               {
                               switch (urand(0,1)) {

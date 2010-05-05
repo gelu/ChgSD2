@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_kologarn_left_armAI : public ScriptedAI
                 pTemp->DealDamage(pTemp, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         do{
             if (Creature* pTemp = m_creature->SummonCreature(MOB_RUBBLE, LeftArmX, LeftArmY, LeftArmZ, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                     {
                         pTemp->AddThreat(pTarget,0.0f);
                         pTemp->AI()->AttackStart(pTarget);
@@ -269,7 +269,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public ScriptedAI
                 pTemp->DealDamage(pTemp, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         do{
             if (Creature* pTemp = m_creature->SummonCreature(MOB_RUBBLE, RightArmX, RightArmY, RightArmZ, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000))
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                     {
                         pTemp->AddThreat(pTarget,0.0f);
                         pTemp->AI()->AttackStart(pTarget);
@@ -286,7 +286,7 @@ struct MANGOS_DLL_DECL boss_kologarn_right_armAI : public ScriptedAI
         if (Stone_Grip_Timer < diff)
         {
             //stone grip emote
-            if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0)){
+            if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0)){
                 //DoCast(target, m_bIsRegularMode ? SPELL_STONE_GRIP : SPELL_STONE_GRIP_H);
                 GripTarget = target->GetGUID();
                 grip = true;

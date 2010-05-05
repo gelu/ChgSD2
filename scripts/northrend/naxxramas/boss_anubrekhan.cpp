@@ -172,7 +172,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     void SummonGuard()
     {
         //DoCast(m_creature, SPELL_SUMMONGUARD);
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
             m_creature->SummonCreature(NPC_CRYPT_GUARD, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
     }
 
@@ -188,8 +188,8 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
             //Do NOT cast it when we are afflicted by locust swarm
             if (!m_creature->HasAura(SPELL_LOCUSTSWARM) || !m_creature->HasAura(SPELL_LOCUSTSWARM_H))
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, m_bIsRegularMode ? SPELL_IMPALE : SPELL_IMPALE_H);
+                if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                    DoCastSpellIfCan(target, m_bIsRegularMode ? SPELL_IMPALE : SPELL_IMPALE_H);
             }
 
             m_uiImpaleTimer = 15000;

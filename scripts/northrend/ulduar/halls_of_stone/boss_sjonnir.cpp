@@ -154,7 +154,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
     {
         m_lDwarfGUIDList.push_back(pSummoned->GetGUID());
 
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
         {
             pSummoned->AddThreat(pTarget, 0.0f);
             pSummoned->AI()->AttackStart(pTarget);
@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL boss_sjonnirAI : public ScriptedAI
 
         if (m_uiChainLightning_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_CHAIN_LIGHTING_H : SPELL_CHAIN_LIGHTING);
             m_uiChainLightning_Timer = 10000 + rand()%5000;
         }

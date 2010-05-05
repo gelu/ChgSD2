@@ -282,7 +282,7 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 
 	if (Polymorph_Timer < diff)
         {
-	if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+	if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 	DoCast(target, m_bIsRegularMode ? SPELL_POLYMORPH : SPELL_POLYMORPH_H);
             Polymorph_Timer = m_bIsRegularMode ? 20000 : 15000;
         }else Polymorph_Timer -= diff;
@@ -696,7 +696,7 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 
 	if (Poison_Timer < diff)
         {
-	if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+	if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 				DoCast(m_creature, SPELL_POISON_BOTTLE);
             Poison_Timer = m_bIsRegularMode ? 10000 : 5000;
         }else Poison_Timer -= diff;

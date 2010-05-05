@@ -154,7 +154,7 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
 
 			if (Swamp_Timer < diff)
 			{
-				if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+				if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 					DoCast(target, m_bIsHeroic ? SPELL_SWAMP_H : SPELL_SWAMP_N);
 
 				Swamp_Timer = 7300;
@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
 
 			if (MindBlast_Timer < diff)
 			{
-				if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+				if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 					DoCast(target, m_bIsHeroic ? SPELL_MIND_BLAST_H : SPELL_MIND_BLAST_N);
 
 				MindBlast_Timer = 11300;
@@ -182,7 +182,7 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
 
 				if (Sleep_Timer < diff)
 				{
-					if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+					if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 						DoCast(target, m_bIsHeroic ? SPELL_SLEEP_H : SPELL_SLEEP_N);
                         switch(rand()%2)
                         {

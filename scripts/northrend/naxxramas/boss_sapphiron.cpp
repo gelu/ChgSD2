@@ -171,16 +171,16 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 
             if (LifeDrain_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target, m_bIsRegularMode ? SPELL_LIFE_DRAIN : SPELL_LIFE_DRAIN_H);
+                if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                    DoCastSpellIfCan(target,SPELL_LIFE_DRAIN);
 
                 LifeDrain_Timer = 24000;
             }else LifeDrain_Timer -= diff;
 
             if (Blizzard_Timer < diff)
             {
-                if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
-                    DoCast(target,SPELL_BLIZZARD);
+                if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                    DoCastSpellIfCan(target,SPELL_BLIZZARD);
 
                 Blizzard_Timer = 20000;
             }else Blizzard_Timer -= diff;
@@ -230,7 +230,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
             if (Icebolt_Timer < diff && Icebolt_Count < 5)
             {
                 if (Icebolt_Count == 1 || Icebolt_Count == 3)
-                    if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+                    if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                     {
                         DoCast(target, SPELL_ICEBOLT);
                         targets.push_back(target);

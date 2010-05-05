@@ -169,21 +169,21 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
             case 0: {
                     break;}
             case 1: {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_HOPELESSNESS);
                     stage = 2;
                     break;}
             case 2: {
                     break;}
             case 3: {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_HOPELESSNESS);
                     stage = 4;
                     break;}
             case 4: {
                     break;}
             case 5: {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_HOPELESSNESS);
                     stage = 6;
                     break;}
@@ -191,7 +191,7 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
                     break;}
         }
                     if (m_uiDespair_Timer < diff) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, SPELL_IMPENDING_DESPAIR);
                     m_uiDespair_Timer= Regular ? 40000 : 30000;
                     } else m_uiDespair_Timer -= diff;
@@ -202,7 +202,7 @@ struct MANGOS_DLL_DECL boss_falrynAI : public ScriptedAI
                     } else m_uiStrike_Timer -= diff;
 
                     if (m_uiHorror_Timer < diff) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, Regular ? SPELL_DEFILING_HORROR_N : SPELL_DEFILING_HORROR_H);
                     m_uiHorror_Timer=urand(25000,35000);
                     } else m_uiHorror_Timer -= diff;
