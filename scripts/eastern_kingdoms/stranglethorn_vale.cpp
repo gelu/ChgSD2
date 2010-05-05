@@ -17,15 +17,25 @@
 /* ScriptData
 SDName: Stranglethorn_Vale
 SD%Complete: 100
-SDComment: Quest support: 592
+SDComment: Quest support: 592, 8193
 SDCategory: Stranglethorn Vale
 EndScriptData */
 
 /* ContentData
 mob_yenniku
+npc_riggle_bassbait
 EndContentData */
 
 #include "precompiled.h"
+#include "GameEventMgr.h"
+
+enum
+{
+    SAY_START               = -1510356,
+    SAY_WINNER              = -1510357,
+    SAY_END                 = -1510358,
+    QUEST_MASTER_ANGLER     = 8193,
+};
 
 /*######
 ## mob_yenniku
@@ -93,8 +103,111 @@ CreatureAI* GetAI_mob_yenniku(Creature *_Creature)
 }
 
 /*######
-##
+##npc_riggle_bassbait
 ######*/
+/**
+ *  AI for Riggle Bassbait.
+ *  This is the AI for Riggle Bassbait, see http://www.wowhead.com/?npc=15077
+ *  @see ScriptedAI
+ *  @author burned, gotisch
+ */
+struct MANGOS_DLL_DECL npc_riggle_bassbaitAI : public ScriptedAI
+{
+    /**
+     *  Constructor of the Creature.
+     *  This is called when the creature is spawned.
+     *  @param c The Creature that this AI is for
+     */
+    npc_riggle_bassbaitAI(Creature *c) : ScriptedAI(c)
+    {
+        // This will keep the NPC active even if there are no players around!
+        c->SetActiveObjectState(true);
+        bEventAnnounced = bEventIsOver = bEventWinnerFound = false;
+        Reset();
+    }
+    /**
+     *  Flag to check if event was announced. True if event was announced.
+     */
+    bool bEventAnnounced;
+    /**
+     *  Flag to check if event is over. True if event is over.
+     */
+    bool bEventIsOver;
+    /**
+     *  Flag to check if someone won the event. True if someone has won.
+     */
+    bool bEventWinnerFound;
+
+    void Reset() { }
+
+    void Aggro(Unit *who) {}
+
+    void UpdateAI(const uint32 diff)
+    {
+        // Announce the event max 1 minute after being spawned. But only if Fishing extravaganza is running.
+        if (!bEventAnnounced && time(NULL) % 60 == 0 && IsHolidayActive(HOLIDAY_FISHING_EXTRAVAGANZA))
+        {
+            debug_log("SD2: npc_riggle_bassbait announce HOLIDAY_FISHING_EXTRAVAGANZA contest");
+            DoScriptText(SAY_START, m_creature);
+            m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER); //Quest&Gossip are now active
+            bEventAnnounced = true;
+        }
+        // The Event was started (announced) & It was not yet ended & One minute passed & the Fish are gone
+        if ( bEventAnnounced && !bEventIsOver && time(NULL) % 60 == 0 && !IsHolidayActive(HOLIDAY_FISHING_EXTRAVAGANZA))
+        {
+            debug_log("SD2: npc_riggle_bassbait end HOLIDAY_FISHING_EXTRAVAGANZA contest");
+            DoScriptText(SAY_END, m_creature);
+            bEventIsOver = true;
+        }
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+/**
+ * GossipHello for NPC Riggle Bassbait. 
+ * This is called each time a Player tries to talk with the NPC.
+ */
+bool GossipHello_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature)
+{
+    if (pCreature->isQuestGiver()) // If the quest is still running.
+    {
+        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
+        pPlayer->SEND_GOSSIP_MENU(7614, pCreature->GetGUID());
+        return true;
+    }
+    // The Quest is not there anymore 
+    // There is a winner!
+    pPlayer->SEND_GOSSIP_MENU(7714, pCreature->GetGUID());
+    return true;
+}
+
+bool ChooseReward_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature, const Quest* pQuest, uint32 uiItem)
+{
+    // TODO: check if this can only be called if NPC has QUESTGIVER flag.
+    if (pQuest->GetQuestId() == QUEST_MASTER_ANGLER && ((npc_riggle_bassbaitAI*)(pCreature->AI()))->bEventWinnerFound == false)
+    {
+        DoScriptText(SAY_WINNER, pCreature,pPlayer);
+        pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+        ((npc_riggle_bassbaitAI*)(pCreature->AI()))->bEventWinnerFound = true;
+        // right way to load another creature, you need first argument because he uses it to get map.
+        Unit* creature2 = Unit::GetUnit((*pCreature),MAKE_NEW_GUID(54687,15078,HIGHGUID_UNIT));
+        if (creature2)
+        {
+            creature2->SetFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_QUESTGIVER);
+        } else {
+            debug_log("Could not change flag of Jang");
+        }
+        return true;
+    }
+    return true;
+}
+
+CreatureAI* GetAI_npc_riggle_bassbait(Creature* pCreature)
+{
+    return new npc_riggle_bassbaitAI(pCreature);
+}
 
 void AddSC_stranglethorn_vale()
 {
@@ -103,5 +216,12 @@ void AddSC_stranglethorn_vale()
     newscript = new Script;
     newscript->Name = "mob_yenniku";
     newscript->GetAI = &GetAI_mob_yenniku;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_riggle_bassbait";
+    newscript->GetAI = &GetAI_npc_riggle_bassbait;
+    newscript->pGossipHello = &GossipHello_npc_riggle_bassbait;
+    newscript->pChooseReward = &ChooseReward_npc_riggle_bassbait;
     newscript->RegisterSelf();
 }
