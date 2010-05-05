@@ -107,4 +107,5 @@ UPDATE `creature_template` SET `ScriptName`='mob_spinestalker', `AIName`='' WHER
 UPDATE `creature_template` SET `ScriptName`='mob_ice_tomb', `AIName`='' WHERE `entry`= 36980;
 
 -- Lich King
--- UPDATE `creature_template` SET `ScriptName`='boss_lich_king' WHERE `entry`= 29983;
+UPDATE `creature_template` SET `ScriptName`='boss_the_lich_king_icc', `AIName`='' WHERE `entry`= 29983;
+UPDATE `creature_template` SET `ScriptName`='boss_tirion_icc', `AIName`='' WHERE `entry`= 38995;
