@@ -102,8 +102,8 @@ struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO,0))
-            summoned->AI()->AttackStart(target);
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+            summoned->AddThreat(pTarget);
     }
 
     void UpdateAI(const uint32 uiDiff)
