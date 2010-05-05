@@ -51,7 +51,6 @@ UPDATE gameobject_template SET ScriptName='go_jump_a_tron' WHERE entry=183146;
 UPDATE gameobject_template SET ScriptName='go_orb_of_command' WHERE entry=179879;
 UPDATE gameobject_template SET ScriptName='go_resonite_cask' WHERE entry=178145;
 UPDATE gameobject_template SET ScriptName='go_sacred_fire_of_life' WHERE entry=175944;
-UPDATE gameobject_template SET ScriptName='go_school_of_red_snapper' WHERE entry=181616;
 UPDATE gameobject_template SET ScriptName='go_shrine_of_the_birds' WHERE entry IN (185547,185553,185551);
 UPDATE gameobject_template SET ScriptName='go_tablet_of_madness' WHERE entry=180368;
 UPDATE gameobject_template SET ScriptName='go_tablet_of_the_seven' WHERE entry=169294;
@@ -114,6 +113,7 @@ UPDATE creature_template SET ScriptName='npc_locksmith' WHERE entry IN (29665,29
 
 /* SPELL */
 UPDATE creature_template SET ScriptName='spell_dummy_npc' WHERE entry IN (16880,1200,26616,26643,16518,25793,25758,25752,25792,25753,26421,26841,27808,27122,28068,12298,12296,24918,17326,17654,16847,18879,26270,26268,30146);
+UPDATE gameobject_template SET ScriptName='spell_dummy_go' WHERE entry IN (181616,186949);
 
 /*  */
 /* ZONE */
@@ -423,7 +423,7 @@ UPDATE creature_template SET ScriptName='boss_gormok' WHERE entry=34796;
 UPDATE creature_template SET ScriptName='boss_acidmaw' WHERE entry=35144;
 UPDATE creature_template SET ScriptName='boss_dreadscale' WHERE entry=34799;
 UPDATE creature_template SET ScriptName='boss_icehowl' WHERE entry=34797;
-UPDATE creature_template SET ScriptName='boss_jaraxxis' WHERE entry=34780;
+UPDATE creature_template SET ScriptName='boss_jaraxxus' WHERE entry=34780;
 UPDATE creature_template SET ScriptName='boss_anubarak_trial' WHERE entry=34564;
 UPDATE creature_template SET ScriptName='boss_fjola' WHERE entry=34497;
 UPDATE creature_template SET ScriptName='boss_eydis' WHERE entry=34496;
@@ -530,7 +530,7 @@ UPDATE creature_template SET ScriptName='npc_rathis_tomber' WHERE entry=16224;
 
 
 /* GRIZZLY HILLS */
-UPDATE creature_template SET ScriptName='npc_orsonn_and_kodian' WHERE entry IN (27274, 27275);
+
 
 /* GRUUL'S LAIR */
 UPDATE instance_template SET script='instance_gruuls_lair' WHERE map =565;
@@ -624,9 +624,7 @@ UPDATE creature_template SET ScriptName='npc_dame_evniki_kapsalis' WHERE entry=3
 UPDATE creature_template SET ScriptName='npc_royal_historian_archesonus' WHERE entry=8879;
 
 /* ISLE OF QUEL'DANAS */
-UPDATE creature_template SET ScriptName='npc_ayren_cloudbreaker' WHERE entry=25059;
 UPDATE creature_template SET ScriptName='npc_converted_sentry' WHERE entry=24981;
-UPDATE creature_template SET ScriptName='npc_unrestrained_dragonhawk' WHERE entry=25236;
 
 /* KARAZHAN */
 UPDATE instance_template SET script='instance_karazhan' WHERE map=532;
@@ -667,6 +665,7 @@ UPDATE creature_template SET ScriptName='npc_grandmother' WHERE entry=17603;
 
 /* LOCH MODAN */
 UPDATE creature_template SET ScriptName='npc_mountaineer_pebblebitty' WHERE entry=3836;
+UPDATE creature_template SET ScriptName='npc_miran' WHERE entry=1379;
 
 /* MAGISTER'S TERRACE */
 UPDATE instance_template SET script='instance_magisters_terrace' WHERE map=585;

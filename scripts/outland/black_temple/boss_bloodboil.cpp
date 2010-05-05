@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Bloodboil
-SD%Complete: 80
-SDComment: Bloodboil not working correctly, missing enrage
+SD%Complete: 85
+SDComment: Bloodboil not working correctly
 SDCategory: Black Temple
 EndScriptData */
 
@@ -50,6 +50,7 @@ EndScriptData */
 #define SPELL_TAUNT_GURTOGG      40603
 #define SPELL_INSIGNIFIGANCE     40618
 #define SPELL_BERSERK            45078
+#define SPELL_ENRAGE             27680
 
 struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
 {
@@ -75,6 +76,7 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
     uint32 EjectTimer;
     uint32 BewilderingStrikeTimer;
     uint32 PhaseChangeTimer;
+    uint32 m_uiEnrageTimer;
 
     bool Phase1;
 
@@ -94,6 +96,7 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         EjectTimer = 10000;
         BewilderingStrikeTimer = 15000;
         PhaseChangeTimer = 60000;
+        m_uiEnrageTimer = 600000;
 
         Phase1 = true;
     }
@@ -222,7 +225,7 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 DoCastSpellIfCan(m_creature->getVictim(), SPELL_BEWILDERING_STRIKE);
                 float mt_threat = m_creature->getThreatManager().getThreat(m_creature->getVictim());
 
-                if (Unit* target = SelectUnit(SELECT_TARGET_TOPAGGRO, 1))
+                if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 1))
                     m_creature->AddThreat(target, mt_threat);
 
                 BewilderingStrikeTimer = 20000;
@@ -272,7 +275,7 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
         {
             if (Phase1)
             {
-                Unit* target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+                Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
                 if (target && target->isAlive())
                 {
                     Phase1 = false;
@@ -319,6 +322,13 @@ struct MANGOS_DLL_DECL boss_gurtogg_bloodboilAI : public ScriptedAI
                 PhaseChangeTimer = 60000;
             }
         }else PhaseChangeTimer -= diff;
+        
+        //Enrage
+        if (m_uiEnrageTimer < diff)
+        {
+            DoCast(m_creature, SPELL_ENRAGE);
+            m_uiEnrageTimer = 60000;
+        }else m_uiEnrageTimer -= diff;
 
         DoMeleeAttackIfReady();
     }
