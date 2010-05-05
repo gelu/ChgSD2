@@ -139,6 +139,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     break;}
 
             case 1: {
+                    m_creature->InterruptNonMeleeSpells(true);
                     bsw->doCast(SPELL_BONE_STORM);
                     stage = 2;
                     DoScriptText(-1631002,m_creature);
