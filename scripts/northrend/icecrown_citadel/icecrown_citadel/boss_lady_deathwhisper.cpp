@@ -147,18 +147,18 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     if (place < 2) 
     {
     if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z))
-    if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                 pTemp->AddThreat(pTarget, 100.0f);
                 pTemp->GetMotionMaster()->MoveChase(pTarget);
                 };
     if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z))
-    if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                 pTemp->AddThreat(pTarget, 100.0f);
                 pTemp->GetMotionMaster()->MoveChase(pTarget);
                 };
     }
     if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z))
-    if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                 pTemp->AddThreat(pTarget, 100.0f);
                 pTemp->GetMotionMaster()->MoveChase(pTarget);
                 };
@@ -340,7 +340,7 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
-        if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                 m_creature->AddThreat(pTarget, 1000.0f);
                 m_creature->GetMotionMaster()->MoveChase(pTarget);
                 m_creature->SetSpeedRate(MOVE_RUN, 0.5);

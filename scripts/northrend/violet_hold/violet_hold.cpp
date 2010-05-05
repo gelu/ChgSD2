@@ -223,7 +223,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             }
         }
         if(!IsWalking && !IsInCombat) {
-                if (Unit* m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+                if (Unit* m_uEmbraceTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                 m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
                 m_creature->SetInCombatWithZone();
                 IsInCombat = true;
@@ -304,7 +304,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         //Arcane Stream
         if (m_uiArcaneStream_Timer <= uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                 DoCast(pTarget, m_bIsRegular ? SPELL_ARCANE_STREAM : SPELL_ARCANE_STREAM_H);
             m_uiArcaneStream_Timer = 7000;
         }else m_uiArcaneStream_Timer -= uiDiff;

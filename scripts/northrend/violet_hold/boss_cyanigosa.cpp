@@ -100,7 +100,7 @@ struct MANGOS_DLL_DECL boss_cyanigosaAI : public ScriptedAI
 
         if (m_uiManaDestruction_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, SPELL_MANA_DESTRUCTION);
             m_uiManaDestruction_Timer = urand(8000, 13000);
         }
@@ -109,7 +109,7 @@ struct MANGOS_DLL_DECL boss_cyanigosaAI : public ScriptedAI
 
         if (m_uiBlizzard_Timer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_BLIZZARD_H : SPELL_BLIZZARD);
             m_uiBlizzard_Timer = urand(20000, 25000);
         }

@@ -410,7 +410,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
          
 			if (Exorcism_Timer < diff)
 			{
-				if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+				if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 					DoCast(target, m_bIsHeroic ? SPELL_EXORCISM_H : SPELL_EXORCISM_N);
 
 				Exorcism_Timer = 7300;

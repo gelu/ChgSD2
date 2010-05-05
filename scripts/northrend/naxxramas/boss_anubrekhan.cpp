@@ -172,7 +172,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
     void SummonGuard()
     {
         //DoCast(m_creature, SPELL_SUMMONGUARD);
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
             m_creature->SummonCreature(NPC_CRYPT_GUARD, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 300000);
     }
 

@@ -85,7 +85,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
 
         if (DevouringFlameTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target && target->isAlive())
                 DoCast(target, Regular ? SP_DEVOURING_FLAME : H_SP_DEVOURING_FLAME);
             DevouringFlameTimer = 9000+rand()%3000;
@@ -108,7 +108,7 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
 
         if (FireballTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target && target->isAlive())
                 DoCast(target, Regular ? SP_FIREBALL : H_SP_FIREBALL);
             FireballTimer = 4000 + rand()%4000;

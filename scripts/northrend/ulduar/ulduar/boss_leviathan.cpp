@@ -87,7 +87,7 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
 
         if(RocketTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             int32 dmg = Regular ? (3000 + rand()%2000) : (2000 + rand()%1200);
             if(target && target->isAlive())
                 m_creature->CastCustomSpell(target, SP_ROCKET, &dmg, 0, 0, false);

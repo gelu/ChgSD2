@@ -211,7 +211,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
 
             //DoCast(m_creature, SPELL_VANISH); We dont want to drop aggro
             m_uiVanishPhase = 1;
-            if (m_uEmbraceTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
+            if (m_uEmbraceTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
                 m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
 
             m_creature->SetVisibility(VISIBILITY_OFF);

@@ -135,12 +135,12 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
                     {
                           if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                              if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                                    pTemp->AddThreat(pTarget, 100.0f);
                                    pTemp->GetMotionMaster()->MoveChase(pTarget);
                                 };
                           if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                              if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                              if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                                    pTemp->AddThreat(pTarget, 100.0f);
                                    pTemp->GetMotionMaster()->MoveChase(pTarget);
                                 };
@@ -149,12 +149,12 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                             || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                             {
                             if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                               if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                                    pTemp->AddThreat(pTarget, 100.0f);
                                    pTemp->GetMotionMaster()->MoveChase(pTarget);
                                 };
                             if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                               if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+                               if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                                    pTemp->AddThreat(pTarget, 100.0f);
                                    pTemp->GetMotionMaster()->MoveChase(pTarget);
                                 };

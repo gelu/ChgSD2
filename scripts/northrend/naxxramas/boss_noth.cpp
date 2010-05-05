@@ -155,7 +155,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
 
     void JustSummoned(Creature* summoned)
     {
-        if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+        if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
         {
             summoned->AddThreat(target,0.0f);
             summoned->AI()->AttackStart(target);
@@ -228,7 +228,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             //DoCast(m_creature, SPELL_BLINK);
             m_creature->GetMap()->CreatureRelocation(m_creature, 2670.804 + rand()%30, -3517.517 + rand()%30, 261.313, m_creature->GetOrientation());
             DoResetThreat();
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 AttackStart(pTarget);
             Blink_Timer = 25000;
         }else Blink_Timer -= diff;

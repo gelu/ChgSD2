@@ -96,7 +96,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
 
         if(FreezeTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target) DoCast(target, SP_FREEZE);
             FreezeTimer = 60000;
         }

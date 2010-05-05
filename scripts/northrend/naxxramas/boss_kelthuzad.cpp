@@ -278,7 +278,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 
     void Possess()
     {
-        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
         {
             pTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
             pTarget->setFaction(pTarget->getFaction());
@@ -390,7 +390,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             //Check for Mana Detonation
             if (ManaDetonation_Timer < diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
                     if (pTarget->getPowerType() == POWER_MANA)
                     {
                         int32 curPower = pTarget->GetPower(POWER_MANA);
@@ -426,7 +426,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             //Check for Shadow Fissure
             if (ShadowFisure_Timer < diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
                     DoCast(pTarget,SPELL_SHADOW_FISURE);
 
                 if (rand()%2)
@@ -438,7 +438,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
             //Check for Frost Blast
             if (FrostBlast_Timer < diff)
             {
-                if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
                     m_creature->CastSpell(pTarget,SPELL_FROST_BLAST,true);
 
                 if (rand()%2)

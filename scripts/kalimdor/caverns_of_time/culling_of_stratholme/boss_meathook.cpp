@@ -108,7 +108,7 @@ struct MANGOS_DLL_DECL boss_meathookAI : public ScriptedAI
 
 		if (Chain_Timer < diff)
         {
-			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+			if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 				DoCast(target, m_bIsHeroic ? SPELL_CHAIN_H : SPELL_CHAIN_N);
 
             Chain_Timer = 6300;
@@ -118,7 +118,7 @@ struct MANGOS_DLL_DECL boss_meathookAI : public ScriptedAI
 
 		if (Exploded_Timer < diff)
         {
-			if (Unit* target = SelectUnit(SELECT_TARGET_RANDOM,0))
+			if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
 				DoCast(target, m_bIsHeroic ? SPELL_EXPLODED_H : SPELL_EXPLODED_N);
 
             Exploded_Timer = 9300;

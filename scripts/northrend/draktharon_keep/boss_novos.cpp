@@ -154,9 +154,9 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
                 switch(urand(0, 1))
                 {
                     case 0: 
-                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_WRATH_OF_MISERY : H_SPELL_WRATH_OF_MISERY);
+                        DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_WRATH_OF_MISERY : H_SPELL_WRATH_OF_MISERY);
                     case 1: 
-                        DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_BLIZZARD : H_SPELL_BLIZZARD);
+                        DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_BLIZZARD : H_SPELL_BLIZZARD);
                 }
                 SpecialCast_Timer = urand(10000, 15000);
             }else ArcaneBlast_Timer -= uiDiff;
@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
             //Regual cast - frostbolt
             if (Cast_Timer < uiDiff && ArcaneBlast_Timer > uiDiff && SpecialCast_Timer > uiDiff)
             {
-                DoCast(SelectUnit(SELECT_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_FROSTBOLT : H_SPELL_FROSTBOLT);
+                DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0),  m_bIsRegularMode ? SPELL_FROSTBOLT : H_SPELL_FROSTBOLT);
                 Cast_Timer = 1000;
             }else Cast_Timer -= uiDiff;
             

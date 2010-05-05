@@ -60,7 +60,7 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
         if (DefenderTimer < diff)
         {
             Unit *defender = DoSpawnCreature(CR_FERAL_DEFENDER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(defender && target && target->isAlive())
                 defender->AddThreat(target, 1.0f);
             DefenderTimer = 45000;
@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
 
         if (SwarmTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target && target->isAlive())
             {
                 DoCast(target, SP_GUARDIAN_SWARM);

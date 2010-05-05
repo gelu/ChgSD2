@@ -72,7 +72,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
 
         if (SlagPotTimer < diff)
         {
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(target && target->isAlive())
                 DoCast(target, Regular ? SP_SLAG_POT : H_SP_SLAG_POT);
             SlagPotTimer = 15000;
@@ -83,7 +83,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
         {
             Creature *construct;
             construct = DoSpawnCreature(CR_CONSTRUCT, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 10000);
-            Unit *target = SelectUnit(SELECT_TARGET_RANDOM, 0);
+            Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
             if(construct && target && target->isAlive())
             {
                 construct->AddThreat(target, 1.0f);
