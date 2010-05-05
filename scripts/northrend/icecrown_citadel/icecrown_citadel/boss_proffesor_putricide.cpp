@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
                     if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
-                        if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+                        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                               bsw->doCast(SPELL_MALLEABLE_GOO, pTarget);
                        }
 
