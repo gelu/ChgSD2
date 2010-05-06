@@ -89,7 +89,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == GORMOK_DONE) {
                          pInstance->SetData(TYPE_STAGE,2);
                          pInstance->SetData(TYPE_EVENT,200);
-                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,SNAKES_IN_PROGRESS);
                          pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                          };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
@@ -103,7 +103,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_DONE) {
                          pInstance->SetData(TYPE_STAGE,3);
                          pInstance->SetData(TYPE_EVENT,300);
-                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,SNAKES_IN_PROGRESS);
                          pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                  };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
@@ -251,6 +251,7 @@ switch(uiAction) {
     if (pInstance->GetData(TYPE_BEASTS) != DONE) {
            pInstance->SetData(TYPE_EVENT,110);
            pInstance->SetData(TYPE_NORTHREND_BEASTS,NOT_STARTED);
+           pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
            };
     break;
     };

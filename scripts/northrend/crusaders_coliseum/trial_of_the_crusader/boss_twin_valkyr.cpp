@@ -65,6 +65,7 @@ enum BossSpells
     SPELL_LIGHT_ESSENCE    = 65686,
     SPELL_DARK_ESSENCE     = 65684,
     SPELL_BERSERK          = 64238,
+    SPELL_REMOVE_TOUCH     = 68084,
     SPELL_NONE             = 0,
 //
     SPELL_UNLEASHED_DARK   = 65808,
@@ -175,11 +176,12 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                     };
                  break;
           case 2:
-                 if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff) 
-                     && bsw->doCast(SPELL_SHIELD_LIGHT) == CAST_OK ) 
+                 if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff)) 
                      {
                             m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
                             DoScriptText(-1713539,m_creature);
+                            m_creature->InterruptNonMeleeSpells(true);
+                            bsw->doCast(SPELL_SHIELD_LIGHT);
                             bsw->doCast(SPELL_TWIN_PACT_L);
                             stage = 0;
                             TwinPactCasted = true;
@@ -330,11 +332,12 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                     };
                  break;
           case 2:
-                 if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff) 
-                     && bsw->doCast(SPELL_SHIELD_DARK) == CAST_OK ) 
+                 if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff))
                      {
                             m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
                             DoScriptText(-1713539,m_creature);
+                            m_creature->InterruptNonMeleeSpells(true);
+                            bsw->doCast(SPELL_SHIELD_DARK);
                             bsw->doCast(SPELL_TWIN_PACT_H);
                             stage = 0;
                             TwinPactCasted = true;
@@ -425,6 +428,7 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
         player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_DARK_ESSENCE);
+        player->CastSpell(player,SPELL_REMOVE_TOUCH,false);
         player->CastSpell(player,SPELL_LIGHT_ESSENCE,false);
         player->CLOSE_GOSSIP_MENU();
     return true;
@@ -475,6 +479,7 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_LIGHT_ESSENCE);
+        player->CastSpell(player,SPELL_REMOVE_TOUCH,false);
         player->CastSpell(player,SPELL_DARK_ESSENCE,false);
         player->CLOSE_GOSSIP_MENU();
     return true;
