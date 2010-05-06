@@ -38,9 +38,125 @@ enum BossSpells
     SPELL_NIGHTMARE_POTAL        = 72482,
     SPELL_EMERALD_VIGOR          = 70873,
     SPELL_DREAMWALKER_RAGE       = 71189,
+    SPELL_IMMUNITY               = 72724,
+    SPELL_CORRUPTION             = 70904,
+    SPELL_DREAM_SLIP             = 71196,
+    SPELL_ICE_SPIKE              = 70702,
+
 // Summons
     NPC_RISEN_ARCHMAGE           = 37868,
+    NPC_SUPPRESSOR               = 37863,
     NPC_BLASING_SKELETON         = 36791,
     NPC_BLISTERING_ZOMBIE        = 37934,
     NPC_GLUTTONOUS_ABOMINATION   = 37886,
 };
+
+struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
+{
+    boss_valithria_dreamwalkerAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    BossSpellWorker* bsw;
+    uint8 stage;
+    bool battlestarted;
+    bool intro;
+
+    void Reset()
+    {
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
+        bsw->resetTimers();
+        m_creature->SetRespawnDelay(7*DAY);
+        bsw->doCast(SPELL_CORRUPTION);
+        bsw->doCast(SPELL_IMMUNITY);
+        stage = 0;
+        battlestarted = false;
+        intro = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+/*    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631006,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631007,m_creature,pVictim);
+               break;
+        };*/
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+    }
+
+    void PlayersWin()
+    {
+        if(!pInstance) return
+        DoScriptText(-1631000,m_creature);
+        bsw->doCast(SPELL_DREAMWALKER_RAGE);
+        if (Unit* pTemp = bsw->doSummon(NPC_VALITHRIA_QUEST, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z,TEMPSUMMON_MANUAL_DESPAWN))
+           if (pTemp->HasAura(SPELL_CORRUPTION))
+               pTemp->RemoveAurasDueToSpell(SPELL_CORRUPTION);
+        pInstance->SetData(TYPE_VALITHRIA, DONE);
+        m_creature->ForcedDespawn();
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if(!pInstance) return
+        pInstance->SetData(TYPE_VALITHRIA, FAIL);
+        DoScriptText(-1631000,m_creature);
+    }
+
+    void AttackStart(Unit *who)
+    {
+        //ignore all attackstart commands
+        return;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        switch(stage)
+        {
+            case 0: 
+                    break;
+            case 1: 
+                    break;
+            default:
+                    break;
+        } 
+
+        if ( stage ==0 && m_creature->GetHealthPercent() > 90.0f ) stage = 1;
+        if ( stage ==2 && m_creature->GetHealthPercent() < 15.0f ) stage = 3;
+        if ( m_creature->GetHealthPercent() > 99.9f ) stage = 4;
+
+        bsw->timedCast(SPELL_ICE_SPIKE, diff);
+
+        return;
+    }
+};
+
+
+CreatureAI* GetAI_boss_valithria_dreamwalker(Creature* pCreature)
+{
+    return new boss_valithria_dreamwalkerAI(pCreature);
+}
+
+void AddSC_boss_valithria_dreamwalker()
+{
+    Script *newscript;
+    newscript = new Script;
+    newscript->Name = "boss_valithria_dreamwalker";
+    newscript->GetAI = &GetAI_boss_valithria_dreamwalker;
+    newscript->RegisterSelf();
+}

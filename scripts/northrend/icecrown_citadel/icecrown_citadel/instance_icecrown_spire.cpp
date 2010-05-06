@@ -78,6 +78,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiValithriaDoor3GUID;
     uint64 m_uiValithriaDoor4GUID;
 
+    uint64 m_uiSindragosaDoor1GUID;
+    uint64 m_uiSindragosaDoor2GUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
@@ -120,6 +123,11 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                         OpenDoor(m_uiCounsilDoor2GUID);
                                         }
 //        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
+//        if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
+//        if (m_auiEncounter[11] == DONE) {
+//                                        OpenDoor(m_uiSindragosaDoor2GUID);
+//                                        OpenDoor(m_uiSindragosaDoor1GUID);
+//                                        }
 
     }
 
@@ -294,6 +302,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_VALITHRIA_DOOR_4: 
                          m_uiValithriaDoor4GUID = pGo->GetGUID();
                          break;
+            case GO_SINDRAGOSA_DOOR_1: 
+                         m_uiSindragosaDoor1GUID = pGo->GetGUID();
+                         break;
+            case GO_SINDRAGOSA_DOOR_2: 
+                         m_uiSindragosaDoor2GUID = pGo->GetGUID();
+                         break;
             case GO_SAURFANG_CACHE_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
                                   m_uiSaurfangCacheGUID = pGo->GetGUID(); 
@@ -444,9 +458,20 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_VALITHRIA:
                 m_auiEncounter[10] = uiData;
+                if (uiData == DONE) {
+                OpenDoor(m_uiGreenDragonDoor2GUID);
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
+                                     if (pChest && !pChest->isSpawned()) {
+                                          pChest->SetRespawnTime(7*DAY);
+                                      };
+                                };
                 break;
              case TYPE_SINDRAGOSA:
                 m_auiEncounter[11] = uiData;
+                if (uiData == DONE) {
+                                     OpenDoor(m_uiSindragosaDoor1GUID);
+                                     OpenDoor(m_uiSindragosaDoor2GUID);
+                                    }
                 break;
              case TYPE_LICH_KING:
                 m_auiEncounter[12] = uiData;

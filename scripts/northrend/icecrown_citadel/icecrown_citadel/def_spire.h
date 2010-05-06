@@ -37,7 +37,7 @@ enum
     NPC_KELESETH                = 37972,
     NPC_LANATHEL                = 37955,
     NPC_VALITHRIA               = 36789,
-    NPC_VALITHRIA_H             = 38589,
+    NPC_VALITHRIA_QUEST         = 38589,
     NPC_SINDRAGOSA              = 36853,
     NPC_LICH_KING               = 36597,
 
@@ -81,6 +81,7 @@ enum
     GO_VALITHRIA_DOOR_4         = 201381, //1558
 
     GO_SINDRAGOSA_DOOR_1        = 201369, //1619
+    GO_SINDRAGOSA_DOOR_2        = 201379,
 
     GO_FROZENTRONE_TR           = 202223, //72061
 
