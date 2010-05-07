@@ -27,6 +27,9 @@ INSERT INTO `locales_npc_text` (`entry`, `Text0_0_loc1`, `Text0_0_loc2`, `Text0_
 
 UPDATE `creature_template` SET `scriptname`='boss_lich_king_toc' WHERE `entry`=35877;
 UPDATE `creature_template` SET `minhealth`= 20000, `maxhealth` = 20000, `faction_A`= 1770, `faction_H` = 1770,  `scriptname`='npc_fizzlebang_toc' WHERE `entry`=35458;
+UPDATE `creature_template` SET `flags_extra`=0 WHERE `entry` IN (22517, 35651);
+DELETE FROM `creature` WHERE `map` = 649 AND `id` IN (35651, 22517);
+
 UPDATE `creature_template` SET `scriptname`='npc_tirion_toc' WHERE `entry`=34996;
 UPDATE `creature_template` SET `scriptname`='npc_garrosh_toc' WHERE `entry`=34995;
 UPDATE `creature_template` SET `scriptname`='npc_rinn_toc' WHERE `entry`=34990;

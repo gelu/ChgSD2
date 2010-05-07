@@ -135,7 +135,7 @@ struct MANGOS_DLL_DECL boss_jaraxxusAI : public ScriptedAI
         bsw->timedCast(SPELL_FEL_LIGHTING, uiDiff);
 
         if (bsw->timedQuery(SPELL_INCINERATE_FLESH, uiDiff)) {
-                    if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
                            {
                            DoScriptText(-1713522,m_creature,pTarget);
                            bsw->doCast(SPELL_INCINERATE_FLESH,pTarget);
@@ -188,7 +188,7 @@ struct MANGOS_DLL_DECL mob_legion_flameAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
 
-        if (Unit* pTarget= SelectUnit(SELECT_TARGET_RANDOM, 0) ) {
+        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
                 m_creature->GetMotionMaster()->MoveChase(pTarget);
                 m_creature->SetSpeedRate(MOVE_RUN, 0.5);
                 }

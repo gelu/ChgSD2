@@ -41,9 +41,12 @@ static _Messages _GossipMessage[]=
 {MSG_LICH_KING,GOSSIP_ACTION_INFO_DEF+5,false,TYPE_ANUBARAK}, //
 {MSG_ANUBARAK,GOSSIP_ACTION_INFO_DEF+6,true,TYPE_ANUBARAK}, //
 };
+
 enum
 {
-         NUM_MESSAGES = 6,
+    NUM_MESSAGES = 6,
+    SPELL_WILFRED_PORTAL        = 68424,
+    SPELL_JARAXXUS_CHAINS       = 67924,
 };
 
 
@@ -89,7 +92,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == GORMOK_DONE) {
                          pInstance->SetData(TYPE_STAGE,2);
                          pInstance->SetData(TYPE_EVENT,200);
-                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,SNAKES_IN_PROGRESS);
                          pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                          };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
@@ -103,7 +106,7 @@ struct MANGOS_DLL_DECL npc_toc_announcerAI : public ScriptedAI
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_DONE) {
                          pInstance->SetData(TYPE_STAGE,3);
                          pInstance->SetData(TYPE_EVENT,300);
-                         pInstance->SetData(TYPE_NORTHREND_BEASTS,IN_PROGRESS);
+                         pInstance->SetData(TYPE_NORTHREND_BEASTS,SNAKES_IN_PROGRESS);
                          pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
                  };
             if (pInstance->GetData(TYPE_NORTHREND_BEASTS) == FAIL) {
@@ -251,6 +254,7 @@ switch(uiAction) {
     if (pInstance->GetData(TYPE_BEASTS) != DONE) {
            pInstance->SetData(TYPE_EVENT,110);
            pInstance->SetData(TYPE_NORTHREND_BEASTS,NOT_STARTED);
+           pInstance->SetData(TYPE_BEASTS,IN_PROGRESS);
            };
     break;
     };
@@ -502,6 +506,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
     InstanceData* pInstance;
     uint32 UpdateTimer;
     Creature* pPortal;
+    Creature* pTrigger;
 
     void JustDied(Unit* pKiller)
     {
@@ -530,7 +535,8 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
               {
                case 1110:
                     pInstance->SetData(TYPE_EVENT, 1120);
-                    UpdateTimer = 4000;
+                    UpdateTimer = 3000;
+                    pInstance->SetData(TYPE_JARAXXUS,IN_PROGRESS);
                     break;
                case 1120:
                     DoScriptText(-1713511, m_creature);
@@ -539,44 +545,75 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     break;
                case 1130:
                     m_creature->GetMotionMaster()->MovementExpired();
-                    pPortal = m_creature->SummonCreature(NPC_PORTAL, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                    if (pPortal) pPortal->SetRespawnDelay(DAY);
+                    m_creature->HandleEmoteCommand(EMOTE_STATE_SPELL_CHANNEL_OMNI);
+                    pPortal = m_creature->SummonCreature(NPC_WILFRED_PORTAL, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+                    if (pPortal)  {
+                                  pPortal->SetRespawnDelay(DAY);
+                                  pPortal->SetDisplayId(22862);
+                                  }
                     DoScriptText(-1713512, m_creature);
-                    pInstance->SetData(TYPE_EVENT, 1135);
+                    pInstance->SetData(TYPE_EVENT, 1132);
                     UpdateTimer = 4000;
+                    break;
+               case 1132:
+                    m_creature->GetMotionMaster()->MovementExpired();
+                    if (pPortal) pPortal->SetFloatValue(OBJECT_FIELD_SCALE_X, 1.5f);
+                    pInstance->SetData(TYPE_EVENT, 1134);
+                    UpdateTimer = 4000;
+                    break;
+               case 1134:
+                    if (pPortal) pPortal->SetDisplayId(15900);
+                    pTrigger =  m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5.0f, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+                    if (pTrigger)  {
+                                   pTrigger->SetDisplayId(17612);
+                                   pTrigger->CastSpell(pTrigger, SPELL_WILFRED_PORTAL, false);
+                                   pTrigger->SetRespawnDelay(DAY);
+                                   }
+                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_SPELLCAST_OMNI);
+                    UpdateTimer = 4000;
+                    pInstance->SetData(TYPE_EVENT, 1135);
                     break;
                case 1135:
-                    m_creature->GetMotionMaster()->MovementExpired();
-                    if (pPortal) pPortal->SetDisplayId(15900);
+                    if (pTrigger) pTrigger->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
+                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_SPELLCAST_OMNI);
+                    UpdateTimer = 3000;
                     pInstance->SetData(TYPE_EVENT, 1140);
-                    UpdateTimer = 4000;
                     break;
                case 1140:
-                    m_creature->CastSpell(pPortal,69016,false);
                     pInstance->SetData(TYPE_STAGE,4);
-                    pInstance->SetData(TYPE_JARAXXUS,IN_PROGRESS);
                           m_creature->SummonCreature(NPC_JARAXXUS, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_JARAXXUS))) {
+                                pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                                pTemp->CastSpell(pTemp, SPELL_JARAXXUS_CHAINS, false);
+                                }
+                    pInstance->SetData(TYPE_EVENT, 1142);
+                    UpdateTimer = 5000;
+                    break;
+               case 1142:
+                    UpdateTimer = 5000;
+                    pInstance->SetData(TYPE_EVENT, 1144);
+                    DoScriptText(-1713513, m_creature);
+                    break;
+               case 1144:
+                    if (pTrigger) pTrigger->ForcedDespawn();
+                    pInstance->SetData(TYPE_EVENT, 1150);
+                    UpdateTimer = 5000;
+                    break;
+               case 1150:
+                      if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_JARAXXUS))) {
+                                pTemp->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                                pTemp->RemoveAurasDueToSpell(SPELL_JARAXXUS_CHAINS);
                                 pTemp->SetInCombatWithZone();
                                 m_creature->SetInCombatWith(pTemp);
                                 pTemp->AddThreat(m_creature, 1000.0f);
                                 pTemp->AI()->AttackStart(m_creature);
                                 }
-                    pInstance->SetData(TYPE_EVENT, 1150);
-                    UpdateTimer = 500;
-                    break;
-               case 1150:
-                    DoScriptText(-1713513, m_creature);
+                    DoScriptText(-1713515, m_creature);
                     pInstance->SetData(TYPE_EVENT, 1160);
-                    UpdateTimer = 1000;
+                    UpdateTimer = 3000;
                     break;
                case 1160:
-                    DoScriptText(-1713515, m_creature);
                     pInstance->SetData(TYPE_EVENT, 1170);
-                    UpdateTimer = 1000;
-                    break;
-               case 1170:
-                    pInstance->SetData(TYPE_EVENT, 1175);
                     UpdateTimer = 1000;
                     break;
               }

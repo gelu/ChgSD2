@@ -237,6 +237,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         enraged = false;
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
+        m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
     }
 
     void JustDied(Unit* pKiller)
@@ -251,7 +252,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     void JustReachedHome()
     {
         if (!m_pInstance) return;
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == IN_PROGRESS)
+        if (m_pInstance->GetData(TYPE_BEASTS) == IN_PROGRESS)
                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
@@ -286,6 +287,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                     break;}
         case 1: {
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    m_creature->InterruptNonMeleeSpells(true);
                     bsw->doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
@@ -295,7 +297,8 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
                 if (bsw->timedQuery(SPELL_SLIME_POOL, uiDiff))
                     bsw->doCast(NPC_SLIME_POOL);
 
-                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
+                if ((bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
+                    || m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
                         stage = 3;
                     break;}
         case 3: {
@@ -361,7 +364,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
     void JustReachedHome()
     {
         if (!m_pInstance) return;
-        if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == IN_PROGRESS)
+        if (m_pInstance->GetData(TYPE_BEASTS) == IN_PROGRESS)
                         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, FAIL);
             m_creature->ForcedDespawn();
     }
@@ -395,6 +398,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                     break;}
         case 1: {
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    m_creature->InterruptNonMeleeSpells(true);
                     bsw->doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
@@ -405,7 +409,8 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
                 if (bsw->timedQuery(SPELL_SLIME_POOL, uiDiff))
                     bsw->doCast(NPC_SLIME_POOL);
 
-                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED) 
+                if ((bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
+                    || m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
                          stage = 3;
                     break;}
         case 3: {
