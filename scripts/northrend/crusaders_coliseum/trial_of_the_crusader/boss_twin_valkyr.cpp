@@ -132,6 +132,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_LIGHT_ESSENCE, SpawnLoc[25].x, SpawnLoc[25].y, SpawnLoc[25].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         DoScriptText(-1713541,m_creature);
         m_pInstance->SetData(DATA_HEALTH_FJOLA, m_creature->GetMaxHealth());
+        bsw->doCast(SPELL_LIGHT_SURGE);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -178,10 +179,10 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff)) 
                      {
-                            m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
-                            DoScriptText(-1713539,m_creature);
                             m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_SHIELD_LIGHT);
+                            m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
+                            DoScriptText(-1713539,m_creature);
                             bsw->doCast(SPELL_TWIN_PACT_L);
                             stage = 0;
                             TwinPactCasted = true;
@@ -209,8 +210,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
      bsw->doCast(SPELL_TWIN_POWER);
      m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_NONE);
     }
-
-        bsw->timedCast(SPELL_LIGHT_SURGE, uiDiff);
 
         if (bsw->timedQuery(SPELL_LIGHT_TOUCH, uiDiff))
            {
@@ -289,6 +288,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[22].x, SpawnLoc[22].y, SpawnLoc[22].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         if (m_creature->isAlive()) m_creature->SummonCreature(NPC_DARK_ESSENCE, SpawnLoc[23].x, SpawnLoc[23].y, SpawnLoc[23].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
         m_pInstance->SetData(DATA_HEALTH_EYDIS, m_creature->GetMaxHealth());
+        bsw->doCast(SPELL_DARK_SURGE);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -334,10 +334,10 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff))
                      {
-                            m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
-                            DoScriptText(-1713539,m_creature);
                             m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_SHIELD_DARK);
+                            m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
+                            DoScriptText(-1713539,m_creature);
                             bsw->doCast(SPELL_TWIN_PACT_H);
                             stage = 0;
                             TwinPactCasted = true;
@@ -362,8 +362,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
      m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_NONE);
      stage = 2;
     }
-
-        bsw->timedCast(SPELL_DARK_SURGE, uiDiff);
 
         if (bsw->timedQuery(SPELL_DARK_TOUCH, uiDiff))
            {

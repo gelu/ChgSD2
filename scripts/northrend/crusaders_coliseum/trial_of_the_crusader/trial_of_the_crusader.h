@@ -29,8 +29,8 @@ enum
 
     NPC_THRALL                  = 34994,
     NPC_PROUDMOORE              = 34992,
-    NPC_PORTAL                  = 19224,
     NPC_TRIGGER                 = 22517,
+    NPC_WILFRED_PORTAL          = 35651,
 
     NPC_ICEHOWL                 = 34797,
     NPC_GORMOK                  = 34796,
@@ -101,10 +101,6 @@ enum
     DATA_HEALTH_FJOLA           = 202,
     DATA_CASTING_EYDIS          = 203,
     DATA_CASTING_FJOLA          = 204,
-
-    SPELL_WILFRED_PORTAL        = 68424,
-    SPELL_JARAXXUS_CHAINS       = 67924,
-    NPC_WILFRED_POTAL           = 35651,
 
     DESPAWN_TIME                = 300000,
 
