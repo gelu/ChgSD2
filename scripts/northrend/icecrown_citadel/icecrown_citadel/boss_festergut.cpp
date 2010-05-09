@@ -39,6 +39,7 @@ enum BossSpells
     SPELL_GASTRIC_BLOAT      = 72219,
     SPELL_GASTRIC_EXPLOSION  = 72227,
     SPELL_VILE_GAS           = 72272,
+    SPELL_BERSERK            = 47008,
 };
 
 struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
@@ -53,12 +54,35 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
+    bool intro;
+    bool pet;
 
     void Reset()
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
         stage = 0;
+        intro = false;
+        pet = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if(!pInstance || intro) return
+        pInstance->SetData(TYPE_EVENT, 500);
+        intro = true;
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631204,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631205,m_creature,pVictim);
+               break;
+        }
     }
 
     void JustReachedHome()
@@ -68,7 +92,9 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);
+        DoScriptText(-1631203,m_creature,who);
     }
 
     void JustDied(Unit *killer)
@@ -77,10 +103,20 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         bsw->doRemove(SPELL_PUNGENT_BLIGHT);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_1);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_2);
+        DoScriptText(-1631206,m_creature);
     }
 
     void UpdateAI(const uint32 diff)
     {
+
+        if (!pet) {
+                  if (Creature* pGuard = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_STINKY)))
+                                if (!pGuard->isAlive())  {
+                                                         pet = true;
+                                                         DoScriptText(-1631209,m_creature);
+                                                         }
+                            }
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
@@ -113,6 +149,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
             case 3: 
                     if (bsw->timedQuery(SPELL_PUNGENT_BLIGHT, diff))
                         {
+                        DoScriptText(-1631208,m_creature);
                         bsw->doCast(SPELL_PUNGENT_BLIGHT);
                         stage = 0;
                         }
@@ -122,7 +159,16 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
 
         bsw->timedCast(SPELL_GASTRIC_BLOAT, diff);
 
-        bsw->timedCast(SPELL_VILE_GAS, diff);
+        if (bsw->timedQuery(SPELL_VILE_GAS, diff)) {
+                        bsw->doCast(SPELL_VILE_GAS);
+                        DoScriptText(-1631213,m_creature);
+                        };
+
+        if (bsw->timedQuery(SPELL_BERSERK, diff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631207,m_creature);
+                 };
+
 
         DoMeleeAttackIfReady();
     }

@@ -390,6 +390,7 @@ extern void AddSC_boss_festergut();
 extern void AddSC_boss_proffesor_putricide();
 extern void AddSC_blood_prince_council();
 extern void AddSC_boss_blood_queen_lanathel();
+extern void AddSC_boss_valithria_dreamwalker();
 extern void AddSC_boss_sindragosa();
 extern void AddSC_boss_lich_king_icc();
 
@@ -866,6 +867,7 @@ void AddScripts()
     AddSC_boss_proffesor_putricide();
     AddSC_blood_prince_council();
     AddSC_boss_blood_queen_lanathel();
+    AddSC_boss_valithria_dreamwalker();
     AddSC_boss_sindragosa();
     AddSC_boss_lich_king_icc();
 

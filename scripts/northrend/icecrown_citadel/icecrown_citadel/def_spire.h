@@ -45,6 +45,9 @@ enum
 
     NPC_TIRION                  = 38995,
 
+    NPC_STINKY                  = 37025,
+    NPC_PRECIOUS                = 37217,
+
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
 

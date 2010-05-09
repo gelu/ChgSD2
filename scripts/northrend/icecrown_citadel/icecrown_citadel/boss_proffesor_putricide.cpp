@@ -53,6 +53,12 @@ enum BossSpells
     SPELL_REGURGITATED_OOZE       = 70539,
     SPELL_MUTATED_SLASH           = 70542,
     SPELL_MUTATED_AURA            = 70405,
+
+    SPELL_BERSERK                 = 47008,
+//
+//    VIEW_1                        = 30881,
+//    VIEW_2                        = 38216,
+//    VIEW_3                        = 38216,
 };
 
 struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
@@ -67,21 +73,47 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
+    bool intro;
 
     void Reset()
     {
-        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
         stage = 0;
+        intro = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if(!pInstance || intro) return
+        DoScriptText(-1631249,m_creature);
+        intro = true;
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631241,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631242,m_creature,pVictim);
+               break;
+        }
     }
 
     void Aggro(Unit *who) 
     {
-        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
+        DoScriptText(-1631240,m_creature, who);
     }
 
     void JustDied(Unit *killer)
     {
-        if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, DONE);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_PUTRICIDE, DONE);
+        DoScriptText(-1631243,m_creature, killer);
     }
 
     void JustReachedHome()
@@ -161,13 +193,17 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
                     if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
-                        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                              bsw->doCast(SPELL_MALLEABLE_GOO, pTarget);
+                          bsw->doCast(SPELL_MALLEABLE_GOO);
                        }
 
 
         if ( stage ==0 && m_creature->GetHealthPercent() < 80.0f ) stage = 1;
         if ( stage ==2 && m_creature->GetHealthPercent() < 35.0f ) stage = 3;
+
+        if (bsw->timedQuery(SPELL_BERSERK, diff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631244,m_creature);
+                 }
 
         DoMeleeAttackIfReady();
     }

@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                DoScriptText(-1631421,m_creature,pVictim);
                break;
         case 1:
-               DoScriptText(-16311422,m_creature,pVictim);
+               DoScriptText(-1631422,m_creature,pVictim);
                break;
         }
     }
@@ -111,7 +111,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
     void Aggro(Unit *who) 
     {
         if(!pInstance) return;
-           DoScriptText(-16311420,m_creature,who);
+           DoScriptText(-1631420,m_creature,who);
         bsw->doCast(SPELL_FROST_AURA_1);
     }
 
@@ -119,7 +119,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_SINDRAGOSA, DONE);
-        DoScriptText(-16311423,m_creature,killer);
+        DoScriptText(-1631423,m_creature,killer);
     }
 
     void UpdateAI(const uint32 diff)
@@ -140,7 +140,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                          {
                          bsw->doCast(SPELL_ICY_GRIP);
                          bsw->doCast(SPELL_BLISTERING_COLD);
-                         DoScriptText(-16311426,m_creature);
+                         DoScriptText(-1631426,m_creature);
                          }
 
                     if (bsw->timedQuery(SPELL_FROST_BEACON, diff) && m_creature->GetHealthPercent() < 85.0f) stage = 1;
@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                          {
                          bsw->doCast(SPELL_ICY_GRIP);
                          bsw->doCast(SPELL_BLISTERING_COLD);
-                         DoScriptText(-16311426,m_creature);
+                         DoScriptText(-1631426,m_creature);
                          }
             break;
             default: break;

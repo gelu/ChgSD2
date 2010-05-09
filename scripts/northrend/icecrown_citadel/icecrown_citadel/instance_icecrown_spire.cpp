@@ -54,6 +54,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiRimefangGUID;
     uint64 m_uiSpinestalkerGUID;
 
+    uint64 m_uiStinkyGUID;
+    uint64 m_uiPreciousGUID;
+
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
@@ -228,6 +231,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                           break;
             case NPC_SPINESTALKER:
                           m_uiSpinestalkerGUID = pCreature->GetGUID();
+                          break;
+            case NPC_STINKY:
+                          m_uiStinkyGUID = pCreature->GetGUID();
+                          break;
+            case NPC_PRECIOUS:
+                          m_uiPreciousGUID = pCreature->GetGUID();
                           break;
         }
     }
@@ -571,10 +580,16 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case NPC_LICH_KING:               return m_uiLichKingGUID;
             case NPC_RIMEFANG:                return m_uiRimefangGUID;
             case NPC_SPINESTALKER:            return m_uiSpinestalkerGUID;
+            case NPC_STINKY:                  return m_uiStinkyGUID;
+            case NPC_PRECIOUS:                return m_uiPreciousGUID;
             case GO_SCIENTIST_DOOR_ORANGE:    return m_uiSDoorOrangeGUID;
             case GO_SCIENTIST_DOOR_GREEN:     return m_uiSDoorGreenGUID;
             case GO_SCIENTIST_DOOR_COLLISION: return m_uiSDoorCollisionGUID;
             case GO_BLOODWING_DOOR:           return m_uiBloodwingDoorGUID;
+            case GO_VALITHRIA_DOOR_1:         return m_uiValithriaDoor1GUID;
+            case GO_VALITHRIA_DOOR_2:         return m_uiValithriaDoor2GUID;
+            case GO_VALITHRIA_DOOR_3:         return m_uiValithriaDoor3GUID;
+            case GO_VALITHRIA_DOOR_4:         return m_uiValithriaDoor4GUID;
         }
         return 0;
     }

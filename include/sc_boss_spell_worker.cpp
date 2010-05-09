@@ -236,6 +236,16 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                    return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
+            case CAST_ON_RANDOM_POINT:
+                   if (pSpell->LocData.z <= 1.0f) {
+                         float fPosX, fPosY, fPosZ;
+                         boss->GetPosition(fPosX, fPosY, fPosZ);
+                         boss->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
+                         boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
+                         return CAST_OK;
+                         } else return CAST_FAIL_OTHER;
+                   break;
+
             default:
                    return CAST_FAIL_OTHER;
                    break;

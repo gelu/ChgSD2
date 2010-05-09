@@ -45,6 +45,7 @@ enum BossSpellTableParameters
   CAST_ON_ALLPLAYERS        = 12,
   CAST_ON_FRENDLY           = 13,
   CAST_ON_FRENDLY_LOWHP     = 14,
+  CAST_ON_RANDOM_POINT      = 15,
   SPELLTABLEPARM_NUMBER
 };
 
