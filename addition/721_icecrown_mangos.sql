@@ -94,9 +94,8 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 UPDATE `creature_template` SET `ScriptName`='boss_blood_queen_lanathel', `AIName`='' WHERE `entry`= 37955;
 
 -- Valithria dreamwalker
-DELETE FROM `creature` WHERE `map` = 631 AND `id` IN (38589);
-DELETE FROM `creature` WHERE `map` = 631 AND `guid` IN (62056,61780,75866,77143);
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
 
 UPDATE `gameobject_template` SET `faction` = '0',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201375,201373);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201374);

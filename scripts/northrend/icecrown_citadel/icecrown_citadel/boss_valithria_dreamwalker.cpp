@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_valithria
-SD%Complete: 1%
+SD%Complete: 5%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -39,7 +39,8 @@ static Locations SpawnLoc[]=
 
 enum BossSpells
 {
-    SPELL_NIGHTMARE_POTAL        = 72482,
+//    SPELL_NIGHTMARE_PORTAL       = 72481, // Not worked yet. Use 71977 (visual effect) instead?
+    SPELL_NIGHTMARE_PORTAL       = 71977,
     SPELL_EMERALD_VIGOR          = 70873,
     SPELL_DREAMWALKER_RAGE       = 71189,
     SPELL_IMMUNITY               = 72724,
@@ -53,6 +54,7 @@ enum BossSpells
     NPC_BLASING_SKELETON         = 36791,
     NPC_BLISTERING_ZOMBIE        = 37934,
     NPC_GLUTTONOUS_ABOMINATION   = 37886,
+    NPC_NIGHTMARE_PORTAL         = 38429, // Not realized yet
 };
 
 struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
@@ -61,11 +63,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         bsw = new BossSpellWorker(this);
+        pMap = m_creature->GetMap();
         Reset();
-        pGuard1 = NULL;
-        pGuard2 = NULL;
-        pGuard3 = NULL;
-        pGuard4 = NULL;
     }
 
     ScriptedInstance *pInstance;
@@ -74,47 +73,43 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     bool battlestarted;
     bool intro;
     uint8 currentDoor;
-    Creature* pGuard1;
-    Creature* pGuard2;
-    Creature* pGuard3;
-    Creature* pGuard4;
+    int8 portalscount;
+    Map* pMap;
+
 
     void Reset()
     {
         if(!pInstance) return;
+        m_creature->SetHealth(m_creature->GetMaxHealth()/2);
         pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
         bsw->resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
         bsw->doCast(SPELL_CORRUPTION);
         bsw->doCast(SPELL_IMMUNITY);
         stage = 0;
+        portalscount = 0;
         battlestarted = false;
         intro = false;
         currentDoor = 0;
-        if (!pGuard1) pGuard1 = (Creature*)bsw->doSummon(NPC_RISEN_ARCHMAGE, SpawnLoc[5].x, SpawnLoc[5].y, SpawnLoc[5].z);
-            if (pGuard1 && !pGuard1->isAlive()) pGuard1->Respawn();
-        if (!pGuard2) pGuard2 = (Creature*)bsw->doSummon(NPC_RISEN_ARCHMAGE, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z);
-            if (pGuard2 && !pGuard2->isAlive()) pGuard2->Respawn();
-        if (!pGuard3) pGuard3 = (Creature*)bsw->doSummon(NPC_RISEN_ARCHMAGE, SpawnLoc[7].x, SpawnLoc[7].y, SpawnLoc[7].z);
-            if (pGuard3 && !pGuard3->isAlive()) pGuard3->Respawn();
-        if (!pGuard4) pGuard4 = (Creature*)bsw->doSummon(NPC_RISEN_ARCHMAGE, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z);
-            if (pGuard4 && !pGuard4->isAlive()) pGuard4->Respawn();
+        if (Unit* pTemp = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_VALITHRIA_QUEST)))
+                if (pTemp->GetVisibility() == VISIBILITY_ON)
+                            pTemp->SetVisibility(VISIBILITY_OFF);
     }
 
-    uint8 GetDoor(uint8 doornum)
+    uint64 GetDoor(uint8 doornum)
     {
         switch (doornum) {
             case 1:
-               return pInstance->GetData(GO_VALITHRIA_DOOR_1);
+               return pInstance->GetData64(GO_VALITHRIA_DOOR_1);
                break;
             case 2:
-               return pInstance->GetData(GO_VALITHRIA_DOOR_2);
+               return pInstance->GetData64(GO_VALITHRIA_DOOR_2);
                break;
             case 3:
-               return pInstance->GetData(GO_VALITHRIA_DOOR_3);
+               return pInstance->GetData64(GO_VALITHRIA_DOOR_3);
                break;
             case 4:
-               return pInstance->GetData(GO_VALITHRIA_DOOR_4);
+               return pInstance->GetData64(GO_VALITHRIA_DOOR_4);
                break;
             default:
                return 0;
@@ -140,23 +135,39 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
               pGo->SetGoState(GO_STATE_READY);
     }
 
-    void EnterEvadeMode()
+    void QueryEvadeMode()
     {
-       Map* pMap = m_creature->GetMap();
        Map::PlayerList const &players = pMap->GetPlayers();
        for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
               {
               if(Player* pPlayer = i->getSource())
                     if(pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 100.0f)) return;
               }
+
+              pInstance->SetData(TYPE_VALITHRIA, FAIL);
+              DoScriptText(-1631409,m_creature);
+              m_creature->DeleteThreatList();
+              m_creature->CombatStop(true);
+              m_creature->LoadCreaturesAddon();
+              if (m_creature->isAlive())
+                  m_creature->GetMotionMaster()->MoveTargetedHome();
+              m_creature->SetLootRecipient(NULL);
+              Reset();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
     {
-        if(!pInstance || intro) return;
+        if (!pInstance || ( intro && battlestarted)) return;
 
-        DoScriptText(-1631401,m_creature,pWho);
-        intro = true;
+        if (!intro)  {
+                     DoScriptText(-1631401,m_creature,pWho);
+                     intro = true;
+                     }
+        if (!battlestarted && pWho->isAlive() && pWho->IsWithinDistInMap(m_creature, 20.0f))  {
+                     DoScriptText(-1631401,m_creature,pWho);
+                     battlestarted = true;
+                     pInstance->SetData(TYPE_VALITHRIA, IN_PROGRESS);
+                     }
     }
 
     void KilledUnit(Unit* pVictim)
@@ -176,20 +187,13 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void JustSummoned(Creature* summoned)
     {
         if(!pInstance || !summoned || !battlestarted) return;
-        summoned->AddThreat(m_creature, 100.0f);
-        m_creature->GetMotionMaster()->MoveChase(m_creature);
-    }
 
-    void PlayersWin()
-    {
-        if(!pInstance) return
-        DoScriptText(-1631000,m_creature);
-        bsw->doCast(SPELL_DREAMWALKER_RAGE);
-        if (Unit* pTemp = bsw->doSummon(NPC_VALITHRIA_QUEST, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z,TEMPSUMMON_MANUAL_DESPAWN))
-           if (pTemp->HasAura(SPELL_CORRUPTION))
-               pTemp->RemoveAurasDueToSpell(SPELL_CORRUPTION);
-        pInstance->SetData(TYPE_VALITHRIA, DONE);
-        m_creature->ForcedDespawn();
+        if ( summoned->GetEntry() == NPC_NIGHTMARE_PORTAL ) return;
+
+        summoned->AddThreat(m_creature, 100.0f);
+
+        m_creature->GetMotionMaster()->MoveChase(m_creature);
+
     }
 
     void JustDied(Unit *killer)
@@ -197,10 +201,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         if(!pInstance) return
         pInstance->SetData(TYPE_VALITHRIA, FAIL);
         DoScriptText(-1631409,m_creature);
-            if (pGuard1 && pGuard1->isAlive()) pGuard1->ForcedDespawn();
-            if (pGuard2 && pGuard2->isAlive()) pGuard2->ForcedDespawn();
-            if (pGuard3 && pGuard3->isAlive()) pGuard3->ForcedDespawn();
-            if (pGuard4 && pGuard4->isAlive()) pGuard4->ForcedDespawn();
+        m_creature->Respawn();
+        Reset();
     }
 
     void AttackStart(Unit *who)
@@ -211,37 +213,95 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!battlestarted) {
-                                if (pGuard1 && !pGuard1->isAlive() &&
-                                    pGuard2 && !pGuard2->isAlive() &&
-                                    pGuard3 && !pGuard3->isAlive() &&
-                                    pGuard4 && !pGuard4->isAlive()) {
-                                                         battlestarted = true;
-                                                         DoScriptText(-1631401,m_creature);
-                                                         }
-                            return;
-                            }
+        if (!battlestarted) return;
+
+        QueryEvadeMode();
 
         switch(stage)
         {
             case 0: 
+                    if ( m_creature->GetHealthPercent() > 90.0f ) stage = 2;
+                    if ( m_creature->GetHealthPercent() < 10.0f ) stage = 3;
                     break;
             case 1: 
+                    if ( m_creature->GetHealthPercent() < 90.0f && m_creature->GetHealthPercent() > 10.0f ) stage = 0;
+                    if ( m_creature->GetHealthPercent() > 99.9f ) stage = 5;
+                    if ( m_creature->GetHealthPercent() < 1.0f  ) stage = 4;
+                    break;
+            case 2: 
+                    DoScriptText(-1631407,m_creature);
+                    stage = 1;
+                    break;
+            case 3: 
+                    DoScriptText(-1631406,m_creature);
+                    stage = 1;
+                    break;
+            case 4: 
+                    DoScriptText(-1631409,m_creature);
+                    stage = 1;
+                    pInstance->SetData(TYPE_VALITHRIA, FAIL);
+                    DoScriptText(-1631409,m_creature);
+                    m_creature->DeleteThreatList();
+                    m_creature->CombatStop(true);
+                    m_creature->LoadCreaturesAddon();
+
+                    if (m_creature->isAlive())
+                       m_creature->GetMotionMaster()->MoveTargetedHome();
+                    m_creature->SetLootRecipient(NULL);
+                    Reset();
+                    break;
+            case 5: 
+                    DoScriptText(-1631408,m_creature);
+                    if (m_creature->HasAura(SPELL_CORRUPTION)) bsw->doRemove(SPELL_CORRUPTION);
+                    stage = 6;
+                    return;
+                    break;
+            case 6: 
+                    if (bsw->timedQuery(SPELL_CORRUPTION, diff)) stage = 7;
+                    return;
+                    break;
+            case 7: 
+                    bsw->doCast(SPELL_DREAMWALKER_RAGE);
+                    stage = 8;
+                    return;
+                    break;
+            case 8: 
+                    if (bsw->timedQuery(SPELL_CORRUPTION, diff)) stage = 9;
+                    return;
+                    break;
+            case 9: 
+                    if (Unit* pTemp = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_VALITHRIA_QUEST)))
+                    {
+                        if (pTemp->HasAura(SPELL_CORRUPTION))
+                             pTemp->RemoveAurasDueToSpell(SPELL_CORRUPTION);
+                        if (pTemp->GetVisibility() == VISIBILITY_OFF)
+                            pTemp->SetVisibility(VISIBILITY_ON);
+                    }
+                    pInstance->SetData(TYPE_VALITHRIA, DONE);
+                    stage = 10;
+                    m_creature->ForcedDespawn();
                     break;
             default:
                     break;
         } 
 
-        if ( stage ==0 && m_creature->GetHealthPercent() > 90.0f ) stage = 1;
-        if ( stage ==2 && m_creature->GetHealthPercent() < 15.0f ) stage = 3;
-        if ( m_creature->GetHealthPercent() > 99.9f ) stage = 4;
 
         if (bsw->timedQuery(NPC_RISEN_ARCHMAGE, diff)) {
-                        CloseDoor(GetDoor(currentDoor));
-                        currentDoor = urand(1,4);
-                        OpenDoor(GetDoor(currentDoor));
-                        DoScriptText(-1631402,m_creature);
-                        };
+                                                        CloseDoor(GetDoor(currentDoor));
+                                                        currentDoor = urand(1,4);
+                                                        OpenDoor(GetDoor(currentDoor));
+                                                        DoScriptText(-1631402,m_creature);
+                                                        };
+
+        if (bsw->timedQuery(SPELL_NIGHTMARE_PORTAL, diff) || portalscount > 0) 
+                                                        {
+                                                        if (!portalscount) {
+                                                                           portalscount = 3;
+                                                                           DoScriptText(-1631405,m_creature);
+                                                                           };
+                                                        bsw->doCast(SPELL_NIGHTMARE_PORTAL);
+                                                        --portalscount;
+                                                        };
 
         bsw->timedCast(SPELL_ICE_SPIKE, diff);
 
@@ -249,17 +309,79 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     }
 };
 
-
 CreatureAI* GetAI_boss_valithria_dreamwalker(Creature* pCreature)
 {
     return new boss_valithria_dreamwalkerAI(pCreature);
-}
+};
+
+struct MANGOS_DLL_DECL mob_nightmare_portalAI : public ScriptedAI
+{
+    mob_nightmare_portalAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool portalcasted;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        SetCombatMovement(false); 
+        m_creature->GetMotionMaster()->MoveRandom();
+        m_creature->SetDisplayId(29352);
+        portalcasted = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if (!m_pInstance || portalcasted) return;
+
+        if (pWho->isAlive() && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 2.0f))  
+                 {
+                 bsw->doCast(SPELL_EMERALD_VIGOR, pWho);
+                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_0);
+                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_1);
+                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_2);
+                 portalcasted = true;
+                 }
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_VALITHRIA) != IN_PROGRESS || portalcasted)
+              m_creature->ForcedDespawn();
+ 
+    }
+
+};
+
+CreatureAI* GetAI_mob_nightmare_portal(Creature *pCreature)
+{
+    return new mob_nightmare_portalAI(pCreature);
+};
+
 
 void AddSC_boss_valithria_dreamwalker()
 {
     Script *newscript;
+
     newscript = new Script;
     newscript->Name = "boss_valithria_dreamwalker";
     newscript->GetAI = &GetAI_boss_valithria_dreamwalker;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_nightmare_portal";
+    newscript->GetAI = &GetAI_mob_nightmare_portal;
+    newscript->RegisterSelf();
+
 }

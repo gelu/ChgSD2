@@ -47,7 +47,7 @@ static t_Locations PortalLoc[]=
 {"Цитадель Ледяной Короны",4198.42, 2769.22, 351.065,70859,false,true,TYPE_SAURFANG}, //
 {"Святилище крови",4490.205566, 2769.275635, 403.983765,0,false,true,TYPE_BLOOD_COUNCIL}, //
 {"Логово Королевы льда",4356.580078, 2565.75, 220.401993,70861,false,true,TYPE_VALITHRIA}, //
-{"Ледяной трон",529.3, -2124.7, 1041, 70860,false,true,TYPE_SINDRAGOSA}, //
+{"Ледяной трон",528.767273f, -2124.845947f, 1041.86f, 70860,false,true,TYPE_SINDRAGOSA}, //
 };
 
 

@@ -220,21 +220,27 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_
 -- Valithria
 DELETE FROM `boss_spell_table` WHERE `entry` = 36789;
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `locData_x`, `locData_y`, `locData_z`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
-(36789, 72482, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36789, 71977, 0, 0, 0, 30000, 0, 0, 0, 60000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36789, 71987, 0, 0, 0, 10000, 0, 0, 0, 25000, 0, 0, 0, 0, 0, 0, 1, 1, 0),
+(36789, 72481, 0, 0, 0, 10000, 0, 0, 0, 25000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (36789, 70873, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (36789, 71189, 0, 0, 0, 3000, 0, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (36789, 72724, 0, 0, 0, 3000, 0, 0, 0, 3000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
-(36789, 70904, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36789, 70904, 0, 0, 0, 5000, 0, 0, 0, 5000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (36789, 71196, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 0, 0, 0, 1, 0, 0),
-(36789, 70702, 0, 0, 0, 10000, 0, 0, 0, 20000, 0, 0, 0, 10, 40, 0, 15, 0, 0);
+(36789, 70702, 0, 0, 0, 15000, 0, 0, 0, 25000, 0, 0, 0, 0, 0, 0, 13, 0, 1);
 -- summons
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMax_N10`,  `data1`, `data2`, `data3`, `data4`, `locData_x`, `locData_y`, `locData_z`, `CastType` ) VALUES
-(36789, 37868, 20000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
-(36789, 37863, 20000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
-(36789, 36791, 20000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
-(36789, 37934, 20000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
-(36789, 37886, 20000, 40000, 1, 1, 1, 1, 2, 5, 0, 9);
-
+(36789, 38429, 30000, 40000, 1, 1, 1, 1, 5, 70, 0, 9),
+(36789, 37868, 30000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
+(36789, 37863, 30000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
+(36789, 36791, 30000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
+(36789, 37934, 30000, 40000, 1, 1, 1, 1, 2, 5, 0, 9),
+(36789, 37886, 30000, 40000, 1, 1, 1, 1, 2, 5, 0, 9);
+-- Nightmare portal
+DELETE FROM `boss_spell_table` WHERE `entry` = 38429;
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `locData_x`, `locData_y`, `locData_z`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
+(38429, 70873, 0, 0, 0, 1000, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 0, 6, 0, 1);
 
 -- Sindragosa
 DELETE FROM `boss_spell_table` WHERE `entry` = 36853;

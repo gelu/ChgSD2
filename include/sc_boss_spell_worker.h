@@ -145,6 +145,11 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _doRemove(FindSpellIDX(SpellID),pTarget, index);
              };
 
+        bool doAura(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
+             {
+             return _doAura(FindSpellIDX(SpellID),pTarget, index);
+             };
+
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
              {
              if (!pTarget) pTarget = boss;
@@ -209,6 +214,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         CanCastResult _CanCastSpell(Unit* pTarget, const SpellEntry *pSpell, bool isTriggered = false);
 
         bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
+
+        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 

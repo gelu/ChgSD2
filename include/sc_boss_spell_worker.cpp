@@ -452,6 +452,23 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
      return true;
 };
 
+bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
+{
+    if (!pTarget) return false;
+
+    SpellEntry const *spell;
+
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
+
+   if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
+        if (pTarget->AddAura(new BossAura(spell, index, &pSpell->varData, pTarget, pTarget)))
+                  return CAST_OK;
+    else return CAST_FAIL_OTHER;
+
+};
+
 // Copypasting from CreatureAI.cpp. if this called from bossAI-> crashed :(
 
 CanCastResult BossSpellWorker::_CanCastSpell(Unit* pTarget, const SpellEntry *pSpell, bool isTriggered)
