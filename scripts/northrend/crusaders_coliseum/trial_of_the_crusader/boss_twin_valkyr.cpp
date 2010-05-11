@@ -178,15 +178,19 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                  break;
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_L, uiDiff)) 
-                     {
+                      {
                             m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_SHIELD_LIGHT);
                             m_pInstance->SetData(DATA_CASTING_FJOLA, SPELL_TWIN_PACT_L);
                             DoScriptText(-1713539,m_creature);
+                            stage = 3;
+                      }
+                 break;
+          case 3:
+                            m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_TWIN_PACT_L);
                             stage = 0;
                             TwinPactCasted = true;
-                      }
                  break;
           default:
                  break;
@@ -333,15 +337,19 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                  break;
           case 2:
                  if (bsw->timedQuery(SPELL_TWIN_PACT_H, uiDiff))
-                     {
+                      {
                             m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_SHIELD_DARK);
                             m_pInstance->SetData(DATA_CASTING_EYDIS, SPELL_TWIN_PACT_H);
                             DoScriptText(-1713539,m_creature);
+                            stage = 3;
+                      }
+                 break;
+          case 3:
+                            m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_TWIN_PACT_H);
                             stage = 0;
                             TwinPactCasted = true;
-                      }
                  break;
           default:
                  break;

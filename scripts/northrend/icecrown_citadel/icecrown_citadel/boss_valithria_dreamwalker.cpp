@@ -340,7 +340,7 @@ struct MANGOS_DLL_DECL mob_nightmare_portalAI : public ScriptedAI
     {
         if (!m_pInstance || portalcasted) return;
 
-        if (pWho->isAlive() && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 2.0f))  
+        if (pWho->isAlive() && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 2.0f))
                  {
                  bsw->doCast(SPELL_EMERALD_VIGOR, pWho);
                  bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_0);
