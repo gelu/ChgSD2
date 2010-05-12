@@ -246,6 +246,12 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                          } else return CAST_FAIL_OTHER;
                    break;
 
+            case CAST_ON_RANDOM_PLAYER:
+                   if ( pSpell->LocData.x < 1 ) pTarget = SelectRandomPlayer();
+                       else pTarget = SelectRandomPlayerAtRange((float)pSpell->LocData.x);
+                   return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
+                   break;
+
             default:
                    return CAST_FAIL_OTHER;
                    break;
@@ -337,7 +343,9 @@ BossSpellTableParameters BossSpellWorker::getBSWCastType(uint32 pTemp)
                 case 12: return CAST_ON_ALLPLAYERS;
                 case 13: return CAST_ON_FRENDLY;
                 case 14: return CAST_ON_FRENDLY_LOWHP;
-                case 15: return SPELLTABLEPARM_NUMBER;
+                case 15: return CAST_ON_RANDOM_POINT;
+                case 16: return CAST_ON_RANDOM_PLAYER;
+                case 17: return SPELLTABLEPARM_NUMBER;
      default: return DO_NOTHING;
      };
 };
@@ -422,6 +430,7 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
                      break;
 
                 case CAST_ON_RANDOM:
+                case CAST_ON_RANDOM_PLAYER:
                 case CAST_ON_ALLPLAYERS:
                   {
                     Map::PlayerList const& pPlayers = pMap->GetPlayers();
@@ -580,6 +589,40 @@ Unit* BossSpellWorker::SelectLowHPFriendly(float fRange, uint32 uiMinHPDiff)
 
     return pUnit;
 }
+
+// Not threat-based select random player function
+
+Unit* BossSpellWorker::_doSelect(uint32 SpellID, bool spellsearchtype, float range)
+{
+    Map::PlayerList const &pList = pMap->GetPlayers();
+          if (pList.isEmpty()) return NULL;
+
+    Unit* _list[pMap->GetMaxPlayers()];
+
+    uint8 _count = 0;
+
+    memset(&_list, 0, sizeof(_list));
+
+
+          for(Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
+          {
+              if (Player* player = i->getSource())
+                 {
+                  if (player->isGameMaster()) continue;
+
+                  if ( player->isAlive()
+                       && player->IsWithinDistInMap(boss, range)
+                       && (SpellID == 0 || (player->HasAura(SpellID) == spellsearchtype))
+                     )
+                     {
+                     _list[_count] = (Unit*)player;
+                     ++_count;
+                     }
+                 }
+           }
+    debug_log("BSW: search result for random player, count = %u ",_count);
+    return _list[urand(0,_count)];
+};
 
 
 #endif

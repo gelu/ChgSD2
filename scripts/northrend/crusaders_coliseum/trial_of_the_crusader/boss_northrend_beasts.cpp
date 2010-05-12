@@ -455,21 +455,19 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
     ScriptedInstance *m_pInstance;
     BossSpellWorker* bsw;
     float m_Size;
-    uint8 Difficulty;
+    bool cloudcasted;
 
     void Reset()
     {
         if(!m_pInstance) return;
-        Difficulty = m_pInstance->GetData(TYPE_DIFFICULTY);
-        if (Difficulty == RAID_DIFFICULTY_10MAN_HEROIC || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) 
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetInCombatWithZone();
         m_creature->SetSpeedRate(MOVE_RUN, 0.05f);
         SetCombatMovement(false);
         m_creature->GetMotionMaster()->MoveRandom();
         bsw->doCast(SPELL_SLIME_POOL_2);
-        bsw->doCast(SPELL_SLIME_POOL_VISUAL);
         m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        cloudcasted = false;
     }
 
     void AttackStart(Unit *who)
@@ -479,7 +477,12 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-            if (bsw->timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
+        if (!cloudcasted) {
+                          bsw->doCast(SPELL_SLIME_POOL_VISUAL);
+                          cloudcasted = true;
+                          }
+
+        if (bsw->timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
                 m_Size = m_Size*1.035;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }

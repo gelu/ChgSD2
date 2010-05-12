@@ -46,6 +46,7 @@ enum BossSpellTableParameters
   CAST_ON_FRENDLY           = 13,
   CAST_ON_FRENDLY_LOWHP     = 14,
   CAST_ON_RANDOM_POINT      = 15,
+  CAST_ON_RANDOM_PLAYER     = 16,
   SPELLTABLEPARM_NUMBER
 };
 
@@ -161,6 +162,17 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _doSummon(FindSpellIDX(SpellID), type, delay);
              };
 
+        Unit* SelectRandomPlayer(uint32 SpellID = 0, bool spellsearchtype = false, float range = 100.0f)
+             {
+             return _doSelect(SpellID, spellsearchtype, range);
+             };
+
+        Unit* SelectRandomPlayerAtRange(float range)
+             {
+             return _doSelect(0, false, range);
+             };
+
+
         Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
              return _doSummonAtPosition(FindSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ);
@@ -194,6 +206,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         void          _resetTimer(uint8 m_uiSpellIdx);
 
         bool          isSummon(uint8 m_uiSpellIdx);
+
+        Unit*         _doSelect(uint32 SpellID, bool spellsearchtype = false, float range = 100.0f);
 
         Unit*         _doSummon(uint8 m_uiSpellIdx, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000);
 

@@ -55,6 +55,9 @@ enum BossSpells
     NPC_BLISTERING_ZOMBIE        = 37934,
     NPC_GLUTTONOUS_ABOMINATION   = 37886,
     NPC_NIGHTMARE_PORTAL         = 38429, // Not realized yet
+    // Mana void
+    NPC_MANA_VOID                = 38068, // Bugged, need override
+    SPELL_VOID_BUFF              = 71085, 
 };
 
 struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
@@ -369,6 +372,52 @@ CreatureAI* GetAI_mob_nightmare_portal(Creature *pCreature)
     return new mob_nightmare_portalAI(pCreature);
 };
 
+struct MANGOS_DLL_DECL mob_mana_voidAI : public ScriptedAI
+{
+    mob_mana_voidAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    uint32 m_ui_Timer;
+
+    void Reset()
+    {
+        SetCombatMovement(false); 
+        m_creature->SetDisplayId(29308);
+        m_creature->GetMotionMaster()->MoveRandom();
+        m_creature->CastSpell(m_creature, SPELL_VOID_BUFF, false);
+        m_ui_Timer = 30000;
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    void JustDied(Unit *killer)
+    {
+       m_creature->RemoveCorpse();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_VALITHRIA) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+ 
+        if (m_ui_Timer < uiDiff)
+              m_creature->ForcedDespawn();
+        else m_ui_Timer -= uiDiff;
+    }
+
+};
+
+CreatureAI* GetAI_mob_mana_void(Creature *pCreature)
+{
+    return new mob_mana_voidAI(pCreature);
+};
 
 void AddSC_boss_valithria_dreamwalker()
 {
@@ -382,6 +431,11 @@ void AddSC_boss_valithria_dreamwalker()
     newscript = new Script;
     newscript->Name = "mob_nightmare_portal";
     newscript->GetAI = &GetAI_mob_nightmare_portal;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_mana_void";
+    newscript->GetAI = &GetAI_mob_mana_void;
     newscript->RegisterSelf();
 
 }

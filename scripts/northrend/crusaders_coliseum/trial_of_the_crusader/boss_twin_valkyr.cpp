@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: trial_of_the_crusader
-SD%Complete: 0
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Crusader Coliseum
 EndScriptData */
@@ -71,10 +71,6 @@ enum BossSpells
     SPELL_UNLEASHED_DARK   = 65808,
     SPELL_UNLEASHED_LIGHT  = 65795,
 };
-
-/*######
-## boss_fjola
-######*/
 
 struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 {
@@ -187,7 +183,6 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
                       }
                  break;
           case 3:
-                            m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_TWIN_PACT_L);
                             stage = 0;
                             TwinPactCasted = true;
@@ -231,10 +226,6 @@ CreatureAI* GetAI_boss_fjola(Creature* pCreature)
 {
     return new boss_fjolaAI(pCreature);
 }
-
-/*######
-## boss_eydis
-######*/
 
 struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 {
@@ -346,7 +337,6 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
                       }
                  break;
           case 3:
-                            m_creature->InterruptNonMeleeSpells(true);
                             bsw->doCast(SPELL_TWIN_PACT_H);
                             stage = 0;
                             TwinPactCasted = true;
@@ -434,8 +424,10 @@ bool GossipHello_mob_light_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
         player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_DARK_ESSENCE);
-        player->CastSpell(player,SPELL_REMOVE_TOUCH,false);
+//        player->CastSpell(player,SPELL_REMOVE_TOUCH,false); // Not worked now
         player->CastSpell(player,SPELL_LIGHT_ESSENCE,false);
+        if (player->HasAura(SPELL_LIGHT_TOUCH)) 
+                player->RemoveAurasDueToSpell(SPELL_LIGHT_TOUCH); // Override for REMOVE_TOUCH
         player->CLOSE_GOSSIP_MENU();
     return true;
 };
@@ -485,8 +477,10 @@ bool GossipHello_mob_dark_essence(Player *player, Creature* pCreature)
     if(!pInstance) return true;
     player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, pCreature->GetGUID());
         player->RemoveAurasDueToSpell(SPELL_LIGHT_ESSENCE);
-        player->CastSpell(player,SPELL_REMOVE_TOUCH,false);
+//        player->CastSpell(player,SPELL_REMOVE_TOUCH,false); // Not worked now
         player->CastSpell(player,SPELL_DARK_ESSENCE,false);
+        if (player->HasAura(SPELL_DARK_TOUCH)) 
+                player->RemoveAurasDueToSpell(SPELL_DARK_TOUCH); // Override for REMOVE_TOUCH
         player->CLOSE_GOSSIP_MENU();
     return true;
 }
