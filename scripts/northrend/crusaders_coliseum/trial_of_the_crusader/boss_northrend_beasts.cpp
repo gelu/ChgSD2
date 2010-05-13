@@ -101,7 +101,7 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
 
         if(!m_pInstance) return;
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();
         SnoboldsCount = 4;
     }
@@ -235,7 +235,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         stage = 1;
         enraged = false;
         m_creature->SetInCombatWithZone();
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(7*DAY);
         m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
     }
 
@@ -349,7 +349,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         stage = 0;
         enraged = false;
         m_creature->SetInCombatWithZone();
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(7*DAY);
     }
 
     void JustDied(Unit* pKiller)
@@ -516,7 +516,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
 
     void Reset() {
         if(!m_pInstance) return;
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(7*DAY);
         MovementStarted = false;
         stage = 0;
     }
