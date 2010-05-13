@@ -74,6 +74,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
     BossSpellWorker* bsw;
     uint8 stage;
     bool intro;
+    uint32 UpdateTimer;
 
     void Reset()
     {
@@ -123,6 +124,30 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+        if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_PROFESSOR_PUTRICIDE)
+        {
+            UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
+            if (UpdateTimer <= diff)
+            {
+            switch (pInstance->GetData(TYPE_EVENT))
+                {
+                case 500:
+                          DoScriptText(-16311201, m_creature);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,510);
+                          break;
+                case 600:
+                          DoScriptText(-16311220, m_creature);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,610);
+                          break;
+                default:
+                          break;
+                }
+             } else UpdateTimer -= diff;
+             pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
+        }
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 

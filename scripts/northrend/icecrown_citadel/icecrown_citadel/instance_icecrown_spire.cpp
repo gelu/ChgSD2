@@ -553,6 +553,15 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                  return NPC_LICH_KING;
                                  break;
 
+                                 case 500:
+                                 case 600:
+                                 return NPC_PROFESSOR_PUTRICIDE;
+                                 break;
+
+                                 case 800:
+                                 return NPC_LANATHEL;
+                                 break;
+
                                  default:
                                  break;
                                  };

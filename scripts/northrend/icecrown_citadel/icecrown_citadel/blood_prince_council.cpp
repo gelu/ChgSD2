@@ -68,13 +68,22 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
     BossSpellWorker* bsw;
     Creature* pBrother1;
     Creature* pBrother2;
-
+    bool intro;
 
     void Reset() {
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
+        intro = false;
     }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if(!m_pInstance || intro) return
+        m_pInstance->SetData(TYPE_EVENT, 800);
+        intro = true;
+    }
+
 
     void JustReachedHome()
     {

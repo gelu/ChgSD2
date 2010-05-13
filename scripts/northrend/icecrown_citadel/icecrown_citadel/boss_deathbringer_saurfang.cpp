@@ -163,7 +163,10 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
             if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;
 
-            bsw->timedCast(SPELL_BERSERK, diff);
+        if (bsw->timedQuery(SPELL_BERSERK, diff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631108,m_creature);
+                 };
 
         DoMeleeAttackIfReady();
     }
