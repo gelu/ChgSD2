@@ -473,8 +473,8 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
 
    if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
         if (pTarget->AddAura(new BossAura(spell, index, &pSpell->varData, pTarget, pTarget)))
-                  return CAST_OK;
-    else return CAST_FAIL_OTHER;
+                  return true;
+    else return false;
 
 };
 
