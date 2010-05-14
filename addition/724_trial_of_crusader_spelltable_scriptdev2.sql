@@ -336,7 +336,7 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin
 (34454, 65957, 68095, 15000, 20000, 3);
 
 -- Priest
-DELETE FROM `boss_spell_table` WHERE `entry` IN (34466,34456);
+DELETE FROM `boss_spell_table` WHERE `entry` IN (34466,34447);
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
 (34466, 66177, 68035, 3000, 8000, 14),
 (34466, 66099, 68032, 3000, 8000, 14),
@@ -345,12 +345,12 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin
 (34466, 65546, 0, 3000, 8000, 6),
 (34466, 65543, 0, 5000, 25000, 1);
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_H10`, `timerMin_N10`, `timerMax_N10`, `CastType`) VALUES
-(34456, 66177, 68035, 3000, 8000, 14),
-(34456, 66099, 68032, 3000, 8000, 14),
-(34456, 66104, 68023, 3000, 8000, 14),
-(34456, 66100, 68026, 3000, 8000, 4),
-(34456, 65546, 0, 3000, 8000, 6),
-(34456, 65543, 0, 5000, 25000, 1);
+(34447, 66177, 68035, 3000, 8000, 14),
+(34447, 66099, 68032, 3000, 8000, 14),
+(34447, 66104, 68023, 3000, 8000, 14),
+(34447, 66100, 68026, 3000, 8000, 4),
+(34447, 65546, 0, 3000, 8000, 6),
+(34447, 65543, 0, 5000, 25000, 1);
 
 -- Shadow priest
 DELETE FROM `boss_spell_table` WHERE `entry` IN (34473,34441);

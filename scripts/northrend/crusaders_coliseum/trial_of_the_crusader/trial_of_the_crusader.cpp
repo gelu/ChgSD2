@@ -637,9 +637,13 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
     uint32 UpdateTimer;
+    uint32 crusader[12];
+    uint8 crusaderscount;
 
     void Reset()
     {
+    crusaderscount = 0;
+    memset(&crusader, 0, sizeof(crusader));
     }
 
     void AttackStart(Unit *who)
@@ -805,74 +809,146 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
 //Summoning crusaders
         case 3091:
                pInstance->SetData(TYPE_STAGE,6);
-               if (pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_NORMAL 
+               if (pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_NORMAL
                               ||  pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_HEROIC)
                               {
-                              pInstance->SetData(TYPE_CRUSADERS_COUNT,12);
-                              m_creature->SummonCreature(NPC_CRUSADER_1_7, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_7))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_1_8, SpawnLoc[10].x, SpawnLoc[10].y, SpawnLoc[10].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_8))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_1_9, SpawnLoc[11].x, SpawnLoc[11].y, SpawnLoc[11].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_9))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_1_10, SpawnLoc[12].x, SpawnLoc[12].y, SpawnLoc[12].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_10))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_0_1, SpawnLoc[13].x, SpawnLoc[13].y, SpawnLoc[13].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_0_1))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           pTemp->SetRespawnDelay(DAY);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_0_2, SpawnLoc[14].x, SpawnLoc[14].y, SpawnLoc[14].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_0_2))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           pTemp->SetRespawnDelay(DAY);
-                                           }
+                              crusaderscount = 12;
+                              switch (urand(0,3)){                                       // Healers, 3 in 25-mode
+                                                 case 0: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_12;
+                                                         crusader[2] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 case 1: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_2;
+                                                         crusader[2] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 case 2: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_2;
+                                                         crusader[2] = NPC_CRUSADER_1_12;
+                                                         break;
+                                                 case 3: crusader[0] = NPC_CRUSADER_1_2;
+                                                         crusader[1] = NPC_CRUSADER_1_12;
+                                                         crusader[2] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 }
+                              switch (urand(0,5)){                                       // Random melee DD, 2 in 25-mode
+                                                 case 0: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[4] = NPC_CRUSADER_1_4;
+                                                         break;
+                                                 case 1: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[4] = NPC_CRUSADER_1_5;
+                                                         break;
+                                                 case 2: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[4] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 case 3: crusader[3] = NPC_CRUSADER_1_4;
+                                                         crusader[4] = NPC_CRUSADER_1_5;
+                                                         break;
+                                                 case 4: crusader[3] = NPC_CRUSADER_1_4;
+                                                         crusader[4] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 case 5: crusader[3] = NPC_CRUSADER_1_5;
+                                                         crusader[4] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 }
+
+                              switch (urand(0,3)){                                       // Random magic DD, 3 in 25-mode
+                                                 case 0: crusader[5] = NPC_CRUSADER_1_7;
+                                                         crusader[6] = NPC_CRUSADER_1_8;
+                                                         crusader[7] = NPC_CRUSADER_1_11;
+                                                         break;
+                                                 case 1: crusader[5] = NPC_CRUSADER_1_7;
+                                                         crusader[6] = NPC_CRUSADER_1_8;
+                                                         crusader[7] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 case 2: crusader[5] = NPC_CRUSADER_1_8;
+                                                         crusader[6] = NPC_CRUSADER_1_11;
+                                                         crusader[7] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 case 3: crusader[5] = NPC_CRUSADER_1_7;
+                                                         crusader[6] = NPC_CRUSADER_1_11;
+                                                         crusader[7] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 }
+                               crusader[8]  = NPC_CRUSADER_1_9;  //Hunter+warlock
+                               crusader[9]  = NPC_CRUSADER_1_10;
+                               crusader[10] = NPC_CRUSADER_0_1;
+                               crusader[11] = NPC_CRUSADER_0_2;
+
+                              } else {
+                              crusaderscount = 6;
+                              switch (urand(0,5)){                                       // Healers, 2 in 10-mode
+                                                 case 0: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_12;
+                                                         break;
+                                                 case 1: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_2;
+                                                         break;
+                                                 case 2: crusader[0] = NPC_CRUSADER_1_2;
+                                                         crusader[1] = NPC_CRUSADER_1_12;
+                                                         break;
+                                                 case 3: crusader[0] = NPC_CRUSADER_1_1;
+                                                         crusader[1] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 case 4: crusader[0] = NPC_CRUSADER_1_2;
+                                                         crusader[1] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 case 5: crusader[0] = NPC_CRUSADER_1_12;
+                                                         crusader[1] = NPC_CRUSADER_1_13;
+                                                         break;
+                                                 }
+                              switch (urand(0,5)){                                       // Random melee DD, 2 in 10-mode
+                                                 case 0: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[2] = NPC_CRUSADER_1_4;
+                                                         break;
+                                                 case 1: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[2] = NPC_CRUSADER_1_5;
+                                                         break;
+                                                 case 2: crusader[3] = NPC_CRUSADER_1_3;
+                                                         crusader[2] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 case 3: crusader[3] = NPC_CRUSADER_1_4;
+                                                         crusader[2] = NPC_CRUSADER_1_5;
+                                                         break;
+                                                 case 4: crusader[3] = NPC_CRUSADER_1_4;
+                                                         crusader[2] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 case 5: crusader[3] = NPC_CRUSADER_1_5;
+                                                         crusader[2] = NPC_CRUSADER_1_6;
+                                                         break;
+                                                 }
+
+                              switch (urand(0,5)){                                       // Random magic DD, 2 in 10-mode
+                                                 case 0: crusader[4] = NPC_CRUSADER_1_7;
+                                                         crusader[5] = NPC_CRUSADER_1_8;
+                                                         break;
+                                                 case 1: crusader[5] = NPC_CRUSADER_1_7;
+                                                         crusader[4] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 case 2: crusader[5] = NPC_CRUSADER_1_7;
+                                                         crusader[4] = NPC_CRUSADER_1_11;
+                                                         break;
+                                                 case 3: crusader[5] = NPC_CRUSADER_1_8;
+                                                         crusader[4] = NPC_CRUSADER_1_11;
+                                                         break;
+                                                 case 4: crusader[5] = NPC_CRUSADER_1_8;
+                                                         crusader[4] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 case 5: crusader[5] = NPC_CRUSADER_1_11;
+                                                         crusader[4] = NPC_CRUSADER_1_14;
+                                                         break;
+                                                 }
+
                               }
-                              else pInstance->SetData(TYPE_CRUSADERS_COUNT,6);
-               m_creature->SummonCreature(NPC_CRUSADER_1_1, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_1))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-               m_creature->SummonCreature(NPC_CRUSADER_1_2, SpawnLoc[4].x, SpawnLoc[4].y, SpawnLoc[4].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_2))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-               m_creature->SummonCreature(NPC_CRUSADER_1_3, SpawnLoc[5].x, SpawnLoc[5].y, SpawnLoc[5].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_3))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-               m_creature->SummonCreature(NPC_CRUSADER_1_4, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_4))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-               m_creature->SummonCreature(NPC_CRUSADER_1_5, SpawnLoc[7].x, SpawnLoc[7].y, SpawnLoc[7].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_5))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-               m_creature->SummonCreature(NPC_CRUSADER_1_6, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-               if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_1_6))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
+               for(uint8 i = 0; i < crusaderscount; ++i)
+                       {
+                       m_creature->SummonCreature(crusader[i], SpawnLoc[i+2].x, SpawnLoc[i+2].y, SpawnLoc[i+2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                       if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(crusader[i]))) {
+                             pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
+                               }
+                       }
+               pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                UpdateTimer = 3000;
                pInstance->SetData(TYPE_EVENT,3095);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
@@ -885,72 +961,143 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                if (pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_NORMAL 
                               ||  pInstance->GetData(TYPE_DIFFICULTY) == RAID_DIFFICULTY_25MAN_HEROIC)
                               {
-                              pInstance->SetData(TYPE_CRUSADERS_COUNT,12);
+                              crusaderscount = 12;
+                              switch (urand(0,3)){                                       // Healers, 3 in 25-mode
+                                                 case 0: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_12;
+                                                         crusader[2] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 case 1: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_2;
+                                                         crusader[2] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 case 2: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_2;
+                                                         crusader[2] = NPC_CRUSADER_2_12;
+                                                         break;
+                                                 case 3: crusader[0] = NPC_CRUSADER_2_2;
+                                                         crusader[1] = NPC_CRUSADER_2_12;
+                                                         crusader[2] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 }
+                              switch (urand(0,5)){                                       // Random melee DD, 2 in 25-mode
+                                                 case 0: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[4] = NPC_CRUSADER_2_4;
+                                                         break;
+                                                 case 1: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[4] = NPC_CRUSADER_2_5;
+                                                         break;
+                                                 case 2: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[4] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 case 3: crusader[3] = NPC_CRUSADER_2_4;
+                                                         crusader[4] = NPC_CRUSADER_2_5;
+                                                         break;
+                                                 case 4: crusader[3] = NPC_CRUSADER_2_4;
+                                                         crusader[4] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 case 5: crusader[3] = NPC_CRUSADER_2_5;
+                                                         crusader[4] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 }
 
-                              m_creature->SummonCreature(NPC_CRUSADER_2_7, SpawnLoc[9].x, SpawnLoc[9].y, SpawnLoc[9].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_7))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_2_8, SpawnLoc[10].x, SpawnLoc[10].y, SpawnLoc[10].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_8))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_2_9, SpawnLoc[11].x, SpawnLoc[11].y, SpawnLoc[11].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_9))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_2_10, SpawnLoc[12].x, SpawnLoc[12].y, SpawnLoc[12].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_10))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_0_1, SpawnLoc[13].x, SpawnLoc[13].y, SpawnLoc[13].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_0_1))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
-                              m_creature->SummonCreature(NPC_CRUSADER_0_2, SpawnLoc[14].x, SpawnLoc[14].y, SpawnLoc[14].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                              if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_0_2))) {
-                                           pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                           pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                           }
+                              switch (urand(0,3)){                                       // Random magic DD, 3 in 25-mode
+                                                 case 0: crusader[5] = NPC_CRUSADER_2_7;
+                                                         crusader[6] = NPC_CRUSADER_2_8;
+                                                         crusader[7] = NPC_CRUSADER_2_11;
+                                                         break;
+                                                 case 1: crusader[5] = NPC_CRUSADER_2_7;
+                                                         crusader[6] = NPC_CRUSADER_2_8;
+                                                         crusader[7] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 case 2: crusader[5] = NPC_CRUSADER_2_8;
+                                                         crusader[6] = NPC_CRUSADER_2_11;
+                                                         crusader[7] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 case 3: crusader[5] = NPC_CRUSADER_2_7;
+                                                         crusader[6] = NPC_CRUSADER_2_11;
+                                                         crusader[7] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 }
+                               crusader[8]  = NPC_CRUSADER_2_9;  //Hunter+warlock
+                               crusader[9]  = NPC_CRUSADER_2_10;
+                               crusader[10] = NPC_CRUSADER_0_1;
+                               crusader[11] = NPC_CRUSADER_0_2;
+
+                              } else {
+                              crusaderscount = 6;
+                              switch (urand(0,5)){                                       // Healers, 2 in 10-mode
+                                                 case 0: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_12;
+                                                         break;
+                                                 case 1: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_2;
+                                                         break;
+                                                 case 2: crusader[0] = NPC_CRUSADER_2_2;
+                                                         crusader[1] = NPC_CRUSADER_2_12;
+                                                         break;
+                                                 case 3: crusader[0] = NPC_CRUSADER_2_1;
+                                                         crusader[1] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 case 4: crusader[0] = NPC_CRUSADER_2_2;
+                                                         crusader[1] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 case 5: crusader[0] = NPC_CRUSADER_2_12;
+                                                         crusader[1] = NPC_CRUSADER_2_13;
+                                                         break;
+                                                 }
+                              switch (urand(0,5)){                                       // Random melee DD, 2 in 10-mode
+                                                 case 0: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[2] = NPC_CRUSADER_2_4;
+                                                         break;
+                                                 case 1: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[2] = NPC_CRUSADER_2_5;
+                                                         break;
+                                                 case 2: crusader[3] = NPC_CRUSADER_2_3;
+                                                         crusader[2] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 case 3: crusader[3] = NPC_CRUSADER_2_4;
+                                                         crusader[2] = NPC_CRUSADER_2_5;
+                                                         break;
+                                                 case 4: crusader[3] = NPC_CRUSADER_2_4;
+                                                         crusader[2] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 case 5: crusader[3] = NPC_CRUSADER_2_5;
+                                                         crusader[2] = NPC_CRUSADER_2_6;
+                                                         break;
+                                                 }
+
+                              switch (urand(0,5)){                                       // Random magic DD, 2 in 10-mode
+                                                 case 0: crusader[4] = NPC_CRUSADER_2_7;
+                                                         crusader[5] = NPC_CRUSADER_2_8;
+                                                         break;
+                                                 case 1: crusader[5] = NPC_CRUSADER_2_7;
+                                                         crusader[4] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 case 2: crusader[5] = NPC_CRUSADER_2_7;
+                                                         crusader[4] = NPC_CRUSADER_2_11;
+                                                         break;
+                                                 case 3: crusader[5] = NPC_CRUSADER_2_8;
+                                                         crusader[4] = NPC_CRUSADER_2_11;
+                                                         break;
+                                                 case 4: crusader[5] = NPC_CRUSADER_2_8;
+                                                         crusader[4] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 case 5: crusader[5] = NPC_CRUSADER_2_11;
+                                                         crusader[4] = NPC_CRUSADER_2_14;
+                                                         break;
+                                                 }
+
                               }
-                              else pInstance->SetData(TYPE_CRUSADERS_COUNT,6);
-
-                m_creature->SummonCreature(NPC_CRUSADER_2_1, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_1))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-                m_creature->SummonCreature(NPC_CRUSADER_2_2, SpawnLoc[4].x, SpawnLoc[4].y, SpawnLoc[4].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_2))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-                m_creature->SummonCreature(NPC_CRUSADER_2_3, SpawnLoc[5].x, SpawnLoc[5].y, SpawnLoc[5].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_3))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-                m_creature->SummonCreature(NPC_CRUSADER_2_4, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_4))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-                m_creature->SummonCreature(NPC_CRUSADER_2_5, SpawnLoc[7].x, SpawnLoc[7].y, SpawnLoc[7].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                          if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_5))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                }
-                m_creature->SummonCreature(NPC_CRUSADER_2_6, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                          if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_CRUSADER_2_6))) {
-                                pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
-                                pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
-                                pTemp->SetInCombatWithZone();
-                                }
+               for(uint8 i = 0; i < crusaderscount; ++i)
+                       {
+                       m_creature->SummonCreature(crusader[i], SpawnLoc[i+2].x, SpawnLoc[i+2].y, SpawnLoc[i+2].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
+                       if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(crusader[i]))) {
+                             pTemp->GetMotionMaster()->MovePoint(0, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+                                 pTemp->AddSplineFlag(SPLINEFLAG_WALKMODE);
+                               }
+                       }
+               pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                UpdateTimer = 3000;
                pInstance->SetData(TYPE_EVENT,3095);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
