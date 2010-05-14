@@ -597,7 +597,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 }
         case 3: {
                 if (bsw->timedQuery(SPELL_TRAMPLE,uiDiff)) {
-                        if (pTarget && pTarget->isAlive() && (m_creature->GetDistance2d(pTarget) <= 200.0f)) {
+                        if (pTarget && pTarget->isAlive() && (pTarget->IsWithinDistInMap(m_creature, 200.0f))) {
                                     pTarget->GetPosition(fPosX, fPosY, fPosZ);
                                     TrampleCasted = false;
                                     MovementStarted = true;

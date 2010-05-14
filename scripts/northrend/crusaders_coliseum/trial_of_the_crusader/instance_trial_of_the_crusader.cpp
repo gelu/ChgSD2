@@ -72,6 +72,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint64 m_uiCrusader18Guid;
     uint64 m_uiCrusader19Guid;
     uint64 m_uiCrusader1aGuid;
+    uint64 m_uiCrusader1bGuid;
+    uint64 m_uiCrusader1cGuid;
+    uint64 m_uiCrusader1dGuid;
+    uint64 m_uiCrusader1eGuid;
 
     uint64 m_uiCrusader21Guid;
     uint64 m_uiCrusader22Guid;
@@ -83,6 +87,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
     uint64 m_uiCrusader28Guid;
     uint64 m_uiCrusader29Guid;
     uint64 m_uiCrusader2aGuid;
+    uint64 m_uiCrusader2bGuid;
+    uint64 m_uiCrusader2cGuid;
+    uint64 m_uiCrusader2dGuid;
+    uint64 m_uiCrusader2eGuid;
 
     uint64 m_uiCrusader01Guid;
     uint64 m_uiCrusader02Guid;
@@ -216,6 +224,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case NPC_CRUSADER_1_8: m_uiCrusader18Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_1_9: m_uiCrusader19Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_1_10: m_uiCrusader1aGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_1_11: m_uiCrusader1bGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_1_12: m_uiCrusader1cGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_1_13: m_uiCrusader1dGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_1_14: m_uiCrusader1eGuid = pCreature->GetGUID(); break;
 
          case NPC_CRUSADER_2_1: m_uiCrusader21Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_2_2: m_uiCrusader22Guid = pCreature->GetGUID(); break;
@@ -227,6 +239,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case NPC_CRUSADER_2_8: m_uiCrusader28Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_2_9: m_uiCrusader29Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_2_10: m_uiCrusader2aGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_2_11: m_uiCrusader2bGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_2_12: m_uiCrusader2cGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_2_13: m_uiCrusader2dGuid = pCreature->GetGUID(); break;
+         case NPC_CRUSADER_2_14: m_uiCrusader2eGuid = pCreature->GetGUID(); break;
 
          case NPC_CRUSADER_0_1: m_uiCrusader01Guid = pCreature->GetGUID(); break;
          case NPC_CRUSADER_0_2: m_uiCrusader02Guid = pCreature->GetGUID(); break;
@@ -407,6 +423,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case NPC_CRUSADER_1_8: return m_uiCrusader18Guid;
          case NPC_CRUSADER_1_9: return m_uiCrusader19Guid;
          case NPC_CRUSADER_1_10: return m_uiCrusader1aGuid;
+         case NPC_CRUSADER_1_11: return m_uiCrusader1bGuid;
+         case NPC_CRUSADER_1_12: return m_uiCrusader1cGuid;
+         case NPC_CRUSADER_1_13: return m_uiCrusader1dGuid;
+         case NPC_CRUSADER_1_14: return m_uiCrusader1eGuid;
 
          case NPC_CRUSADER_2_1: return m_uiCrusader21Guid;
          case NPC_CRUSADER_2_2: return m_uiCrusader22Guid;
@@ -418,6 +438,10 @@ struct MANGOS_DLL_DECL instance_trial_of_the_crusader : public ScriptedInstance
          case NPC_CRUSADER_2_8: return m_uiCrusader28Guid;
          case NPC_CRUSADER_2_9: return m_uiCrusader29Guid;
          case NPC_CRUSADER_2_10: return m_uiCrusader2aGuid;
+         case NPC_CRUSADER_2_11: return m_uiCrusader2bGuid;
+         case NPC_CRUSADER_2_12: return m_uiCrusader2cGuid;
+         case NPC_CRUSADER_2_13: return m_uiCrusader2dGuid;
+         case NPC_CRUSADER_2_14: return m_uiCrusader2eGuid;
 
          case NPC_CRUSADER_0_1: return m_uiCrusader01Guid;
          case NPC_CRUSADER_0_2: return m_uiCrusader02Guid;
