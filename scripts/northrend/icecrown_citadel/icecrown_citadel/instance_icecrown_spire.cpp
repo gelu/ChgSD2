@@ -125,12 +125,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                         OpenDoor(m_uiCounsilDoor1GUID);
                                         OpenDoor(m_uiCounsilDoor2GUID);
                                         }
-//        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
-//        if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
-//        if (m_auiEncounter[11] == DONE) {
-//                                        OpenDoor(m_uiSindragosaDoor2GUID);
-//                                        OpenDoor(m_uiSindragosaDoor1GUID);
-//                                        }
+        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
+        if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
+        if (m_auiEncounter[11] == DONE) {
+                                        OpenDoor(m_uiSindragosaDoor2GUID);
+                                        OpenDoor(m_uiSindragosaDoor1GUID);
+                                        }
 
     }
 
@@ -463,7 +463,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_LANATHEL:
                 m_auiEncounter[9] = uiData;
-//                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
+                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
                 break;
              case TYPE_VALITHRIA:
                 m_auiEncounter[10] = uiData;
@@ -544,27 +544,27 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_EVENT:         return m_auiEvent;
              case TYPE_EVENT_TIMER:   return m_auiEventTimer;
              case TYPE_EVENT_NPC: switch (m_auiEvent) 
-                                 {
-                                 case 1:
-                                 return NPC_TIRION;
-                                 break;
+                                         {
+                                          case 1:
+                                                 return NPC_TIRION;
+                                                 break;
 
-                                 case 2:
-                                 return NPC_LICH_KING;
-                                 break;
+                                          case 2:
+                                                 return NPC_LICH_KING;
+                                                 break;
 
-                                 case 500:
-                                 case 600:
-                                 return NPC_PROFESSOR_PUTRICIDE;
-                                 break;
+                                          case 500:
+                                          case 600:
+                                                 return NPC_PROFESSOR_PUTRICIDE;
+                                                 break;
 
-                                 case 800:
-                                 return NPC_LANATHEL;
-                                 break;
+                                          case 800:
+                                                 return NPC_LANATHEL;
+                                                 break;
 
-                                 default:
-                                 break;
-                                 };
+                                          default:
+                                                 break;
+                                          };
 
         }
         return 0;

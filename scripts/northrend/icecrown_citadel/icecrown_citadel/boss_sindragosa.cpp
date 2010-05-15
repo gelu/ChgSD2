@@ -41,10 +41,15 @@ enum BossSpells
     SPELL_ICY_TOMB           = 70157,
     SPELL_ASPHYXATION        = 71665,
     SPELL_FROST_BOMB         = 71053,
-
+    SPELL_FROST_BOMB_TRIGGER = 69846,
+    SPELL_ICE_TOMB_TRIGGER   = 69675,
     SPELL_MYSTIC_BUFFET      = 70128,
 
     NPC_ICE_TOMB             = 36980,
+    NPC_FROST_BOMB           = 37186,
+
+    SPELL_FLY_VISUAL         = 57764,
+    SPELL_BERSERK            = 47008,
 
 // Rimefang
     SPELL_FROST_AURA         = 71387,
@@ -59,6 +64,8 @@ enum BossSpells
 static Locations SpawnLoc[]=
 {
     {4408.052734f, 2484.825439f, 203.374207f},  // 0 Sindragosa spawn
+    {4474.239746f, 2484.243896f, 231.0f},       // 1 Sindragosa fly o=3.11
+    {4474.239746f, 2484.243896f, 203.380402f},  // 2 Sindragosa fly - ground point o=3.11
 };
 
 struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
@@ -73,8 +80,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
-    Unit* pTarget1;
-    Unit* pTarget2;
+    Map* pMap;
+    uint8 Difficulty;
+    uint8 icecount;
+    bool MovementStarted;
 
     void Reset()
     {
@@ -82,6 +91,25 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
         bsw->resetTimers();
         stage = 0;
         m_creature->SetRespawnDelay(7*DAY);
+        pMap = m_creature->GetMap();
+        Difficulty = pMap->GetDifficulty();
+        switch (Difficulty) {
+                             case RAID_DIFFICULTY_10MAN_NORMAL:
+                                       icecount = 2;
+                                       break;
+                             case RAID_DIFFICULTY_10MAN_HEROIC:
+                                       icecount = 2;
+                                       break;
+                             case RAID_DIFFICULTY_25MAN_NORMAL:
+                                       icecount = 5;
+                                       break;
+                             case RAID_DIFFICULTY_25MAN_HEROIC:
+                                       icecount = 5;
+                                       break;
+                             default:
+                                       icecount = 2;
+                                       break;
+                            }
     }
 
     void KilledUnit(Unit* pVictim)
@@ -122,6 +150,50 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
         DoScriptText(-1631423,m_creature,killer);
     }
 
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (!pInstance) return;
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+
+        if (id == 1) {
+                m_creature->GetMotionMaster()->MovementExpired();
+                MovementStarted = false;
+                }
+    }
+
+    void IceMark()
+    {
+        for (uint8 i = 1; i <= icecount; i++)
+            if (Unit* pTemp = bsw->SelectRandomPlayer(SPELL_FROST_BEACON, false, 200.0f))
+                bsw->doCast(SPELL_FROST_BEACON, pTemp);
+    }
+
+    void IceBlock()
+    {
+        for (uint8 i = 1; i <= icecount; i++)
+            if (Unit* pTemp = bsw->SelectRandomPlayer(SPELL_FROST_BEACON, true, 200.0f))
+                bsw->doCast(SPELL_ICY_TOMB, pTemp);
+
+        Map::PlayerList const &pList = pMap->GetPlayers();
+                 if (pList.isEmpty()) return;
+
+        for(Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
+          {
+              if (Player* player = i->getSource())
+                 {
+                  if (player->isGameMaster()) continue;
+
+                  if (player->isAlive() && (player->HasAura(SPELL_ICY_TOMB)))
+                     {
+                         float fPosX, fPosY, fPosZ;
+                         player->GetPosition(fPosX, fPosY, fPosZ);
+                         if (Unit* pTemp = bsw->doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
+                              pTemp->AddThreat(player, 100.0f);
+                     };
+                 };
+           };
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -144,24 +216,46 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                          }
 
                     if (bsw->timedQuery(SPELL_FROST_BEACON, diff) && m_creature->GetHealthPercent() < 85.0f) stage = 1;
+                    if (m_creature->GetHealthPercent() < 35.0f) 
+                       {
+                            bsw->doCast(SPELL_MYSTIC_BUFFET);
+                            stage = 4;
+                            DoScriptText(-1631429,m_creature);
+                       }
             break;
             case 1: 
                     DoScriptText(-1631425,m_creature);
-                    bsw->doCast(SPELL_FROST_BEACON);
+                    IceMark();
                     stage = 2;
+                    MovementStarted = true;
+                    SetCombatMovement(false);
+                    bsw->doCast(SPELL_FLY_VISUAL);
+                    m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
             break;
             case 2: 
-                    bsw->timedCast(SPELL_ICY_TOMB, diff);
-                    bsw->timedCast(SPELL_FROST_BOMB, diff);
-                    if (bsw->timedQuery(SPELL_FROST_BEACON, diff)) stage = 0;
+                    if (bsw->timedQuery(SPELL_ICY_TOMB, diff)) {
+                          stage = 3;
+                          IceBlock();
+                          };
             break;
             case 3: 
+                    if (bsw->timedQuery(SPELL_FROST_BOMB, diff))
+                           if (Unit* pTemp = bsw->SelectRandomPlayerAtRange(250.0f))
+                                bsw->doCast(SPELL_FROST_BOMB_TRIGGER, pTemp);
+
+                    if (bsw->timedQuery(SPELL_FROST_BEACON, diff)) {
+                           stage = 0;
+                           SetCombatMovement(true);
+                           m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                           bsw->doRemove(SPELL_FLY_VISUAL);
+                           }
+            break;
+            case 4: 
                     bsw->timedCast(SPELL_CLEAVE_1, diff);
                     bsw->timedCast(SPELL_TAIL_SMASH, diff);
                     bsw->timedCast(SPELL_FROST_BREATH, diff);
                     bsw->timedCast(SPELL_PERMEATING_CHILL, diff);
                     bsw->timedCast(SPELL_UNCHAINED_MAGIC, diff);
-                    bsw->timedCast(SPELL_MYSTIC_BUFFET, diff);
                     if (bsw->timedQuery(SPELL_ICY_GRIP, diff))
                          {
                          bsw->doCast(SPELL_ICY_GRIP);
@@ -172,12 +266,11 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
             default: break;
         }
 
-        if (m_creature->GetHealthPercent() < 35.0f) 
-               {
-                stage = 3;
-                DoScriptText(-1631429,m_creature);
-               }
-
+         if (bsw->timedQuery(SPELL_BERSERK, diff))
+                {
+                bsw->doCast(SPELL_BERSERK);
+                DoScriptText(-1631424,m_creature);
+                };
 
         DoMeleeAttackIfReady();
     }
@@ -203,7 +296,6 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public ScriptedAI
     void Reset()
     {
         SetCombatMovement(false);
-        m_creature->SetInCombatWithZone();
         pVictim = NULL;
     }
 
@@ -246,6 +338,49 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public ScriptedAI
 CreatureAI* GetAI_mob_ice_tomb(Creature* pCreature)
 {
     return new mob_ice_tombAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
+{
+    mob_frost_bombAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+
+    ScriptedInstance *m_pInstance;
+    uint32 boom_timer;
+
+    void Reset()
+    {
+        SetCombatMovement(false);
+        boom_timer = 5000;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if(m_pInstance && m_pInstance->GetData(TYPE_SINDRAGOSA) != IN_PROGRESS)
+            m_creature->ForcedDespawn();
+
+        if (boom_timer <= uiDiff)
+        {
+            m_creature->CastSpell(m_creature, SPELL_FROST_BOMB, true);
+            m_creature->ForcedDespawn();
+        }
+        else boom_timer -= uiDiff;
+    }
+
+};
+
+CreatureAI* GetAI_mob_frost_bomb(Creature* pCreature)
+{
+    return new mob_frost_bombAI(pCreature);
 }
 
 struct MANGOS_DLL_DECL mob_rimefangAI : public ScriptedAI
@@ -394,6 +529,11 @@ void AddSC_boss_sindragosa()
     newscript = new Script;
     newscript->Name = "mob_ice_tomb";
     newscript->GetAI = &GetAI_mob_ice_tomb;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_frost_bomb";
+    newscript->GetAI = &GetAI_mob_frost_bomb;
     newscript->RegisterSelf();
 
 }

@@ -86,8 +86,8 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
-        if(!pInstance || intro) return
-        DoScriptText(-1631249,m_creature);
+        if(!pInstance || intro) return;
+        DoScriptText(-1631249,m_creature, pWho);
         intro = true;
     }
 

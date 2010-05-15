@@ -16,8 +16,9 @@
 enum
 {
   DIFFICULTY_LEVELS = 4,
-  MAX_BOSS_SPELLS   = 16,
+  MAX_BOSS_SPELLS   = 32,
   SPELL_INDEX_ERROR = 255,
+  INSTANCE_MAX_PLAYERS = 40,
 };
 
 enum BossSpellFlag

@@ -317,7 +317,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 DoScriptText(-1631031,m_creature);
                 };
 
-
          DoMeleeAttackIfReady();
     }
 };

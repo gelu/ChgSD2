@@ -65,7 +65,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
-        if(!pInstance || intro) return
+        if(!pInstance || intro) return;
         pInstance->SetData(TYPE_EVENT, 600);
         intro = true;
     }
@@ -93,7 +93,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_ROTFACE, DONE);
-        DoScriptText(-1631224,m_creature);
+        DoScriptText(-1631224,m_creature, killer);
     }
 
     void UpdateAI(const uint32 diff)

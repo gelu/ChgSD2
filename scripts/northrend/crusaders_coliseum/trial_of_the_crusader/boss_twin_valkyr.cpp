@@ -167,7 +167,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public ScriptedAI
 
                 if (bsw->timedQuery(SPELL_LIGHT_TOUCH, uiDiff))
                    {
-                   if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_LIGHT_ESSENCE, false, 150.0f))
+                   if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_LIGHT_ESSENCE, false, 50.0f))
                              bsw->doCast(SPELL_LIGHT_TOUCH, pTarget);
                    bsw->doCast(NPC_UNLEASHED_LIGHT);
                    };
@@ -326,7 +326,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public ScriptedAI
 
                 if (bsw->timedQuery(SPELL_DARK_TOUCH, uiDiff))
                    {
-                   if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_DARK_ESSENCE, false, 150.0f))
+                   if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_DARK_ESSENCE, false, 50.0f))
                              bsw->doCast(SPELL_DARK_TOUCH, pTarget);
                    bsw->doCast(NPC_UNLEASHED_DARK);
                    };
