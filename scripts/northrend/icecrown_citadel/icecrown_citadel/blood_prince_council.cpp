@@ -72,7 +72,8 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
     Creature* pBrother2;
     bool intro;
 
-    void Reset() {
+    void Reset() 
+    {
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
@@ -82,6 +83,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
     void MoveInLineOfSight(Unit* pWho) 
     {
         if(!m_pInstance || intro) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
         m_pInstance->SetData(TYPE_EVENT, 800);
         intro = true;
     }

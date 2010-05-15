@@ -543,7 +543,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
              case TYPE_EVENT:         return m_auiEvent;
              case TYPE_EVENT_TIMER:   return m_auiEventTimer;
-             case TYPE_EVENT_NPC: switch (m_auiEvent) 
+             case TYPE_EVENT_NPC:     switch (m_auiEvent) 
                                          {
                                           case 1:
                                                  return NPC_TIRION;

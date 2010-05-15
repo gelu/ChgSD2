@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                               case 4: randommob = NPC_GLUTTONOUS_ABOMINATION;break;
                               default: randommob = NPC_RISEN_ARCHMAGE;       break;
                               }
-                       if (Creature* pTemp = m_creature->SummonCreature(randommob, SpawnLoc[door].x, SpawnLoc[door].y, SpawnLoc[door].z, 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME))
+                       if (Unit* pTemp = bsw->doSummon(randommob, SpawnLoc[door].x, SpawnLoc[door].y, SpawnLoc[door].z, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000))
                             mobsGUIDList.push_back(pTemp->GetGUID());
                        }
     }
@@ -260,12 +260,11 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
         for(std::list<uint64>::iterator itr = mobsGUIDList.begin(); itr != mobsGUIDList.end(); ++itr)
         {
-            if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+            if (Unit* pTemp = Unit::GetUnit(*m_creature, *itr))
                 if (pTemp->isAlive()) {
                     pTemp->DeleteThreatList();
                     pTemp->CombatStop(true);
                     pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                    pTemp->ForcedDespawn();
                     }
         }
         mobsGUIDList.clear();

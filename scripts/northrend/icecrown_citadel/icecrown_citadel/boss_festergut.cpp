@@ -69,6 +69,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     void MoveInLineOfSight(Unit* pWho) 
     {
         if(!pInstance || intro) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
+
         pInstance->SetData(TYPE_EVENT, 500);
         intro = true;
     }

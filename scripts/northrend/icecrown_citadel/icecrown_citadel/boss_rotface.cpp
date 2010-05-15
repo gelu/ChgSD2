@@ -66,6 +66,8 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
     void MoveInLineOfSight(Unit* pWho) 
     {
         if(!pInstance || intro) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
+
         pInstance->SetData(TYPE_EVENT, 600);
         intro = true;
     }
