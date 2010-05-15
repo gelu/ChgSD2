@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_rotface
-SD%Complete: 0%
+SD%Complete: 10%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -107,7 +107,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
                                                          pet = true;
                                                          DoScriptText(-1631228,m_creature);
                                                          };
-                            };
+                };
 
     if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;

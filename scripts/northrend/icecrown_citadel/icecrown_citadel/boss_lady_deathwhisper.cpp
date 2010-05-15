@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_lady_deathwhisper
-SD%Complete: 20%
+SD%Complete: 50%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

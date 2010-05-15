@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_sindragosa
-SD%Complete: 0%
+SD%Complete: 60%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

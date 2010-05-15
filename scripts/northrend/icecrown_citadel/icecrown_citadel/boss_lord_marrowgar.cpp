@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_lord_marrowgar
-SD%Complete: 30%
+SD%Complete: 60%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: icecrown_teleport
-SD%Complete: 30%
+SD%Complete: 100%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

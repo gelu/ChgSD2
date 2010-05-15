@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_blood_queen_lanathel
-SD%Complete: 1%
+SD%Complete: 20%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

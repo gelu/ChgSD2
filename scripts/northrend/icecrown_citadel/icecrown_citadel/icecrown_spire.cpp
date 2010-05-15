@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: icecrown_spire
-SD%Complete: 10%
+SD%Complete: 100%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel - mobs
 EndScriptData */

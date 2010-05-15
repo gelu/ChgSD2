@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_valithria
-SD%Complete: 5%
+SD%Complete: 60%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */

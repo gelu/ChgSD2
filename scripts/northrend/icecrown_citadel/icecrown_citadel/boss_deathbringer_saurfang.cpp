@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_deathbringer_saurfang
-SD%Complete: 10%
+SD%Complete: 30%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
