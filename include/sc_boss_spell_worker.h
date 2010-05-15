@@ -173,7 +173,6 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _doSelect(0, false, range);
              };
 
-
         Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
              return _doSummonAtPosition(FindSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ);

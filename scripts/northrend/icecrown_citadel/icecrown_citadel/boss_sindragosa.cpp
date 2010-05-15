@@ -161,6 +161,25 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                 }
     }
 
+    void doBlisteringCold()
+    {
+        bsw->doCast(SPELL_ICY_GRIP);
+
+        Map::PlayerList const &pList = pMap->GetPlayers();
+                 if (pList.isEmpty()) return;
+
+        for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
+              if (Player* player = i->getSource())
+                 if ( player->isAlive())
+                        {
+                        float fPosX, fPosY, fPosZ;
+                        m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, 1.0f, fPosX, fPosY, fPosZ);
+                        player->NearTeleportTo(fPosX, fPosX, fPosX, 0.0f);
+                        }
+        bsw->doCast(SPELL_BLISTERING_COLD);
+    }
+
     void IceMark()
     {
         for (uint8 i = 1; i <= icecount; i++)
@@ -172,7 +191,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
     {
         for (uint8 i = 1; i <= icecount; i++)
             if (Unit* pTemp = bsw->SelectRandomPlayer(SPELL_FROST_BEACON, true, 200.0f))
-                bsw->doCast(SPELL_ICY_TOMB, pTemp);
+                {
+                    bsw->doCast(SPELL_ICY_TOMB, pTemp);
+                    pTemp->RemoveAurasDueToSpell(SPELL_FROST_BEACON);
+                };
 
         Map::PlayerList const &pList = pMap->GetPlayers();
                  if (pList.isEmpty()) return;
@@ -181,14 +203,12 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
           {
               if (Player* player = i->getSource())
                  {
-                  if (player->isGameMaster()) continue;
-
-                  if (player->isAlive() && (player->HasAura(SPELL_ICY_TOMB)))
+                  if ( player->isAlive() && (player->HasAura(SPELL_ICY_TOMB)) )
                      {
-                         float fPosX, fPosY, fPosZ;
-                         player->GetPosition(fPosX, fPosY, fPosZ);
-                         if (Unit* pTemp = bsw->doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
-                              pTemp->AddThreat(player, 100.0f);
+                        float fPosX, fPosY, fPosZ;
+                        player->GetPosition(fPosX, fPosY, fPosZ);
+                        if (Unit* pTemp = bsw->doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
+                            pTemp->AddThreat(player, 100.0f);
                      };
                  };
            };
@@ -204,15 +224,15 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
             case 0: 
                     bsw->timedCast(SPELL_CLEAVE_1, diff);
                     bsw->timedCast(SPELL_TAIL_SMASH, diff);
-                    bsw->timedCast(SPELL_FROST_BREATH, diff);
+                    bsw->timedCast(SPELL_FROST_BREATH_1, diff);
                     bsw->timedCast(SPELL_PERMEATING_CHILL, diff);
 
                     bsw->timedCast(SPELL_UNCHAINED_MAGIC, diff);
+
                     if (bsw->timedQuery(SPELL_ICY_GRIP, diff))
                          {
-                         bsw->doCast(SPELL_ICY_GRIP);
-                         bsw->doCast(SPELL_BLISTERING_COLD);
                          DoScriptText(-1631426,m_creature);
+                         doBlisteringCold();
                          }
 
                     if (bsw->timedQuery(SPELL_FROST_BEACON, diff) && m_creature->GetHealthPercent() < 85.0f) stage = 1;
@@ -253,14 +273,13 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
             case 4: 
                     bsw->timedCast(SPELL_CLEAVE_1, diff);
                     bsw->timedCast(SPELL_TAIL_SMASH, diff);
-                    bsw->timedCast(SPELL_FROST_BREATH, diff);
+                    bsw->timedCast(SPELL_FROST_BREATH_1, diff);
                     bsw->timedCast(SPELL_PERMEATING_CHILL, diff);
                     bsw->timedCast(SPELL_UNCHAINED_MAGIC, diff);
                     if (bsw->timedQuery(SPELL_ICY_GRIP, diff))
                          {
-                         bsw->doCast(SPELL_ICY_GRIP);
-                         bsw->doCast(SPELL_BLISTERING_COLD);
                          DoScriptText(-1631426,m_creature);
+                         doBlisteringCold();
                          }
             break;
             default: break;

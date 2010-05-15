@@ -478,10 +478,11 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
 
     debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
 
-   if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
+    if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
         if (pTarget->AddAura(new BossAura(spell, index, &pSpell->varData, pTarget, pTarget)))
-                  return true;
-    else return false;
+                return true;
+
+    return false;
 
 };
 
