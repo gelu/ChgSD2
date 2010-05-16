@@ -118,8 +118,12 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
+        if(!m_pInstance) return;
+        m_pInstance->SetData(TYPE_CRUSADERS, IN_PROGRESS);
         DoCast(m_creature, SPELL_ANTI_AOE, true);
-        if(m_pInstance) m_pInstance->SetData(TYPE_CRUSADERS, IN_PROGRESS);
+            if(who->GetTypeId() != TYPEID_PLAYER)
+                  if (Unit* player = bsw->SelectRandomPlayerAtRange(80.0f))
+                       m_creature->AddThreat(player, 100.0f);
     }
 
     void Reset()
