@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_lady_deathwhisper
-SD%Complete: 20%
+SD%Complete: 50%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -316,7 +316,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 bsw->doCast(SPELL_BERSERK);
                 DoScriptText(-1631031,m_creature);
                 };
-
 
          DoMeleeAttackIfReady();
     }

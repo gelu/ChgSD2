@@ -51,6 +51,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSindragosaGUID;
     uint64 m_uiLichKingGUID;
 
+    uint64 m_uiRimefangGUID;
+    uint64 m_uiSpinestalkerGUID;
+
+    uint64 m_uiStinkyGUID;
+    uint64 m_uiPreciousGUID;
+
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
@@ -75,6 +81,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiValithriaDoor3GUID;
     uint64 m_uiValithriaDoor4GUID;
 
+    uint64 m_uiSindragosaDoor1GUID;
+    uint64 m_uiSindragosaDoor2GUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
@@ -84,6 +93,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiGunshipArmoryA_ID;
 
     uint32 m_uiDataCouncilHealth;
+
+    uint32 m_auiEvent;
+    uint32 m_auiEventTimer;
 
     void OpenDoor(uint64 guid)
     {
@@ -114,6 +126,11 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                         OpenDoor(m_uiCounsilDoor2GUID);
                                         }
         if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
+        if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
+        if (m_auiEncounter[11] == DONE) {
+                                        OpenDoor(m_uiSindragosaDoor2GUID);
+                                        OpenDoor(m_uiSindragosaDoor1GUID);
+                                        }
 
     }
 
@@ -136,6 +153,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         m_uiSDoorGreenGUID = 0;
         m_uiBloodwingDoorGUID = 0;
         m_uiSDoorCollisionGUID = 0;
+        m_auiEvent = 0;
+        m_auiEventTimer = 1000;
         switch (Difficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
                                        m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_10;
@@ -207,6 +226,18 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                           break;
             case NPC_LICH_KING:
                           m_uiLichKingGUID = pCreature->GetGUID();
+                          break;
+            case NPC_RIMEFANG:
+                          m_uiRimefangGUID = pCreature->GetGUID();
+                          break;
+            case NPC_SPINESTALKER:
+                          m_uiSpinestalkerGUID = pCreature->GetGUID();
+                          break;
+            case NPC_STINKY:
+                          m_uiStinkyGUID = pCreature->GetGUID();
+                          break;
+            case NPC_PRECIOUS:
+                          m_uiPreciousGUID = pCreature->GetGUID();
                           break;
         }
     }
@@ -280,6 +311,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                          break;
             case GO_VALITHRIA_DOOR_4: 
                          m_uiValithriaDoor4GUID = pGo->GetGUID();
+                         break;
+            case GO_SINDRAGOSA_DOOR_1: 
+                         m_uiSindragosaDoor1GUID = pGo->GetGUID();
+                         break;
+            case GO_SINDRAGOSA_DOOR_2: 
+                         m_uiSindragosaDoor2GUID = pGo->GetGUID();
                          break;
             case GO_SAURFANG_CACHE_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
@@ -427,13 +464,24 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 break;
              case TYPE_LANATHEL:
                 m_auiEncounter[9] = uiData;
-//                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
+                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
                 break;
              case TYPE_VALITHRIA:
                 m_auiEncounter[10] = uiData;
+                if (uiData == DONE) {
+                OpenDoor(m_uiGreenDragonDoor2GUID);
+                                 if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
+                                     if (pChest && !pChest->isSpawned()) {
+                                          pChest->SetRespawnTime(7*DAY);
+                                      };
+                                };
                 break;
              case TYPE_SINDRAGOSA:
                 m_auiEncounter[11] = uiData;
+                if (uiData == DONE) {
+                                     OpenDoor(m_uiSindragosaDoor1GUID);
+                                     OpenDoor(m_uiSindragosaDoor2GUID);
+                                    }
                 break;
              case TYPE_LICH_KING:
                 m_auiEncounter[12] = uiData;
@@ -448,7 +496,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case DATA_BLOOD_COUNCIL_HEALTH:     m_uiDataCouncilHealth = uiData; 
                                                  uiData = NOT_STARTED; 
                                                  break;
-
+             case TYPE_EVENT:            m_auiEvent = uiData; uiData = NOT_STARTED; break;
+             case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
 
         if (uiData == DONE)
@@ -493,6 +542,36 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
              case TYPE_COUNT:         return m_auiEncounter[14];
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
+             case TYPE_EVENT:         return m_auiEvent;
+             case TYPE_EVENT_TIMER:   return m_auiEventTimer;
+             case TYPE_EVENT_NPC:     switch (m_auiEvent) 
+                                         {
+                                          case 1:
+                                                 return NPC_TIRION;
+                                                 break;
+
+                                          case 2:
+                                                 return NPC_LICH_KING;
+                                                 break;
+                                          case 500:
+                                          case 510:
+                                          case 550:
+                                          case 560:
+                                          case 600:
+                                          case 610:
+                                          case 650:
+                                          case 660:
+                                                 return NPC_PROFESSOR_PUTRICIDE;
+                                                 break;
+
+                                          case 800:
+                                                 return NPC_LANATHEL;
+                                                 break;
+
+                                          default:
+                                                 break;
+                                          };
+
         }
         return 0;
     }
@@ -501,37 +580,31 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     {
         switch(uiData)
         {
-            case NPC_LORD_MARROWGAR: 
-                                     return m_uiMarrogwarGUID;
-            case NPC_LADY_DEATHWHISPER:
-                                     return m_uiDeathWhisperGUID;
-            case NPC_DEATHBRINGER_SAURFANG: 
-                                     return m_uiSaurfangGUID;
-            case NPC_FESTERGUT:
-                                     return m_uiFestergutGUID;
-            case NPC_ROTFACE:
-                                     return m_uiRotfaceGUID;
-            case NPC_PROFESSOR_PUTRICIDE:
-                                     return m_uiPutricideGUID;
-            case NPC_TALDARAM:
-                                     return m_uiTaldaramGUID;
-            case NPC_VALANAR:
-                                     return m_uiValanarGUID;
-            case NPC_KELESETH:
-                                     return m_uiKelesethGUID;
-            case NPC_LANATHEL:
-                                     return m_uiLanathelGUID;
-            case NPC_VALITHRIA:
-                                     return m_uiValithriaGUID;
-            case NPC_SINDRAGOSA:
-                                     return m_uiSindragosaGUID;
-            case NPC_LICH_KING:
-                                     return m_uiLichKingGUID;
-
+            case NPC_LORD_MARROWGAR:          return m_uiMarrogwarGUID;
+            case NPC_LADY_DEATHWHISPER:       return m_uiDeathWhisperGUID;
+            case NPC_DEATHBRINGER_SAURFANG:   return m_uiSaurfangGUID;
+            case NPC_FESTERGUT:               return m_uiFestergutGUID;
+            case NPC_ROTFACE:                 return m_uiRotfaceGUID;
+            case NPC_PROFESSOR_PUTRICIDE:     return m_uiPutricideGUID;
+            case NPC_TALDARAM:                return m_uiTaldaramGUID;
+            case NPC_VALANAR:                 return m_uiValanarGUID;
+            case NPC_KELESETH:                return m_uiKelesethGUID;
+            case NPC_LANATHEL:                return m_uiLanathelGUID;
+            case NPC_VALITHRIA:               return m_uiValithriaGUID;
+            case NPC_SINDRAGOSA:              return m_uiSindragosaGUID;
+            case NPC_LICH_KING:               return m_uiLichKingGUID;
+            case NPC_RIMEFANG:                return m_uiRimefangGUID;
+            case NPC_SPINESTALKER:            return m_uiSpinestalkerGUID;
+            case NPC_STINKY:                  return m_uiStinkyGUID;
+            case NPC_PRECIOUS:                return m_uiPreciousGUID;
             case GO_SCIENTIST_DOOR_ORANGE:    return m_uiSDoorOrangeGUID;
             case GO_SCIENTIST_DOOR_GREEN:     return m_uiSDoorGreenGUID;
             case GO_SCIENTIST_DOOR_COLLISION: return m_uiSDoorCollisionGUID;
             case GO_BLOODWING_DOOR:           return m_uiBloodwingDoorGUID;
+            case GO_VALITHRIA_DOOR_1:         return m_uiValithriaDoor1GUID;
+            case GO_VALITHRIA_DOOR_2:         return m_uiValithriaDoor2GUID;
+            case GO_VALITHRIA_DOOR_3:         return m_uiValithriaDoor3GUID;
+            case GO_VALITHRIA_DOOR_4:         return m_uiValithriaDoor4GUID;
         }
         return 0;
     }

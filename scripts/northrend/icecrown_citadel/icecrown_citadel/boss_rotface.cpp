@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_rotface
-SD%Complete: 0%
+SD%Complete: 10%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -51,35 +51,84 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
+    bool intro;
+    bool pet;
 
     void Reset()
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_ROTFACE, NOT_STARTED);
+        stage = 0;
+        intro = false;
+        pet = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if(!pInstance || intro) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
+
+        pInstance->SetData(TYPE_EVENT, 600);
+        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
+        intro = true;
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631222,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631223,m_creature,pVictim);
+               break;
+        }
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_ROTFACE, IN_PROGRESS);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_ROTFACE, IN_PROGRESS);
+        DoScriptText(-1631221,m_creature,who);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_ROTFACE, DONE);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_ROTFACE, DONE);
+        DoScriptText(-1631224,m_creature, killer);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+
+    if (!pet) {
+              if (Creature* pGuard = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_PRECIOUS)))
+                                if (!pGuard->isAlive())  {
+                                                         pet = true;
+                                                         DoScriptText(-1631228,m_creature);
+                                                         };
+                };
+
+    if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_OOZE_FLOOD_1, diff);
+        if (bsw->timedQuery(SPELL_OOZE_FLOOD_1, diff)){
+                 bsw->doCast(SPELL_OOZE_FLOOD_1);
+                 DoScriptText(-1631225,m_creature);
+                 };
 
         bsw->timedCast(SPELL_SLIME_SPRAY, diff);
 
-        bsw->timedCast(SPELL_MUTATED_INFECTION, diff);
+        if (bsw->timedQuery(SPELL_MUTATED_INFECTION, diff)){
+                 bsw->doCast(SPELL_MUTATED_INFECTION);
+                 DoScriptText(-1631226,m_creature);
+                 };
 
-        bsw->timedCast(SPELL_BERSERK, diff);
+        if (bsw->timedQuery(SPELL_BERSERK, diff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631225,m_creature);
+                 };
 
         DoMeleeAttackIfReady();
     }

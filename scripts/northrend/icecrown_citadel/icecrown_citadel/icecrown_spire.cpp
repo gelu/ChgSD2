@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: icecrown_spire
-SD%Complete: 10%
+SD%Complete: 100%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel - mobs
 EndScriptData */
@@ -110,7 +110,9 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
+        if(!pInstance) return;
+        if (killer->GetTypeId() == TYPEID_PLAYER)
+              pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
     }
 
     void JustReachedHome()
@@ -120,7 +122,7 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(7*DAY);
         stage = 0;
     }
 

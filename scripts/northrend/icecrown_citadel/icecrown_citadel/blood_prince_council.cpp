@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: blood_prince_council
-SD%Complete: 3%
+SD%Complete: 30%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -26,6 +26,8 @@ EndScriptData */
 
 enum BossSpells
 {
+        SPELL_BERSERK                           = 47008,
+
         //Darkfallen Orb
         SPELL_INVOCATION_OF_BLOOD               = 70952,
 
@@ -68,12 +70,35 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
     BossSpellWorker* bsw;
     Creature* pBrother1;
     Creature* pBrother2;
+    bool intro;
 
-
-    void Reset() {
+    void Reset() 
+    {
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
+        intro = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if(!m_pInstance || intro) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
+        m_pInstance->SetData(TYPE_EVENT, 800);
+        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
+        intro = true;
+    }
+
+    void KilledUnit(Unit* pVictim)
+    {
+    switch (urand(0,1)) {
+        case 0:
+               DoScriptText(-1631302,m_creature,pVictim);
+               break;
+        case 1:
+               DoScriptText(-1631303,m_creature,pVictim);
+               break;
+        }
     }
 
     void JustReachedHome()
@@ -86,6 +111,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
+        DoScriptText(-1631304,m_creature,pKiller);
         if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
            {
                 m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
@@ -94,11 +120,6 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
                 pBrother2->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
            }
             else  m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-    }
-
-    void KilledUnit(Unit* pVictim)
-    {
-        if (!m_pInstance) return;
     }
 
     void Aggro(Unit* pWho)
@@ -153,6 +174,11 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
         bsw->timedCast(SPELL_KINETIC_BOMB, uiDiff);
 
         bsw->timedCast(SPELL_SHOCK_VORTEX, uiDiff);
+
+        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631305,m_creature);
+                 };
 
         DoMeleeAttackIfReady();
     }
@@ -265,6 +291,11 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public ScriptedAI
 
         bsw->timedCast(SPELL_FLAMES, uiDiff);
 
+        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631305,m_creature);
+                 };
+
         DoMeleeAttackIfReady();
     }
 };
@@ -372,6 +403,11 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public ScriptedAI
         bsw->timedCast(SPELL_SHADOW_LANCE, uiDiff);
 
         bsw->timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
+
+        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
+                 bsw->doCast(SPELL_BERSERK);
+                 DoScriptText(-1631305,m_creature);
+                 };
 
         DoMeleeAttackIfReady();
     }

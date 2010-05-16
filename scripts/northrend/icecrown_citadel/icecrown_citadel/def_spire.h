@@ -1,3 +1,6 @@
+/* Copyright (C) 2010 by /dev/rsa for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software licensed under GPL version 2
+ * Please see the included DOCS/LICENSE.TXT for more information */
 
 #ifndef DEF_ICECROWN_SPIRE_H
 #define DEF_ICECROWN_SPIRE_H
@@ -34,16 +37,19 @@ enum
     NPC_KELESETH                = 37972,
     NPC_LANATHEL                = 37955,
     NPC_VALITHRIA               = 36789,
-    NPC_VALITHRIA_H             = 38589,
+    NPC_VALITHRIA_QUEST         = 38589,
     NPC_SINDRAGOSA              = 36853,
     NPC_LICH_KING               = 36597,
 
     NPC_MURADIN                 = 36948,
 
+    NPC_TIRION                  = 38995,
+
+    NPC_STINKY                  = 37025,
+    NPC_PRECIOUS                = 37217,
+
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
-
-    NPC_RISEN_ARCHMAGE          = 37868,
 
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
@@ -78,6 +84,7 @@ enum
     GO_VALITHRIA_DOOR_4         = 201381, //1558
 
     GO_SINDRAGOSA_DOOR_1        = 201369, //1619
+    GO_SINDRAGOSA_DOOR_2        = 201379,
 
     GO_FROZENTRONE_TR           = 202223, //72061
 
@@ -105,9 +112,14 @@ enum
     GO_FROSTWING_SIGIL          = 202181,
     GO_BLOODWING_SIGIL          = 202183,
 
-    TYPE_DIFFICULTY             = 1001,
+    TYPE_EVENT_TIMER            = 99,
+    TYPE_EVENT                  = 100,
+    TYPE_EVENT_NPC              = 101,
     MAP_NUM                     = 631,
+    TYPE_DIFFICULTY             = 1001,
     DATA_BLOOD_COUNCIL_HEALTH   = 1002,
+    DESPAWN_TIME                = 300000,
+
 };
 
 #endif
