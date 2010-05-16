@@ -243,10 +243,11 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                    break;
 
             case CAST_ON_RANDOM_POINT:
+                   if (!pTarget) pTarget = boss;
                    if (pSpell->LocData.z <= 1.0f) {
                          float fPosX, fPosY, fPosZ;
-                         boss->GetPosition(fPosX, fPosY, fPosZ);
-                         boss->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
+                         pTarget->GetPosition(fPosX, fPosY, fPosZ);
+                         pTarget->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
                          boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
                          return CAST_OK;
                          } else return CAST_FAIL_OTHER;
@@ -477,10 +478,11 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
 
     debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
 
-   if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
+    if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
         if (pTarget->AddAura(new BossAura(spell, index, &pSpell->varData, pTarget, pTarget)))
-                  return true;
-    else return false;
+                return true;
+
+    return false;
 
 };
 
@@ -603,8 +605,11 @@ Unit* BossSpellWorker::_doSelect(uint32 SpellID, bool spellsearchtype, float ran
     Map::PlayerList const &pList = pMap->GetPlayers();
           if (pList.isEmpty()) return NULL;
 
+#if defined( __GNUC__ )
     Unit* _list[pMap->GetMaxPlayers()];
-
+#else
+    Unit* _list[INSTANCE_MAX_PLAYERS];
+#endif 
     uint8 _count = 0;
 
     memset(&_list, 0, sizeof(_list));
@@ -627,7 +632,8 @@ Unit* BossSpellWorker::_doSelect(uint32 SpellID, bool spellsearchtype, float ran
                  }
            }
     debug_log("BSW: search result for random player, count = %u ",_count);
-    return _list[urand(0,_count)];
+    if (_count == 0) return NULL;
+    else return _list[urand(0,_count)];
 };
 
 
