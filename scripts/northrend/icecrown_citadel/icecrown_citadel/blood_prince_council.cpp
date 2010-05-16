@@ -85,6 +85,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
         if(!m_pInstance || intro) return;
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
         m_pInstance->SetData(TYPE_EVENT, 800);
+        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
         intro = true;
     }
 

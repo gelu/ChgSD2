@@ -72,6 +72,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
 
         pInstance->SetData(TYPE_EVENT, 500);
+        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
         intro = true;
     }
 
@@ -102,6 +103,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
+        pInstance->SetData(TYPE_EVENT, 550);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_1);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_2);

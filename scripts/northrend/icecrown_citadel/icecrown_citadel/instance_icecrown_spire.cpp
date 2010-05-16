@@ -154,6 +154,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         m_uiBloodwingDoorGUID = 0;
         m_uiSDoorCollisionGUID = 0;
         m_auiEvent = 0;
+        m_auiEventTimer = 1000;
         switch (Difficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
                                        m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_10;
@@ -552,9 +553,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                           case 2:
                                                  return NPC_LICH_KING;
                                                  break;
-
                                           case 500:
+                                          case 510:
+                                          case 550:
+                                          case 560:
                                           case 600:
+                                          case 610:
+                                          case 650:
+                                          case 660:
                                                  return NPC_PROFESSOR_PUTRICIDE;
                                                  break;
 

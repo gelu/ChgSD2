@@ -65,6 +65,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         if(!pInstance) return;
         pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
         stage = 0;
+        UpdateTimer = 1000;
     }
 
     void JustReachedHome()
@@ -106,6 +107,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
             UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
             if (UpdateTimer <= diff)
             {
+            debug_log("EventMGR: creature %u received signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
             switch (pInstance->GetData(TYPE_EVENT))
                 {
                 case 800:

@@ -69,6 +69,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
 
         pInstance->SetData(TYPE_EVENT, 600);
+        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
         intro = true;
     }
 

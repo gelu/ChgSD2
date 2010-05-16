@@ -61,6 +61,13 @@ enum BossSpells
 //    VIEW_3                        = 38216,
 };
 
+static Locations SpawnLoc[]=
+{
+    {4356.779785f, 3263.510010f, 389.398010f},  // 0 Putricide start point o=1.586
+    {4295.081055f, 3188.883545f, 389.330261f},  // 1 Puticide Festergut say, o=4.27
+    {4417.302246f, 3188.219971f, 389.332520f},  // 2 Putricide Rotface say o=5.102
+};
+
 struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 {
     boss_proffesor_putricideAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -82,11 +89,15 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
         pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
         stage = 0;
         intro = false;
+        UpdateTimer = 1000;
     }
 
     void MoveInLineOfSight(Unit* pWho) 
     {
-        if(!pInstance || intro) return;
+        if (!pInstance || intro) return;
+        if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_PROFESSOR_PUTRICIDE
+            || !pWho->IsWithinDistInMap(m_creature, 40.0f)) return;
+
         DoScriptText(-1631249,m_creature, pWho);
         intro = true;
     }
@@ -129,17 +140,47 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
             UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
             if (UpdateTimer <= diff)
             {
+            debug_log("EventMGR: creature %u received signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
             switch (pInstance->GetData(TYPE_EVENT))
                 {
                 case 500:
-                          DoScriptText(-16311201, m_creature);
-                          UpdateTimer = 2000;
+                          m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 4.27f);
+                          DoScriptText(-1631201, m_creature);
+                          UpdateTimer = 10000;
                           pInstance->SetData(TYPE_EVENT,510);
                           break;
-                case 600:
-                          DoScriptText(-16311220, m_creature);
+                case 510:
+                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
+                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                           UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,520);
+                          break;
+                case 550:
+                          m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 4.27f);
+                          DoScriptText(-1631202, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,560);
+                          break;
+                case 560:
+                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
+                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,570);
+                          break;
+                case 600:
+                          m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          m_creature->NearTeleportTo(SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5.102f);
+                          DoScriptText(-1631220, m_creature);
+                          UpdateTimer = 10000;
                           pInstance->SetData(TYPE_EVENT,610);
+                          break;
+                case 610:
+                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
+                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,620);
                           break;
                 default:
                           break;
