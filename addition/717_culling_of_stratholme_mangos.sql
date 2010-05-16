@@ -20,7 +20,7 @@ update `creature_template` set `AIName`='', `Scriptname`='boss_meathook' where `
 update `creature_template` set `AIName`='', `Scriptname`='boss_lord_epoch' where `entry` in (26532);
 update `creature_template` set `AIName`='', `Scriptname`='boss_malganis' where `entry` in (26533);
 update `instance_template` set `script` = 'instance_culling_of_stratholme' WHERE map=595;
--- Spawning Salramm in the instance --
+/*-- Spawning Salramm in the instance --
 INSERT INTO creature VALUES (4458724,26530,595,1,1,0,0,2174.32,1307.32,131.866,4.32264,25,0,0,337025,62535,0,0);
 -- heroic version --
 INSERT INTO creature VALUES (4458725,26530,595,2,1,0,0,2178.93,1307.89,131.526,4.12069,25,0,0,421281,62535,0,0);
@@ -36,6 +36,7 @@ INSERT INTO creature VALUES (4458741,26532,595,2,1,0,1820,2446.17,1111.64,148.07
 INSERT INTO creature VALUES (4459981,26533,595,1,1,0,0,2298.33,1501.03,128.362,5.11213,25,0,0,404430,41690,0,0);
 -- heroic version --
 INSERT INTO creature VALUES (4459615,26533,595,2,1,0,0,2298.9,1502.32,128.361,5.21301,25,0,0,505538,41690,0,0);
+*/
 update `creature` set `spawntimesecs`='3600' where `id` in (31127, 31126, 28167, 28169);
 
 DELETE FROM `creature` WHERE (`guid`=4456649);
@@ -55,9 +56,10 @@ INSERT INTO `gameobject_template` (`entry`, `type`, `displayId`, `name`, `castBa
 
 update `gameobject` set `state` = '1' where `id` in (187711);
 update `gameobject` set `spawntimesecs` = '-604800', `state` = '0'  where `id` in (190663);
-
+UPDATE `gameobject_template` SET faction = 0 WHERE entry= 190663;
+/*
 UPDATE `creature` set `curhealth` = '8600' where `id`=28167;
 UPDATE `creature` set `curhealth` = '8600' where `id`=28169;
 UPDATE `creature` set `curhealth` = '15000' where `id`=27737;
 UPDATE `quest_template` set `SpecialFlags` = '1' where `entry`=13151;
-
+*/

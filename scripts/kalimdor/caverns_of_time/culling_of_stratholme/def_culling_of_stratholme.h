@@ -13,48 +13,54 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-
+ 
+ 
 /* ScriptData
 SDName: instance_culling_of_stratholme
 SD%Complete: ?%
 SDComment:
 SDCategory: Culling of Stratholme
 EndScriptData */
-
-
-
-
+ 
+ 
+ 
+ 
 #ifndef DEF_CULLING_OF_STRATHOLME_H
 #define DEF_CULLING_OF_STRATHOLME_H  
-
+ 
 enum Data
 {
-	MAX_ENCOUNTER                  = 5,
+    MAX_ENCOUNTER                  = 5,
     TYPE_ARTHAS_EVENT              = 0,
-	TYPE_SALRAMM_EVENT             = 1,
-	TYPE_MEATHOOK_EVENT            = 2,
-	TYPE_EPOCH_EVENT			   = 3,
-	TYPE_MALGANIS_EVENT            = 4,
-
+    TYPE_SALRAMM_EVENT             = 1,
+    TYPE_MEATHOOK_EVENT            = 2,
+    TYPE_EPOCH_EVENT               = 3,
+    TYPE_MALGANIS_EVENT            = 4,
+    TYPE_TIME_EVENT                = 6,
+ 
     DATA_GO_SHKAF_GATE             = 8,
     DATA_GO_MAL_GATE1              = 9,
     DATA_GO_MAL_GATE2              = 10,
     DATA_GO_MAL_CHEST              = 11,
     DATA_ARTHAS                    = 12,
-	DATA_SALRAMM                   = 13,
-	DATA_MEATHOOK                  = 14,
-	DATA_EPOCH      			   = 15,
-	DATA_MALGANIS                  = 16,
-
-
+    DATA_SALRAMM                   = 13,
+    DATA_MEATHOOK                  = 14,
+    DATA_EPOCH                     = 15,
+    DATA_MALGANIS                  = 16,
+ 
+ 
     NPC_ARTHAS                     = 26499,  // Arthas
-	NPC_MEATHOOK                   = 26529,  // Meathook
-	NPC_SALRAMM                    = 26530,  // Salramm
-	NPC_EPOCH                      = 26532,  // Lord Epoch
-	NPC_MALGANIS                   = 26533   // Mal'Ganis
+    NPC_MEATHOOK                   = 26529,  // Meathook
+    NPC_SALRAMM                    = 26530,  // Salramm
+    NPC_EPOCH                      = 26532,  // Lord Epoch
+    NPC_MALGANIS                   = 26533,   // Mal'Ganis
+        
+    // Wave Event
+    TYPE_WAVE_EVENT                = 17,
+    WORLD_STATE_WAVE               = 3504,
+    WORLD_STATE_TIME               = 3932,
+    WORLD_STATE_REMAIN             = 3931
 };
-
+ 
 #endif
-
-
+ 
