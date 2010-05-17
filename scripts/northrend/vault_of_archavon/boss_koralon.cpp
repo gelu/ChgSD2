@@ -29,8 +29,6 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
     ScriptedInstance* pInstance;
     bool Regular;
-    uint32 m_uiEvadeCheckCooldown;
-
     uint32 BurningBreathTimer;
     uint32 MeteorFistsTimer;
     uint32 FlamesTimer;
@@ -41,7 +39,6 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiEvadeCheckCooldown = 2000;
         BurningBreathTimer = 25000;
         MeteorFistsTimer = 47000;
         FlamesTimer = 15000;
@@ -53,7 +50,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
     void Aggro(Unit *who)
     {
-        DoCast(m_creature, SP_BURNING_FURY_AURA);
+        DoCastSpellIfCan(m_creature, SP_BURNING_FURY_AURA);
 
         if(pInstance) pInstance->SetData(TYPE_KORALON, IN_PROGRESS);
     };
@@ -68,18 +65,9 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_uiEvadeCheckCooldown < diff)
-        {
-            if (m_creature->GetDistance2d(-218.95f, 103.41f) > 80.0f)
-                EnterEvadeMode();
-            m_uiEvadeCheckCooldown = 2000;
-        }
-        else
-            m_uiEvadeCheckCooldown -= diff;
-
         if(BurningBreathTimer < diff)
         {
-            DoCast(m_creature, Regular ? SP_BURNING_BREATH : H_SP_BURNING_BREATH);
+            DoCastSpellIfCan(m_creature, Regular ? SP_BURNING_BREATH : H_SP_BURNING_BREATH);
             BurningBreathTimer = 45000;
 
             BB = true;
@@ -92,7 +80,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
         {
             if(BBTickTimer < diff)
             {
-                DoCast(NULL, Regular ? SP_BB_EFFECT : H_SP_BB_EFFECT, true);
+                DoCastSpellIfCan(NULL, Regular ? SP_BB_EFFECT : H_SP_BB_EFFECT, true);
                 BBTickTimer = 1000;
                 ++BBTicks;
                 if(BBTicks > 2) BB = false;
@@ -107,7 +95,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
             for(i=0; i< flames; ++i)
             {
                 Unit *target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-                if(target) DoCast(target, Regular ? SP_CINDER : H_SP_CINDER);
+                if(target) DoCastSpellIfCan(target, Regular ? SP_CINDER : H_SP_CINDER);
             }
             FlamesTimer = 20000;
         }
@@ -115,7 +103,7 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
 
         if(MeteorFistsTimer < diff)
         {
-            DoCast(m_creature->getVictim(), SP_METEOR_FISTS_EFF);
+            DoCastSpellIfCan(m_creature->getVictim(), SP_METEOR_FISTS_EFF);
             MeteorFistsTimer = 45000;
         }
         else MeteorFistsTimer -= diff;

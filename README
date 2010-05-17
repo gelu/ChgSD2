@@ -1,4 +1,4 @@
-@package RSA scripts for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>;
+@package RSA scripts for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
 @version 0.2
 @revision (current)
 @copyright (c) 2009-2010 /dev/rsa
@@ -22,14 +22,15 @@ In this repository you found this custom scripts:
 
 - many scripts from Insider42
 - Ulduar (by Insider42, small correct by me)
-- Trial of the Champion ( by ..., big rewrite by me)
-- Violet hold (by ..., big rewrite by me)
-- Naxxramas (by ...)
-- An'kahet (by ...)
-- Draktaron (by ...)
+- Trial of the Champion ( by Syntec, big rewrite by me)
+- Violet hold (by ckegg, big rewrite by me)
+- Naxxramas (by ckegg)
+- An'kahet (by Tassadar)
+- Draktaron (by Tassadar)
+- Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
 - Halls of reflection (partially, by me)
-- Icecrown Citadel (by me)
+- Icecrown Citadel (not finished, by me)
 
 Attention please! In my project only correct Linux Makefile provided. 
 If you want compile this branch on Windows, please convert Makefile to your c++ compiler.

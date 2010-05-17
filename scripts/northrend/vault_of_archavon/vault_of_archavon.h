@@ -7,7 +7,7 @@
 
 enum
 {
-    MAX_ENCOUNTER               = 3,
+    MAX_ENCOUNTER               = 4,
 
     DATA_ARCHAVON               = 1,
     DATA_EMALON                 = 2,
@@ -20,6 +20,7 @@ enum
     TYPE_ARCHAVON               = 8,
     TYPE_EMALON                 = 9,
     TYPE_KORALON                = 10,
+    TYPE_TORAVON                = 11,
 
     NPC_ARCHAVON                = 31125,
     NPC_EMALON                  = 33993,

@@ -215,6 +215,7 @@ extern void AddSC_boss_ptheradras();
 extern void AddSC_boss_onyxia();                            //onyxias_lair
 extern void AddSC_boss_amnennar_the_coldbringer();          //razorfen_downs
 extern void AddSC_razorfen_downs();
+extern void AddSC_instance_razorfen_kraul();                //razorfen_kraul
 extern void AddSC_boss_ayamiss();                           //ruins_of_ahnqiraj
 extern void AddSC_boss_kurinnaxx();
 extern void AddSC_boss_moam();
@@ -318,6 +319,7 @@ extern void AddSC_instance_nexus();
 extern void AddSC_boss_sartharion();                        //obsidian_sanctum
 extern void AddSC_instance_obsidian_sanctum();
 extern void AddSC_instance_vault_of_archavon();             //vault_of_archavon
+extern void AddSC_boss_toravon();
 extern void AddSC_boss_koralon();
 extern void AddSC_boss_emalon();
 extern void AddSC_boss_archavon();
@@ -678,16 +680,16 @@ void AddScripts()
     AddSC_wetlands();
 
     //kalimdor
-    AddSC_instance_blackfathom_deeps();                     //blackfathom_deeps
-    AddSC_boss_aeonus();                                    //COT, dark_portal
+    AddSC_instance_blackfathom_deeps();                     // blackfathom deeps
+    AddSC_boss_aeonus();                                    // Opening the Dark Portal
     AddSC_boss_chrono_lord_deja();
     AddSC_boss_temporus();
     AddSC_dark_portal();
     AddSC_instance_dark_portal();
-    AddSC_hyjal();                                          //COT, hyjal
+    AddSC_hyjal();                                          // Battle of Mount Hyjal
     AddSC_boss_archimonde();
     AddSC_instance_mount_hyjal();
-    AddSC_boss_captain_skarloc();                           //COT, old_hillsbrad
+    AddSC_boss_captain_skarloc();                           // Escape from Durnholde Keep
     AddSC_boss_epoch_hunter();
     AddSC_boss_lieutenant_drake();
     AddSC_instance_old_hillsbrad();
@@ -699,6 +701,7 @@ void AddScripts()
     AddSC_boss_onyxia();                                    //onyxias_lair
     AddSC_boss_amnennar_the_coldbringer();                  //razorfen_downs
     AddSC_razorfen_downs();
+    AddSC_instance_razorfen_kraul();                        //razorfen_kraul
     AddSC_boss_ayamiss();                                   //ruins_of_ahnqiraj
     AddSC_boss_kurinnaxx();
     AddSC_boss_moam();
@@ -794,6 +797,7 @@ void AddScripts()
     AddSC_boss_sartharion();                                //obsidian_sanctum
     AddSC_instance_obsidian_sanctum();
     AddSC_instance_vault_of_archavon();                     //vault_of_archavon
+    AddSC_boss_toravon();
     AddSC_boss_koralon();
     AddSC_boss_emalon();
     AddSC_boss_archavon();

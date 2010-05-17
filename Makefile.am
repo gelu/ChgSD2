@@ -279,6 +279,8 @@ scripts/kalimdor/maraudon/boss_princess_theradras.cpp \
 scripts/kalimdor/onyxias_lair/boss_onyxia.cpp \
 scripts/kalimdor/razorfen_downs/boss_amnennar_the_coldbringer.cpp \
 scripts/kalimdor/razorfen_downs/razorfen_downs.cpp \
+scripts/kalimdor/razorfen_kraul/instance_razorfen_kraul.cpp \
+scripts/kalimdor/razorfen_kraul/razorfen_kraul.h \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_ayamiss.cpp \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_buru.cpp \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_kurinnaxx.cpp \
@@ -429,6 +431,7 @@ scripts/northrend/utgarde_keep/utgarde_pinnacle/utgarde_pinnacle.h \
 scripts/northrend/vault_of_archavon/boss_archavon.cpp \
 scripts/northrend/vault_of_archavon/boss_emalon.cpp \
 scripts/northrend/vault_of_archavon/boss_koralon.cpp \
+scripts/northrend/vault_of_archavon/boss_toravon.cpp \
 scripts/northrend/vault_of_archavon/instance_vault_of_archavon.cpp \
 scripts/northrend/vault_of_archavon/vault_of_archavon.h \
 scripts/outland/blades_edge_mountains.cpp \
