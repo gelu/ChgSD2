@@ -92,6 +92,7 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 
 -- Qween Lana'thel
 UPDATE `creature_template` SET `ScriptName`='boss_blood_queen_lanathel', `AIName`='' WHERE `entry`= 37955;
+UPDATE `creature_template` SET `ScriptName`='mob_swarming_shadows', `AIName`='' WHERE `entry`= 38163;
 
 -- Valithria dreamwalker
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;
