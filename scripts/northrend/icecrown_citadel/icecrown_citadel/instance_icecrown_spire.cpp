@@ -116,7 +116,11 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[1] == DONE) {
                                         OpenDoor(m_uiIcewall1GUID);
                                         OpenDoor(m_uiIcewall2GUID);
-                                        }
+                                        };
+        if (m_auiEncounter[2] == DONE) {
+                        if (GameObject* pGOTemp = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
+                              pGOTemp->SetGoState(GO_STATE_ACTIVE);
+                                       };
         if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
         if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorGreenGUID);
         if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
@@ -124,13 +128,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[8] == DONE) {
                                         OpenDoor(m_uiCounsilDoor1GUID);
                                         OpenDoor(m_uiCounsilDoor2GUID);
-                                        }
+                                        };
         if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
         if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
         if (m_auiEncounter[11] == DONE) {
                                         OpenDoor(m_uiSindragosaDoor2GUID);
                                         OpenDoor(m_uiSindragosaDoor1GUID);
-                                        }
+                                        };
 
     }
 
@@ -404,7 +408,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 m_auiEncounter[2] = uiData; 
                 if (uiData == DONE) {
                     if (GameObject* pGOTemp = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
-                        pGOTemp->SetRespawnTime(25000);
+                        pGOTemp->SetGoState(GO_STATE_ACTIVE);
                 }
                 break;
              case TYPE_FLIGHT_WAR:

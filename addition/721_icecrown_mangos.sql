@@ -117,3 +117,4 @@ UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201369,201379);
 -- Lich King
 UPDATE `creature_template` SET `ScriptName`='boss_the_lich_king_icc', `AIName`='' WHERE `entry`= 29983;
 UPDATE `creature_template` SET `ScriptName`='boss_tirion_icc', `AIName`='' WHERE `entry`= 38995;
+UPDATE `creature_template` SET `ScriptName`='mob_ice_sphere_icc', `AIName`='' WHERE `entry`= 36633;
