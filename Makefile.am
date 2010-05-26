@@ -362,6 +362,12 @@ scripts/northrend/icecrown_citadel/icecrown_citadel/boss_the_lich_king.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/boss_valithria_dreamwalker.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/gunship_battle.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/icecrown_spire.cpp \
+scripts/northrend/ruby_sanctum/def_ruby_sanctum.h \
+scripts/northrend/ruby_sanctum/instance_ruby_sanctum.cpp \
+scripts/northrend/ruby_sanctum/boss_halion.cpp \
+scripts/northrend/ruby_sanctum/boss_zarithian.cpp \
+scripts/northrend/ruby_sanctum/boss_baltharus.cpp \
+scripts/northrend/ruby_sanctum/boss_ragefire.cpp \
 scripts/northrend/naxxramas/boss_anubrekhan.cpp \
 scripts/northrend/naxxramas/boss_faerlina.cpp \
 scripts/northrend/naxxramas/boss_four_horsemen.cpp \

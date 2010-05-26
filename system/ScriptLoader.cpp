@@ -411,6 +411,12 @@ extern void AddSC_boss_falryn();
 extern void AddSC_boss_marwyn();
 //extern void AddSC_boss_lich_king_fh();
 
+extern void AddSC_instance_ruby_sanctum();                  // Ruby Sanctum
+extern void AddSC_boss_halion();
+extern void AddSC_boss_ragefire();
+extern void AddSC_boss_zarithian();
+extern void AddSC_boss_baltharus();
+
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
 extern void AddSC_boss_nexusprince_shaffar();               //auchindoun, mana_tombs
@@ -890,6 +896,12 @@ void AddScripts()
     AddSC_boss_falryn();
     AddSC_boss_marwyn();
 //    AddSC_boss_lich_king_fh();
+
+    AddSC_instance_ruby_sanctum();                         // Ruby Sanctum
+    AddSC_boss_halion();
+    AddSC_boss_ragefire();
+    AddSC_boss_zarithian();
+    AddSC_boss_baltharus();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
