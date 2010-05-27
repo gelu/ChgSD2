@@ -91,9 +91,9 @@ enum BossSpells
 enum Yells
 {
     SAY_INTRO_1_KING                =       -1631501,
-    SAY_INTRO_2_TIRION              =       -1631502,
+    SAY_INTRO_2_TIRION              =       -1631552,
     SAY_INTRO_3_KING                =       -1631503,
-    SAY_INTRO_4_TIRION              =       -1631504,
+    SAY_INTRO_4_TIRION              =       -1631554,
     SAY_INTRO_5_KING                =       -1631505,
     SAY_AGGRO_KING                  =       -1631506,
     SAY_REMORSELESS_WINTER          =       -1631507,
@@ -126,7 +126,7 @@ enum Yells
 static Locations SpawnLoc[]=
 {
     {459.93689f, -2124.638184f, 1040.860107f},    // 0 Lich King Intro
-    {503.156525, -2124.516602, 1040.860107},      // 1 Lich king move end
+    {503.15652f, -2124.516602f, 1040.860107f},      // 1 Lich king move end
     {491.27118f, -2124.638184f, 1040.860107f},    // 2 Tirion 1
     {481.69797f, -2124.638184f, 1040.860107f},    // 3 Tirion 2
     {498.00448f, 2201.573486f, 1046.093872f},     // 4 Valkyrs?
@@ -196,7 +196,8 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_LICH_KING, FAIL);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_LICH_KING, FAIL);
     }
 
     void StartMovement(uint32 id, uint32 _nextEvent)
@@ -204,6 +205,8 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
         nextPoint = id;
         nextEvent = _nextEvent;
         m_creature->GetMotionMaster()->MovePoint(id, SpawnLoc[id].x, SpawnLoc[id].y, SpawnLoc[id].z);
+        pInstance->SetData(TYPE_EVENT,0);
+        movementstarted = true;
     }
 
     void JustSummoned(Creature* summoned)
@@ -212,7 +215,8 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_LICH_KING, IN_PROGRESS);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_LICH_KING, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
@@ -233,6 +237,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                 {
                 case 12000:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
+                          m_creature->SetStandState(UNIT_STAND_STATE_STAND);
                           StartMovement(0,12020);
                           break;
                 case 12020:
@@ -242,18 +247,48 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                           pInstance->SetData(TYPE_EVENT,12030);
                           break;
                 case 12040:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY2H);
+                          DoScriptText(SAY_INTRO_3_KING, m_creature);
+                          UpdateTimer = 3000;
+                          pInstance->SetData(TYPE_EVENT,12041);
+                          break;
+                case 12041:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_LAUGH);
+                          UpdateTimer = 3000;
+                          pInstance->SetData(TYPE_EVENT,12042);
+                          break;
+                case 12042:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE,EMOTE_ONESHOT_POINT_NOSHEATHE);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,12043);
+                          break;
+                case 12043:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE,EMOTE_ONESHOT_NONE);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,12050);
                           break;
                 case 12060:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
+                          DoScriptText(SAY_INTRO_5_KING, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,12080);
                           break;
                 case 12080:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE,EMOTE_STATE_READY2H);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,12100);
                           break;
                 case 12100:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE,EMOTE_ONESHOT_NONE);
+                          UpdateTimer = 6000;
+                          pInstance->SetData(TYPE_EVENT,12120);
                           break;
                 case 12120:
+                          m_creature->SetInCombatWithZone();
+                          pInstance->SetData(TYPE_EVENT,12999);
+                          UpdateTimer = 6000;
                           break;
-                case 12140:
-                          break;
-                case 12160:
+                case 13000:
                           break;
                 default:
                           break;
@@ -287,10 +322,34 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
 
     ScriptedInstance *pInstance;
     uint32 UpdateTimer;
+    uint32 nextEvent;
+    uint32 nextPoint;
+    bool movementstarted;
 
     void Reset()
     {
         if(!pInstance) return;
+        movementstarted = false;
+    }
+
+    void StartMovement(uint32 id, uint32 _nextEvent)
+    {
+        nextPoint = id;
+        nextEvent = _nextEvent;
+        m_creature->GetMotionMaster()->MovePoint(id, SpawnLoc[id].x, SpawnLoc[id].y, SpawnLoc[id].z);
+        pInstance->SetData(TYPE_EVENT,0);
+        movementstarted = true;
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !movementstarted) return;
+        if (id == nextPoint) 
+        {
+            movementstarted = false;
+            pInstance->SetData(TYPE_EVENT,nextEvent);
+            m_creature->GetMotionMaster()->MovementExpired();
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -311,18 +370,25 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           pInstance->SetData(TYPE_EVENT,12040);
                           break;
                 case 12050:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_POINT_NOSHEATHE);
+                          DoScriptText(SAY_INTRO_4_TIRION, m_creature);
+                          UpdateTimer = 5000;
+                          pInstance->SetData(TYPE_EVENT,12051);
                           break;
-                case 12070:
+                case 12051:
+                          m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
+                          UpdateTimer = 3000;
+                          pInstance->SetData(TYPE_EVENT,12052);
                           break;
-                case 12090:
+                case 12052:
+                          StartMovement(3,12053);
                           break;
-                case 12110:
+                case 12053:
+                          UpdateTimer = 3000;
+                          pInstance->SetData(TYPE_EVENT,12060);
+                          m_creature->CastSpell(m_creature, SPELL_ICEBLOCK_TRIGGER, false);
                           break;
-                case 12130:
-                          break;
-                case 12150:
-                          break;
-                case 12170:
+                case 13010:
                           break;
                 default:
                           break;

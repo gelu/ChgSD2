@@ -562,6 +562,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                          {
                                           case 12030:
                                           case 12050:
+                                          case 12051:
+                                          case 12052:
+                                          case 12053:
                                           case 12070:
                                           case 12090:
                                           case 12110:
@@ -574,18 +577,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                           case 12000:
                                           case 12020:
                                           case 12040:
+                                          case 12041:
+                                          case 12042:
+                                          case 12043:
                                           case 12060:
                                           case 12080:
                                           case 12100:
                                           case 12120:
-                                          case 12140:
-                                          case 12160:
-                                          case 12180:
-                                          case 12200:
-                                          case 12220:
-                                          case 12240:
-                                          case 12260:
-                                          case 12280:
                                           case 12300:
                                                  return NPC_LICH_KING;
                                                  break;
