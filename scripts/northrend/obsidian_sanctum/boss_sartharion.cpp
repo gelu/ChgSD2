@@ -1094,7 +1094,7 @@ struct MANGOS_DLL_DECL mob_tenebronAI : public dummy_dragonAI
         // shadow fissure
         if (m_uiShadowFissureTimer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_SHADOW_FISSURE : SPELL_SHADOW_FISSURE_H);
 
             m_uiShadowFissureTimer = urand(8000, 10000);
@@ -1194,7 +1194,7 @@ struct MANGOS_DLL_DECL mob_shadronAI : public dummy_dragonAI
         // shadow fissure
         if (m_uiShadowFissureTimer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_SHADOW_FISSURE : SPELL_SHADOW_FISSURE_H);
 
             m_uiShadowFissureTimer = urand(8000, 10000);
@@ -1294,7 +1294,7 @@ struct MANGOS_DLL_DECL mob_vesperonAI : public dummy_dragonAI
         // shadow fissure
         if (m_uiShadowFissureTimer < uiDiff)
         {
-            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM, 0))
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 DoCast(pTarget, m_bIsRegularMode ? SPELL_SHADOW_FISSURE : SPELL_SHADOW_FISSURE_H);
 
             m_uiShadowFissureTimer = urand(8000, 10000);
