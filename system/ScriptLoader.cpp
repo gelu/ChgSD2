@@ -233,11 +233,13 @@ extern void AddSC_instance_wailing_caverns();               // Wailing Caverns
 extern void AddSC_zulfarrak();                              //zulfarrak
 // culling of stratholme
 extern void AddSC_boss_lord_epoch();
-extern void AddSC_culling_of_stratholme();
 extern void AddSC_boss_malganis();
 extern void AddSC_boss_meathook();
-extern void AddSC_instance_culling_of_stratholme();
 extern void AddSC_boss_salramm();
+extern void AddSC_boss_infinite_corruptor();
+extern void AddSC_culling_of_stratholme();
+extern void AddSC_culling_of_stratholmeAI();
+extern void AddSC_instance_culling_of_stratholme();
 
 extern void AddSC_ashenvale();
 extern void AddSC_azshara();
@@ -971,11 +973,13 @@ void AddScripts()
     AddSC_instance_mechanar();
 
     AddSC_boss_lord_epoch();                                //culling of stratholme
-    AddSC_culling_of_stratholme();
     AddSC_boss_malganis();
     AddSC_boss_meathook();
-    AddSC_instance_culling_of_stratholme();
     AddSC_boss_salramm();
+    AddSC_boss_infinite_corruptor();
+    AddSC_culling_of_stratholme();
+    AddSC_culling_of_stratholmeAI();
+    AddSC_instance_culling_of_stratholme();
 
     AddSC_blades_edge_mountains();
     AddSC_boss_doomlordkazzak();
