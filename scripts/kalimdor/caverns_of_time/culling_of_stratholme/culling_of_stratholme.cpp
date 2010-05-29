@@ -26,7 +26,7 @@ EndScriptData */
 #include "def_culling_of_stratholme.h"
 #include "escort_ai.h"
 #include "WorldPacket.h"
-#include "weather.h"
+#include "Weather.h"
 
 /*###
 ## npc_arthas
