@@ -155,6 +155,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     uint32 nextPoint;
     uint32 UpdateTimer;
     bool movementstarted;
+    bool battlestarted;
 
     void Reset()
     {
@@ -165,6 +166,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
         nextEvent = 0;
         nextPoint = 0;
         movementstarted = false;
+        battlestarted = false;
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -285,6 +287,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                           break;
                 case 12120:
                           m_creature->SetInCombatWithZone();
+                          battlestarted = true;
                           pInstance->SetData(TYPE_EVENT,12999);
                           UpdateTimer = 6000;
                           break;
@@ -295,6 +298,14 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                 }
              } else UpdateTimer -= diff;
              pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
+        }
+
+        if (battlestarted && !m_creature->SelectHostileTarget())
+        {
+            battlestarted = false;
+            pInstance->SetData(TYPE_LICH_KING, FAIL);
+            EnterEvadeMode();
+            return;
         }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -330,6 +341,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
     {
         if(!pInstance) return;
         movementstarted = false;
+        m_creature->RemoveAurasDueToSpell(SPELL_ICEBLOCK_TRIGGER);
     }
 
     void StartMovement(uint32 id, uint32 _nextEvent)
@@ -354,6 +366,13 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+
+        if (pInstance->GetData(TYPE_LICH_KING) == FAIL && m_creature->HasAura(SPELL_ICEBLOCK_TRIGGER)) 
+        {
+            m_creature->RemoveAurasDueToSpell(SPELL_ICEBLOCK_TRIGGER);
+            m_creature->GetMotionMaster()->MoveTargetedHome();
+            Reset();
+        }
 
         if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_TIRION)
         {
@@ -408,6 +427,11 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
 
 bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
 {
+    ScriptedInstance* pInstance;
+    pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if (pInstance->GetData(TYPE_LICH_KING) != NOT_STARTED) return false;
+
     char const* _message;
 
     switch (LocaleConstant currentlocale = pPlayer->GetSession()->GetSessionDbcLocale())
@@ -444,6 +468,7 @@ bool GossipSelect_boss_tirion_icc(Player* pPlayer, Creature* pCreature, uint32 u
     if (uiAction == GOSSIP_ACTION_INFO_DEF)
     {
         pPlayer->CLOSE_GOSSIP_MENU();
+        pInstance->SetData(TYPE_LICH_KING, IN_PROGRESS);
         pInstance->SetData(TYPE_EVENT,12000);
         return true;
     } else return false;

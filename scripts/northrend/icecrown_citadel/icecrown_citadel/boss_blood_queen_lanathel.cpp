@@ -66,6 +66,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
         stage = 0;
         UpdateTimer = 1000;
+        bsw->resetTimers();
     }
 
     void JustReachedHome()

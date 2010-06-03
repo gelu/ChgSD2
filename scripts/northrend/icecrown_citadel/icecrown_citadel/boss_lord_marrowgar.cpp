@@ -61,6 +61,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
         stage = 0;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 

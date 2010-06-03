@@ -71,6 +71,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
         m_uiIsFrenzy = false;
         stage = 0;
+        bsw->resetTimers();
     }
 
     void Aggro(Unit *who) 

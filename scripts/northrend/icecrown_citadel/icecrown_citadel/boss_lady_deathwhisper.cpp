@@ -86,6 +86,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         stage = 0;
         MovementStarted = false;
         intro = false;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 

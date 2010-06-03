@@ -61,6 +61,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
         stage = 0;
         intro = false;
         pet = false;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
