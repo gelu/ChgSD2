@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_the_lich_king
-SD%Complete: 1%
+SD%Complete: 5%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -88,45 +88,15 @@ enum BossSpells
 
 };
 
-enum Yells
+enum Common
 {
-    SAY_INTRO_1_KING                =       -1631501,
-    SAY_INTRO_2_TIRION              =       -1631552,
-    SAY_INTRO_3_KING                =       -1631503,
-    SAY_INTRO_4_TIRION              =       -1631554,
-    SAY_INTRO_5_KING                =       -1631505,
-    SAY_AGGRO_KING                  =       -1631506,
-    SAY_REMORSELESS_WINTER          =       -1631507,
-    SAY_RANDOM_1                    =       -1631508,
-    SAY_RANDOM_2                    =       -1631509,
-    SAY_KILL_1                      =       -1631510,
-    SAY_KILL_2                      =       -1631511,
-    SAY_BERSERK                     =       -1631512,
-    SAY_ENDING_1_KING               =       -1631513,
-    SAY_ENDING_2_KING               =       -1631514,
-    SAY_ENDING_3_KING               =       -1631515,
-    SAY_ENDING_4_KING               =       -1631516,
-    SAY_ENDING_5_TIRION             =       -1631517,
-    SAY_ENDING_6_KING               =       -1631518,
-    SAY_ENDING_7_KING               =       -1631519,
-    SAY_ENDING_8_TIRION             =       -1631520,
-    SAY_ENDING_9_FATHER             =       -1631521,
-    SAY_ENDING_10_TIRION            =       -1631522,
-    SAY_ENDING_11_FATHER            =       -1631523,
-    SAY_ENDING_12_KING              =       -1631524,
-    SAY_DEATH_KING                  =       -1631525,
-    SAY_ESCAPE_FROSTMOURNE          =       -1631526,
-    SAY_HARVEST_SOUL                =       -1631527,
-    SAY_DEVOURED_FROSTMOURNE        =       -1631528,
-    SAY_SUMMON_VALKYR               =       -1631529,
-    SAY_BROKEN_ARENA                =       -1631530,
-    SAY_10_PROZENT                  =       -1631531,
+     FINAL_BATTLE_MOVIE             = 14,
 };
 
 static Locations SpawnLoc[]=
 {
     {459.93689f, -2124.638184f, 1040.860107f},    // 0 Lich King Intro
-    {503.15652f, -2124.516602f, 1040.860107f},      // 1 Lich king move end
+    {503.15652f, -2124.516602f, 1040.860107f},    // 1 Lich king move end
     {491.27118f, -2124.638184f, 1040.860107f},    // 2 Tirion 1
     {481.69797f, -2124.638184f, 1040.860107f},    // 3 Tirion 2
     {498.00448f, 2201.573486f, 1046.093872f},     // 4 Valkyrs?
@@ -156,6 +126,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     uint32 UpdateTimer;
     bool movementstarted;
     bool battlestarted;
+    Creature* pTirion;
 
     void Reset()
     {
@@ -186,14 +157,14 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-/*    switch (urand(0,1)) {
+    switch (urand(0,1)) {
         case 0:
-               DoScriptText(-1631006,m_creature,pVictim);
+               DoScriptText(-1631519,m_creature,pVictim);
                break;
         case 1:
-               DoScriptText(-1631007,m_creature,pVictim);
+               DoScriptText(-1631517,m_creature,pVictim);
                break;
-        };*/
+        };
     }
 
     void JustReachedHome()
@@ -244,13 +215,13 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                           break;
                 case 12020:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
-                          DoScriptText(SAY_INTRO_1_KING, m_creature);
+                          DoScriptText(-1631501, m_creature);
                           UpdateTimer = 12000;
                           pInstance->SetData(TYPE_EVENT,12030);
                           break;
                 case 12040:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY2H);
-                          DoScriptText(SAY_INTRO_3_KING, m_creature);
+                          DoScriptText(-1631503, m_creature);
                           UpdateTimer = 3000;
                           pInstance->SetData(TYPE_EVENT,12041);
                           break;
@@ -271,7 +242,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                           break;
                 case 12060:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_TALK);
-                          DoScriptText(SAY_INTRO_5_KING, m_creature);
+                          DoScriptText(-1631505, m_creature);
                           UpdateTimer = 10000;
                           pInstance->SetData(TYPE_EVENT,12080);
                           break;
@@ -288,10 +259,43 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                 case 12120:
                           m_creature->SetInCombatWithZone();
                           battlestarted = true;
-                          pInstance->SetData(TYPE_EVENT,12999);
-                          UpdateTimer = 6000;
+                          pInstance->SetData(TYPE_EVENT,12200);
+                          UpdateTimer = 10000;
+                          break;
+                case 12200:
+                          DoScriptText(-1631506, m_creature);
+                          UpdateTimer = 5000;
+                          pInstance->SetData(TYPE_EVENT,12220);
                           break;
                 case 13000:
+                          DoScriptText(-1631507, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,13020);
+                          break;
+                case 13020:
+                          DoScriptText(-1631508, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,13060);
+                          break;
+                case 13060:
+                          DoScriptText(-1631509, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,13080);
+                          break;
+                case 13100:
+                          DoScriptText(-1631510, m_creature);
+                          UpdateTimer = 8000;
+                          pInstance->SetData(TYPE_EVENT,13110);
+                          break;
+                case 13120:
+                          DoScriptText(-1631511, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,13130);
+                          break;
+                case 13140:
+                          DoScriptText(-1631512, m_creature);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,13150);
                           break;
                 default:
                           break;
@@ -311,9 +315,165 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_SHOCKWAVE, diff);
+        switch(stage)
+        {
+            case 0:           // Phase 1
+//                    bsw->timedCast(SPELL_SHOCKWAVE, diff);
+                    bsw->timedCast(SPELL_INFEST, diff);
+                    bsw->timedCast(SPELL_SUMMON_DRUDGE_GHOULS, diff);
+                    bsw->timedCast(SPELL_PLAGUE_SIPHON, diff);
+                    bsw->timedCast(SPELL_SUMMON_SHAMBLING_HORROR, diff);
+                    bsw->timedCast(SPELL_NECROTIC_PLAGUE, diff);
 
-        DoMeleeAttackIfReady();
+                    DoMeleeAttackIfReady();
+                    if (bsw->timedQuery(SPELL_BERSERK, diff))
+                    {
+                        bsw->doCast(SPELL_BERSERK);
+                        DoScriptText(-1631518,m_creature);
+                    };
+
+                    if (m_creature->GetHealthPercent() < 70.0f) 
+                       {
+                            stage = 1;
+                            DoScriptText(-1631515,m_creature);
+                       }
+                    break;
+            case 1:             // Go in transition phase
+                    m_creature->AttackStop();
+                    SetCombatMovement(false);
+                    StartMovement(1,0);
+                    stage = 2;
+                    break;
+            case 2:
+                    if (movementstarted) return;
+                    stage = 3;
+                    break;
+            case 3:
+                    bsw->timedCast(SPELL_REMORSELESS_WINTER, diff);
+                    bsw->timedCast(SPELL_SUMMON_RAGING_SPIRIT, diff);
+                    bsw->timedCast(SPELL_SUMMON_ICE_SPHERE, diff);
+                    bsw->timedCast(SPELL_PAIN_AND_SUFFERING, diff);
+
+                    if (bsw->timedQuery(SPELL_BERSERK, diff))
+                    {
+                        bsw->doCast(SPELL_BERSERK);
+                        DoScriptText(-1631518,m_creature);
+                    };
+
+                    if (bsw->timedQuery(SPELL_QUAKE, diff))
+                       {
+                            bsw->doCast(SPELL_QUAKE);
+                            stage = 4;
+                            DoScriptText(-1631524, m_creature);
+                            m_creature->GetMotionMaster()->Clear();
+                            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                            SetCombatMovement(true);
+                       }
+                    break;
+            case 4:           // Phase 2
+
+                    bsw->timedCast(SPELL_DEFILE, diff);
+                    if (bsw->timedQuery(SPELL_SUMMON_VALKYR, diff)) 
+                       {
+                            bsw->doCast(SPELL_SUMMON_VALKYR);
+                            DoScriptText(-1631527,m_creature);
+                       }
+
+                    bsw->timedCast(SPELL_SOUL_REAPER, diff);
+                    bsw->timedCast(SPELL_INFEST, diff);
+
+                    DoMeleeAttackIfReady();
+
+                    if (bsw->timedQuery(SPELL_BERSERK, diff))
+                    {
+                        bsw->doCast(SPELL_BERSERK);
+                        DoScriptText(-1631518,m_creature);
+                    };
+
+                    if (m_creature->GetHealthPercent() < 40.0f) 
+                       {
+                            stage = 5;
+                            DoScriptText(-1631523,m_creature);
+                       }
+                    break;
+            case 5:           // Go in transition phase
+                    m_creature->AttackStop();
+                    SetCombatMovement(false);
+                    StartMovement(1,0);
+                    stage = 6;
+                    break;
+            case 6:
+                    if (movementstarted) return;
+                    stage = 7;
+                    break;
+
+            case 7:
+                    bsw->timedCast(SPELL_REMORSELESS_WINTER, diff);
+                    bsw->timedCast(SPELL_SUMMON_RAGING_SPIRIT, diff);
+                    bsw->timedCast(SPELL_SUMMON_ICE_SPHERE, diff);
+                    bsw->timedCast(SPELL_PAIN_AND_SUFFERING, diff);
+
+                    if (bsw->timedQuery(SPELL_BERSERK, diff))
+                    {
+                        bsw->doCast(SPELL_BERSERK);
+                        DoScriptText(-1631518,m_creature);
+                    };
+
+                    if (bsw->timedQuery(SPELL_QUAKE, diff))
+                       {
+                            bsw->doCast(SPELL_QUAKE);
+                            stage = 8;
+                            DoScriptText(-1631524, m_creature);
+                            m_creature->GetMotionMaster()->Clear();
+                            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                            SetCombatMovement(true);
+                       }
+                    break;
+            case 8:           // Phase 3
+
+                    bsw->timedCast(SPELL_SOUL_REAPER, diff);
+                    bsw->timedCast(SPELL_DEFILE, diff);
+                    bsw->timedCast(SPELL_SUMMON_VILE_SPIRITS, diff);
+                    if (bsw->timedQuery(SPELL_HARVEST_SOUL, diff)) 
+                       {
+                            bsw->doCast(SPELL_HARVEST_SOUL);
+                            DoScriptText(-16314,m_creature);
+                       }
+
+                    bsw->timedCast(SPELL_SOUL_REAPER, diff);
+                    bsw->timedCast(SPELL_INFEST, diff);
+
+                    DoMeleeAttackIfReady();
+
+                    if (m_creature->GetHealthPercent() < 10.0f) 
+                       {
+                            stage = 9;
+                            DoScriptText(-1631429,m_creature);
+                       }
+                    break;
+            case 9:           // Ending Phase start
+                    m_creature->AttackStop();
+                    SetCombatMovement(false);
+                    if (pTirion = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_TIRION))) {
+                                m_creature->SetInCombatWith(pTirion);
+                                pTirion->AddThreat(m_creature, 1000.0f);
+                                }
+                    bsw->doCast(SPELL_FURY_OF_FROSTMOURNE);
+                    SetCombatMovement(false);
+                    StartMovement(1,0);
+                    stage = 10;
+                    pInstance->SetData(TYPE_EVENT,13000);
+                    break;
+            case 10:
+                    if (movementstarted) return;
+                    stage = 11;
+                    bsw->doCast(SPELL_CHANNEL_KING);
+                    break;
+            case 11:
+                    break;
+
+        }
+
     }
 };
 
@@ -384,30 +544,41 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                 {
                 case 12030:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_TALK);
-                          DoScriptText(SAY_INTRO_2_TIRION, m_creature);
+                          DoScriptText(-1631552, m_creature);
                           UpdateTimer = 9000;
                           pInstance->SetData(TYPE_EVENT,12040);
                           break;
                 case 12050:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_POINT_NOSHEATHE);
-                          DoScriptText(SAY_INTRO_4_TIRION, m_creature);
-                          UpdateTimer = 5000;
+                          DoScriptText(-1631554, m_creature);
+                          UpdateTimer = 3000;
                           pInstance->SetData(TYPE_EVENT,12051);
                           break;
                 case 12051:
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
-                          UpdateTimer = 3000;
+                          UpdateTimer = 1000;
                           pInstance->SetData(TYPE_EVENT,12052);
                           break;
                 case 12052:
+                          m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                           StartMovement(3,12053);
                           break;
                 case 12053:
                           UpdateTimer = 3000;
                           pInstance->SetData(TYPE_EVENT,12060);
-                          m_creature->CastSpell(m_creature, SPELL_ICEBLOCK_TRIGGER, false);
+                          m_creature->CastSpell(m_creature, SPELL_ICEBLOCK_TRIGGER, true);
                           break;
-                case 13010:
+                case 13110:
+                          DoScriptText(-1631555, m_creature);
+                          UpdateTimer = 5000;
+                          m_creature->CastSpell(m_creature, SPELL_TIRION_LIGHT, false);
+                          pInstance->SetData(TYPE_EVENT,13120);
+                          break;
+                case 13130:
+                          SetCombatMovement(false);
+                          m_creature->RemoveAurasDueToSpell(SPELL_ICEBLOCK_TRIGGER);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,13140);
                           break;
                 default:
                           break;
@@ -494,6 +665,11 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public ScriptedAI
 
     void Reset()
     {
+       if (Unit* pTarget = bsw->SelectRandomPlayerAtRange(100.0f))
+           {
+               m_creature->SetInCombatWith(pTarget);
+               m_creature->AddThreat(pTarget,100.0f);
+           }
        bsw->doCast(SPELL_ICE_SPHERE_VISUAL);
     }
 
@@ -503,8 +679,11 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public ScriptedAI
         if (!pInstance || pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
 
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
         if (m_creature->getVictim()->GetTypeId() != TYPEID_PLAYER) 
-         return;
+            return;
 
         bsw->timedCast(SPELL_ICE_PULSE, uiDiff);
 
