@@ -1716,85 +1716,126 @@ bool GossipSelect_npc_locksmith(Player* pPlayer, Creature* pCreature, uint32 uiS
     return true;
 }
 
-struct MANGOS_DLL_DECL mob_mirror_imageAI : public ScriptedAI
+/*######
+## npc_mirror_image
+######*/
+
+struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
 {
-    mob_mirror_imageAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {
-        bLocked = false;
-        Reset();
-    }
-    uint64 m_uiCreatorGUID;
+    npc_mirror_imageAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
     uint32 m_uiFrostboltTimer;
-    uint32 m_uiFireBlastTimer;
-    float fDist;
-    float fAngle;
-    bool bLocked;
+    uint32 m_uiFireblastTimer;
+    bool inCombat;
 
-    void Reset()
+    void Reset() 
     {
-        m_uiFrostboltTimer = urand(500, 1500);
-        m_uiFireBlastTimer = urand(4500, 6000);
+     Unit *owner = m_creature->GetOwner();
+     if (!owner) return;
+ 
+     m_creature->SetLevel(owner->getLevel());
+
+     if (owner && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+        {
+            m_creature->GetMotionMaster()->Clear(false);
+            m_creature->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
+        }
+        // Inherit Master's Threat List (not yet implemented)
+        //owner->CastSpell((Unit*)NULL, 58838, true);
+        // here mirror image casts on summoner spell (not present in client dbc) 49866
+        // here should be auras (not present in client dbc): 35657, 35658, 35659, 35660 selfcasted by mirror images (stats related?)
+        // Clone Me!
+        m_uiFrostboltTimer = 0;
+        m_uiFireblastTimer = 6100;
+        inCombat = false;
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void AttackStart(Unit* pWho)
     {
-        if (!bLocked)
+      if (!pWho) return;
+
+      if (m_creature->Attack(pWho, true))
         {
-            m_uiCreatorGUID = m_creature->GetCreatorGUID();
-            if (Player* pOwner = (Player*)Unit::GetUnit(*m_creature, m_uiCreatorGUID))
-            {
-                fDist = m_creature->GetDistance(pOwner);
-                fAngle = m_creature->GetAngle(pOwner);
-            }
-            bLocked = true;
+            m_creature->clearUnitState(UNIT_STAT_FOLLOW);
+            // TMGs call CreatureRelocation which via MoveInLineOfSight can call this function
+            // thus with the following clear the original TMG gets invalidated and crash, doh
+            // hope it doesn't start to leak memory without this :-/
+            //i_pet->Clear();
+            m_creature->GetMotionMaster()->MoveChase(pWho);
+            m_creature->getVictim()->AddThreat(m_creature);
+            inCombat = true;
+        }
+    }
+
+    void EnterEvadeMode()
+    {
+     if (m_creature->IsInEvadeMode() || !m_creature->isAlive())
+          return;
+
+        inCombat = false;
+        Unit *owner = m_creature->GetCharmerOrOwner();
+
+        m_creature->AttackStop();
+        m_creature->CombatStop(true);
+        if (owner && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+        {
+            m_creature->GetMotionMaster()->Clear(false);
+            m_creature->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST,PET_FOLLOW_ANGLE);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!(m_creature->HasAura(45204)))
+        {
+            Unit *owner = m_creature->GetCharmerOrOwner();
+            if (!owner)return;
+            m_creature->CastSpell(m_creature, 45204, true, NULL, NULL, owner->GetGUID());
         }
 
-        Player* pOwner = (Player*)Unit::GetUnit(*m_creature, m_uiCreatorGUID);
-        if (!pOwner || !pOwner->IsInWorld())
+        if (!(m_creature->HasAura(58836)))
         {
-            m_creature->ForcedDespawn();
+            Unit *owner = m_creature->GetCharmerOrOwner();
+            if (!owner) return;
+                 m_creature->CastSpell(m_creature, 58836, true, NULL, NULL, owner->GetGUID());
+        }
+
+        if (/*!m_creature->SelectHostileTarget() || */!m_creature->getVictim())
+        {
+            Unit *owner = m_creature->GetCharmerOrOwner();
+            if (owner && owner->getVictim())
+            m_creature->AI()->AttackStart(owner->getVictim());
+        }
+
+        if (inCombat && !m_creature->getVictim())
+        {
+            EnterEvadeMode();
             return;
         }
 
-        uint64 targetGUID = 0;
-
-        if (Spell* pSpell = pOwner->GetCurrentSpell(CURRENT_GENERIC_SPELL))
-            targetGUID = pSpell->m_targets.getUnitTargetGUID();
-        else if (pOwner->getVictim())
-            targetGUID = pOwner->getVictim()->GetGUID();
-
-        Unit* pTarget = Unit::GetUnit(*m_creature, targetGUID);
-
-        if (!pTarget || !m_creature->CanInitiateAttack() || !pTarget->isTargetableForAttack() ||
-        !m_creature->IsHostileTo(pTarget) || !pTarget->isInAccessablePlaceFor(m_creature))
-        {
-            if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != FOLLOW_MOTION_TYPE)
-            {
-                m_creature->InterruptNonMeleeSpells(false);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveFollow(pOwner, fDist, fAngle);
-            }
+        if (/*!m_creature->SelectHostileTarget() || */!m_creature->getVictim())
             return;
-        }
 
-        if (m_uiFrostboltTimer <= uiDiff)
+        if (m_uiFrostboltTimer <= diff)
         {
-            m_creature->CastSpell(pTarget, SPELL_FROSTBOLT, false, NULL, NULL, pOwner->GetGUID());
-            m_uiFrostboltTimer = urand(3000, 4500);
-        } else m_uiFrostboltTimer -= uiDiff;
+            DoCast(m_creature->getVictim(),59638);
+            m_uiFrostboltTimer = 3100;
+        }else m_uiFrostboltTimer -= diff;
 
-        if (m_uiFireBlastTimer <= uiDiff)
+        if (m_uiFireblastTimer <= diff)
         {
-            m_creature->CastSpell(pTarget, SPELL_FIREBLAST, false, NULL, NULL, pOwner->GetGUID());
-            m_uiFireBlastTimer = urand(9000, 12000);
-        } else m_uiFireBlastTimer -= uiDiff;
+            DoCast(m_creature->getVictim(),59637,true);
+            m_uiFireblastTimer = 6000;
+        }else m_uiFireblastTimer -= diff;
+
+        DoMeleeAttackIfReady();
     }
 };
 
-CreatureAI* GetAI_mob_mirror_image(Creature* pCreature)
+CreatureAI* GetAI_npc_mirror_image(Creature* pCreature)
 {
-    return new mob_mirror_imageAI(pCreature);
-}
+    return new npc_mirror_imageAI(pCreature);
+};
 
 /*####
  ## npc_snake_trap_serpents - Summonned snake id are 19921 and 19833
@@ -1812,12 +1853,14 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 
     uint32 SpellTimer;
     bool IsViper;
+    Unit* Owner;
 
     void Reset()
     {
         SpellTimer = 500;
 
-        Unit *Owner = m_creature->GetOwner();
+        Owner = m_creature->GetOwner();
+
         if (!Owner) return;
 
         CreatureInfo const *Info = m_creature->GetCreatureInfo();
@@ -1826,13 +1869,13 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
             IsViper = true;
         else
             IsViper = false;
+
+        m_creature->SetLevel(Owner->getLevel());
     }
 
     void UpdateAI(const uint32 diff)
     {
-        Unit *Owner = m_creature->GetOwner();
-
-        if (!Owner) return;
+        if (!Owner || !m_creature->SelectHostileTarget()) return;
 
         if (!m_creature->getVictim())
         {
@@ -1842,6 +1885,9 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
             if (Owner->getAttackerForHelper())
                 AttackStart(Owner->getAttackerForHelper());
         }
+
+        if (!m_creature->getVictim())
+            return;
 
         if (SpellTimer <= diff)
         {
@@ -1889,6 +1935,8 @@ struct MANGOS_DLL_DECL npc_rune_blade : public ScriptedAI
         Unit * owner = m_creature->GetOwner();
         if (!owner || owner->GetTypeId() != TYPEID_PLAYER)
             return;
+
+        m_creature->SetLevel(owner->getLevel());
 
         // Cannot be Selected or Attacked
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -2011,8 +2059,8 @@ void AddSC_npcs_special()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "mob_mirror_image";
-    newscript->GetAI = &GetAI_mob_mirror_image;
+    newscript->Name = "npc_mirror_image";
+    newscript->GetAI = &GetAI_npc_mirror_image;
     newscript->RegisterSelf();
 
     newscript = new Script;
