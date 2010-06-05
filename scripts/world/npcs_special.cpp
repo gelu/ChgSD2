@@ -1727,10 +1727,11 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
     uint32 m_uiFrostboltTimer;
     uint32 m_uiFireblastTimer;
     bool inCombat;
+    Unit *owner;
 
     void Reset() 
     {
-     Unit *owner = m_creature->GetOwner();
+     owner = m_creature->GetOwner();
      if (!owner) return;
  
      m_creature->SetLevel(owner->getLevel());
@@ -1746,7 +1747,7 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
         // here should be auras (not present in client dbc): 35657, 35658, 35659, 35660 selfcasted by mirror images (stats related?)
         // Clone Me!
         m_uiFrostboltTimer = 0;
-        m_uiFireblastTimer = 6100;
+        m_uiFireblastTimer = 0;
         inCombat = false;
     }
 
@@ -1761,8 +1762,10 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
             // thus with the following clear the original TMG gets invalidated and crash, doh
             // hope it doesn't start to leak memory without this :-/
             //i_pet->Clear();
-            m_creature->GetMotionMaster()->MoveChase(pWho);
-            m_creature->getVictim()->AddThreat(m_creature);
+//            m_creature->GetMotionMaster()->MoveChase(pWho);
+            m_creature->SetInCombatWith(pWho);
+            m_creature->AddThreat(pWho, 100.0f);
+            DoStartMovement(pWho, 20.0f);
             inCombat = true;
         }
     }
@@ -1773,7 +1776,6 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
           return;
 
         inCombat = false;
-        Unit *owner = m_creature->GetCharmerOrOwner();
 
         m_creature->AttackStop();
         m_creature->CombatStop(true);
@@ -1786,26 +1788,15 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!(m_creature->HasAura(45204)))
-        {
-            Unit *owner = m_creature->GetCharmerOrOwner();
-            if (!owner)return;
+        if (owner && !(m_creature->HasAura(45204)))
             m_creature->CastSpell(m_creature, 45204, true, NULL, NULL, owner->GetGUID());
-        }
 
-        if (!(m_creature->HasAura(58836)))
-        {
-            Unit *owner = m_creature->GetCharmerOrOwner();
-            if (!owner) return;
+        if (owner && !(m_creature->HasAura(58836)))
                  m_creature->CastSpell(m_creature, 58836, true, NULL, NULL, owner->GetGUID());
-        }
 
-        if (/*!m_creature->SelectHostileTarget() || */!m_creature->getVictim())
-        {
-            Unit *owner = m_creature->GetCharmerOrOwner();
+        if (!m_creature->getVictim())
             if (owner && owner->getVictim())
-            m_creature->AI()->AttackStart(owner->getVictim());
-        }
+                m_creature->AI()->AttackStart(owner->getVictim());
 
         if (inCombat && !m_creature->getVictim())
         {
@@ -1813,18 +1804,17 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
             return;
         }
 
-        if (/*!m_creature->SelectHostileTarget() || */!m_creature->getVictim())
-            return;
+        if (!inCombat) return;
 
         if (m_uiFrostboltTimer <= diff)
         {
-            DoCast(m_creature->getVictim(),59638);
+            DoCastSpellIfCan(m_creature->getVictim(),59638);
             m_uiFrostboltTimer = 3100;
         }else m_uiFrostboltTimer -= diff;
 
         if (m_uiFireblastTimer <= diff)
         {
-            DoCast(m_creature->getVictim(),59637,true);
+            DoCastSpellIfCan(m_creature->getVictim(),59637);
             m_uiFireblastTimer = 6000;
         }else m_uiFireblastTimer -= diff;
 
@@ -1859,7 +1849,7 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
     {
         SpellTimer = 500;
 
-        Owner = m_creature->GetOwner();
+        Owner = m_creature->GetCharmerOrOwner();
 
         if (!Owner) return;
 
@@ -1882,8 +1872,8 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
             if (m_creature->isInCombat())
                 DoStopAttack();
 
-            if (Owner->getAttackerForHelper())
-                AttackStart(Owner->getAttackerForHelper());
+            if (Owner && Owner->getVictim())
+                m_creature->AI()->AttackStart(Owner->getVictim());
         }
 
         if (!m_creature->getVictim())
