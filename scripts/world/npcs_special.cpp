@@ -1836,6 +1836,7 @@ CreatureAI* GetAI_npc_mirror_image(Creature* pCreature)
 #define SPELL_DEADLY_POISON          34655   //Venomous Snake
 
 #define MOB_VIPER 19921
+#define MOB_VENOM_SNIKE 19833
 
 struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 {
@@ -1863,9 +1864,20 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
         m_creature->SetLevel(Owner->getLevel());
     }
 
+    void AttackStart(Unit* pWho)
+    {
+      if (!pWho) return;
+
+      if (m_creature->Attack(pWho, true))
+         {
+            m_creature->SetInCombatWith(pWho);
+            m_creature->AddThreat(pWho, 100.0f);
+         }
+    }
+
     void UpdateAI(const uint32 diff)
     {
-        if (!Owner || !m_creature->SelectHostileTarget()) return;
+        if (!Owner) return;
 
         if (!m_creature->getVictim())
         {
@@ -1873,7 +1885,7 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
                 DoStopAttack();
 
             if (Owner && Owner->getVictim())
-                m_creature->AI()->AttackStart(Owner->getVictim());
+                AttackStart(Owner->getVictim());
         }
 
         if (!m_creature->getVictim())
@@ -1881,12 +1893,12 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 
         if (SpellTimer <= diff)
         {
-            if (IsViper) //Viper - 19921
+            if (m_creature->GetEntry() == MOB_VIPER ) //Viper - 19921
             {
-                if (urand(0,2) == 0) //33% chance to cast
+                if (!urand(0,2)) //33% chance to cast
                 {
                     uint32 spell;
-                    if (urand(0,1) == 0)
+                    if (urand(0,1))
                         spell = SPELL_MIND_NUMBING_POISON;
                     else
                         spell = SPELL_CRIPPLING_POISON;
@@ -1896,18 +1908,15 @@ struct MANGOS_DLL_DECL npc_snake_trap_serpentsAI : public ScriptedAI
 
                 SpellTimer = urand(3000, 5000);
             }
-            else //Venomous Snake - 19833
+            else if (m_creature->GetEntry() == MOB_VENOM_SNIKE ) //Venomous Snake - 19833
             {
                 if (urand(0,1) == 0) //80% chance to cast
                     m_creature->CastSpell(m_creature->getVictim(), SPELL_DEADLY_POISON, true);
                 SpellTimer = urand(2500, 4500);
             }
         } 
-        else 
-        {
-            SpellTimer -= diff;
-            DoMeleeAttackIfReady();
-        }
+        else SpellTimer -= diff;
+
         DoMeleeAttackIfReady();
     }
 };
