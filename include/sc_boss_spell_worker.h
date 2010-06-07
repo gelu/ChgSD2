@@ -78,7 +78,7 @@ struct SpellTable
     uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
     uint32 m_uiSpellData[DIFFICULTY_LEVELS];           // Additional data for spell casting or summon
     Locations LocData;                                 // Float data structure for locations
-    int32 varData;                                     // Additional data for spell
+    int   varData;                                     // Additional data for spell
     uint32 StageMaskN;                                 // Stage mask for this spell (normal)
     uint32 StageMaskH;                                 // Stage mask for this spell (heroic)
     BossSpellTableParameters  m_CastTarget;            // Target on casting spell
@@ -102,7 +102,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         Unit*  currentTarget;
 
-        void Reset(uint8 _Difficulty = 0);
+        void Reset();
 
         void resetTimer(uint32 SpellID)
              {
@@ -218,8 +218,6 @@ class MANGOS_DLL_DECL BossSpellWorker
         CanCastResult _BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
 
         CanCastResult _BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx);
-
-        Difficulty    setDifficulty(uint8 _Difficulty = 0);
 
         bool          _QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff);
 

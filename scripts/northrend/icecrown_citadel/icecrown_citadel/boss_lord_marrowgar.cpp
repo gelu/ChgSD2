@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                                                    };
 
                                float fPosX, fPosY, fPosZ;
-                               pTarget->GetPosition(fPosX, fPosY, fPosZ);
+                               m_creature->GetPosition(fPosX, fPosY, fPosZ);
                                if (Unit* pSpike = bsw->doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ))
                                    pSpike->AddThreat(pTarget, 100.0f);
                               }
@@ -234,17 +234,17 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
     mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
+    BossSpellWorker* bsw;
     Unit* pVictim;
-
 
     void Reset()
     {
-        SetCombatMovement(false);
-        m_creature->SetInCombatWithZone();
+//        SetCombatMovement(false);
         pVictim = NULL;
     }
 
@@ -253,32 +253,49 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
         if (!pVictim && pWho)  {
                         pVictim = pWho;
                         m_creature->SetInCombatWith(pVictim);
-                        DoCast(pVictim, SPELL_BONE_STRIKE_IMPALE);
+                        m_creature->SetSpeedRate(MOVE_RUN, 5.0f);
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                         }
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-            if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void KilledUnit(Unit* _Victim)
     {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+        bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void JustDied(Unit* Killer)
     {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+        bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_MARROWGAR) != IN_PROGRESS)
         {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->ForcedDespawn();
+        }
+
+        if (!pVictim) return;
+
+        if(pVictim && !pVictim->isAlive())
+        {
+            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+            m_creature->ForcedDespawn();
+        }
+
+        if((m_creature->GetDistance2d(pVictim) < 1.1f) &&
+             !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
+        {
+            bsw->doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
+            m_creature->GetMotionMaster()->Clear();
+            SetCombatMovement(false);
         }
 
     }
