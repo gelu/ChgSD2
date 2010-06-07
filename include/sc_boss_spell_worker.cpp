@@ -254,6 +254,11 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                             }
                          pTarget->GetPosition(fPosX, fPosY, fPosZ);
                          pTarget->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
+                                if ((int)fPosZ == 0) 
+                                {
+                                    debug_log("BSW: Positon Z is NULL. Strange bug");
+                                    return CAST_FAIL_OTHER;
+                                 }
                          boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
                          return CAST_OK;
                          } else return CAST_FAIL_OTHER;
