@@ -476,7 +476,7 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
 
     if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
         {
-            int32 basepoint = pSpell->varData ? spell->EffectBasePoints[index] : pSpell->varData;
+            int32 basepoint = pSpell->varData ?  pSpell->varData - 1 : spell->EffectBasePoints[index] + 1;
             if (pTarget->AddAura(new BossAura(spell, index, &basepoint, pTarget, pTarget)))
                 return true;
         }
