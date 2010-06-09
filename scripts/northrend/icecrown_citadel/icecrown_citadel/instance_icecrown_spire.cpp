@@ -84,6 +84,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSindragosaDoor1GUID;
     uint64 m_uiSindragosaDoor2GUID;
 
+    uint64 m_uiIceShard1GUID;
+    uint64 m_uiIceShard2GUID;
+    uint64 m_uiIceShard3GUID;
+    uint64 m_uiIceShard4GUID;
+
+    uint64 m_uiFrostyWindGUID;
+    uint64 m_uiFrostyEdgeGUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
@@ -190,6 +198,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     void OnPlayerEnter(Player *m_player)
     {
         OpenAllDoors();
+    }
+
+    bool IsEncounterInProgress() const
+    {
+        for(uint8 i = 1; i < MAX_ENCOUNTERS-3 ; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS) return true;
+
+        return false;
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -390,6 +406,24 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiValitriaCacheGUID = pGo->GetGUID();
                                   break;
+            case GO_ICESHARD_1: 
+                                  m_uiIceShard1GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_2: 
+                                  m_uiIceShard2GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_3: 
+                                  m_uiIceShard3GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_4: 
+                                  m_uiIceShard4GUID = pGo->GetGUID();
+                                  break;
+            case GO_FROSTY_WIND: 
+                                  m_uiFrostyWindGUID = pGo->GetGUID();
+                                  break;
+            case GO_FROSTY_EDGE: 
+                                  m_uiFrostyEdgeGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -573,8 +607,16 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                           case 12170:
                                           case 13110:
                                           case 13130:
+                                          case 13131:
+                                          case 13132:
                                           case 13150:
                                           case 13170:
+                                          case 13190:
+                                          case 13210:
+                                          case 13230:
+                                          case 13250:
+                                          case 13270:
+                                          case 13290:
                                                  return NPC_TIRION;
                                                  break;
 
@@ -599,6 +641,9 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                           case 13140:
                                           case 13160:
                                           case 13180:
+                                          case 13200:
+                                          case 13220:
+                                          case 13240:
                                                  return NPC_LICH_KING;
                                                  break;
                                           case 500:
@@ -653,6 +698,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_VALITHRIA_DOOR_2:         return m_uiValithriaDoor2GUID;
             case GO_VALITHRIA_DOOR_3:         return m_uiValithriaDoor3GUID;
             case GO_VALITHRIA_DOOR_4:         return m_uiValithriaDoor4GUID;
+            case GO_ICESHARD_1:               return m_uiIceShard1GUID;
+            case GO_ICESHARD_2:               return m_uiIceShard2GUID;
+            case GO_ICESHARD_3:               return m_uiIceShard3GUID;
+            case GO_ICESHARD_4:               return m_uiIceShard4GUID;
+            case GO_FROSTY_WIND:              return m_uiFrostyWindGUID;
+            case GO_FROSTY_EDGE:              return m_uiFrostyEdgeGUID;
         }
         return 0;
     }

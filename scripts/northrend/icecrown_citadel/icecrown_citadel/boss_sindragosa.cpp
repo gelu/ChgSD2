@@ -262,6 +262,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                     MovementStarted = true;
                     SetCombatMovement(false);
                     bsw->doCast(SPELL_FLY_VISUAL);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
                     m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                     m_creature->HandleEmoteCommand(EMOTE_ONESHOT_FLY_SIT_GROUND_UP);
                     m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
@@ -300,6 +302,8 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
                            SetCombatMovement(true);
                            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                            bsw->doRemove(SPELL_FLY_VISUAL);
+                           m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+                           m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                            m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
                           };
             break;
@@ -415,7 +419,9 @@ struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
         boom_timer = 9000;
         finita = false;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetDisplayId(15880);
+//        m_creature->SetDisplayId(15880);
+        m_creature->SetDisplayId(22523);
+//        m_creature->SetDisplayId(19075);
     }
 
     void AttackStart(Unit *pWho)

@@ -120,3 +120,15 @@ UPDATE `creature_template` SET `ScriptName`='boss_tirion_icc', `npcflag`=1, `AIN
 INSERT IGNORE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('71614', '1', '38995');
 
 UPDATE `creature_template` SET `ScriptName`='mob_ice_sphere_icc', `AIName`='' WHERE `entry`= 36633;
+UPDATE `creature_template` SET `ScriptName`='mob_defiler_icc', `AIName`='' WHERE `entry`= 38757;
+UPDATE `creature_template` SET `ScriptName`='mob_strangulate_vehicle', `AIName`='' WHERE `entry`= 36598;
+UPDATE `creature_template` SET `ScriptName`='mob_vile_spirit', `AIName`='' WHERE `entry`= 37799;
+
+DELETE FROM `npc_text` WHERE `ID` IN (721001); 
+INSERT INTO `npc_text` (`ID`, `Text0_0`) VALUES
+(721001, 'Greetings $N! Are you ready to battle with Lich King?');
+
+DELETE FROM `locales_npc_text` WHERE `entry` IN (721001);
+INSERT INTO `locales_npc_text` (`entry`, `Text0_0_loc1`, `Text0_0_loc2`, `Text0_0_loc3`, `Text0_0_loc4`, `Text0_0_loc5`, `Text0_0_loc6`, `Text0_0_loc7`, `Text0_0_loc8`) VALUES
+(721001, 'Greetings $N! Are you ready to battle with Lich King?', NULL, NULL, NULL, NULL, NULL, NULL, 'Приветствую, $N! Поможешь мне прихлопнуть главного засранца WOW?');
+

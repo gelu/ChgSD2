@@ -45,6 +45,8 @@ enum
 
     NPC_TIRION                  = 38995,
     NPC_MENETHIL                = 38579,
+    NPC_SPIRIT_WARDEN           = 38579,
+    NPC_FROSTMOURNE             = 27880,
 
     NPC_STINKY                  = 37025,
     NPC_PRECIOUS                = 37217,
@@ -112,6 +114,14 @@ enum
     GO_PLAGUE_SIGIL             = 202182,
     GO_FROSTWING_SIGIL          = 202181,
     GO_BLOODWING_SIGIL          = 202183,
+
+    GO_ICESHARD_1               = 202142, //8304
+    GO_ICESHARD_2               = 202141, //8364
+    GO_ICESHARD_3               = 202143, //8310
+    GO_ICESHARD_4               = 202144, //9007
+
+    GO_FROSTY_WIND              = 202188, //
+    GO_FROSTY_EDGE              = 202189, //
 
     TYPE_EVENT_TIMER            = 99,
     TYPE_EVENT                  = 100,

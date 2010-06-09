@@ -248,15 +248,15 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                          if (!pTarget->IsPositionValid())
                             {
                                 if (pTarget->GetTypeId() == TYPEID_PLAYER)
-                                     debug_log("BSW: Player %s (guid %u) has invalid position. May be cheater?",pTarget->GetName(),pTarget->GetGUIDLow());
-                                else debug_log("BSW: Creature %u has invalid position.",pTarget->GetEntry());
+                                     error_log("BSW: Player %s (guid %u) has invalid position. May be cheater?",pTarget->GetName(),pTarget->GetGUIDLow());
+                                else error_log("BSW: Creature %u has invalid position.",pTarget->GetEntry());
                                 return CAST_FAIL_OTHER;
                             }
                          pTarget->GetPosition(fPosX, fPosY, fPosZ);
                          pTarget->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
                                 if ((int)fPosZ == 0) 
                                 {
-                                    debug_log("BSW: Positon Z is NULL. Strange bug");
+                                    error_log("BSW: Positon Z is NULL. Strange bug");
                                     return CAST_FAIL_OTHER;
                                  }
                          boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
