@@ -1,5 +1,5 @@
 @package RSA scripts for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-@version 0.2
+@version 0.3a
 @revision (current)
 @copyright (c) 2009-2010 /dev/rsa
 @license GNU Public License
@@ -27,10 +27,12 @@ In this repository you found this custom scripts:
 - Naxxramas (by ckegg)
 - An'kahet (by Tassadar)
 - Draktaron (by Tassadar)
+- Culling of Stratholme (by Maxxx2021)
 - Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
 - Halls of reflection (partially, by me)
-- Icecrown Citadel (not finished, by me)
+- Icecrown Citadel (by me)
+- NPC special (by me, thanks for all)
 
 Attention please! In my project only correct Linux Makefile provided. 
 If you want compile this branch on Windows, please convert Makefile to your c++ compiler.
@@ -38,11 +40,11 @@ If you want compile this branch on Windows, please convert Makefile to your c++ 
 Thanks to:
 - Vladimir Mangos - MaNGOS project;
 - Insider42 - for your work;
-- griffonheart (original texts/sounds);
+- griffonheart (original texts/sounds for TOC);
 - Cristy (re-translation to english);
-- Selector - Faction champions base script;
+- Selector - Faction champions base script, testing, bugreports;
 - Boxa - changes for Windows compilers and bugreports;
+- Wowka321 - core support;
 - Dron01 - bugreports and valuable advice;
 - gladden, ghostart - bugreports;
-- Insider42 - bugreports, features;
 - all - testing.

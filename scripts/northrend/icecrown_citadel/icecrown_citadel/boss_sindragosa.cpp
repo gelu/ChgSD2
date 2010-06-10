@@ -277,6 +277,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public ScriptedAI
             case 3: 
                           stage = 4;
                           IceBlock();
+                          m_creature->SetOrientation(3.1f);
             break;
             case 4: 
                     if (bsw->timedQuery(SPELL_FROST_BOMB, diff))

@@ -40,12 +40,10 @@ enum
         SPELL_BLOOD_NOVA                        = 72380,
         SPELL_RUNE_OF_BLOOD                     = 72408,
         SPELL_CALL_BLOOD_BEASTS                 = 72173,
+
         SPELL_SCENT_OF_BLOOD                    = 72769,
         SPELL_RESISTANT_SKIN                    = 72723,
-
-        SPELL_BEAST_1                           = 72176,
-        SPELL_BEAST_2                           = 72723,
-        SPELL_BEAST_3                           = 21150,
+        SPELL_BLOOD_LINK_BEAST                  = 72176,
 
 };
 
@@ -60,30 +58,34 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
-    bool m_uiIsFrenzy;
     uint8 stage;
     uint8 Difficulty;
+    uint8 beasts;
+    Unit* MarkTarget;
 
     void Reset()
     {
         if(!pInstance) return;
         Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
         pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
-        m_uiIsFrenzy = false;
         stage = 0;
+        beasts = 0;
         bsw->resetTimers();
+        MarkTarget = NULL;
     }
 
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
         DoScriptText(-1631100,m_creature);
+        bsw->doCast(SPELL_BLOOD_LINK);
     }
 
     void JustReachedHome()
     {
         if (pInstance) pInstance->SetData(TYPE_SAURFANG, FAIL);
     }
+
 
     void KilledUnit(Unit* pVictim)
     {
@@ -95,12 +97,35 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                DoScriptText(-1631104,m_creature,pVictim);
                break;
         };
+
+        if (pVictim && pVictim->HasAura(SPELL_MARK))
+        {
+            m_creature->ModifyHealth(m_creature->GetMaxHealth() * 0.05f);
+            pVictim->RemoveAurasDueToSpell(SPELL_MARK);
+        }
+    }
+
+    void JustSummoned(Creature* summoned)
+    {
+        if(!pInstance || !summoned) return;
+
+        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
+            summoned->AddThreat(pTarget, 100.0f);
+            summoned->GetMotionMaster()->MoveChase(pTarget);
+            }
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_SAURFANG, DONE);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_SAURFANG, DONE);
         DoScriptText(-1631106,m_creature);
+        if (MarkTarget) MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
+    }
+
+    void doBloodPower()
+    {
+       m_creature->ModifyPower(m_creature->getPowerType(), +1);
     }
 
     void UpdateAI(const uint32 diff)
@@ -108,61 +133,58 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (!m_creature->HasAura(SPELL_BLOOD_POWER))
+            bsw->doCast(SPELL_BLOOD_POWER);
+
         switch(stage)
         {
-            case 0: {
-                    break;}
-            case 1: {
-                    if (!m_uiIsFrenzy) {
-                    bsw->doCast(SPELL_FRENZY);
-                    m_uiIsFrenzy = true;
-                    stage = 2;
-                    DoScriptText(-1631101,m_creature);
-                    }
-                    break;}
+            case 0:
+                    if (m_creature->GetHealthPercent() <= 30.0f) stage = 1;
+                    break;
 
-            case 2: {
-                    break;}
+            case 1: 
+                        bsw->doCast(SPELL_FRENZY);
+                        stage = 2;
+                        DoScriptText(-1631101,m_creature);
+                    break;
+
+            case 2:
+                    break;
+
+            default:
+                    break;
         }
 
-                    bsw->timedCast(SPELL_BLOOD_LINK, diff);
+            if (bsw->timedQuery(SPELL_MARK, diff))
+            {
+                if (MarkTarget) MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
 
-                    bsw->timedCast(SPELL_BLOOD_NOVA, diff);
+                if (MarkTarget = bsw->SelectRandomPlayerAtRange(120.0f))
+                   if (bsw->doCast(SPELL_MARK, MarkTarget) == CAST_OK) 
+                       doBloodPower();
+            }
 
-                    bsw->timedCast(SPELL_BOILING_BLOOD, diff);
+            if (bsw->timedCast(SPELL_BLOOD_NOVA, diff) == CAST_OK) doBloodPower();
 
-                    bsw->timedCast(SPELL_RUNE_OF_BLOOD, diff);
+            if (bsw->timedCast(SPELL_BOILING_BLOOD, diff) == CAST_OK) doBloodPower();
 
-                    if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
+            if (bsw->timedCast(SPELL_RUNE_OF_BLOOD, diff) == CAST_OK) doBloodPower();
+
+            if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
                     {
-                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                              if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                                   pTemp->AddThreat(pTarget, 100.0f);
-                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
-                                };
-                          if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                              if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                                   pTemp->AddThreat(pTarget, 100.0f);
-                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
-                                };
-                        DoScriptText(-1631102,m_creature);
                         if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                            || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
-                            {
-                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                               if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                                   pTemp->AddThreat(pTarget, 100.0f);
-                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
-                                };
-                            if (Unit* pTemp = bsw->doSummon(NPC_BLOOD_BEASTS))
-                               if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                                   pTemp->AddThreat(pTarget, 100.0f);
-                                   pTemp->GetMotionMaster()->MoveChase(pTarget);
-                                };
-                            }
-                    }
+                            || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 4;
+                            else beasts = 2;
 
-            if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;
+                        DoScriptText(-1631102,m_creature);
+                     };
+
+                     if (beasts > 0)
+                        if (bsw->doCast(SPELL_CALL_BLOOD_BEASTS) == CAST_OK)
+                           {
+                               doBloodPower();
+                               --beasts;
+                           };
 
         if (bsw->timedQuery(SPELL_BERSERK, diff)){
                  bsw->doCast(SPELL_BERSERK);
@@ -178,11 +200,73 @@ CreatureAI* GetAI_boss_deathbringer_saurfang(Creature* pCreature)
     return new boss_deathbringer_saurfangAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
+{
+    mob_blood_beastAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    Creature* pOwner;
+    bool scentcasted;
+    BossSpellWorker* bsw;
+
+    void Reset()
+    {
+         pOwner = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DEATHBRINGER_SAURFANG));
+         bsw->resetTimers();
+         bsw->doCast(SPELL_BLOOD_LINK_BEAST);
+         scentcasted = false;
+    }
+    void KilledUnit(Unit* pVictim)
+    {
+        if (pOwner && pOwner->isAlive())
+            pOwner->ModifyHealth(pOwner->GetMaxHealth() * 0.05f);
+        if (pVictim && pVictim->HasAura(SPELL_MARK))
+            pVictim->RemoveAurasDueToSpell(SPELL_MARK);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_SAURFANG) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (!m_creature->HasAura(SPELL_RESISTANT_SKIN))
+            bsw->doCast(SPELL_RESISTANT_SKIN);
+
+        if (!scentcasted && (m_creature->GetHealthPercent() <= 20.0f))
+           {
+               if (urand(0,1))                            //50%
+                   bsw->doCast(SPELL_SCENT_OF_BLOOD);
+               scentcasted = true;
+           }
+
+        DoMeleeAttackIfReady();
+
+    }
+};
+
+CreatureAI* GetAI_mob_blood_beast(Creature* pCreature)
+{
+    return new mob_blood_beastAI(pCreature);
+}
+
 void AddSC_boss_deathbringer_saurfang()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "boss_deathbringer_saurfang";
     newscript->GetAI = &GetAI_boss_deathbringer_saurfang;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_blood_beast";
+    newscript->GetAI = &GetAI_mob_blood_beast;
     newscript->RegisterSelf();
 }

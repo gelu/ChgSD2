@@ -472,14 +472,16 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
 
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
-    debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
+    if (pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty]))
+            debug_log("BSW: adding aura stack from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
 
     if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
         {
+            debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
             int32 basepoint = pSpell->varData ?  pSpell->varData - 1 : spell->EffectBasePoints[index] + 1;
             if (pTarget->AddAura(new BossAura(spell, index, &basepoint, pTarget, pTarget)))
                 return true;
-        }
+        };
 
     return false;
 
