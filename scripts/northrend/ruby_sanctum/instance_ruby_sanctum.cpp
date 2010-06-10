@@ -15,59 +15,40 @@
 */
 
 #include "precompiled.h"
-#include "def_pit.h"
+#include "def_ruby_sanctum.h"
 
-struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
+struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
 {
-    instance_pit_of_saron(Map* pMap) : ScriptedInstance(pMap) 
+    instance_ruby_sanctum(Map* pMap) : ScriptedInstance(pMap) 
     {
-        Regular = pMap->IsRegularDifficulty();
         Initialize();
     }
 
-    bool Regular;
-    bool needSave;
     std::string strSaveData;
 
     //Creatures GUID
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
-    uint64 m_uiGafrostGUID;
-    uint64 m_uiKrickGUID;
-    uint64 m_uiIckGUID;
-    uint64 m_uiTirannusGUID;
-
-    void OpenDoor(uint64 guid)
-    {
-        if(!guid) return;
-        GameObject* pGo = instance->GetGameObject(guid);
-        if(pGo) pGo->SetGoState(GO_STATE_ACTIVE);
-    }
-
-    void CloseDoor(uint64 guid)
-    {
-        if(!guid) return;
-        GameObject* pGo = instance->GetGameObject(guid);
-        if(pGo) pGo->SetGoState(GO_STATE_READY);
-    }
+    uint64 m_uiHalionGUID;
+    uint64 m_uiRagefireGUID;
+    uint64 m_uiZarithianGUID;
+    uint64 m_uiBaltharusGUID;
 
     void Initialize()
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
-        m_uiGafrostGUID =0;
-        m_uiKrickGUID =0;
-        m_uiIckGUID =0;
-        m_uiTirannusGUID =0;
     }
 
     void OnCreatureCreate(Creature* pCreature)
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_GAFROST:  m_uiGafrostGUID = pCreature->GetGUID(); break;
-            case NPC_KRICK:    m_uiKrickGUID = pCreature->GetGUID(); break;
-            case NPC_ICK:      m_uiIckGUID = pCreature->GetGUID(); break;
-            case NPC_TYRANNUS: m_uiTirannusGUID = pCreature->GetGUID(); break;
+            case NPC_HALION: 
+                         m_uiHalionGUID = pCreature->GetGUID();
+                         break;
+            case NPC_RAGEFIRE:
+                          m_uiRagefireGUID = pCreature->GetGUID();
+                          break;
         }
     }
 
@@ -77,14 +58,13 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
         {
         }
     }
+
     void SetData(uint32 uiType, uint32 uiData)
     {
         switch(uiType)
         {
-            case TYPE_GAFROST: m_auiEncounter[0] = uiData; break;
-            case TYPE_KRICK: m_auiEncounter[1] = uiData; break;
-            case TYPE_ICK: m_auiEncounter[2] = uiData; break;
-            case TYPE_TYRANNUS: m_auiEncounter[3] = uiData; break;
+            case TYPE_HALION:   m_auiEncounter[3] = uiData; break;
+            case TYPE_RAGEFIRE: m_auiEncounter[1] = uiData; break;
         }
 
         if (uiData == DONE)
@@ -112,10 +92,8 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_GAFROST: return m_auiEncounter[0];
-            case TYPE_KRICK: return m_auiEncounter[1];
-            case TYPE_ICK: return m_auiEncounter[2];
-            case TYPE_TYRANNUS: return m_auiEncounter[3];
+             case TYPE_HALION:       return m_auiEncounter[3];
+             case TYPE_RAGEFIRE:     return m_auiEncounter[2];
         }
         return 0;
     }
@@ -124,10 +102,8 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiData)
         {
-            case NPC_GAFROST:  return m_uiGafrostGUID;
-            case NPC_KRICK:    return m_uiKrickGUID;
-            case NPC_ICK:      return m_uiIckGUID;
-            case NPC_TYRANNUS: return m_uiTirannusGUID;
+            case NPC_HALION:   return m_uiHalionGUID;
+            case NPC_RAGEFIRE: return m_uiRagefireGUID;
         }
         return 0;
     }
@@ -156,17 +132,17 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     }
 };
 
-InstanceData* GetInstanceData_instance_pit_of_saron(Map* pMap)
+InstanceData* GetInstanceData_instance_ruby_sanctum(Map* pMap)
 {
-    return new instance_pit_of_saron(pMap);
+    return new instance_ruby_sanctum(pMap);
 }
 
 
-void AddSC_instance_pit_of_saron()
+void AddSC_instance_ruby_sanctum()
 {
     Script* pNewScript;
     pNewScript = new Script;
-    pNewScript->Name = "instance_pit_of_saron";
-    pNewScript->GetInstanceData = &GetInstanceData_instance_pit_of_saron;
+    pNewScript->Name = "instance_ruby_sanctum";
+    pNewScript->GetInstanceData = &GetInstanceData_instance_ruby_sanctum;
     pNewScript->RegisterSelf();
 }

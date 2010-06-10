@@ -234,11 +234,13 @@ extern void AddSC_instance_wailing_caverns();               // Wailing Caverns
 extern void AddSC_zulfarrak();                              //zulfarrak
 // culling of stratholme
 extern void AddSC_boss_lord_epoch();
-extern void AddSC_culling_of_stratholme();
 extern void AddSC_boss_malganis();
 extern void AddSC_boss_meathook();
-extern void AddSC_instance_culling_of_stratholme();
 extern void AddSC_boss_salramm();
+extern void AddSC_boss_infinite_corruptor();
+extern void AddSC_culling_of_stratholme();
+extern void AddSC_culling_of_stratholmeAI();
+extern void AddSC_instance_culling_of_stratholme();
 
 extern void AddSC_ashenvale();
 extern void AddSC_azshara();
@@ -405,12 +407,18 @@ extern void AddSC_boss_bronjahm();
 extern void AddSC_instance_pit_of_saron();
 extern void AddSC_boss_forgemaster_gafrost();
 extern void AddSC_boss_krick();
-extern void AddSC_boss_scourgelord_tirannus();
+extern void AddSC_boss_scourgelord_tyrannus();
 
 extern void AddSC_instance_halls_of_reflection();
 extern void AddSC_boss_falryn();
 extern void AddSC_boss_marwyn();
 //extern void AddSC_boss_lich_king_fh();
+
+extern void AddSC_instance_ruby_sanctum();                  // Ruby Sanctum
+extern void AddSC_boss_halion();
+extern void AddSC_boss_ragefire();
+extern void AddSC_boss_zarithian();
+extern void AddSC_boss_baltharus();
 
 //outland
 extern void AddSC_boss_exarch_maladaar();                   //auchindoun, auchenai_crypts
@@ -886,12 +894,18 @@ void AddScripts()
     AddSC_instance_pit_of_saron();
     AddSC_boss_forgemaster_gafrost();
     AddSC_boss_krick();
-    AddSC_boss_scourgelord_tirannus();
+    AddSC_boss_scourgelord_tyrannus();
 
     AddSC_instance_halls_of_reflection();
     AddSC_boss_falryn();
     AddSC_boss_marwyn();
 //    AddSC_boss_lich_king_fh();
+
+    AddSC_instance_ruby_sanctum();                         // Ruby Sanctum
+    AddSC_boss_halion();
+    AddSC_boss_ragefire();
+    AddSC_boss_zarithian();
+    AddSC_boss_baltharus();
 
     //outland
     AddSC_boss_exarch_maladaar();                           //auchindoun, auchenai_crypts
@@ -961,11 +975,13 @@ void AddScripts()
     AddSC_instance_mechanar();
 
     AddSC_boss_lord_epoch();                                //culling of stratholme
-    AddSC_culling_of_stratholme();
     AddSC_boss_malganis();
     AddSC_boss_meathook();
-    AddSC_instance_culling_of_stratholme();
     AddSC_boss_salramm();
+    AddSC_boss_infinite_corruptor();
+    AddSC_culling_of_stratholme();
+    AddSC_culling_of_stratholmeAI();
+    AddSC_instance_culling_of_stratholme();
 
     AddSC_blades_edge_mountains();
     AddSC_boss_doomlordkazzak();

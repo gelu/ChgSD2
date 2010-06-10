@@ -30,7 +30,7 @@ PORTALS_COUNT = 8
 
 struct t_Locations
 {
-    char const* name;
+    char const* name[2];
     float x, y, z;
     uint32 spellID;
     bool state;
@@ -40,14 +40,14 @@ struct t_Locations
 
 static t_Locations PortalLoc[]=
 {
-{"Молот света",-17.1928, 2211.44, 30.1158,0,true,true,TYPE_TELEPORT}, //
-{"Молельня проклятых",-503.62, 2211.47, 62.8235,70856,false,true,TYPE_MARROWGAR},  //
-{"Черепной вал",-615.145, 2211.47, 199.972,70857,false,true,TYPE_DEATHWHISPER}, //
-{"Подъем смертоносного",-549.131, 2211.29, 539.291,70858,false,true,TYPE_FLIGHT_WAR}, //
-{"Цитадель Ледяной Короны",4198.42, 2769.22, 351.065,70859,false,true,TYPE_SAURFANG}, //
-{"Святилище крови",4490.205566, 2769.275635, 403.983765,0,false,true,TYPE_BLOOD_COUNCIL}, //
-{"Логово Королевы льда",4356.580078, 2565.75, 220.401993,70861,false,true,TYPE_VALITHRIA}, //
-{"Ледяной трон",528.767273f, -2124.845947f, 1041.86f, 70860,false,true,TYPE_SINDRAGOSA}, //
+{"Hammer of the World","Молот света",-17.1928, 2211.44, 30.1158,0,true,true,TYPE_TELEPORT}, //
+{"Chapel of Damned","Молельня проклятых",-503.62, 2211.47, 62.8235,70856,false,true,TYPE_MARROWGAR},  //
+{"Skulls plato","Черепной вал",-615.145, 2211.47, 199.972,70857,false,true,TYPE_DEATHWHISPER}, //
+{"The Rise of Deadly","Подъем смертоносного",-549.131, 2211.29, 539.291,70858,false,true,TYPE_FLIGHT_WAR}, //
+{"Icecrown Citadel","Цитадель Ледяной Короны",4198.42, 2769.22, 351.065,70859,false,true,TYPE_SAURFANG}, //
+{"Sanctuary of Blood","Святилище крови",4490.205566, 2769.275635, 403.983765,0,false,true,TYPE_BLOOD_COUNCIL}, //
+{"Lair of the Queen of Ice","Логово Королевы льда",4356.580078, 2565.75, 220.401993,70861,false,true,TYPE_VALITHRIA}, //
+{"Frozen Throne","Ледяной трон",528.767273f, -2124.845947f, 1041.86f, 70860,false,true,TYPE_SINDRAGOSA}, //
 };
 
 
@@ -73,9 +73,31 @@ bool GOGossipHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
     ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
     if(!pInstance) return true;
 
+    uint8 _locale;
+
+    switch (LocaleConstant currentlocale = player->GetSession()->GetSessionDbcLocale())
+    {
+     case LOCALE_enUS:
+     case LOCALE_koKR:
+     case LOCALE_frFR:
+     case LOCALE_deDE:
+     case LOCALE_zhCN:
+     case LOCALE_zhTW:
+     case LOCALE_esES:
+     case LOCALE_esMX:
+                      _locale = 0;
+                      break;
+     case LOCALE_ruRU:
+                      _locale = 1;
+                      break;
+     default:
+                      _locale = 0;
+                      break;
+    };
+
     for(uint8 i = 0; i < PORTALS_COUNT; i++) {
-    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter))
-             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, PortalLoc[i].name, GOSSIP_SENDER_MAIN, i);
+    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter) || player->isGameMaster())
+             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, PortalLoc[i].name[_locale], GOSSIP_SENDER_MAIN, i);
     };
     player->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;

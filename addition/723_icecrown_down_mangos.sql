@@ -1,10 +1,15 @@
 UPDATE `instance_template` SET `script`='instance_forge_of_souls' WHERE `map`=632;
 UPDATE `creature_template` SET `ScriptName`='boss_bronjahm', `AIName` ='' WHERE `entry`=36497;
-UPDATE `creature_template` SET `ScriptName`='mob_soul_fragment', `modelid_A`= 10771, `modelid_H`= 10771, `AIName` ='' WHERE `entry`=36535;
--- original modelid - 30233
+UPDATE `creature_template` SET `ScriptName`='mob_soul_fragment', `modelid_A`= 30233, `modelid_H`= 30233, `AIName` ='' WHERE `entry`=36535;
+-- UPDATE `creature_template` SET `ScriptName`='mob_soul_storm', `AIName` ='' WHERE `entry`=;
 -- UPDATE `creature_template` SET `ScriptName`='boss_devourer', `AIName` ='' WHERE `entry`=33113;
 
 -- UPDATE `instance_template` SET `script`='instance_pit_of_saron' WHERE `map`=658;
+-- UPDATE `creature_template` SET `ScriptName`='boss_ick', `AIName` ='' WHERE `entry`=36476;
+-- UPDATE `creature_template` SET `ScriptName`='boss_krick', `AIName` ='' WHERE `entry`=36477;
+-- UPDATE `creature_template` SET `ScriptName`='mob_exploding_orb', `AIName` ='' WHERE `entry`=36610;
+-- UPDATE `creature_template` SET `ScriptName`='boss_forgemaster_garfrost', `AIName` ='' WHERE `entry`=36494;
+-- UPDATE `creature_template` SET `ScriptName`='boss_scourgelord_tyrannus', `AIName` ='' WHERE `entry`=36658;
 
 UPDATE `instance_template` SET `script`='instance_halls_of_reflection' WHERE `map`=668;
 UPDATE `creature_template` SET `ScriptName`='boss_falryn' WHERE `entry`=38112;

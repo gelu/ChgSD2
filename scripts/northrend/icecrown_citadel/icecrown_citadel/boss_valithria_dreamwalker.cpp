@@ -488,7 +488,7 @@ struct MANGOS_DLL_DECL mob_mana_voidAI : public ScriptedAI
     {
         if (!m_pInstance || m_pInstance->GetData(TYPE_VALITHRIA) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
- 
+
         if (m_ui_Timer < uiDiff)
               m_creature->ForcedDespawn();
         else m_ui_Timer -= uiDiff;

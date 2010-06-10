@@ -78,6 +78,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
         intro = false;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -209,6 +210,7 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public ScriptedAI
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
+        bsw->resetTimers();
     }
 
     void JustReachedHome()
@@ -324,6 +326,7 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public ScriptedAI
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
+        bsw->resetTimers();
     }
 
     void JustReachedHome()

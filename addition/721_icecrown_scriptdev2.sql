@@ -162,6 +162,7 @@ INSERT INTO `script_texts` (`entry`,`content_loc8`, `content_default`, `sound`, 
 ('-1631526','Склонись перед своим господином и повелителем!','Bow down before your lord and master!','17372','6','0','0','Lich King SAY'),
 ('-1631527','Валькирия! Твой господин зовет!','Val\'kyr, your master calls!','17373','6','0','0','Lich King SAY_SUMMON'),
 ('-1631528','...','...','17374','6','0','0','Lich King SAY_DEATH'),
+('-1631531','Оскверняю!','Defile!','0','3','0','0','Lich King SAY'),
 
 -- Tirion
 ('-1631552','Мы даруем тебе быструю смерть, Артас! Более быструю чем ты заслуживаешь за то что замучил и погубил десятки тысяч жизней!','We will grant you a swift death, Arthas. More than can be said for the thousands you\'ve tortured and slain.','17390','6','0','0','Tirion SAY_INTRO2'),
@@ -174,4 +175,11 @@ INSERT INTO `script_texts` (`entry`,`content_loc8`, `content_default`, `sound`, 
 ('-1631558','Вы не должны оказаться во власти Ледяной скорби. Иначе, как и я, будете навеки порабощены этим проклятым клинком.','First, you must escape Frostmourne\'s hold, or be damned as I am; trapped within this cursed blade for all eternity.','17395','6','0','0','Terenas Menethil II SAY'),
 ('-1631559','Помогите мне уничтожить эти истерзанные души. Вместе мы вытянем силу из ледяной скорби и ослабим короля-лича.','Aid me in destroying these tortured souls! Together we will loosen Frostmourne\'s hold and weaken the Lich King from within!','17396','6','0','0','Terenas Menethil II SAY'),
 ('-1631560','Наконец я свободен. Все кончено, сын мой. Настал час расплаты.','Free at last! It is over, my son. This is the moment of reckoning.','17397','6','0','0','Terenas Menethil II SAY'),
-('-1631561','Поднимитесь, воины света!','Rise up, champions of the Light!','17398','6','0','0',' SAY');
+('-1631561','Поднимитесь, воины света!','Rise up, champions of the Light!','17398','6','0','0',' SAY'),
+
+-- Adds
+('-1631590','Р-р-р-рота, подъем!','<need translate>','0','6','0','0','custom message'),
+('-1631591','Хилы, не спать!','<need translate>','0','6','0','0','custom message'),
+('-1631592','ДД поднажали!','<need translate>','0','6','0','0','custom message'),
+('-1631593','Лидер, гони лентяев из рейда! А то еще час возиться будете!','<need translate>','0','6','0','0','custom message'),
+('-1631594','Ну вот вы и прикончили Артаса. Теперь будем ждать Катаклизм.','<need translate>','0','6','0','0','custom message');

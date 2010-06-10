@@ -90,6 +90,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
         stage = 0;
         intro = false;
         UpdateTimer = 1000;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 

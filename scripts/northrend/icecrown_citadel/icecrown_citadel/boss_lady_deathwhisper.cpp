@@ -46,6 +46,19 @@ enum BossSpells
 
         SPELL_VENGEFUL_BLAST                    = 71494,
         SPELL_VENGEFUL_BLAST_0                  = 71544,
+        // summons
+        SPELL_FROST_FEVER                       = 71129,
+        SPELL_DEATHCHILL_BOLT                   = 70594,
+        SPELL_DEATHCHILL_BLAST                  = 70906,
+        SPELL_DARK_MARTYRDROM                   = 70903,
+        SPELL_CURSE_OF_TOPOR                    = 71237,
+        SPELL_SHORUD_OF_THE_OCCULUT             = 70768,
+        SPELL_ADHERENTS_DETERMINIATION          = 71234,
+        SPELL_SUMMON_VISUAL                     = 41236,
+
+        SPELL_NECROTIC_STRIKE                   = 70659,
+        SPELL_SHADOW_CLEAVE                     = 70670,
+        SPELL_VAMPIRIC_MIGHT                    = 70674,
 };
 
 static Locations SpawnLoc[]=
@@ -86,6 +99,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         stage = 0;
         MovementStarted = false;
         intro = false;
+        bsw->resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -142,26 +156,23 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         DoScriptText(-1631032,m_creature,killer);
     }
 
+    void JustSummoned(Creature* summoned)
+    {
+        if(!pInstance || !summoned) return;
+
+        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
+            summoned->AddThreat(pTarget, 100.0f);
+            }
+    }
+
     void CallGuard(uint8 place)
     {
     if (place < 2) 
-    {
-    if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z))
-    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                pTemp->AddThreat(pTarget, 100.0f);
-                pTemp->GetMotionMaster()->MoveChase(pTarget);
-                };
-    if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z))
-    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                pTemp->AddThreat(pTarget, 100.0f);
-                pTemp->GetMotionMaster()->MoveChase(pTarget);
-                };
-    }
-    if (Unit* pTemp = bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z))
-    if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                pTemp->AddThreat(pTarget, 100.0f);
-                pTemp->GetMotionMaster()->MoveChase(pTarget);
-                };
+       {
+          bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z);
+          bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z);
+       }
+       bsw->doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -257,13 +268,17 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                     switch (urand(0,1)) {
                             case 0:
                                   if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_FANATIC, 100.0f))
-                                  bsw->doCast(SPELL_DARK_EMPOWERMENT, pGuard);
-                                  DoScriptText(-1631026,m_creature);
+                                  {
+                                      bsw->doCast(SPELL_DARK_EMPOWERMENT, pGuard);
+                                      DoScriptText(-1631026,m_creature);
+                                  };
                                   break;
                             case 1:
                                   if(Creature *pGuard = GetClosestCreatureWithEntry(m_creature, NPC_ADHERENT, 100.0f))
-                                  bsw->doCast(SPELL_DARK_EMPOWERMENT, pGuard);
-                                  DoScriptText(-1631027,m_creature);
+                                  {
+                                      bsw->doCast(SPELL_DARK_EMPOWERMENT, pGuard);
+                                      DoScriptText(-1631027,m_creature);
+                                  };
                                   break;
                                   }
                     }
@@ -320,6 +335,11 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
          DoMeleeAttackIfReady();
     }
 };
+
+CreatureAI* GetAI_boss_lady_deathwhisper(Creature* pCreature)
+{
+    return new boss_lady_deathwhisperAI(pCreature);
+}
 
 struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
 {
@@ -378,10 +398,107 @@ CreatureAI* GetAI_mob_vengeful_shade(Creature* pCreature)
     return new mob_vengeful_shadeAI(pCreature);
 }
 
-
-CreatureAI* GetAI_boss_lady_deathwhisper(Creature* pCreature)
+struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
 {
-    return new boss_lady_deathwhisperAI(pCreature);
+    mob_cult_adherentAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    BossSpellWorker* bsw;
+    bool bone;
+
+    void Reset()
+    {
+        bsw->resetTimers();
+        bsw->doCast(SPELL_SUMMON_VISUAL);
+        bone = false;
+    }
+
+    void Aggro(Unit *who) 
+    {
+        bsw->doCast(SPELL_SHORUD_OF_THE_OCCULUT);
+        DoStartMovement(who, 20.0f);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+            bsw->timedCast(SPELL_FROST_FEVER, uiDiff);
+
+            bsw->timedCast(SPELL_DEATHCHILL_BOLT, uiDiff);
+
+            bsw->timedCast( SPELL_DEATHCHILL_BLAST, uiDiff);
+
+            if (m_creature->GetHealthPercent() < 15.0f && !bone)
+            {
+                if (!urand(0,3)) bsw->doCast(SPELL_DARK_MARTYRDROM); //30%
+                bone = true;
+            }
+    }
+};
+
+CreatureAI* GetAI_mob_cult_adherent(Creature* pCreature)
+{
+    return new mob_cult_adherentAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
+{
+    mob_cult_fanaticAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        bsw = new BossSpellWorker(this);
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    BossSpellWorker* bsw;
+    bool bone;
+
+    void Reset()
+    {
+        bsw->resetTimers();
+        bone = false;
+    }
+
+    void Aggro(Unit *who) 
+    {
+        bsw->doCast(SPELL_VAMPIRIC_MIGHT);
+        DoStartMovement(who);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+            bsw->timedCast(SPELL_NECROTIC_STRIKE, uiDiff);
+
+            bsw->timedCast(SPELL_SHADOW_CLEAVE, uiDiff);
+
+            if (m_creature->GetHealthPercent() < 15.0f && !bone)
+            {
+                if (!urand(0,3)) bsw->doCast(SPELL_DARK_MARTYRDROM); //30%
+                bone = true;
+            }
+    }
+};
+
+CreatureAI* GetAI_mob_cult_fanatic(Creature* pCreature)
+{
+    return new mob_cult_fanaticAI(pCreature);
 }
 
 void AddSC_boss_lady_deathwhisper()
@@ -395,5 +512,15 @@ void AddSC_boss_lady_deathwhisper()
     newscript = new Script;
     newscript->Name = "mob_vengeful_shade";
     newscript->GetAI = &GetAI_mob_vengeful_shade;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_cult_adherent";
+    newscript->GetAI = &GetAI_mob_cult_adherent;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_cult_fanatic";
+    newscript->GetAI = &GetAI_mob_cult_fanatic;
     newscript->RegisterSelf();
 }

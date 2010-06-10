@@ -84,6 +84,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiSindragosaDoor1GUID;
     uint64 m_uiSindragosaDoor2GUID;
 
+    uint64 m_uiIceShard1GUID;
+    uint64 m_uiIceShard2GUID;
+    uint64 m_uiIceShard3GUID;
+    uint64 m_uiIceShard4GUID;
+
+    uint64 m_uiFrostyWindGUID;
+    uint64 m_uiFrostyEdgeGUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
@@ -116,7 +124,15 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[1] == DONE) {
                                         OpenDoor(m_uiIcewall1GUID);
                                         OpenDoor(m_uiIcewall2GUID);
-                                        }
+                                        };
+        if (m_auiEncounter[2] == DONE) {
+                        if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
+                            {
+                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 1);
+                              pGO->SetGoState(GO_STATE_READY);
+                              pGO->SetRespawnTime(MINUTE);
+                            }
+                                       };
         if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
         if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorGreenGUID);
         if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
@@ -124,13 +140,13 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[8] == DONE) {
                                         OpenDoor(m_uiCounsilDoor1GUID);
                                         OpenDoor(m_uiCounsilDoor2GUID);
-                                        }
+                                        };
         if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
         if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
         if (m_auiEncounter[11] == DONE) {
                                         OpenDoor(m_uiSindragosaDoor2GUID);
                                         OpenDoor(m_uiSindragosaDoor1GUID);
-                                        }
+                                        };
 
     }
 
@@ -182,6 +198,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     void OnPlayerEnter(Player *m_player)
     {
         OpenAllDoors();
+    }
+
+    bool IsEncounterInProgress() const
+    {
+        for(uint8 i = 1; i < MAX_ENCOUNTERS-3 ; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS) return true;
+
+        return false;
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -382,6 +406,24 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiValitriaCacheGUID = pGo->GetGUID();
                                   break;
+            case GO_ICESHARD_1: 
+                                  m_uiIceShard1GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_2: 
+                                  m_uiIceShard2GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_3: 
+                                  m_uiIceShard3GUID = pGo->GetGUID();
+                                  break;
+            case GO_ICESHARD_4: 
+                                  m_uiIceShard4GUID = pGo->GetGUID();
+                                  break;
+            case GO_FROSTY_WIND: 
+                                  m_uiFrostyWindGUID = pGo->GetGUID();
+                                  break;
+            case GO_FROSTY_EDGE: 
+                                  m_uiFrostyEdgeGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -403,8 +445,14 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
                 if (uiData == DONE) {
-                    if (GameObject* pGOTemp = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
-                        pGOTemp->SetRespawnTime(25000);
+                    if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
+                        {
+                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 1);
+                              pGO->SetGoState(GO_STATE_READY);
+//                              pGO->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
+//                              pGO->SetRespawnTime(MINUTE);
+//                              pGOTemp->SetGoState(GO_STATE_ACTIVE);
+                        }
                 }
                 break;
              case TYPE_FLIGHT_WAR:
@@ -546,11 +594,68 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
              case TYPE_EVENT_TIMER:   return m_auiEventTimer;
              case TYPE_EVENT_NPC:     switch (m_auiEvent) 
                                          {
-                                          case 1:
+                                          case 12030:
+                                          case 12050:
+                                          case 12051:
+                                          case 12052:
+                                          case 12053:
+                                          case 12070:
+                                          case 12090:
+                                          case 12110:
+                                          case 12130:
+                                          case 12150:
+                                          case 12170:
+                                          case 13110:
+                                          case 13130:
+                                          case 13131:
+                                          case 13132:
+                                          case 13150:
+                                          case 13170:
+                                          case 13190:
+                                          case 13210:
+                                          case 13230:
+                                          case 13250:
+                                          case 13270:
+                                          case 13290:
+                                          case 13310:
+                                          case 13330:
+                                          case 13350:
+                                          case 13370:
+                                          case 14010:
+                                          case 14030:
+                                          case 14050:
+                                          case 14070:
                                                  return NPC_TIRION;
                                                  break;
 
-                                          case 2:
+                                          case 12000:
+                                          case 12020:
+                                          case 12040:
+                                          case 12041:
+                                          case 12042:
+                                          case 12043:
+                                          case 12060:
+                                          case 12080:
+                                          case 12100:
+                                          case 12120:
+                                          case 12200:
+                                          case 13000:
+                                          case 13020:
+                                          case 13040:
+                                          case 13060:
+                                          case 13080:
+                                          case 13100:
+                                          case 13120:
+                                          case 13140:
+                                          case 13160:
+                                          case 13180:
+                                          case 13200:
+                                          case 13220:
+                                          case 13240:
+                                          case 13260:
+                                          case 13280:
+                                          case 13300:
+                                          case 14000:
                                                  return NPC_LICH_KING;
                                                  break;
                                           case 500:
@@ -605,6 +710,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_VALITHRIA_DOOR_2:         return m_uiValithriaDoor2GUID;
             case GO_VALITHRIA_DOOR_3:         return m_uiValithriaDoor3GUID;
             case GO_VALITHRIA_DOOR_4:         return m_uiValithriaDoor4GUID;
+            case GO_ICESHARD_1:               return m_uiIceShard1GUID;
+            case GO_ICESHARD_2:               return m_uiIceShard2GUID;
+            case GO_ICESHARD_3:               return m_uiIceShard3GUID;
+            case GO_ICESHARD_4:               return m_uiIceShard4GUID;
+            case GO_FROSTY_WIND:              return m_uiFrostyWindGUID;
+            case GO_FROSTY_EDGE:              return m_uiFrostyEdgeGUID;
         }
         return 0;
     }

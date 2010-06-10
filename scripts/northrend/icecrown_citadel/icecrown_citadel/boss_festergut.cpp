@@ -49,6 +49,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         bsw = new BossSpellWorker(this);
         Reset();
+        bsw->resetTimers();
     }
 
     ScriptedInstance *pInstance;
