@@ -153,6 +153,17 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     {
         if (!pInstance) return;
         if (finalphase && pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS) return;
+
+        m_creature->RemoveAllAuras();
+        m_creature->DeleteThreatList();
+        m_creature->CombatStop(true);
+        m_creature->LoadCreaturesAddon();
+        if (m_creature->isAlive())
+            m_creature->GetMotionMaster()->MoveTargetedHome();
+
+        m_creature->SetLootRecipient(NULL);
+
+        Reset();
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -370,7 +381,6 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
         {
             battlestarted = false;
             pInstance->SetData(TYPE_LICH_KING, FAIL);
-            m_creature->GetMotionMaster()->MoveTargetedHome();
             EnterEvadeMode();
             return;
         }
