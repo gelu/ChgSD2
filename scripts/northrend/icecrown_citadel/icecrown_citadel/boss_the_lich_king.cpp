@@ -55,7 +55,8 @@ enum BossSpells
     SPELL_QUAKE                      = 72262,
 
 //Raging spirit
-    SPELL_SUMMON_RAGING_SPIRIT       = 69201, // triggered
+//    SPELL_SUMMON_RAGING_SPIRIT       = 69201, // triggered
+    SPELL_SUMMON_RAGING_SPIRIT       = 69200,
     SPELL_SOUL_SHRIEK                = 69242,
 
 //Ice sphere
@@ -151,7 +152,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     void EnterEvadeMode()
     {
         if (!pInstance) return;
-        if (finalphase) return;
+        if (finalphase && pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS) return;
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -181,6 +182,9 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     {
         if (!pInstance) return;
         pInstance->SetData(TYPE_LICH_KING, FAIL);
+        stage = 0;
+        battlestarted = false;
+        finalphase = false;
     }
 
 
@@ -366,6 +370,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
         {
             battlestarted = false;
             pInstance->SetData(TYPE_LICH_KING, FAIL);
+            m_creature->GetMotionMaster()->MoveTargetedHome();
             EnterEvadeMode();
             return;
         }
@@ -863,11 +868,7 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public ScriptedAI
 
     void Reset()
     {
-       if (Unit* pTarget = bsw->SelectRandomPlayerAtRange(120.0f))
-           {
-               m_creature->SetInCombatWith(pTarget);
-               m_creature->AddThreat(pTarget,100.0f);
-           }
+       bsw->resetTimers();
        bsw->doCast(SPELL_ICE_SPHERE_VISUAL);
        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     }
@@ -879,7 +880,14 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public ScriptedAI
               m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            {
+                if (Unit* pTarget = bsw->SelectRandomPlayerAtRange(120.0f))
+                {
+                   m_creature->SetInCombatWith(pTarget);
+                   m_creature->AddThreat(pTarget,100.0f);
+                }
             return;
+            }
 
         if (m_creature->getVictim()->GetTypeId() != TYPEID_PLAYER) 
             return;
@@ -906,6 +914,7 @@ struct MANGOS_DLL_DECL mob_defiler_iccAI : public ScriptedAI
 
     ScriptedInstance *m_pInstance;
     uint32 life_timer;
+    float m_Size0;
     float m_Size;
 
     void Reset()
@@ -915,7 +924,8 @@ struct MANGOS_DLL_DECL mob_defiler_iccAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->CastSpell(m_creature, SPELL_DEFILE, true);
-        m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        m_Size0 = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        m_Size = m_Size0;
     }
 
     void AttackStart(Unit *pWho)
@@ -944,7 +954,7 @@ struct MANGOS_DLL_DECL mob_defiler_iccAI : public ScriptedAI
         else life_timer -= uiDiff;
 
         // Override especially for clean core
-        if (m_Size >= 6.0f) m_creature->ForcedDespawn();
+        if (m_Size >= m_Size0 * 6.0f) m_creature->ForcedDespawn();
 
         if (doSearchPlayers()) {
                 m_Size = m_Size*1.01;
