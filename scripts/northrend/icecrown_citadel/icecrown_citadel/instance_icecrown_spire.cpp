@@ -128,9 +128,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
         if (m_auiEncounter[2] == DONE) {
                         if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
                             {
-                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 1);
+                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 0);
                               pGO->SetGoState(GO_STATE_READY);
-                              pGO->SetRespawnTime(MINUTE);
                             }
                                        };
         if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
@@ -447,11 +446,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                 if (uiData == DONE) {
                     if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
                         {
-                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 1);
+                              pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 0);
                               pGO->SetGoState(GO_STATE_READY);
-//                              pGO->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
-//                              pGO->SetRespawnTime(MINUTE);
-//                              pGOTemp->SetGoState(GO_STATE_ACTIVE);
                         }
                 }
                 break;

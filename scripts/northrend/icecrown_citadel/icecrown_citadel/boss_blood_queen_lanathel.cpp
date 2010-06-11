@@ -42,9 +42,18 @@ enum BossSpells
         SPELL_BLOODBOLT_WHIRL                   = 71772,
         SPELL_PRESENCE_OF_DARKFALLEN            = 71952,
 
+        SPELL_FLY_VISUAL                        = 57764,
+
         NPC_SWARMING_SHADOWS                    = 38163,
         SPELL_SWARMING_SHADOWS_VISUAL           = 71267,
 };
+
+static Locations SpawnLoc[]=
+{
+    {4595.640137f, 2769.195557f, 400.137054f},  // 0 Phased
+    {4595.904785f, 2769.315918f, 421.838623f},  // 1 Fly
+};
+
 
 struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 {
@@ -58,7 +67,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
+    uint8 nextPoint;
+    uint8 bloodbolts;
     uint32 UpdateTimer;
+    bool movementstarted;
+    Unit* MirrorMarked;
+    Unit* MirrorTarget;
+    Unit* Darkfallen[5];
+    uint8 darkfallened;
 
     void Reset()
     {
@@ -66,7 +82,15 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
         stage = 0;
         UpdateTimer = 1000;
+        bloodbolts = 0;
+        movementstarted = false;
+        MirrorMarked = NULL;
+        MirrorTarget = NULL;
         bsw->resetTimers();
+        memset(&Darkfallen, 0, sizeof(Darkfallen));
+        darkfallened = 0;
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
     }
 
     void JustReachedHome()
@@ -84,21 +108,111 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                DoScriptText(-1631331,m_creature,pVictim);
                break;
         }
+
+        if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_1))
+           pVictim->RemoveAurasDueToSpell(SPELL_BLOOD_MIRROR_1);
+
+        if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_2))
+           pVictim->RemoveAurasDueToSpell(SPELL_BLOOD_MIRROR_2);
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !movementstarted) return;
+        if (id == nextPoint) 
+        {
+            movementstarted = false;
+            m_creature->GetMotionMaster()->MovementExpired();
+        }
+    }
+
+    void StartMovement(uint32 id)
+    {
+        nextPoint = id;
+        m_creature->GetMotionMaster()->Clear();
+        m_creature->GetMotionMaster()->MovePoint(id, SpawnLoc[id].x, SpawnLoc[id].y, SpawnLoc[id].z);
+        movementstarted = true;
     }
 
     void Aggro(Unit *who) 
     {
         if(!pInstance) return; 
         pInstance->SetData(TYPE_LANATHEL, IN_PROGRESS);
+
         bsw->doCast(SPELL_SHROUD_OF_SORROW);
-               DoScriptText(-1631321,m_creature,who);
+
+        DoScriptText(-1631321,m_creature,who);
     }
 
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_LANATHEL, DONE);
-               DoScriptText(-1631333,m_creature,killer);
+        DoScriptText(-1631333,m_creature,killer);
+    }
+
+    void doPactOfDarkfallen(bool command)
+    {
+       if (command)
+       {
+          uint8 num = urand(2,5);
+          for(uint8 i = 0; i <= num; ++i)
+              if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 100.0f))
+              {
+                  Darkfallen[i] = pTarget;
+                  bsw->doCast(SPELL_PACT_OF_DARKFALLEN,pTarget);
+                  ++darkfallened;
+              };
+       }
+       else if (darkfallened)
+       {
+          for(uint8 i = 0; i < darkfallened; ++i)
+              if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                  for(uint8 j = 0; j < darkfallened; ++j)
+                     if (j != i && Darkfallen[j] && Darkfallen[j]->isAlive() && Darkfallen[j]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                        if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
+
+          for(uint8 i = 0; i < darkfallened; ++i)
+                  if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                      Darkfallen[i]->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
+          darkfallened = 0;
+       };
+    }
+
+    void doBloodMirror(bool command)
+    {
+
+        if (MirrorMarked)
+            if (!MirrorMarked->isAlive() || !MirrorMarked->HasAura(SPELL_BLOOD_MIRROR_1))
+               MirrorMarked = NULL;
+
+        if (MirrorTarget)
+            if (!MirrorTarget->isAlive() || !MirrorTarget->HasAura(SPELL_BLOOD_MIRROR_2))
+               MirrorTarget = NULL;
+
+        if (!MirrorMarked && m_creature->getVictim()) 
+           {
+               if (MirrorMarked = m_creature->getVictim())
+                  bsw->doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+           }
+
+        if (!MirrorTarget)
+           {
+               if (MirrorTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
+                   bsw->doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+           }
+
+    }
+
+    void DamageDeal(Unit* target, uint32 &damage) 
+    {
+        if (target)
+           if (MirrorMarked)
+             if (MirrorMarked->isAlive())
+                if (target == MirrorMarked)
+                   if (MirrorTarget)
+                      if (MirrorTarget->isAlive())
+                         m_creature->DealDamage(MirrorTarget, damage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
     }
 
     void UpdateAI(const uint32 diff)
@@ -129,32 +243,104 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                        bsw->timedCast(SPELL_VAMPIRIC_BITE,diff);
-                        if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff)) stage = 1;
+
+                    bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
+
+                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 1;
+
+                    if (bsw->timedQuery(SPELL_DELRIOUS_SLASH, diff))
+                        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
+                            bsw->doCast(SPELL_DELRIOUS_SLASH, pTarget);
+
+                    if (bsw->timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
+                        doPactOfDarkfallen(true);
+
+                    if (bsw->timedQuery(SPELL_VAMPIRIC_BITE,diff))
+                        {
+                           switch (urand(0,1)) {
+                               case 0:
+                                      DoScriptText(-1631322,m_creature);
+                                      break;
+                               case 1:
+                                      DoScriptText(-1631323,m_creature);
+                                      break;
+                               }
+                           bsw->doCast(SPELL_VAMPIRIC_BITE);
+                        }
+
+                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff))
+                        {
+                            stage = 1;
+                        };
+
+                    doBloodMirror(true);
+
+                    DoMeleeAttackIfReady();
+
                     break;
-            case 1: 
-                        DoScriptText(-1631327,m_creature);
-                        bsw->doCast(SPELL_BLOODBOLT_WHIRL);
-                        stage = 0;
+            case 1:             // Go in fly phase
+                    m_creature->AttackStop();
+                    SetCombatMovement(false);
+                    StartMovement(1);
+                    bsw->doCast(SPELL_FLY_VISUAL);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
+                    m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
+                    stage = 2;
                     break;
+            case 2:
+                    if (movementstarted) return;
+                    DoScriptText(-1631327,m_creature);
+                    stage = 3;
+                    bsw->doCast(SPELL_BLOODBOLT_WHIRL);
+                    return;
+            case 3:
+                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 5;
+
+                    if (bsw->timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
+                        doPactOfDarkfallen(true);
+
+                    bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
+
+                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff))
+                        {
+                            stage = 4;
+                            DoScriptText(-1631325,m_creature);
+                        };
+                    break;
+            case 4:             // Go in grownd phase
+                    m_creature->AttackStop();
+                    StartMovement(0);
+                    stage = 5;
+                    break;
+            case 5:
+                    if (movementstarted) return;
+                    DoScriptText(-1631325,m_creature);
+                    bsw->doRemove(SPELL_FLY_VISUAL);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+                    m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
+                    stage = 0;
+                    SetCombatMovement(true);
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    return;
             default:
                     break;
         }
 
-        bsw->timedCast(SPELL_DELRIOUS_SLASH, diff);
+        doPactOfDarkfallen(false);
 
-        bsw->timedCast(SPELL_TWILIGHT_BLOODBOLT, diff);
-
-        bsw->timedCast(SPELL_PACT_OF_DARKFALLEN, diff);
-
-        bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
+        if (bloodbolts > 0)
+            {
+                bsw->doCast(SPELL_TWILIGHT_BLOODBOLT);
+                --bloodbolts;
+            };
 
         if (bsw->timedQuery(SPELL_BERSERK, diff)){
                  bsw->doCast(SPELL_BERSERK);
                  DoScriptText(-1631332,m_creature);
                  };
 
-        DoMeleeAttackIfReady();
     }
 };
 
@@ -178,7 +364,6 @@ struct MANGOS_DLL_DECL mob_swarming_shadowsAI : public ScriptedAI
         SetCombatMovement(false); 
 //        m_creature->SetDisplayId(29308);
         m_creature->GetMotionMaster()->MoveRandom();
-//        m_ui_Timer = 30000;
     }
 
     void UpdateAI(const uint32 uiDiff)
