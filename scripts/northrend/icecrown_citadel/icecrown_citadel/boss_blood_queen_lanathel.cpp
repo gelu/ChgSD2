@@ -114,6 +114,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 
         if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_2))
            pVictim->RemoveAurasDueToSpell(SPELL_BLOOD_MIRROR_2);
+
+        for(uint8 i = 0; i < darkfallened; ++i)
+              if (Darkfallen[i] && Darkfallen[i] == pVictim) 
+                 {
+                     Darkfallen[i] = NULL;
+                     if (pVictim && pVictim->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                        pVictim->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
+                 }
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -164,17 +172,20 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                   ++darkfallened;
               };
        }
-       else if (darkfallened)
+       else if (darkfallened > 0)
        {
           for(uint8 i = 0; i < darkfallened; ++i)
-              if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                  for(uint8 j = 0; j < darkfallened; ++j)
-                     if (j != i && Darkfallen[j] && Darkfallen[j]->isAlive() && Darkfallen[j]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                        if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
+              if (Darkfallen[i]) 
+                 if (Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                   for(uint8 j = 0; j < darkfallened; ++j)
+                      if (j != i && Darkfallen[j])
+                        if(Darkfallen[j]->isAlive() && Darkfallen[j]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                           if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
 
           for(uint8 i = 0; i < darkfallened; ++i)
-                  if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                      Darkfallen[i]->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
+                  if (Darkfallen[i])
+                     if (Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                         Darkfallen[i]->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
           darkfallened = 0;
        };
     }

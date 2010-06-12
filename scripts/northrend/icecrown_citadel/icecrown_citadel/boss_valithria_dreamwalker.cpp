@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        m_creature->SetHealth(m_creature->GetMaxHealth()/2);
+        m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
         pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
         bsw->resetTimers();
         m_creature->SetRespawnDelay(7*DAY);

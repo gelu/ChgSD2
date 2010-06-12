@@ -159,7 +159,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
             if (bsw->timedQuery(SPELL_MARK, diff))
             {
                 if (MarkTarget && MarkTarget->HasAura(SPELL_MARK))
-                   MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
+                    MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
 
                 if (MarkTarget = bsw->SelectRandomPlayerAtRange(120.0f))
                    if (bsw->doCast(SPELL_MARK, MarkTarget) == CAST_OK) 

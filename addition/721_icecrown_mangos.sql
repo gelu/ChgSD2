@@ -99,8 +99,12 @@ UPDATE `creature_template` SET `ScriptName`='mob_swarming_shadows', `AIName`='' 
 
 -- Valithria dreamwalker
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10067;
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10068;
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10069;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
 UPDATE `creature_template` SET `ScriptName`='mob_mana_void', `AIName`='' WHERE `entry`= 38068;
+
 
 UPDATE `gameobject_template` SET `faction` = '0',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201375,201373);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201374);
