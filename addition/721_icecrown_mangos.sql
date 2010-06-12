@@ -26,11 +26,11 @@ UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `
 DELETE FROM `gameobject` WHERE `guid` IN (913383, 913385, 913395, 913397);
 DELETE FROM `gameobject_template` WHERE `entry` IN (902241,902242);
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72260', '1', '37813');
 
 -- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
 UPDATE `creature_template` SET `faction_A`=14, `faction_H`=14,`ScriptName`='mob_vengeful_shade', `AIName`='' WHERE `entry`= 38222;
-#UPDATE `gameobject` SET `spawntimesecs` = -25, `state` = 1 WHERE `id` = 202220;
 UPDATE `creature_template` SET `ScriptName`='mob_cult_adherent', `AIName`='' WHERE `entry`= 37949;
 UPDATE `creature_template` SET `ScriptName`='mob_cult_fanatic', `AIName`='' WHERE `entry`= 37890;
 
