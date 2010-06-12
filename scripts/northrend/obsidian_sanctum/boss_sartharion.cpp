@@ -1715,10 +1715,13 @@ struct MANGOS_DLL_DECL mob_flame_tsunamiAI : public ScriptedAI
         else
             m_uiMovementStartTimer -= uiDiff;
 
+
         if (m_uiTickTimer < uiDiff)
         {
+
             if (m_pDummyDamager)
-                m_pDummyDamager->CastSpell(m_pDummyDamager, SPELL_FLAME_TSUNAMI_DMG, false);
+                if (m_pDummyDamager->isAlive() && !m_pDummyDamager->HasAura(SPELL_FLAME_TSUNAMI_DMG_AURA))
+                    m_pDummyDamager->CastSpell(m_pDummyDamager, SPELL_FLAME_TSUNAMI_DMG_AURA, false);
 
             std::list<Creature*> lLavaBlazes;
             GetCreatureListWithEntryInGrid(lLavaBlazes, m_creature, NPC_LAVA_BLAZE, 6.0f);
