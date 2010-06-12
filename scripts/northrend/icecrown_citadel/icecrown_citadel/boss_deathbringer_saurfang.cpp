@@ -61,7 +61,6 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     uint8 stage;
     uint8 Difficulty;
     uint8 beasts;
-    Unit* MarkTarget;
 
     void Reset()
     {
@@ -71,7 +70,6 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         stage = 0;
         beasts = 0;
         bsw->resetTimers();
-        MarkTarget = NULL;
     }
 
     void Aggro(Unit *who) 
@@ -98,11 +96,6 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                break;
         };
 
-        if (pVictim && pVictim->HasAura(SPELL_MARK))
-        {
-            m_creature->ModifyHealth(m_creature->GetMaxHealth() * 0.05f);
-            pVictim->RemoveAurasDueToSpell(SPELL_MARK);
-        }
     }
 
     void JustSummoned(Creature* summoned)
@@ -120,8 +113,15 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         if(!pInstance) return;
         pInstance->SetData(TYPE_SAURFANG, DONE);
         DoScriptText(-1631106,m_creature);
-        if (MarkTarget && MarkTarget->HasAura(SPELL_MARK))
-             MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
+
+        Map::PlayerList const &pList = m_creature->GetMap()->GetPlayers();
+        if (pList.isEmpty()) return;
+
+        for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
+           if (Player* pPlayer = i->getSource())
+               if (pPlayer && pPlayer->isAlive())
+                  if (pPlayer->HasAura(SPELL_MARK))
+                     bsw->doRemove(SPELL_MARK,pPlayer);
     }
 
     void doBloodPower()
@@ -158,11 +158,8 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
 
             if (bsw->timedQuery(SPELL_MARK, diff))
             {
-                if (MarkTarget && MarkTarget->HasAura(SPELL_MARK))
-                    MarkTarget->RemoveAurasDueToSpell(SPELL_MARK);
-
-                if (MarkTarget = bsw->SelectRandomPlayerAtRange(120.0f))
-                   if (bsw->doCast(SPELL_MARK, MarkTarget) == CAST_OK) 
+                if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_MARK,false,120.0f))
+                   if (bsw->doCast(SPELL_MARK, pTarget) == CAST_OK) 
                        doBloodPower();
             }
 
@@ -223,12 +220,11 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
          bsw->doCast(SPELL_BLOOD_LINK_BEAST);
          scentcasted = false;
     }
+
     void KilledUnit(Unit* pVictim)
     {
         if (pOwner && pOwner->isAlive())
             pOwner->ModifyHealth(pOwner->GetMaxHealth() * 0.05f);
-        if (pVictim && pVictim->HasAura(SPELL_MARK))
-            pVictim->RemoveAurasDueToSpell(SPELL_MARK);
     }
 
     void UpdateAI(const uint32 uiDiff)
