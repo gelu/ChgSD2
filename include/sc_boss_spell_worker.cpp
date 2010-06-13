@@ -259,8 +259,13 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                                     error_log("BSW: Positon Z is NULL. Strange bug");
                                     return CAST_FAIL_OTHER;
                                  }
-                         boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
-                         return CAST_OK;
+                         if (SpellEntry const *spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
+                           if (SpellRangeEntry const *pSpellRange = GetSpellRangeStore()->LookupEntry(spell->rangeIndex))
+                              if (boss->GetDistance(fPosX, fPosY, fPosZ) <= pSpellRange->maxRange)
+                                {
+                                    boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
+                                     return CAST_OK;
+                                } else CAST_FAIL_TOO_FAR;
                          } else return CAST_FAIL_OTHER;
                    break;
 
