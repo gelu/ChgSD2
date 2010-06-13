@@ -963,10 +963,7 @@ struct MANGOS_DLL_DECL mob_defiler_iccAI : public ScriptedAI
             m_creature->ForcedDespawn();
         else life_timer -= uiDiff;
 
-        // Override especially for clean core
-        if (m_Size >= m_Size0 * 6.0f) m_creature->ForcedDespawn();
-
-        if (doSearchPlayers()) {
+        if (doSearchPlayers() && m_Size <= m_Size0 * 6.0f) {
                 m_Size = m_Size*1.01;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }
