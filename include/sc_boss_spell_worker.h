@@ -111,7 +111,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         void resetTimers()
              {
-             for (uint8 i = 0; i < _bossSpellCount; ++i)
+             for (uint8 i = 0; i < bossSpellCount(); ++i)
                   _resetTimer(i);
              };
 
