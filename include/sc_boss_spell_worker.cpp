@@ -440,7 +440,7 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
                     for(Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
                       {
                         pTarget = itr->getSource();
-                        if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(boss, pSpell->LocData.x))
+                        if (pTarget && pTarget->isAlive() && pTarget->IsInMap(boss))
                             pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
                        }
                         return true;
@@ -450,7 +450,7 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
                   default: return false;
           }
           if (pTarget) {
-              if (pTarget->isAlive()) {
+              if (pTarget->isAlive() && pTarget->IsInMap(boss)) {
                   if ( pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty]) &&
                        pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->GetStackAmount() > 1) {
                            if (pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->modStackAmount(-1))
@@ -459,7 +459,13 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
                                }
                            else pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
                            }
-                   else pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+                   else {
+                           if (pTarget->IsInMap(boss)) pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+                           else  {
+                                 error_log("BSW: Attempt remove aura fom dead unit %u, unit not same map with boss",pTarget->GetGUIDLow());
+                                 return false;
+                                 }
+                        }
                   }
      return true;
 };

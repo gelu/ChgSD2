@@ -92,6 +92,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
     uint64 m_uiFrostyWindGUID;
     uint64 m_uiFrostyEdgeGUID;
 
+    uint64 m_uiFrostmourneGUID;
+    uint64 m_uiFrostmourneTriggerGUID;
+    uint64 m_uiFrostmourneHolderGUID;
+
     uint64 m_uiSaurfangCacheGUID;
     uint64 m_uiGunshipArmoryAGUID;
     uint64 m_uiGunshipArmoryHGUID;
@@ -262,6 +266,10 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case NPC_PRECIOUS:
                           m_uiPreciousGUID = pCreature->GetGUID();
                           break;
+            case NPC_FROSTMOURNE_TRIGGER:
+                          m_uiFrostmourneTriggerGUID = pCreature->GetGUID(); break;
+            case NPC_FROSTMOURNE_HOLDER:
+                          m_uiFrostmourneHolderGUID = pCreature->GetGUID(); break;
         }
     }
 
@@ -712,6 +720,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_ICESHARD_4:               return m_uiIceShard4GUID;
             case GO_FROSTY_WIND:              return m_uiFrostyWindGUID;
             case GO_FROSTY_EDGE:              return m_uiFrostyEdgeGUID;
+            case NPC_FROSTMOURNE_TRIGGER:     return m_uiFrostmourneTriggerGUID;
+            case NPC_FROSTMOURNE_HOLDER:      return m_uiFrostmourneHolderGUID;
         }
         return 0;
     }

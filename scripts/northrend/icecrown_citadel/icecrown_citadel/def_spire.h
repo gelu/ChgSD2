@@ -46,7 +46,9 @@ enum
     NPC_TIRION                  = 38995,
     NPC_MENETHIL                = 38579,
     NPC_SPIRIT_WARDEN           = 38579,
-    NPC_FROSTMOURNE             = 27880,
+
+    NPC_FROSTMOURNE_TRIGGER     = 38584,
+    NPC_FROSTMOURNE_HOLDER      = 27880,
 
     NPC_STINKY                  = 37025,
     NPC_PRECIOUS                = 37217,

@@ -225,7 +225,6 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         bsw->timedCast(SPELL_COLD_FLAME_0, uiDiff);
-//        bsw->timedCast(SPELL_COLD_FLAME, uiDiff);
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
     }
@@ -288,12 +287,13 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 
         if(pVictim && !pVictim->isAlive())
         {
-            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+//            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->ForcedDespawn();
         }
 
-        if(m_creature->IsWithinDistInMap(pVictim, 1.0f) &&
-             !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
+        if(m_creature->IsWithinDistInMap(pVictim, 1.0f)
+             && pVictim->isAlive()
+             && !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
         {
             bsw->doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->GetMotionMaster()->Clear();
