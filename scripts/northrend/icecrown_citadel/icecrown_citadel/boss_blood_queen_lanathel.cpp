@@ -75,6 +75,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
     Unit* MirrorTarget;
     Unit* Darkfallen[5];
     uint8 darkfallened;
+    uint32 MirrorDamage;
 
     void Reset()
     {
@@ -89,6 +90,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         bsw->resetTimers();
         memset(&Darkfallen, 0, sizeof(Darkfallen));
         darkfallened = 0;
+        MirrorDamage = 0;
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
     }
@@ -110,18 +112,10 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         }
 
         if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_1))
-           pVictim->RemoveAurasDueToSpell(SPELL_BLOOD_MIRROR_1);
+           bsw->doRemove(SPELL_BLOOD_MIRROR_1,pVictim);
 
         if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_2))
-           pVictim->RemoveAurasDueToSpell(SPELL_BLOOD_MIRROR_2);
-
-        for(uint8 i = 0; i < darkfallened; ++i)
-              if (Darkfallen[i] && Darkfallen[i] == pVictim) 
-                 {
-                     Darkfallen[i] = NULL;
-                     if (pVictim && pVictim->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                        pVictim->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
-                 }
+           bsw->doRemove(SPELL_BLOOD_MIRROR_2,pVictim);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -185,9 +179,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                            if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
 
           for(uint8 i = 0; i < darkfallened; ++i)
-                  if (Darkfallen[i])
-                     if (Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                         Darkfallen[i]->RemoveAurasDueToSpell(SPELL_PACT_OF_DARKFALLEN);
+                  if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                       bsw->doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
           darkfallened = 0;
        };
     }
@@ -217,15 +210,23 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 
     }
 
+    void doMirrorDamage()
+    {
+        uint32 tempdamage = MirrorDamage;
+
+        if (MirrorTarget)
+           if (MirrorTarget->isAlive())
+               m_creature->DealDamage(MirrorTarget, tempdamage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
+        MirrorDamage -= tempdamage;
+    }
+
     void DamageDeal(Unit* target, uint32 &damage) 
     {
         if (target)
            if (MirrorMarked)
              if (MirrorMarked->isAlive())
                 if (target == MirrorMarked)
-                   if (MirrorTarget)
-                      if (MirrorTarget->isAlive())
-                         m_creature->DealDamage(MirrorTarget, damage, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_SHADOW, NULL, false);
+                   MirrorDamage += damage;
     }
 
     void UpdateAI(const uint32 diff)
@@ -343,6 +344,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 
         doPactOfDarkfallen(false);
 
+        doMirrorDamage();
+
         if (bloodbolts > 0)
             {
                 bsw->doCast(SPELL_TWILIGHT_BLOODBOLT);
@@ -371,12 +374,14 @@ struct MANGOS_DLL_DECL mob_swarming_shadowsAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
+    uint32 m_lifetimer;
 
     void Reset()
     {
         SetCombatMovement(false); 
-//        m_creature->SetDisplayId(29308);
+        m_creature->SetDisplayId(11686);
         m_creature->GetMotionMaster()->MoveRandom();
+        m_lifetimer = 10000;
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -386,6 +391,10 @@ struct MANGOS_DLL_DECL mob_swarming_shadowsAI : public ScriptedAI
 
         if (!m_creature->HasAura(SPELL_SWARMING_SHADOWS_VISUAL))
               DoCast(m_creature, SPELL_SWARMING_SHADOWS_VISUAL);
+
+        if (m_lifetimer <= uiDiff)
+            m_creature->ForcedDespawn();
+        else m_lifetimer -= uiDiff;
 
     }
 };
