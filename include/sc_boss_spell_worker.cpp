@@ -267,7 +267,7 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
             case CAST_ON_RANDOM_PLAYER:
                    if ( pSpell->LocData.x < 1 ) pTarget = SelectRandomPlayer();
                        else pTarget = SelectRandomPlayerAtRange((float)pSpell->LocData.x);
-                   if (pTarget || pTarget->IsInMap(boss)) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
+                   if (pTarget && pTarget->IsInMap(boss)) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             default:
@@ -320,8 +320,8 @@ bool BossSpellWorker::_hasAura(uint8 m_uiSpellIdx, Unit* pTarget)
 
 uint8 BossSpellWorker::FindSpellIDX(uint32 SpellID)
 {
-    if (_bossSpellCount != 0)
-      for(uint8 i = 0; i < _bossSpellCount; ++i)
+    if (bossSpellCount() >= 0)
+      for(uint8 i = 0; i < bossSpellCount(); ++i)
         if (m_BossSpell[i].m_uiSpellEntry[RAID_DIFFICULTY_10MAN_NORMAL] == SpellID) return i;
 
     error_log("BSW: spell %u not found  in boss %u spelltable. Memory or database error?", SpellID, bossID);
@@ -366,7 +366,7 @@ CanCastResult BossSpellWorker::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 
 void BossSpellWorker::_fillEmptyDataField()
 {
-    for (uint8 i = 0; i < _bossSpellCount; ++i)
+    for (uint8 i = 0; i < bossSpellCount(); ++i)
         for (uint8 j = 1; j < DIFFICULTY_LEVELS; ++j)
         {
             if (m_BossSpell[i].m_uiSpellEntry[j] == 0)
