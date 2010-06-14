@@ -956,8 +956,8 @@ struct MANGOS_DLL_DECL mob_defiler_iccAI : public ScriptedAI
         if (pList.isEmpty()) return false;
         for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
              if (Player* pPlayer = i->getSource())
-                 if (pPlayer && pPlayer->isAlive())
-                     if(m_creature->IsWithinDistInMap(pPlayer, 0.1f)) return true;
+                 if (pPlayer && pPlayer->isAlive() && pPlayer->IsInMap(m_creature))
+                     if(m_creature->IsWithinDistInMap(pPlayer, m_Size * 6.0f)) return true;
         return false;
     }
 

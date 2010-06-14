@@ -347,10 +347,12 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public ScriptedAI
     mob_ice_tombAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
+    BossSpellWorker* bsw;
     Unit* pVictim;
 
     void Reset()
@@ -370,24 +372,24 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public ScriptedAI
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-            if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_ICY_TOMB);
+            if (pVictim) bsw->doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void KilledUnit(Unit* _Victim)
     {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_ICY_TOMB);
+        if (pVictim) bsw->doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void JustDied(Unit* Killer)
     {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_ICY_TOMB);
+        if (pVictim) bsw->doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_SINDRAGOSA) != IN_PROGRESS)
         {
-        if (pVictim) pVictim->RemoveAurasDueToSpell(SPELL_ICY_TOMB);
+        if (pVictim) bsw->doRemove(SPELL_ICY_TOMB,pVictim);
             m_creature->ForcedDespawn();
         }
 
