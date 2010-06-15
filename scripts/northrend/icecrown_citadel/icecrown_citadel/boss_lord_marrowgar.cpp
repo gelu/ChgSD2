@@ -291,9 +291,10 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
             m_creature->ForcedDespawn();
         }
 
-        if(m_creature->IsWithinDistInMap(pVictim, 1.0f)
-             && pVictim->isAlive()
-             && !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
+        if(pVictim && pVictim->IsInWorld())
+            if(m_creature->IsWithinDistInMap(pVictim, 1.0f)
+                 && pVictim->isAlive()
+                 && !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
         {
             bsw->doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->GetMotionMaster()->Clear();
