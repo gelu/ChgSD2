@@ -102,7 +102,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     {
         if(!pInstance || !summoned) return;
 
-        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
+        if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
             summoned->AddThreat(pTarget, 100.0f);
             summoned->GetMotionMaster()->MoveChase(pTarget);
             }

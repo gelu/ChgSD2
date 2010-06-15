@@ -232,12 +232,12 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
             }
 
             case CAST_ON_FRENDLY:
-                   pTarget = SelectLowHPFriendly();
+                   pTarget = SelectLowHPFriendly(pSpell->LocData.x);
                    return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case CAST_ON_FRENDLY_LOWHP:
-                   pTarget = SelectLowHPFriendly();
+                   pTarget = SelectLowHPFriendly(pSpell->LocData.x);
                    return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
@@ -320,6 +320,20 @@ bool BossSpellWorker::_hasAura(uint8 m_uiSpellIdx, Unit* pTarget)
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
     return (pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty]));
+
+};
+
+uint8 BossSpellWorker::_auraCount(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
+{
+    if (!pTarget) return false;
+
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    if (!pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty])) return 0;
+
+    if (pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->GetStackAmount() > 0)
+        return pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->GetStackAmount();
+        else return 0;
 
 };
 
@@ -653,5 +667,16 @@ Unit* BossSpellWorker::_doSelect(uint32 SpellID, bool spellsearchtype, float ran
     else return _list[urand(0,_count)];
 };
 
+Creature* BossSpellWorker::SelectNearestCreature(uint32 guid, float range)
+{
+    Creature* pTarget = NULL;
+
+    MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck u_check(*boss, guid, true, range*2);
+    MaNGOS::CreatureLastSearcher<MaNGOS::NearestCreatureEntryWithLiveStateInObjectRangeCheck> searcher(boss, pTarget, u_check);
+    Cell::VisitGridObjects(boss, searcher, range*2);
+
+    if (pTarget && pTarget != boss && pTarget->isAlive()) return pTarget;
+       else return NULL;
+}
 
 #endif

@@ -160,8 +160,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 
         m_auiEncounter[0] = 0;
 
-        m_uiMarrogwarGUID =0;
-        m_uiDeathWhisperGUID =0;
+        m_uiMarrogwarGUID = 0;
+        m_uiDeathWhisperGUID = 0;
         m_uiSaurfangGUID = 0;
         m_uiSaurfangCacheGUID = 0;
         m_uiGunshipArmoryAGUID = 0;

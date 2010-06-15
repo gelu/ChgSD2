@@ -26,6 +26,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `
 DELETE FROM `gameobject` WHERE `guid` IN (913383, 913385, 913395, 913397);
 DELETE FROM `gameobject_template` WHERE `entry` IN (902241,902242);
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
+DELETE FROM `spell_script_target` WHERE `entry` = 72260;
 INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72260', '1', '37813');
 
 -- Deathwhisper
@@ -65,6 +66,14 @@ INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `positi
 UPDATE `creature_template` SET `ScriptName`='boss_rotface', `AIName`=''  WHERE `entry`= 36627;
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201370);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201370);
+UPDATE `creature_template` SET `ScriptName`='mob_small_ooze', `AIName`='' WHERE `entry`= 36897;
+UPDATE `creature_template` SET `ScriptName`='mob_big_ooze', `AIName`='' WHERE `entry`= 36899;
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_sticky_ooze', `AIName`='' WHERE `entry`= 37006;
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_ooze_spray_stalker', `AIName`='' WHERE `entry`= 37986;
+DELETE FROM `spell_script_target` WHERE `entry` = 69783;
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69783', '1', '37986');
+
+
 -- Festergut
 UPDATE `creature_template` SET `ScriptName`='boss_festergut', `AIName`=''  WHERE `entry`= 36626;
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201371);

@@ -158,6 +158,13 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _hasAura(FindSpellIDX(SpellID),pTarget);
              };
 
+        uint8 auraCount(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
+             {
+             if (!pTarget) pTarget = boss;
+             if (!_hasAura(FindSpellIDX(SpellID),pTarget)) return 0;
+             else return _auraCount(FindSpellIDX(SpellID),pTarget,index);
+             };
+
         Unit* doSummon(uint32 SpellID, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
              return _doSummon(FindSpellIDX(SpellID), type, delay);
@@ -195,6 +202,8 @@ class MANGOS_DLL_DECL BossSpellWorker
              return _bossSpellCount;
              };
 
+        Creature* SelectNearestCreature(uint32 guid, float range = 120.0f);
+
     private:
 
         BossSpellTableParameters getBSWCastType(uint32 pTemp);
@@ -230,6 +239,8 @@ class MANGOS_DLL_DECL BossSpellWorker
         bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
+
+        uint8         _auraCount(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         void          _fillEmptyDataField();
 
