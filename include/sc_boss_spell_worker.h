@@ -106,7 +106,9 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         void resetTimer(uint32 SpellID)
              {
-             return _resetTimer(FindSpellIDX(SpellID));
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return;
+             return _resetTimer(m_uiSpellIdx);
              };
 
         void resetTimers()
@@ -117,12 +119,15 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         bool timedQuery(uint32 SpellID, uint32 diff)
              {
-             return _QuerySpellPeriod(FindSpellIDX(SpellID), diff);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return false;
+             return _QuerySpellPeriod(m_uiSpellIdx, diff);
              };
 
         CanCastResult timedCast(uint32 SpellID, uint32 diff, Unit* pTarget = NULL)
              {
              uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
              if (!_QuerySpellPeriod(FindSpellIDX(SpellID), diff)) return CAST_FAIL_STATE;
                   else return _BSWSpellSelector(m_uiSpellIdx, pTarget);
              };
@@ -130,7 +135,7 @@ class MANGOS_DLL_DECL BossSpellWorker
         CanCastResult doCast(uint32 SpellID, Unit* pTarget = NULL)
              {
                   uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
-                  if ( m_uiSpellIdx != SPELL_INDEX_ERROR) return _BSWSpellSelector(m_uiSpellIdx, pTarget);
+                  if (queryIndex(m_uiSpellIdx)) return _BSWSpellSelector(m_uiSpellIdx, pTarget);
                   else return CAST_FAIL_OTHER;
              };
 
@@ -138,36 +143,46 @@ class MANGOS_DLL_DECL BossSpellWorker
              {
                   if (!pTarget) return CAST_FAIL_OTHER;
                   uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
-                  if ( m_uiSpellIdx != SPELL_INDEX_ERROR) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
+                  if (queryIndex(m_uiSpellIdx)) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                   else return CAST_FAIL_OTHER;
              };
 
         bool doRemove(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-             return _doRemove(FindSpellIDX(SpellID),pTarget, index);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return false;
+             return _doRemove(m_uiSpellIdx,pTarget, index);
              };
 
         bool doAura(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-             return _doAura(FindSpellIDX(SpellID),pTarget, index);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return false;
+             return _doAura(m_uiSpellIdx,pTarget, index);
              };
 
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
              {
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return false;
              if (!pTarget) pTarget = boss;
-             return _hasAura(FindSpellIDX(SpellID),pTarget);
+             return _hasAura(m_uiSpellIdx,pTarget);
              };
 
         uint8 auraCount(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return 0;
              if (!pTarget) pTarget = boss;
-             if (!_hasAura(FindSpellIDX(SpellID),pTarget)) return 0;
-             else return _auraCount(FindSpellIDX(SpellID),pTarget,index);
+             if (!_hasAura(m_uiSpellIdx,pTarget)) return 0;
+             else return _auraCount(m_uiSpellIdx,pTarget,index);
              };
 
         Unit* doSummon(uint32 SpellID, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
-             return _doSummon(FindSpellIDX(SpellID), type, delay);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return NULL;
+             return _doSummon(m_uiSpellIdx, type, delay);
              };
 
         Unit* SelectRandomPlayer(uint32 SpellID = 0, bool spellsearchtype = false, float range = 100.0f)
@@ -182,17 +197,23 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
-             return _doSummonAtPosition(FindSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return NULL;
+             return _doSummonAtPosition(m_uiSpellIdx, type, delay, fPosX, fPosY, fPosZ);
              };
 
         CanCastResult BSWSpellSelector(uint32 SpellID, Unit* pTarget = NULL)
              {
-             return _BSWSpellSelector(FindSpellIDX(SpellID), pTarget);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
+             return _BSWSpellSelector(m_uiSpellIdx, pTarget);
              };
 
         CanCastResult BSWDoCast(uint32 SpellID, Unit* pTarget)
              {
-             return _BSWDoCast(FindSpellIDX(SpellID), pTarget);
+             uint8 m_uiSpellIdx = FindSpellIDX(SpellID);
+             if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
+             return _BSWDoCast(m_uiSpellIdx, pTarget);
              };
 
         Unit* SelectLowHPFriendly(float fRange = 40.0f, uint32 uiMinHPDiff = 0);
@@ -200,6 +221,15 @@ class MANGOS_DLL_DECL BossSpellWorker
         uint8 bossSpellCount()
              {
              return _bossSpellCount;
+             };
+
+        bool queryIndex(uint8 m_uiSpellIdx)
+             {
+             if (    (m_uiSpellIdx >= 0)
+                  && (m_uiSpellIdx <= bossSpellCount())
+                  && (m_uiSpellIdx  != SPELL_INDEX_ERROR))
+                  return true;
+             else return false;
              };
 
         Creature* SelectNearestCreature(uint32 guid, float range = 120.0f);

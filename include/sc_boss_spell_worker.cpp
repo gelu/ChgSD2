@@ -10,8 +10,8 @@ BossSpellWorker::BossSpellWorker(ScriptedAI* bossAI)
 {
      boss = bossAI->m_creature;
      bossID = boss->GetEntry();
-     if (pMap = boss->GetMap())
-              currentDifficulty = pMap->GetDifficulty();
+     pMap = boss->GetMap();
+     if (pMap) currentDifficulty = pMap->GetDifficulty();
         else currentDifficulty = RAID_DIFFICULTY_10MAN_NORMAL;
      debug_log("BSW: Initializing BossSpellWorker object for boss %u difficulty %u",bossID,currentDifficulty);
      Reset();
@@ -99,8 +99,7 @@ void BossSpellWorker::LoadSpellTable()
             m_BossSpell[uiCount].textEntry = pFields[10+DIFFICULTY_LEVELS*4].GetInt32();
 
             if (bossEntry != bossID) error_db_log("BSW: Unknown error while load boss_spell_table");
-
-            ++uiCount;
+               else ++uiCount;
 
         } while (Result->NextRow());
 
@@ -178,18 +177,20 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                    break;
 
             case APPLY_AURA_SELF:
-                   if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
-                          if(boss->AddAura(new BossAura(spell, EFFECT_INDEX_0, &pSpell->varData, boss, boss)))
+                   spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (spell)
+                       if (boss->AddAura(new BossAura(spell, EFFECT_INDEX_0, &pSpell->varData, boss, boss)))
                               return CAST_OK;
-                          else return CAST_FAIL_OTHER;
+                   return CAST_FAIL_OTHER;
                    break;
 
             case APPLY_AURA_TARGET:
                    if (!pTarget || !pTarget->IsInMap(boss)) return CAST_FAIL_OTHER;
-                   if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
-                          if (pTarget->AddAura(new BossAura(spell, EFFECT_INDEX_0, &pSpell->varData, pTarget, pTarget)))
+                   spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]);
+                   if (spell)
+                       if (pTarget->AddAura(new BossAura(spell, EFFECT_INDEX_0, &pSpell->varData, pTarget, pTarget)))
                               return CAST_OK;
-                          else return CAST_FAIL_OTHER;
+                       return CAST_FAIL_OTHER;
                    break;
 
             case SUMMON_NORMAL:
@@ -219,14 +220,18 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                     {
                         pTarget = itr->getSource();
                         if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(boss, pSpell->LocData.x))
-                                    if (!pSpell->m_IsBugged) {
-                                         res1 = _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
-                                         }
-                                         else {
-                                          _BSWDoCast(m_uiSpellIdx, pTarget);
-                                          res1 = CAST_OK;
-                                          };
-                            return res1;
+                           {
+                               if (!pSpell->m_IsBugged) 
+                                   {
+                                       res1 = _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                                   }
+                                   else 
+                                   {
+                                       _BSWDoCast(m_uiSpellIdx, pTarget);
+                                       res1 = CAST_OK;
+                                   };
+                           };
+                           return res1;
                      }
                    break;
             }
@@ -254,7 +259,7 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                             }
                          pTarget->GetPosition(fPosX, fPosY, fPosZ);
                          pTarget->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
-                                if ((int)fPosZ == 0) 
+                                if ((int)fPosZ == 0)
                                 {
                                     error_log("BSW: Positon Z is NULL. Strange bug");
                                     return CAST_FAIL_OTHER;
@@ -262,11 +267,12 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                          if (SpellEntry const *spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
                            if (SpellRangeEntry const *pSpellRange = GetSpellRangeStore()->LookupEntry(spell->rangeIndex))
                               if (boss->GetDistance(fPosX, fPosY, fPosZ) <= pSpellRange->maxRange)
-                                {
-                                    boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
+                                 {
+                                     boss->CastSpell(fPosX, fPosY, fPosZ, pSpell->m_uiSpellEntry[currentDifficulty], false);
                                      return CAST_OK;
-                                } else CAST_FAIL_TOO_FAR;
-                         } else return CAST_FAIL_OTHER;
+                                 };
+                                 return CAST_FAIL_TOO_FAR;
+                         } else  return CAST_FAIL_OTHER;
                    break;
 
             case CAST_ON_RANDOM_PLAYER:
@@ -501,7 +507,8 @@ bool BossSpellWorker::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectInde
     if (pTarget->HasAura(pSpell->m_uiSpellEntry[currentDifficulty]))
             debug_log("BSW: adding aura stack from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
 
-    if (spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]))
+    spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]);
+    if (spell)
         {
             debug_log("BSW: adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
             int32 basepoint = pSpell->varData ?  pSpell->varData - 1 : spell->EffectBasePoints[index] + 1;
