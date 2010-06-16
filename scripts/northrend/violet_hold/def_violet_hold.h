@@ -97,6 +97,7 @@ struct Locations
     float x, y, z;
     uint32 id;
 };
+
 struct WayPoints
 {
     WayPoints(uint32 _id, float _x, float _y, float _z)
@@ -132,6 +133,7 @@ static Locations BossLoc[]=
     {1857.125, 763.295, 38.654}, // Lavanthor
     {1925.480, 849.981, 47.174}, // Zuramat
 };
+
 static Locations DragonsWP[]=
 {
     //center, ichoron

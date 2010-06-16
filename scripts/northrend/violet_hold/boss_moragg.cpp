@@ -47,7 +47,7 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
     uint32 m_uiCorrosiveSaliva_Timer;
     uint32 m_uiOpticLink_Timer;
     uint32 m_uiRay_Timer;
-    
+
     bool MovementStarted;
 
     void Reset()
@@ -66,9 +66,10 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_MORAGG, IN_PROGRESS);
-
+        if (!m_pInstance) return;
+        m_pInstance->SetData(TYPE_MORAGG, IN_PROGRESS);
+        m_creature->GetMotionMaster()->MovementExpired();
+        SetCombatMovement(true);
     }
 
     void AttackStart(Unit* pWho)
@@ -91,15 +92,32 @@ struct MANGOS_DLL_DECL boss_moraggAI : public ScriptedAI
         }
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void StartMovement(uint32 id)
     {
-        if (m_pInstance->GetData(TYPE_MORAGG) == SPECIAL && !MovementStarted) {
-	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->GetMotionMaster()->MovePoint(id, PortalLoc[id].x, PortalLoc[id].y, PortalLoc[id].z);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;
-         }
+        m_creature->SetInCombatWithZone();
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+        if (id == 0)
+        {
+            MovementStarted = false;
+            m_creature->GetMotionMaster()->MovementExpired();
+            SetCombatMovement(true);
+            m_creature->SetInCombatWithZone();
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance->GetData(TYPE_MORAGG) == SPECIAL && !MovementStarted)
+            StartMovement(0);
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

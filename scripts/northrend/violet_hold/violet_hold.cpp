@@ -106,7 +106,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         IsInCombat = false;
         MovementStarted = false;
         pDoorSeal = GetClosestCreatureWithEntry(m_creature, NPC_DOOR_SEAL, 150.0f);
-       
+
         //Azure Captain
         m_uiMortalStrike_Timer = 3000;
         m_uiWhirlwind_Timer = 5000;
@@ -123,10 +123,11 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
         m_uiBackstab_Timer = 7100;
         m_uiBlink_Timer = 7000;
 
-        if (creatureEntry == NPC_KEEPER)
+        if (creatureEntry == NPC_KEEPER
+            || creatureEntry == NPC_GUARDIAN)
         {
-        SetCombatMovement(false); 
-        m_creature->GetMotionMaster()->MoveRandom();
+            SetCombatMovement(false);
+            m_creature->GetMotionMaster()->MoveRandom();
         };
 
     }
@@ -370,10 +371,12 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
         portalType = 0;
         portalID = 0;
         portalLoc = -1;
-        
         TimeRiftWave_Timer = 15000;
         Check_Timer = 5000;
+
+        m_creature->SetRespawnDelay(DAY);
     }
+
     uint32 SelectRandSummon()
     {
         uint32 entry = 0;
@@ -385,7 +388,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 case 1: entry = NPC_AZURE_INVADER; break;
                 case 2: entry = NPC_AZURE_MAGE_SLAYER; break;
                 case 3: entry = NPC_AZURE_SPELLBREAKER; break;
-            }      
+            }
         }else{
             switch (urand(0, 3))
             {
@@ -393,7 +396,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 case 1: entry = NPC_AZURE_RAIDER; break;
                 case 2: entry = NPC_AZURE_SORCEROR; break;
                 case 3: entry = NPC_AZURE_STALKER; break;
-            }    
+            }
         }
         return entry;
     }
@@ -442,6 +445,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
         }
         return false;
     }
+
     void UpdateAI(const uint32 diff)
     {
         if (!m_pInstance)
@@ -466,7 +470,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 {
                     m_uiNextPortal_Timer = 5000;
                     debug_log("SD2: npc_time_rift: not casting anylonger, i need to die.");
-                    m_creature->setDeathState(JUST_DIED);
+                    m_creature->ForcedDespawn();
                 }
                 break;
             case 2:
@@ -481,7 +485,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                     {
                         m_uiNextPortal_Timer = 5000;
                         debug_log("SD2: npc_time_rift: No elite, i need to die.");
-                        m_creature->setDeathState(JUST_DIED);
+                        m_creature->ForcedDespawn();
                     }
                     Check_Timer = 1000;
                 }else Check_Timer -= diff;
@@ -540,7 +544,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
             ((npc_violet_portalAI*)pTemp->AI())->portalType = portalType; 
             ((npc_violet_portalAI*)pTemp->AI())->portalID = portalID;
             ((npc_violet_portalAI*)pTemp->AI())->portalLoc = tmp;
-            
+
             if(portalType == 1)
             {
                 uint32 entry = urand(0, 1) ? NPC_GUARDIAN : NPC_KEEPER;
@@ -591,11 +595,11 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
                          || m_uiRiftPortalCount == 15
                          || m_uiRiftPortalCount == 18 )
                 {
-                    if (Creature* pTemp = m_creature->SummonCreature(NPC_PORTAL, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 300000))
+                    if (Creature* pTemp = m_creature->SummonCreature(NPC_PORTAL, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_TIMED_DESPAWN, 15000))
                     {
-                        Creature* pSummoned = m_creature->SummonCreature(NPC_AZURE_SABOTEUR, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 300000);
-
-                        pSummoned->AddThreat(pTemp);
+                        pTemp->SetRespawnDelay(7*DAY);
+                        Creature* pSummoned = m_creature->SummonCreature(NPC_AZURE_SABOTEUR, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z, 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 10000);
+//                        pSummoned->AddThreat(pTemp);
                         pTemp->CastSpell(pSummoned, SPELL_PORTAL_CHANNEL, false);
                     }
                     m_pInstance->SetData(TYPE_RIFT, IN_PROGRESS);

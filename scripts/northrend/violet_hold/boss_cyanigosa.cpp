@@ -76,6 +76,7 @@ struct MANGOS_DLL_DECL boss_cyanigosaAI : public ScriptedAI
         m_uiTailSweep_Timer = urand(10000, 11000);
         m_uiArcaneVacuum_Timer = urand(28000, 33000);
         MovementStarted = false;
+        m_creature->SetInCombatWithZone();
     }
 
     void Aggro(Unit* pWho)

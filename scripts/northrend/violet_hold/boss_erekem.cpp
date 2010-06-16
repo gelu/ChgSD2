@@ -75,6 +75,8 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
 
     void Reset()
     {
+        if (!m_pInstance) return;
+
         m_bIsAddDead = false;
         MovementStarted = false;
         m_uiLightningBolt_Timer = 2000;
@@ -93,7 +95,6 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
                     if ((*iter)->isDead())
                         (*iter)->Respawn();
 
-        if (m_pInstance)
             m_pInstance->SetData(TYPE_EREKEM, NOT_STARTED);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -102,11 +103,11 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
+        if (!m_pInstance) return;
         DoScriptText(SAY_AGGRO, m_creature);
-
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_EREKEM, IN_PROGRESS);
-
+        m_pInstance->SetData(TYPE_EREKEM, IN_PROGRESS);
+        m_creature->GetMotionMaster()->MovementExpired();
+        SetCombatMovement(true);
     }
 
     void AttackStart(Unit* pWho)
@@ -140,15 +141,32 @@ struct MANGOS_DLL_DECL boss_erekemAI : public ScriptedAI
         }
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void StartMovement(uint32 id)
     {
-        if (m_pInstance->GetData(TYPE_EREKEM) == SPECIAL && !MovementStarted) {
-	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->GetMotionMaster()->MovePoint(id, PortalLoc[id].x, PortalLoc[id].y, PortalLoc[id].z);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetInCombatWithZone();
         MovementStarted = true;
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+        if (id == 0)
+        {
+            MovementStarted = false;
+            m_creature->GetMotionMaster()->MovementExpired();
+            SetCombatMovement(true);
+            m_creature->SetInCombatWithZone();
         }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance->GetData(TYPE_EREKEM) == SPECIAL && !MovementStarted)
+           StartMovement(0);
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -253,6 +271,13 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
 
     }
 
+    void Aggro(Unit* pWho)
+    {
+        if (!m_pInstance) return;
+        m_creature->GetMotionMaster()->MovementExpired();
+        SetCombatMovement(true);
+    }
+
     void AttackStart(Unit* pWho)
     {
         if (!m_pInstance)
@@ -274,15 +299,32 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
         }
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void StartMovement(uint32 id)
     {
-        if (m_pInstance->GetData(TYPE_EREKEM) == SPECIAL && !MovementStarted) {
-        m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->GetMotionMaster()->MovePoint(id, PortalLoc[id].x, PortalLoc[id].y, PortalLoc[id].z);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;
+        m_creature->SetInCombatWithZone();
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+        if (id == 0)
+        {
+            MovementStarted = false;
+            m_creature->GetMotionMaster()->MovementExpired();
+            SetCombatMovement(true);
+            m_creature->SetInCombatWithZone();
         }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance->GetData(TYPE_EREKEM) == SPECIAL && !MovementStarted)
+            StartMovement(0);
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())

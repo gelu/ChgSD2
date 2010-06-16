@@ -73,6 +73,7 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
 
     void Reset()
     {
+        if (!m_pInstance) return;
         m_bIsExploded = false;
         m_bIsFrenzy = false;
         MovementStarted = false;
@@ -83,18 +84,18 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
         m_creature->SetVisibility(VISIBILITY_ON);
         DespawnWaterElements();
 
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_ICHORON, NOT_STARTED);
+        m_pInstance->SetData(TYPE_ICHORON, NOT_STARTED);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void Aggro(Unit* pWho)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
+        if (m_pInstance) return;
 
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_ICHORON, IN_PROGRESS);
+        DoScriptText(SAY_AGGRO, m_creature);
+        m_pInstance->SetData(TYPE_ICHORON, IN_PROGRESS);
+        SetCombatMovement(true);
     }
 
     void AttackStart(Unit* pWho)
@@ -157,15 +158,32 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
         m_lWaterElementsGUIDList.clear();
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void StartMovement(uint32 id)
     {
-        if (m_pInstance->GetData(TYPE_ICHORON) == SPECIAL && !MovementStarted) {
-	m_creature->GetMotionMaster()->MovePoint(0, PortalLoc[0].x, PortalLoc[0].y, PortalLoc[0].z);
+        m_creature->GetMotionMaster()->MovePoint(id, PortalLoc[id].x, PortalLoc[id].y, PortalLoc[id].z);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = true;
+        m_creature->SetInCombatWithZone();
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+        if (id == 0)
+        {
+            MovementStarted = false;
+            m_creature->GetMotionMaster()->MovementExpired();
+            SetCombatMovement(true);
+            m_creature->SetInCombatWithZone();
         }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (m_pInstance->GetData(TYPE_ICHORON) == SPECIAL && !MovementStarted)
+           StartMovement(0);
 
         //Return since we have no target
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -185,12 +203,10 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
                         m_uiShowup_Counter = 0;
                         DoCast(m_creature, SPELL_PROTECTIVE_BUBBLE);
                         m_creature->AttackStop();
-//                        m_creature->SetVisibility(VISIBILITY_OFF);
                         for(uint8 i = 0; i < 10; i++)
                         {
                             int tmp = urand(0, 5);
                             m_creature->SummonCreature(NPC_ICHOR_GLOBULE, PortalLoc[tmp].x, PortalLoc[tmp].y, PortalLoc[tmp].z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
-                            //m_creature->SummonCreature(NPC_ICHOR_GLOBULE, m_creature->GetPositionX()-10+rand()%20, m_creature->GetPositionY()-10+rand()%20, m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                         }
                     }
                     m_uiBuubleChecker_Timer = 3000;
@@ -210,7 +226,6 @@ struct MANGOS_DLL_DECL boss_ichoronAI : public ScriptedAI
                     {
                         m_bIsExploded = false;
                         m_uiShowup_Counter = 0;
-//                        m_creature->SetVisibility(VISIBILITY_ON);
                         m_creature->SetInCombatWithZone();
                         m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                     }
