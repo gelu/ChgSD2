@@ -296,6 +296,10 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+
+        if (!bsw->hasAura(SPELL_CORRUPTION,m_creature) && stage == 0)
+             bsw->doCast(SPELL_CORRUPTION);
+
         if (!battlestarted) return;
 
         QueryEvadeMode();
@@ -322,7 +326,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                     break;
             case 5: 
                     DoScriptText(-1631408,m_creature);
-                    if (m_creature->HasAura(SPELL_CORRUPTION)) bsw->doRemove(SPELL_CORRUPTION);
+                    if (bsw->hasAura(SPELL_CORRUPTION,m_creature)) bsw->doRemove(SPELL_CORRUPTION);
                     stage = 6;
                     return;
                     break;
