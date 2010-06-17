@@ -42,8 +42,6 @@ enum BossSpells
         SPELL_BLOODBOLT_WHIRL                   = 71772,
         SPELL_PRESENCE_OF_DARKFALLEN            = 71952,
 
-        SPELL_FLY_VISUAL                        = 57764,
-
         NPC_SWARMING_SHADOWS                    = 38163,
         SPELL_SWARMING_SHADOWS_VISUAL           = 71267,
 };
@@ -159,27 +157,39 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
     {
        if (command)
        {
-          uint8 num = urand(2,5);
+          uint8 num = urand(3,5);
           for(uint8 i = 0; i <= num; ++i)
-              if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 100.0f))
+              if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 60.0f))
               {
-                  Darkfallen[i] = pTarget;
-                  bsw->doCast(SPELL_PACT_OF_DARKFALLEN,pTarget);
-                  ++darkfallened;
+                  if (bsw->doCast(SPELL_PACT_OF_DARKFALLEN,pTarget) == CAST_OK)
+                  {
+                      Darkfallen[i] = pTarget;
+                      ++darkfallened;
+                  };
               };
        }
        else if (darkfallened > 0)
        {
           for(uint8 i = 0; i < darkfallened; ++i)
-              if (Darkfallen[i]) 
-                 if (Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                   for(uint8 j = 0; j < darkfallened; ++j)
-                      if (j != i && Darkfallen[j])
-                        if(Darkfallen[j]->isAlive() && Darkfallen[j]->HasAura(SPELL_PACT_OF_DARKFALLEN))
-                           if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
-
+              if (Darkfallen[i])
+              {
+                 if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                    {
+                    for(uint8 j = 0; j < darkfallened; ++j)
+                       if (j != i && Darkfallen[j])
+                       {
+                          if(Darkfallen[j])
+                          {
+                             if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
+                                {
+                                    if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
+                                } else Darkfallen[j] = NULL;
+                          }
+                       }
+                    } else Darkfallen[i] = NULL;
+              }
           for(uint8 i = 0; i < darkfallened; ++i)
-                  if (Darkfallen[i] && Darkfallen[i]->isAlive() && Darkfallen[i]->HasAura(SPELL_PACT_OF_DARKFALLEN))
+                 if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
                        bsw->doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
           darkfallened = 0;
        };
@@ -187,26 +197,45 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 
     void doBloodMirror(bool command)
     {
-
+        if (command)
+        {
         if (MirrorMarked)
-            if (!MirrorMarked->isAlive() || !MirrorMarked->HasAura(SPELL_BLOOD_MIRROR_1))
+            if (!bsw->hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
                MirrorMarked = NULL;
 
         if (MirrorTarget)
-            if (!MirrorTarget->isAlive() || !MirrorTarget->HasAura(SPELL_BLOOD_MIRROR_2))
+            if (!bsw->hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
                MirrorTarget = NULL;
 
-        if (!MirrorMarked && m_creature->getVictim()) 
+        if (!MirrorMarked && m_creature->getVictim())
            {
-               if (MirrorMarked = m_creature->getVictim())
+               MirrorMarked = m_creature->getVictim();
+               if (MirrorMarked)
                   bsw->doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
            }
 
         if (!MirrorTarget)
            {
-               if (MirrorTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
+              MirrorTarget = bsw->SelectRandomPlayer(SPELL_BLOOD_MIRROR_1, false, 40.0f);
+              if (MirrorTarget)
                    bsw->doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
            }
+        } else
+        {
+        if (MirrorMarked)
+            if (bsw->hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
+            {
+               bsw->doRemove(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+               MirrorMarked = NULL;
+            }
+
+        if (MirrorTarget)
+            if (bsw->hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
+            {
+               bsw->doRemove(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+               MirrorTarget = NULL;
+            }
+        }
 
     }
 
@@ -296,10 +325,10 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                     m_creature->AttackStop();
                     SetCombatMovement(false);
                     StartMovement(1);
-                    bsw->doCast(SPELL_FLY_VISUAL);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
                     m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
+                    doBloodMirror(false);
                     stage = 2;
                     break;
             case 2:
@@ -330,7 +359,6 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
             case 5:
                     if (movementstarted) return;
                     DoScriptText(-1631325,m_creature);
-                    bsw->doRemove(SPELL_FLY_VISUAL);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
                     m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
@@ -371,6 +399,7 @@ struct MANGOS_DLL_DECL mob_swarming_shadowsAI : public ScriptedAI
     mob_swarming_shadowsAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
     }
 
     ScriptedInstance* m_pInstance;
@@ -378,10 +407,12 @@ struct MANGOS_DLL_DECL mob_swarming_shadowsAI : public ScriptedAI
 
     void Reset()
     {
-        SetCombatMovement(false); 
         m_creature->SetDisplayId(11686);
-        m_creature->GetMotionMaster()->MoveRandom();
+        m_creature->SetRespawnDelay(7*DAY);
+        SetCombatMovement(false); 
+        m_creature->SetInCombatWithZone();
         m_lifetimer = 10000;
+        DoCast(m_creature, SPELL_SWARMING_SHADOWS_VISUAL);
     }
 
     void UpdateAI(const uint32 uiDiff)
