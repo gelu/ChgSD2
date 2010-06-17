@@ -792,7 +792,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           UpdateTimer = 20000;
                           pInstance->SetData(TYPE_EVENT,14030);
                           DoScriptText(-1631594, m_creature);
-                          pMenethil->ForcedDespawn();
+                          if (pMenethil && pMenethil->isAlive()) pMenethil->ForcedDespawn();
                           EnterEvadeMode();
                           pInstance->SetData(TYPE_EVENT,0);
                           if (Creature* pLichKing = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LICH_KING)))
