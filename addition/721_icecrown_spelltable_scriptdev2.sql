@@ -139,17 +139,18 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_
 -- Rotface
 DELETE FROM `boss_spell_table` WHERE `entry` = 36627;
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
-(36627, 69508, 0, 0, 0, 15000, 0, 0, 0, 20000, 0, 0, 0, 3, 0, 0),
+(36627, 69508, 0, 0, 0, 15000, 0, 0, 0, 20000, 0, 0, 0, 1, 0, 0),
 (36627, 69674, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 6, 0, 0),
-(36627, 70003, 0, 0, 0, 8000, 0, 0, 0, 15000, 0, 0, 0, 6, 0, 0),
+(36627, 70003, 0, 0, 0, 12000, 0, 0, 0, 27000, 0, 0, 0, 6, 0, 0),
 (36627, 69788, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 1, 0, 0),
-(36627, 69783, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 3, 0, 0),
+(36627, 69783, 0, 0, 0, 30000, 0, 0, 0, 45000, 0, 0, 0, 3, 0, 0),
 (36627, 47008, 0, 0, 0, 600000, 0, 0, 0, 600000, 0, 0, 0, 1, 0, 0),
-(36627, 69789, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 1, 0, 0);
+(36627, 69789, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 6, 0, 1);
 -- summons
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMax_N10`,  `data1`, `data2`, `data3`, `data4`, `locData_x`, `locData_y`, `locData_z`, `CastType` ) VALUES
 (36627, 36897, 12000, 12000, 1, 1, 1, 1, 1, 5, 0, 9),
-(36627, 37986, 15000, 15000, 1, 1, 1, 1, 0, 0, 0, 11);
+(36627, 37986, 15000, 15000, 1, 1, 1, 1, 10, 20, 0, 11),
+(36627, 37013, 15000, 15000, 1, 1, 1, 1, 0, 0, 0, 11);
 -- Small ooze
 DELETE FROM `boss_spell_table` WHERE `entry` = 36897;
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
@@ -163,12 +164,16 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMa
 -- Big ooze
 DELETE FROM `boss_spell_table` WHERE `entry` = 36899;
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
-(36899,69774, 0, 0, 0, 10000, 0, 0, 0, 15000, 0, 0, 0, 4, 0, 0),
+(36899,69774, 0, 0, 0, 15000, 0, 0, 0, 25000, 0, 0, 0, 4, 0, 0),
 (36899,69839, 0, 0, 0, 6000, 0, 0, 0, 6000, 0, 0, 0, 1, 0, 0),
 (36899,69760, 0, 0, 0, 10000, 0, 0, 0, 15000, 0, 0, 0, 1, 0, 0),
 (36899,69644, 0, 0, 0, 10000, 0, 0, 0, 15000, 0, 0, 0, 1, 0, 0),
 (36899,69558, 0, 0, 0, 10000, 0, 0, 0, 15000, 0, 0, 0, 1, 0, 0),
 (36899,69889, 0, 0, 0, 10000, 0, 0, 0, 15000, 0, 0, 0, 6, 0, 0);
+-- Ooze explode stalker
+DELETE FROM `boss_spell_table` WHERE `entry` = 38107;
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
+(38107,69840, 0, 0, 0, 2000, 0, 0, 0, 2000, 0, 0, 0, 1, 0, 0);
 
 -- Professor Putricide
 DELETE FROM `boss_spell_table` WHERE `entry` = 36678;
