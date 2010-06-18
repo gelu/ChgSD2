@@ -33,6 +33,7 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
     uint64 m_uiBronjahmGUID;
     uint64 m_uiDevourerGUID;
+    uint64 m_uiLiderGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -79,8 +80,9 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_BRONJAHM: m_auiEncounter[0] = uiData; break;
-            case TYPE_DEVOURER: m_auiEncounter[1] = uiData; break;
+            case TYPE_INTRO:    m_auiEncounter[0] = uiData; break;
+            case TYPE_BRONJAHM: m_auiEncounter[1] = uiData; break;
+            case TYPE_DEVOURER: m_auiEncounter[2] = uiData; break;
         }
 
         if (uiData == DONE)
@@ -108,8 +110,9 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
     {
         switch(uiType)
         {
-             case TYPE_BRONJAHM:     return m_auiEncounter[0];
-             case TYPE_DEVOURER:     return m_auiEncounter[1];
+             case TYPE_INTRO:        return m_auiEncounter[0];
+             case TYPE_BRONJAHM:     return m_auiEncounter[1];
+             case TYPE_DEVOURER:     return m_auiEncounter[2];
         }
         return 0;
     }
@@ -120,8 +123,17 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
         {
             case NPC_BRONJAHM: return m_uiBronjahmGUID;
             case NPC_DEVOURER: return m_uiDevourerGUID;
+            case DATA_LIDER:   return m_uiLiderGUID;
         }
         return 0;
+    }
+
+    void SetData64(uint32 uiData, uint64 uiGuid)
+    {
+        switch(uiData)
+        {
+            case DATA_LIDER: m_uiLiderGUID = uiGuid;
+        }
     }
 
     void Load(const char* chrIn)

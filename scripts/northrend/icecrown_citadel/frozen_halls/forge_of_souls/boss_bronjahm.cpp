@@ -40,6 +40,12 @@ enum BossSpells
         SPELL_SOULSTORM_2                       = 68921,
         SPELL_FEAR                              = 68950,
         SPELL_SHADOW_BOLT                       = 70043,
+
+   /*Music*/
+   Battle01                              = 6077,
+   Battle02                              = 6078,
+   Battle03                              = 6079,
+
 };
 
 struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
@@ -54,6 +60,8 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
     ScriptedInstance *pInstance;
     BossSpellWorker* bsw;
     uint8 stage;
+    uint32 BattleMusicTimer;
+    uint32 Music;
 
     void Reset()
     {
@@ -64,6 +72,23 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
+       Music = (urand(0, 2));
+       switch(Music)
+       {
+         case 0:
+            m_creature->PlayDirectSound(Battle01);
+            BattleMusicTimer = 48000;
+            break;
+         case 1:
+            m_creature->PlayDirectSound(Battle02);
+            BattleMusicTimer = 27000;
+            break;
+         case 2:
+            m_creature->PlayDirectSound(Battle03);
+            BattleMusicTimer = 36000;
+            break; 
+        }
+
         if(pInstance) pInstance->SetData(TYPE_BRONJAHM, IN_PROGRESS);
             DoScriptText(-1632001,m_creature,who);
             SetCombatMovement(true);
@@ -132,6 +157,25 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
         if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;
 
         DoMeleeAttackIfReady();
+
+        if (BattleMusicTimer < diff && m_creature->isAlive())
+        {
+           switch(Music)
+           {
+             case 0:
+                m_creature->PlayDirectSound(Battle01);
+                BattleMusicTimer = 49000;
+                break;
+             case 1:
+                m_creature->PlayDirectSound(Battle02);
+                BattleMusicTimer = 28000;
+                break;
+             case 2:
+                m_creature->PlayDirectSound(Battle03);
+                BattleMusicTimer = 37000;
+                break; 
+            }
+        } else BattleMusicTimer -= diff;
     }
 };
 
