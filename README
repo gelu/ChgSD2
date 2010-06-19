@@ -21,18 +21,20 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 In this repository you found this custom scripts:
 
 - many scripts from Insider42
-- Ulduar (by Insider42, small correct by me)
-- Trial of the Champion ( by Syntec, big rewrite by me)
+- Ulduar (base from Syntec, rewrite by Insider42 and me)
+- Trial of the Champion (by Syntec, big rewrite by me)
 - Violet hold (by ckegg, big rewrite by me)
 - Naxxramas (by ckegg)
 - An'kahet (by Tassadar)
 - Draktaron (by Tassadar)
-- Culling of Stratholme (by Maxxx2021)
-- Obsidian Sanctum (by Maxxx2021)
+- Culling of Stratholme (by MaxXx2021)
+- Obsidian Sanctum (by MaxXx2021)
+- Azjol-Nerub (by MaxXx2021)
+- Forge of souls (by Maxxx2021 and me)
 - Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
 - Halls of reflection (partially, by me)
-- Icecrown Citadel (by me)
+- Icecrown Citadel (alfatesting phase, by me)
 - Ruby Sanctum (placeholders, by me)
 - NPC special (by me, thanks for all)
 
@@ -42,6 +44,8 @@ If you want compile this branch on Windows, please convert Makefile to your c++ 
 Thanks to:
 - Vladimir Mangos - MaNGOS project;
 - Insider42 - for your work;
+- MaxXx2021 aka Mioka - for your scripts;
+- Tassadar;
 - griffonheart (original texts/sounds for TOC);
 - Cristy (re-translation to english);
 - Selector - Faction champions base script, testing, bugreports;
@@ -50,3 +54,9 @@ Thanks to:
 - Dron01 - bugreports and valuable advice;
 - gladden, ghostart - bugreports;
 - all - testing.
+
+Ladies and gentlemen, and friends! If you want to compile my scripts with a compiler different from the GNU C, then the config files, projects or whatever else you need to create your own! I do only Makefile. 
+And please do not send me a compilation error. So what lies in my repository, absolute accuracy compiles fine and works on live servers.
+
+Уважаемые дамы и господа, а также товарищи! Если Вы хотите скомпилировать мои скрипты с помощью компилятора, отличного от GNU C, то конфиг-файлы, проекты или что там еще Вам придется создавать самостоятельно! Я делаю только Makefile.
+И пожалуйста, не присылайте мне ошибки компиляции. То что лежит в моем репозитории, абсолютно точно компилируется нормально и работает на живых серверах.
