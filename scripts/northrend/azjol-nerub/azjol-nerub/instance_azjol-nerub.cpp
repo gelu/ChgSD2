@@ -36,6 +36,10 @@ struct MANGOS_DLL_DECL instance_azjol_nerub : public ScriptedInstance
     uint64 m_uiDoor_Anubarak_2GUID;
     uint64 m_uiDoor_Anubarak_3GUID;
 
+    uint64 uiWatcherGashra;
+    uint64 uiWatcherSilthik;
+    uint64 uiWatcherNarjil;
+
     void Initialize()
     {
         memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
@@ -44,6 +48,10 @@ struct MANGOS_DLL_DECL instance_azjol_nerub : public ScriptedInstance
         m_uiDoor_Anubarak_1GUID = 0;
         m_uiDoor_Anubarak_2GUID = 0;
         m_uiDoor_Anubarak_3GUID = 0;
+
+        uiWatcherGashra = 0;
+        uiWatcherSilthik = 0;
+        uiWatcherNarjil = 0;
     }
 
     void OnObjectCreate(GameObject* pGo)
@@ -71,6 +79,28 @@ struct MANGOS_DLL_DECL instance_azjol_nerub : public ScriptedInstance
                     pGo->SetGoState(GO_STATE_ACTIVE);
                 break;
         }
+    }
+
+    void OnCreatureCreate(Creature* pCreature)
+    {
+        switch(pCreature->GetEntry())
+        {
+            case 28730:    uiWatcherGashra = pCreature->GetGUID();   break;
+            case 28731:    uiWatcherSilthik = pCreature->GetGUID();  break;
+            case 28729:    uiWatcherNarjil = pCreature->GetGUID();   break;
+        }
+    }
+
+    uint64 GetData64(uint32 identifier)
+    {
+        switch(identifier)
+        {
+            case DATA_WATCHER_GASHRA:               return uiWatcherGashra;
+            case DATA_WATCHER_SILTHIK:              return uiWatcherSilthik;
+            case DATA_WATCHER_NARJIL:               return uiWatcherNarjil;
+        }
+
+        return 0;
     }
 
     void SetData(uint32 uiType, uint32 uiData)
