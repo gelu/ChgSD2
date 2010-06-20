@@ -236,6 +236,8 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
+        if(!pInstance) return;
+
         if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_LICH_KING)
         {
             UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
