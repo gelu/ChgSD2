@@ -245,7 +245,7 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 
     void Reset()
     {
-//        SetCombatMovement(false);
+        m_creature->SetRespawnDelay(7*DAY);
         pVictim = NULL;
     }
 
