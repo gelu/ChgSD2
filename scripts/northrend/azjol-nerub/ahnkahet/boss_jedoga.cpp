@@ -99,13 +99,13 @@ static Locations VolunteerLoc[]=
     {369.03, -736.06, -16.17, 1.607},
     {371.66, -735.97, -16.17, 1.607},
     {373.47, -735.63, -16.17, 1.607},
-    
+
     {365.45, -739.03, -16.00, 1.607}, // Right, second line
     {367.56, -738.62, -16.00, 1.607},
     {369.62, -738.22, -16.17, 1.607},
     {371.66, -737.82, -16.06, 1.607},
     {373.75, -737.41, -16.00, 1.607},
-    
+
     {400.99, -705.41, -16.00, 2.491}, // Center, from right
     {398.07, -710.02, -16.00, 2.491},
     {395.34, -713.76, -16.00, 2.491},
@@ -115,7 +115,7 @@ static Locations VolunteerLoc[]=
     {386.19, -725.89, -16.00, 2.491},
     {383.61, -729.29, -16.00, 2.491},
     {380.37, -733.55, -16.00, 2.491},
-    
+
     {402.72, -700.79, -16.00, 3.046}, // Left, first line
     {402.63, -698.86, -16.18, 3.149},
     {402.62, -697.10, -16.17, 3.149},
@@ -208,7 +208,7 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
                     }
                 }
             }else m_creature->ForcedDespawn();    
-            
+
 
             m_uiCheckTimer = 4000;
         }else m_uiCheckTimer -= uiDiff;    
@@ -308,7 +308,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     (*iter)->Respawn();
             }
         }
-        
+
     }
     void JustDied(Unit* pKiller)
     {
@@ -316,7 +316,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
          if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, DONE);
     }
-   
+ 
     Creature* SelectRandomVolunteer(float fRange)
     {
         std::list<Creature* > lVolunteerList;
@@ -328,7 +328,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
             debug_log("SD2: AhnKahet: No volunteer to sacriface!");
             return NULL;
         }
-            
+
 
         std::list<Creature* >::iterator iter = lVolunteerList.begin();
         advance(iter, urand(0, lVolunteerList.size()-1));
@@ -531,10 +531,10 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     case 0: DoScriptText(SAY_SACRIFICE_1, m_creature); break;
                     case 1: DoScriptText(SAY_SACRIFICE_2, m_creature); break;
                 }
-                
+
                 if(pVolunteer && pVolunteer->isAlive())
                     ((npc_twilight_volunteerAI*)pVolunteer->AI())->Sacriface(SACRIFACE_DIE);
-                
+
                 if(!m_bVolunteerDied)
                     DoCast(m_creature, SPELL_GIFT_OF_THE_HERALD);
                 m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
