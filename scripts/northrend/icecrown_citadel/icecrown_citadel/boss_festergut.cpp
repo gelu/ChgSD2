@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_festergut
-SD%Complete: 20%
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -26,20 +26,27 @@ EndScriptData */
 
 enum BossSpells
 {
-    SPELL_GASEOUS_BLIGHT_0   = 70138,
-    SPELL_GASEOUS_BLIGHT_1   = 69161,
-    SPELL_GASEOUS_BLIGHT_2   = 70468,
+    SPELL_GASEOUS_BLIGHT     = 69162,
     SPELL_INHALE_BLIGHT      = 69165,
-    SPELL_INHALED_BLIGHT     = 71912,
+    SPELL_INHALED_BLIGHT     = 69166,
     SPELL_PUNGENT_BLIGHT     = 69195,
     SPELL_PUNGENT_BLIGHT_1   = 69157,
     SPELL_PUNGENT_BLIGHT_2   = 69126,
     SPELL_GAS_SPORE          = 69278,
+    SPELL_SPORE_AURA_0       = 69279,
+    SPELL_SPORE_AURA_1       = 69290,
     SPELL_INOCULATE          = 72103,
     SPELL_GASTRIC_BLOAT      = 72219,
+//    SPELL_GASTRIC_BLOAT      = 72214,
     SPELL_GASTRIC_EXPLOSION  = 72227,
     SPELL_VILE_GAS           = 72272,
+    SPELL_VILE_GAS_AURA      = 69244,
+    SPELL_VILE_GAS_AURA_0    = 69248,
     SPELL_BERSERK            = 47008,
+    SPELL_SUMMON_VILE_STALKER       = 72287,
+
+    NPC_VILE_GAS_STALKER     = 38548,
+    MAX_SPORE_TARGETS        = 6,
 };
 
 struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
@@ -49,7 +56,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         bsw = new BossSpellWorker(this);
         Reset();
-        bsw->resetTimers();
     }
 
     ScriptedInstance *pInstance;
@@ -57,14 +63,19 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     uint8 stage;
     bool intro;
     bool pet;
+    bool sporeCasted;
+    Unit* spored[MAX_SPORE_TARGETS];
 
     void Reset()
     {
         if(!pInstance) return;
+        bsw->resetTimers();
         pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
         stage = 0;
         intro = false;
         pet = false;
+        sporeCasted = false;
+        memset(&spored, 0, sizeof(spored));
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -94,7 +105,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         if (pInstance) pInstance->SetData(TYPE_FESTERGUT, FAIL);
     }
 
-    void Aggro(Unit *who) 
+    void Aggro(Unit *who)
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);
@@ -109,6 +120,43 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_1);
         bsw->doRemove(SPELL_PUNGENT_BLIGHT_2);
         DoScriptText(-1631206,m_creature);
+    }
+
+    void doTriggerUnoculated()
+    {
+         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
+             if (spored[i])
+                if (!bsw->hasAura(SPELL_SPORE_AURA_1,spored[i]))
+                {
+                   bsw->doCast(SPELL_INOCULATE,spored[i]);
+                   spored[i] = NULL;
+                }
+    }
+
+    void doSearchSpored()
+    {
+         Unit* searched = bsw->SelectRandomPlayer(SPELL_SPORE_AURA_1, true, 80.0f);
+
+         if (!searched) return;
+
+         bool exist = false;
+
+         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
+             if (spored[i])
+                if (spored[i] = searched)
+                {
+                    exist = true;
+                    break;
+                }
+
+         if (exist) return;
+
+         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
+             if (!spored[i])
+             {
+                 spored[i] = searched;
+                 break;
+             }
     }
 
     void UpdateAI(const uint32 diff)
@@ -128,44 +176,89 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_0, diff))
+                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
                         {
-                        bsw->doCast(SPELL_GASEOUS_BLIGHT_0);
-                        bsw->doCast(SPELL_INHALE_BLIGHT);
-                        stage = 1;
+                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            stage = 1;
                         }
                     break;
-            case 1: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_0, diff))
-                        {
-                        bsw->doCast(SPELL_GASEOUS_BLIGHT_0);
+            case 1:
+                    switch (urand(0,2)) {
+                            case 0:  DoScriptText(-1631210,m_creature); break;
+                            case 1:  DoScriptText(-1631211,m_creature); break;
+                            case 2:  DoScriptText(-1631212,m_creature); break;
+                            }
                         bsw->doCast(SPELL_INHALE_BLIGHT);
                         stage = 2;
-                        }
                     break;
-            case 2: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT_0, diff))
+            case 2:
+                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
                         {
-                        bsw->doCast(SPELL_GASEOUS_BLIGHT_0);
-                        bsw->doCast(SPELL_INHALE_BLIGHT);
-                        stage = 3;
+                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            stage = 3;
                         }
                     break;
-            case 3: 
+            case 3:
+                    switch (urand(0,2)) {
+                            case 0:  DoScriptText(-1631210,m_creature); break;
+                            case 1:  DoScriptText(-1631211,m_creature); break;
+                            case 2:  DoScriptText(-1631212,m_creature); break;
+                            }
+                        bsw->doCast(SPELL_INHALE_BLIGHT);
+                        stage = 4;
+                    break;
+            case 4:
+                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
+                        {
+                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            stage = 5;
+                        }
+                    break;
+            case 5:
+                    switch (urand(0,2)) {
+                            case 0:  DoScriptText(-1631210,m_creature); break;
+                            case 1:  DoScriptText(-1631211,m_creature); break;
+                            case 2:  DoScriptText(-1631212,m_creature); break;
+                            }
+                        bsw->doCast(SPELL_INHALE_BLIGHT);
+                        stage = 6;
+                    break;
+            case 6:
                     if (bsw->timedQuery(SPELL_PUNGENT_BLIGHT, diff))
                         {
-                        DoScriptText(-1631208,m_creature);
-                        bsw->doCast(SPELL_PUNGENT_BLIGHT);
-                        stage = 0;
+                            DoScriptText(-1631208,m_creature);
+                            bsw->doCast(SPELL_PUNGENT_BLIGHT);
+                            stage = 7;
                         }
                     break;
+            case 7:
+                    switch (urand(0,2)) {
+                            case 0:  DoScriptText(-1631210,m_creature); break;
+                            case 1:  DoScriptText(-1631211,m_creature); break;
+                            case 2:  DoScriptText(-1631212,m_creature); break;
+                            }
+                        m_creature->RemoveAurasDueToSpell(SPELL_INHALED_BLIGHT);
+                        stage = 0;
+                    break;
         }
+
+        doTriggerUnoculated();
+
         bsw->timedCast(SPELL_GAS_SPORE, diff);
+
+        doSearchSpored();
 
         bsw->timedCast(SPELL_GASTRIC_BLOAT, diff);
 
+        if (bsw->auraCount(SPELL_GASTRIC_BLOAT,m_creature->getVictim(),EFFECT_INDEX_1) > 9)
+        {
+            bsw->doCast(SPELL_GASTRIC_EXPLOSION,m_creature->getVictim());
+            m_creature->getVictim()->RemoveAurasDueToSpell(SPELL_GASTRIC_BLOAT);
+        }
+
         if (bsw->timedQuery(SPELL_VILE_GAS, diff)) {
-                        bsw->doCast(SPELL_VILE_GAS);
+//                        if (Unit* pTemp = bsw->doSummon(NPC_VILE_GAS_STALKER))
+                            bsw->doCast(SPELL_VILE_GAS);
                         DoScriptText(-1631213,m_creature);
                         };
 
@@ -173,7 +266,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                  bsw->doCast(SPELL_BERSERK);
                  DoScriptText(-1631207,m_creature);
                  };
-
 
         DoMeleeAttackIfReady();
     }
@@ -185,6 +277,46 @@ CreatureAI* GetAI_boss_festergut(Creature* pCreature)
     return new boss_festergutAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL  mob_vile_gas_stalkerAI : public ScriptedAI
+{
+    mob_vile_gas_stalkerAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    uint32 m_lifetimer;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(7*DAY);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetInCombatWithZone();
+        SetCombatMovement(false);
+        m_creature->SetDisplayId(11686);
+        m_lifetimer = 12000;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_FESTERGUT) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (m_lifetimer <= uiDiff)
+            m_creature->ForcedDespawn();
+        else m_lifetimer -= uiDiff;
+
+    }
+};
+
+CreatureAI* GetAI_mob_vile_gas_stalker(Creature* pCreature)
+{
+    return new mob_vile_gas_stalkerAI(pCreature);
+}
 
 void AddSC_boss_festergut()
 {
@@ -192,5 +324,10 @@ void AddSC_boss_festergut()
     newscript = new Script;
     newscript->Name = "boss_festergut";
     newscript->GetAI = &GetAI_boss_festergut;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_vile_gas_stalker";
+    newscript->GetAI = &GetAI_mob_vile_gas_stalker;
     newscript->RegisterSelf();
 }
