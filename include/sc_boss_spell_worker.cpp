@@ -492,7 +492,7 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
            return false;
         }
 
-        if (_auraCount(m_uiSpellIdx,pTarget) > 1)
+        if (_auraCount(m_uiSpellIdx,pTarget,index) > 1)
         {
             if (pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->modStackAmount(-1))
                 return true;
