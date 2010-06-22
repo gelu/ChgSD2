@@ -36,7 +36,7 @@ UPDATE `creature_template` SET `equipment_id`='1290' where `entry` IN (36990, 37
 
 -- Halls of reflection
 UPDATE `instance_template` SET `script` = 'instance_halls_of_reflection' WHERE map=668;
-UPDATE `gameobject_template` SET ScriptName = '' WHERE `entry` IN (202236,202302);
+UPDATE `gameobject_template` SET `ScriptName` = '' WHERE `entry` IN (202236,202302);
 DELETE FROM `creature` WHERE `map` = 668 AND `id` IN (38177,38176,38173,38172,38567,38175,36940,36941,37069);
 
 UPDATE `creature_template` SET `ScriptName`='generic_creature' WHERE `entry` IN (38177,38176,38173,38172,38567,38175);
@@ -51,9 +51,7 @@ UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_marwyn' WHERE `en
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_lich_king_hr' WHERE `entry` IN (36954);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_lich_king_hr' WHERE `entry` IN (37226);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_jaina_and_sylvana_HRextro' WHERE `entry` IN (36955, 37554);
-UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_raging_gnoul' WHERE `entry` IN (36940);
-UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_risen_witch_doctor' WHERE `entry` IN (36941);
-UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_abon' WHERE `entry` IN (37069);
+UPDATE `creature_template` SET `AIName`='', `Scriptname`='generic_creature' WHERE `entry` IN (36940,36941,37069);
 UPDATE `creature_template` SET `scale`='0.8', `equipment_id`='1221' WHERE `entry` IN (37221, 36955);
 UPDATE `creature_template` SET `equipment_id`='1290' WHERE `entry` IN (37223, 37554);
 UPDATE `creature_template` SET `equipment_id`='0' WHERE `entry`=36954;
@@ -98,11 +96,15 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 DELETE from `creature` WHERE `id`=37226;
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES (135344, 37226, 668, 3, 1, 0, 0, 5551.29, 2261.33, 733.012, 4.0452, 604800, 0, 0, 27890000, 0, 0, 0);
 
-UPDATE `creature_template` SET `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686 WHERE `entry` = 37014;
+UPDATE `creature_template` SET `modelid_A` = 11686, `modelid_A2` = 11686, `modelid_H` = 11686, `modelid_H2` = 11686 WHERE `entry` IN (37014,37704);
 
 DELETE FROM `gameobject` WHERE `id` IN (201385,201596,202079);
 
-/*
+UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (197341,197342,197343);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (197341,197342,197343);
+
+
+/* Original Icewalls from YTDB
 REPLACE INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
 (3485, 201385, 668, 3, 1, 5540.39, 2086.48, 731.066, 1.00057, 0, 0, 0.479677, 0.877445, 604800, 100, 1),
 (3438, 201385, 668, 3, 1, 5494.3, 1978.27, 736.689, 1.0885, 0, 0, 0.517777, 0.855516, 604800, 100, 1),

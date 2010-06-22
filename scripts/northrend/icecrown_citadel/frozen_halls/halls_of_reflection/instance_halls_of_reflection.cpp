@@ -47,6 +47,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
 
     uint64 m_uiMainGateGUID;
     uint64 m_uiExitGateGUID;
+    uint64 m_uiDoor2GUID;
+    uint64 m_uiDoor3GUID;
 
     uint64 m_uiFrostGeneralGUID;
     uint64 m_uiCaptainsChestHordeGUID;
@@ -104,8 +106,10 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         switch(pGo->GetEntry())
         {
             case GO_IMPENETRABLE_DOOR: m_uiMainGateGUID = pGo->GetGUID(); break;
-            case GO_FROSTMOURNE: m_uiFrostmourneGUID = pGo->GetGUID(); break;
-            case GO_ICECROWN_DOOR: m_uiExitGateGUID = pGo->GetGUID(); break;
+            case GO_FROSTMOURNE:       m_uiFrostmourneGUID = pGo->GetGUID(); break;
+            case GO_ICECROWN_DOOR:     m_uiExitGateGUID = pGo->GetGUID(); break;
+            case GO_ICECROWN_DOOR_2:   m_uiDoor2GUID = pGo->GetGUID(); break;
+            case GO_ICECROWN_DOOR_3:   m_uiDoor3GUID = pGo->GetGUID(); break;
         }
     }
 
@@ -113,47 +117,36 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_PHASE:
-                m_auiEncounter[0] = uiData;
+            case TYPE_PHASE:                m_auiEncounter[uiType] = uiData; break;
+            case TYPE_EVENT:                m_auiEncounter[uiType] = uiData;
+                                            uiData = NOT_STARTED;
                 break;
-            case TYPE_EVENT:
-                m_auiEncounter[1] = uiData;
-                uiData = NOT_STARTED;
+            case TYPE_FALRIC:               m_auiEncounter[uiType] = uiData;
+                                            if(uiData == SPECIAL)
+                                                CloseDoor(m_uiExitGateGUID);
                 break;
-            case TYPE_FALRIC:
-                m_auiEncounter[2] = uiData;
-                if(uiData == SPECIAL)
-                    CloseDoor(m_uiExitGateGUID);
+            case TYPE_MARWYN:               m_auiEncounter[uiType] = uiData;
+                                            if(uiData == DONE)
+                                            {
+                                               OpenDoor(m_uiMainGateGUID);
+                                               OpenDoor(m_uiExitGateGUID);
+                                            }
                 break;
-            case TYPE_MARWYN:
-                m_auiEncounter[3] = uiData;
-                if(uiData == DONE)
-                {
-                    OpenDoor(m_uiMainGateGUID);
-                    OpenDoor(m_uiExitGateGUID);
-                }
+            case TYPE_FROST_GENERAL:        m_auiEncounter[uiType] = uiData; 
+                                            if(uiData == DONE)
+                                               OpenDoor(m_uiDoor2GUID);
                 break;
-            case TYPE_LICH_KING:
-                m_auiEncounter[4] = uiData;
+            case TYPE_LICH_KING:            m_auiEncounter[uiType] = uiData;
+                                            if(uiData == IN_PROGRESS)
+                                               OpenDoor(m_uiDoor3GUID);
                 break;
-            case TYPE_ICE_WALL_01:
-                m_auiEncounter[5] = uiData;
-                break;
-            case TYPE_ICE_WALL_02:
-                m_auiEncounter[6] = uiData;
-                break;
-            case TYPE_ICE_WALL_03:
-                m_auiEncounter[7] = uiData;
-                break;
-            case TYPE_ICE_WALL_04:
-                m_auiEncounter[8] = uiData;
-                break;
-            case TYPE_HALLS:
-                m_auiEncounter[9] = uiData;
-                break;
-            case DATA_LIDER:
-                m_auiLider = uiData;
-                uiData = NOT_STARTED;
+            case TYPE_ICE_WALL_01:          m_auiEncounter[uiType] = uiData; break;
+            case TYPE_ICE_WALL_02:          m_auiEncounter[uiType] = uiData; break;
+            case TYPE_ICE_WALL_03:          m_auiEncounter[uiType] = uiData; break;
+            case TYPE_ICE_WALL_04:          m_auiEncounter[uiType] = uiData; break;
+            case TYPE_HALLS:                m_auiEncounter[uiType] = uiData; break;
+            case DATA_LIDER:                m_auiLider = uiData;
+                                            uiData = NOT_STARTED;
                 break;
         }
 
@@ -182,28 +175,19 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_PHASE:
-                return m_auiEncounter[0];
-            case TYPE_EVENT:
-                return m_auiEncounter[1];
-            case TYPE_FALRIC:
-                return m_auiEncounter[2];
-            case TYPE_MARWYN:
-                return m_auiEncounter[3];
-            case TYPE_LICH_KING:
-                return m_auiEncounter[4];
-            case TYPE_ICE_WALL_01:
-                return m_auiEncounter[5];
-            case TYPE_ICE_WALL_02:
-                return m_auiEncounter[6];
-            case TYPE_ICE_WALL_03:
-                return m_auiEncounter[7];
-            case TYPE_ICE_WALL_04:
-                return m_auiEncounter[8];
-            case TYPE_HALLS:
-                return m_auiEncounter[9];
-            case DATA_LIDER:
-                return m_auiLider;
+            case TYPE_PHASE:                return m_auiEncounter[uiType];
+            case TYPE_EVENT:                return m_auiEncounter[uiType];
+            case TYPE_FALRIC:               return m_auiEncounter[uiType];
+            case TYPE_MARWYN:               return m_auiEncounter[uiType];
+            case TYPE_LICH_KING:            return m_auiEncounter[uiType];
+            case TYPE_FROST_GENERAL:        return m_auiEncounter[uiType];
+            case TYPE_ICE_WALL_01:          return m_auiEncounter[uiType];
+            case TYPE_ICE_WALL_02:          return m_auiEncounter[uiType];
+            case TYPE_ICE_WALL_03:          return m_auiEncounter[uiType];
+            case TYPE_ICE_WALL_04:          return m_auiEncounter[uiType];
+            case TYPE_HALLS:                return m_auiEncounter[uiType];
+            case DATA_LIDER:                return m_auiLider;
+            default:                        return 0;
         }
         return 0;
     }
@@ -223,12 +207,15 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         switch(uiData)
         {
             case GO_IMPENETRABLE_DOOR: return m_uiMainGateGUID;
-            case GO_FROSTMOURNE: return m_uiFrostmourneGUID;
-            case NPC_FALRIC: return m_uiFalricGUID;
-            case NPC_MARWYN: return m_uiMarwynGUID;
-            case BOSS_LICH_KING: return m_uiLichKingGUID;
-            case DATA_ESCAPE_LIDER: return m_uiLiderGUID;
-            case NPC_FROST_GENERAL: return m_uiFrostGeneralGUID;
+            case GO_FROSTMOURNE:       return m_uiFrostmourneGUID;
+            case NPC_FALRIC:           return m_uiFalricGUID;
+            case NPC_MARWYN:           return m_uiMarwynGUID;
+            case BOSS_LICH_KING:       return m_uiLichKingGUID;
+            case DATA_ESCAPE_LIDER:    return m_uiLiderGUID;
+            case NPC_FROST_GENERAL:    return m_uiFrostGeneralGUID;
+            case GO_ICECROWN_DOOR:     return m_uiExitGateGUID;
+            case GO_ICECROWN_DOOR_2:   return m_uiDoor2GUID;
+            case GO_ICECROWN_DOOR_3:   return m_uiDoor3GUID;
         }
         return 0;
     }

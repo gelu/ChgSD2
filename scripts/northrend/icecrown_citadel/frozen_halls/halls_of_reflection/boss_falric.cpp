@@ -18,7 +18,7 @@
 SDName: boss_falric
 SD%Complete: 70%
 SDComment:
-SDAuthor: /dev/rsa, rewrited by MaxXx2021 aka Mioka
+SDAuthor: /dev/rsa, changed by MaxXx2021 aka Mioka
 SDCategory: Halls of Reflection
 EndScriptData */
 
@@ -36,10 +36,8 @@ enum
 
     SPELL_HOPELESSNESS                      = 72395,
     SPELL_IMPENDING_DESPAIR                 = 72426,
-    SPELL_DEFILING_HORROR_N                 = 72435,
-    SPELL_DEFILING_HORROR_H                 = 72452,
-    SPELL_QUIVERING_STRIKE_N                = 72422,
-    SPELL_QUIVERING_STRIKE_H                = 72453,
+    SPELL_DEFILING_HORROR                   = 72435,
+    SPELL_QUIVERING_STRIKE                  = 72422,
 
     SPELL_BERSERK                           = 47008
 };
@@ -49,12 +47,10 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
     boss_falricAI(Creature *pCreature) : ScriptedAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
    }
 
    ScriptedInstance* m_pInstance;
-   bool Regular;
    bool m_bIsCall;
 
    uint32 m_uiBerserkTimer;
@@ -101,18 +97,19 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-      if(m_pInstance)
-         m_pInstance->SetData(TYPE_MARWYN, SPECIAL);
+      if(!m_pInstance) return;
+      m_pInstance->SetData(TYPE_MARWYN, SPECIAL);
       DoScriptText(SAY_FALRIC_DEATH, m_creature);
     }
 
     void AttackStart(Unit* who) 
-    { 
-         if(m_pInstance) 
-           if(m_pInstance->GetData(TYPE_FALRIC) != IN_PROGRESS)
-             return; 
+    {
+        if(!m_pInstance) return;
 
-         ScriptedAI::AttackStart(who);
+        if(m_pInstance->GetData(TYPE_FALRIC) != IN_PROGRESS)
+             return;
+
+        ScriptedAI::AttackStart(who);
     }
 
     void Summon()
@@ -162,6 +159,7 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
              if(Creature* Summon = m_creature->SummonCreature(pSummon, SpawnLoc[m_uiLocNo].x, SpawnLoc[m_uiLocNo].y, SpawnLoc[m_uiLocNo].z, SpawnLoc[m_uiLocNo].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
              {
                 m_uiSummonGUID[i] = Summon->GetGUID();
+                Summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 Summon->setFaction(974);
              }
              m_uiLocNo++;
@@ -175,6 +173,7 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
             if(Creature* Summon = m_pInstance->instance->GetCreature(m_uiSummonGUID[m_uiCheckSummon]))
             {
                Summon->setFaction(14);
+               Summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                Summon->SetInCombatWithZone();
             }
             m_uiCheckSummon++;
@@ -185,7 +184,7 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
     {
         if(!m_pInstance) return;
 
-        if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL) 
+        if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL)
         {
             if(!m_bIsCall) 
             {
@@ -212,7 +211,7 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
 
         if(m_uiStrikeTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), Regular ? SPELL_QUIVERING_STRIKE_N : SPELL_QUIVERING_STRIKE_H);
+            DoCast(m_creature->getVictim(), SPELL_QUIVERING_STRIKE);
             m_uiStrikeTimer = (urand(7000, 14000));
         }
         else m_uiStrikeTimer -= uiDiff;
@@ -229,7 +228,7 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
         if(m_uiGrowlTimer < uiDiff)
         {
             DoScriptText(SAY_FALRIC_SP02, m_creature);
-            DoCast(m_creature->getVictim(), Regular ? SPELL_DEFILING_HORROR_N : SPELL_DEFILING_HORROR_H);
+            DoCast(m_creature, SPELL_DEFILING_HORROR);
             m_uiGrowlTimer = (urand(25000, 30000));
         }
         else m_uiGrowlTimer -= uiDiff;

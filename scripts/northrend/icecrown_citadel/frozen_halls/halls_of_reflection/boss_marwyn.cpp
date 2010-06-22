@@ -18,7 +18,7 @@
 SDName: boss_marwyn
 SD%Complete: 60%
 SDComment:
-SDAuthor: /dev/rsa, rewrited by MaxXx2021 aka Mioka
+SDAuthor: /dev/rsa, changed by MaxXx2021 aka Mioka
 SDCategory: Halls of Reflection
 EndScriptData */
 
@@ -35,13 +35,10 @@ enum
     SAY_MARWYN_SP01                         = -1594517,
     SAY_MARWYN_SP02                         = -1594518,
 
-    SPELL_OBLITERATE_N                      = 72360,
-    SPELL_OBLITERATE_H                      = 72434,
-    SPELL_SHARED_SUFFERING_N                = 72368,
-    SPELL_SHARED_SUFFERING_H                = 72369,
+    SPELL_OBLITERATE                        = 72360,
+    SPELL_SHARED_SUFFERING                  = 72368,
     SPELL_WELL_OF_CORRUPTION                = 72362,
-    SPELL_CORRUPTED_FLESH_N                 = 72363,
-    SPELL_CORRUPTED_FLESH_H                 = 72436,
+    SPELL_CORRUPTED_FLESH                   = 72436,
 
     SPELL_BERSERK                           = 47008,
 };
@@ -51,12 +48,10 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
    boss_marwynAI(Creature *pCreature) : ScriptedAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
    }
 
    ScriptedInstance* m_pInstance;
-   bool Regular;
    bool m_bIsCall;
    uint32 m_uiBerserkTimer;
    uint32 m_uiSharedSufferingTimer;
@@ -136,6 +131,7 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
              if(Creature* Summon = m_creature->SummonCreature(pSummon, SpawnLoc[m_uiLocNo].x, SpawnLoc[m_uiLocNo].y, SpawnLoc[m_uiLocNo].z, SpawnLoc[m_uiLocNo].o, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30000))
              {
                 m_uiSummonGUID[i] = Summon->GetGUID();
+                Summon->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 Summon->setFaction(974);
              }
              m_uiLocNo++;
@@ -149,6 +145,7 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
             if(Creature* Summon = m_pInstance->instance->GetCreature(m_uiSummonGUID[m_uiCheckSummon]))
             {
                Summon->setFaction(14);
+               Summon->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                Summon->SetInCombatWithZone();
             }
             m_uiCheckSummon++;
@@ -177,17 +174,19 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
 
     void Aggro(Unit* pVictim)
     {
-      m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-      DoScriptText(SAY_MARWYN_AGGRO, m_creature);
+        if (!m_pInstance) return;
+        m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+        DoScriptText(SAY_MARWYN_AGGRO, m_creature);
     }
 
     void AttackStart(Unit* who) 
-    { 
-         if (m_pInstance) 
-           if (m_pInstance->GetData(TYPE_MARWYN) != IN_PROGRESS)
-             return; 
+    {
+        if (!m_pInstance) return;
 
-         ScriptedAI::AttackStart(who);
+        if (m_pInstance->GetData(TYPE_MARWYN) != IN_PROGRESS)
+             return;
+
+        ScriptedAI::AttackStart(who);
     }
 
    void UpdateAI(const uint32 uiDiff)
@@ -228,22 +227,22 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
 
         if(m_uiObliterateTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), Regular ? SPELL_OBLITERATE_N : SPELL_OBLITERATE_H);
-            m_uiObliterateTimer = urand(8000, 12000);
+            DoCast(m_creature->getVictim(), SPELL_OBLITERATE);
+                m_uiObliterateTimer = urand(8000, 12000);
         } else m_uiObliterateTimer -= uiDiff;
 
         if (m_uiWellTimer < uiDiff) 
         {
             DoScriptText(SAY_MARWYN_SP02, m_creature);
-            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, SPELL_WELL_OF_CORRUPTION);
+//            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+//               DoCast(pTarget, SPELL_WELL_OF_CORRUPTION);
             m_uiWellTimer= urand(25000, 30000);
         } else m_uiWellTimer -= uiDiff;
 
         if (m_uiSharedSufferingTimer < uiDiff) 
         {
             if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, Regular ? SPELL_SHARED_SUFFERING_N : SPELL_SHARED_SUFFERING_H);
+               DoCast(pTarget, SPELL_SHARED_SUFFERING);
             m_uiSharedSufferingTimer = urand(15000, 20000);
         } else m_uiSharedSufferingTimer -= uiDiff;
 
@@ -251,7 +250,7 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
         {
             DoScriptText(SAY_MARWYN_SP01, m_creature);
             if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCast(pTarget, Regular ? SPELL_CORRUPTED_FLESH_N : SPELL_CORRUPTED_FLESH_H);
+                DoCast(pTarget, SPELL_CORRUPTED_FLESH);
             m_uiFleshTimer = urand(10000, 16000);
         } else m_uiFleshTimer -= uiDiff;
 

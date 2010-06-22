@@ -60,7 +60,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
    boss_lich_king_hrAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->SetActiveObjectState(true);
         Reset();
    }
 
@@ -73,8 +72,10 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
    bool Finish;
 
    void Reset()
-   { 
-      NonFight = false;
+   {
+      if(!m_pInstance) return;
+      NonFight    = false;
+      StartEscort = false;
       m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 0, uint32(36942));
    }
 
@@ -103,15 +104,33 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
    }
 
    void AttackStart(Unit* who) 
-   { 
-     if (!who)
-         return;
+   {
+      if (!m_pInstance) return;
+      if (!who)        return;
 
-     if(NonFight == true) return;
+     if (NonFight) return;
 
-     if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || who->GetTypeId() == TYPEID_PLAYER) return;
+     if (m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || who->GetTypeId() == TYPEID_PLAYER) return;
 
      npc_escortAI::AttackStart(who);
+   }
+
+    void JustSummoned(Creature* summoned)
+    {
+         if(!m_pInstance || !summoned) return;
+
+         summoned->SetInCombatWithZone();
+
+         if (Unit* pLider = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+         {
+               summoned->GetMotionMaster()->MoveChase(pLider);
+               summoned->AddThreat(pLider, 100.0f);
+         }
+    }
+
+   void CallGuard(uint32 GuardID)
+   {
+       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,180000);
    }
 
    void Wall01()
@@ -126,8 +145,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             ++Step;
             break;
          case 1:
-            /*if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(DATA_GO_ICE_WALL_01)))
-               pGate->SetGoState(GO_STATE_READY);*/
             StepTimer = 2000;
             ++Step;
             break;
@@ -150,7 +167,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             ++Step;
             break;
          case 5:
-            m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
             m_pInstance->SetData(TYPE_ICE_WALL_01, DONE);
             StepTimer = 100;
             Step = 0;
@@ -171,9 +188,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
           case 1:
             SetEscortPaused(false);
-            m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-            m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-            m_creature->SummonCreature(NPC_ABON,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_ABON);
             m_pInstance->SetData(TYPE_ICE_WALL_02, DONE);
             StepTimer = 100;
             Step = 0;
@@ -193,13 +210,13 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
            ++Step;
            break;
          case 1:
-           SetEscortPaused(false);
-           DoScriptText(SAY_LICH_KING_ABON, m_creature);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_ABON,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_ABON,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+            SetEscortPaused(false);
+            DoScriptText(SAY_LICH_KING_ABON, m_creature);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_ABON);
+            CallGuard(NPC_ABON);
            m_pInstance->SetData(TYPE_ICE_WALL_03, DONE);
            StepTimer = 100;
            Step = 0;
@@ -219,21 +236,21 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
            ++Step;
            break;
          case 1:
-           SetEscortPaused(false);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_ABON,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_ABON,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           StepTimer = 15000;
-           ++Step;
-           break;
+            SetEscortPaused(false);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_ABON);
+            CallGuard(NPC_ABON);
+            StepTimer = 15000;
+            ++Step;
+            break;
          case 2:
-           DoScriptText(SAY_LICH_KING_ABON, m_creature);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_creature->SummonCreature(NPC_RISEN_WITCH_DOCTOR,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
-           m_pInstance->SetData(TYPE_ICE_WALL_04, DONE);
-           ++Step;
+            DoScriptText(SAY_LICH_KING_ABON, m_creature);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            CallGuard(NPC_RISEN_WITCH_DOCTOR);
+            m_pInstance->SetData(TYPE_ICE_WALL_04, DONE);
+            ++Step;
            break;
       }
    }
@@ -241,7 +258,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
    void UpdateEscortAI(const uint32 diff)
     {
       if(!m_pInstance) return;
- 
+
       if(m_pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS)
       {
          if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -253,7 +270,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       if(m_creature->isInCombat() && m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS)
          npc_escortAI::EnterEvadeMode();
 
-      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && StartEscort != true)
+      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && !StartEscort)
       {
          StartEscort = true;
          if(m_creature->HasAura(SPELL_ICE_PRISON))
@@ -264,7 +281,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          NonFight = true;
          m_creature->AttackStop();
          m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-         m_creature->SetSpeedRate(MOVE_WALK, 2.0f, true);
+         m_creature->SetSpeedRate(MOVE_WALK, 2.4f, true);
          if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
              pEscortAI->Start(false, false);
          Step = 0;
@@ -302,201 +319,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
     }
 };
 
-struct MANGOS_DLL_DECL npc_raging_gnoulAI : public ScriptedAI
-{
-    npc_raging_gnoulAI(Creature *pCreature) : ScriptedAI(pCreature)
-   {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->SetActiveObjectState(true);
-        Reset();
-   }
-
-ScriptedInstance* m_pInstance;
-uint32 EmergeTimer;
-bool Emerge;
-uint64 m_uiLiderGUID;
-
-    void Reset()
-    {
-      DoCast(m_creature, SPELL_EMERGE_VISUAL);
-      EmergeTimer = 4000;
-      Emerge = false;
-    }
-
-    void JustDied(Unit* pKiller)
-    {
-    }
-
-    void AttackStart(Unit* who) 
-    { 
-     if (!who)
-         return;
-
-     if(Emerge == false) return;
-
-     ScriptedAI::AttackStart(who);
-    }
-
-   void UpdateAI(const uint32 diff)
-    {
-      if(!m_pInstance) return;
-
-      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS)
-      {
-        if(Emerge != true)
-        {
-           if(EmergeTimer < diff)
-           {
-              m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-              Emerge = true;
-              m_uiLiderGUID = m_pInstance->GetData64(DATA_ESCAPE_LIDER);
-              if(Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_uiLiderGUID)))
-              {
-                DoResetThreat();
-                m_creature->AI()->AttackStart(pLider);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(pLider);
-                m_creature->AddThreat(pLider);
-              }
-
-           } else EmergeTimer -= diff;
-        }
-      }
-
-     DoMeleeAttackIfReady();
-
-    }
-};
-
-struct MANGOS_DLL_DECL npc_risen_witch_doctorAI : public ScriptedAI
-{
-    npc_risen_witch_doctorAI(Creature *pCreature) : ScriptedAI(pCreature)
-   {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->SetActiveObjectState(true);
-        Reset();
-   }
-
-ScriptedInstance* m_pInstance;
-uint32 EmergeTimer;
-bool Emerge;
-uint64 m_uiLiderGUID;
-
-    void Reset()
-    { 
-      DoCast(m_creature, SPELL_EMERGE_VISUAL);
-      EmergeTimer = 5000;
-      Emerge = false;
-    }
-
-    void JustDied(Unit* pKiller)
-    {
-    }
-
-    void AttackStart(Unit* who) 
-    {
-     if (!who)
-         return;
-
-     if(Emerge == false) return;
-
-     ScriptedAI::AttackStart(who);
-    }
-
-   void UpdateAI(const uint32 diff)
-    {
-      if(!m_pInstance) return;
-
-      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS)
-      {
-        if(Emerge != true)
-        {
-           if(EmergeTimer < diff)
-           {
-              m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-              Emerge = true;
-              m_uiLiderGUID = m_pInstance->GetData64(DATA_ESCAPE_LIDER);
-              if(Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_uiLiderGUID)))
-              {
-                DoResetThreat();
-                m_creature->AI()->AttackStart(pLider);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(pLider);
-                m_creature->AddThreat(pLider);
-              }
-
-           } else EmergeTimer -= diff;
-        }
-      }
-
-     DoMeleeAttackIfReady();
-
-    }
-};
-
-struct MANGOS_DLL_DECL npc_abonAI : public ScriptedAI
-{
-    npc_abonAI(Creature *pCreature) : ScriptedAI(pCreature)
-   {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->SetActiveObjectState(true);
-        Reset();
-   }
-
-ScriptedInstance* m_pInstance;
-uint64 m_uiLiderGUID;
-bool Walk;
-
-    void Reset()
-    {
-      Walk = false;
-    }
-
-   void UpdateAI(const uint32 diff)
-    {
-      if(!m_pInstance) return;
-
-      if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS)
-      {
-        if(Walk != true)
-        {
-              m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-              Walk = true;
-              m_uiLiderGUID = m_pInstance->GetData64(DATA_ESCAPE_LIDER);
-              if(Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_uiLiderGUID)))
-              {
-                DoResetThreat();
-                m_creature->AI()->AttackStart(pLider);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(pLider);
-                m_creature->AddThreat(pLider);
-              }
-        }
-      }
-
-     DoMeleeAttackIfReady();
-
-    }
-};
-
 CreatureAI* GetAI_boss_lich_king_hr(Creature* pCreature)
 {
     return new boss_lich_king_hrAI(pCreature);
-}
-
-CreatureAI* GetAI_npc_raging_gnoul(Creature* pCreature)
-{
-    return new npc_raging_gnoulAI(pCreature);
-}
-
-CreatureAI* GetAI_npc_risen_witch_doctor(Creature* pCreature)
-{
-    return new npc_risen_witch_doctorAI(pCreature);
-}
-
-CreatureAI* GetAI_npc_abon(Creature* pCreature)
-{
-    return new npc_abonAI(pCreature);
 }
 
 void AddSC_boss_lich_king_hr()
@@ -508,18 +333,4 @@ void AddSC_boss_lich_king_hr()
     newscript->GetAI = &GetAI_boss_lich_king_hr;
     newscript->RegisterSelf();
 
-    newscript = new Script;
-    newscript->Name = "npc_raging_gnoul";
-    newscript->GetAI = &GetAI_npc_raging_gnoul;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_risen_witch_doctor";
-    newscript->GetAI = &GetAI_npc_risen_witch_doctor;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_abon";
-    newscript->GetAI = &GetAI_npc_abon;
-    newscript->RegisterSelf();
 }

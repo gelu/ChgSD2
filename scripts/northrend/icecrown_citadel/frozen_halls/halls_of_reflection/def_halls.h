@@ -7,12 +7,13 @@ enum Data
     TYPE_EVENT              = 1,
     TYPE_FALRIC             = 2,
     TYPE_MARWYN             = 3,
-    TYPE_LICH_KING          = 4,
-    TYPE_ICE_WALL_01        = 5,
-    TYPE_ICE_WALL_02        = 6,
-    TYPE_ICE_WALL_03        = 7,
-    TYPE_ICE_WALL_04        = 8,
-    TYPE_HALLS              = 9,
+    TYPE_FROST_GENERAL      = 4,
+    TYPE_LICH_KING          = 5,
+    TYPE_ICE_WALL_01        = 6,
+    TYPE_ICE_WALL_02        = 7,
+    TYPE_ICE_WALL_03        = 8,
+    TYPE_ICE_WALL_04        = 9,
+    TYPE_HALLS              = 10,
     MAX_ENCOUNTERS,
 
     DATA_ESCAPE_LIDER       = 101,
@@ -50,6 +51,7 @@ enum Data
     NPC_FROST_GENERAL            = 36723,
 
     GO_ICECROWN_DOOR             = 201976, //72802
+    GO_ICECROWN_DOOR_2           = 197342,
     GO_ICECROWN_DOOR_3           = 197343,
     GO_IMPENETRABLE_DOOR         = 197341, //72801
     GO_FROSTMOURNE_ALTAR         = 202236, //3551

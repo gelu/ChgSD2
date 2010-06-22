@@ -137,6 +137,7 @@ enum
   SPELL_SILENCE                      = 69413,
   SPELL_LICH_KING_CAST               = 57561,
   SPELL_FROSTMOURNE_VISUAL           = 73220,
+  SPELL_SHIELD_DISRUPTION            = 58291,
 
   FACTION                            = 2076,
 };
@@ -569,7 +570,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 if(pLichKing)
                    pLichKing->SetVisibility(VISIBILITY_OFF);
                 m_pInstance->SetData(TYPE_PHASE, 2);
-                JumpNextStep(2000);
+                JumpNextStep(1000);
                 break;
          }
     }
@@ -682,7 +683,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
    npc_jaina_and_sylvana_HRextroAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_creature->SetActiveObjectState(true);
         Reset();
    }
 
@@ -842,10 +842,10 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
     void MoveInLineOfSight(Unit* who)
     {
-       if(!who)
+       if(!who || !m_pInstance)
            return;
 
-       if(!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
+       if(who->GetTypeId() != TYPEID_PLAYER) return;
 
        Player* pPlayer = (Player *)who;
 
@@ -853,7 +853,9 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
        if(pPlayer->GetTeam() == HORDE && m_creature->GetEntry() == NPC_JAINA_OUTRO) return;
 
-       if(m_creature->GetDistance2d(who) <= 50 && m_pInstance->GetData(TYPE_MARWYN) == DONE && m_pInstance->GetData(TYPE_PHASE) == 3)
+       if(m_creature->IsWithinDistInMap(who, 50.0f)
+          && m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE
+          && m_pInstance->GetData(TYPE_PHASE) == 3)
        {
           pPlayer = (Player *)who;
           Event = true;
@@ -996,13 +998,15 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
         switch(Step)
         {
            case 10:
+                  m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
                   m_creature->RemoveAurasDueToSpell(SPELL_SILENCE);
                   m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
-              JumpNextStep(2000);
+              JumpNextStep(6000);
               break;
            case 11:
                 if(GameObject* pCave = m_creature->SummonGameobject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0))
                    pCave->SetGoState(GO_STATE_READY);
+                   m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
                    m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                    m_creature->GetMotionMaster()->MovePoint(0, 5258.911328f,1652.112f,784.295166f);
                    DoScriptText(SAY_ESCAPE_01, m_creature);
@@ -1032,8 +1036,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               JumpNextStep(20000);
               break;
            case 14:
+              m_creature->GetMotionMaster()->MovePoint(0, 5250.959961f, 1639.359985f, 784.302f);
+              JumpNextStep(5000);
+              break;
+           case 15:
                    m_creature->ForcedDespawn();
-              JumpNextStep(20000);
+              JumpNextStep(5000);
               break;
         }
    }
@@ -1229,8 +1237,7 @@ enum GENERAL_EVENT
    SAY_AGGRO                    = -1594519,
    SAY_DEATH                    = -1594520,
 
-   SPELL_SHIELD_THROWN_N        = 69222,
-   SPELL_SHIELD_THROWN_H        = 73076,
+   SPELL_SHIELD_THROWN          = 69222,
    SPELL_SPIKE                  = 59446   // this is not right spell!
 };
 
@@ -1239,30 +1246,54 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
    npc_frostworn_generalAI(Creature *pCreature) : ScriptedAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
    }
 
    ScriptedInstance* m_pInstance;
-   bool Regular;
 
    uint32 m_uiShieldTimer;
    uint32 m_uiSpikeTimer;
 
    void Reset()
    {
-      m_uiShieldTimer = 5000;
-      m_uiSpikeTimer = 14000;
+       if (!m_pInstance) return;
+       m_uiShieldTimer = 5000;
+       m_uiSpikeTimer = 14000;
+       m_pInstance->SetData(TYPE_FROST_GENERAL, NOT_STARTED);
+       m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
    }
 
     void JustDied(Unit* pKiller)
     {
-      DoScriptText(SAY_DEATH, m_creature);
+       if (!m_pInstance) return;
+       DoScriptText(SAY_DEATH, m_creature);
+       m_pInstance->SetData(TYPE_FROST_GENERAL, DONE);
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if (!m_pInstance) return;
+
+        if (m_creature->getVictim()) return;
+
+        if (pWho->GetTypeId() != TYPEID_PLAYER
+            || m_pInstance->GetData(TYPE_MARWYN) != DONE
+            || !m_creature->IsWithinDistInMap(pWho, 20.0f)
+            ) return;
+
+        if (Player* pPlayer = (Player*)pWho)
+            if (pPlayer->isGameMaster()) return;
+
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        AttackStart(pWho);
     }
 
     void Aggro(Unit* pVictim)
     {
-      DoScriptText(SAY_AGGRO, m_creature);
+       if (!m_pInstance) return;
+       DoScriptText(SAY_AGGRO, m_creature);
+       m_pInstance->SetData(TYPE_FROST_GENERAL, IN_PROGRESS);
     }
 
    void UpdateAI(const uint32 uiDiff)
@@ -1273,7 +1304,7 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
         if(m_uiShieldTimer < uiDiff)
         {
             if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, Regular ? SPELL_SHIELD_THROWN_N : SPELL_SHIELD_THROWN_H);
+               DoCast(pTarget,SPELL_SHIELD_THROWN);
             m_uiShieldTimer = urand(8000, 12000);
         } else m_uiShieldTimer -= uiDiff;
 
