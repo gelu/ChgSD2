@@ -124,6 +124,9 @@ enum
 
     GO_FROSTY_WIND              = 202188, //
     GO_FROSTY_EDGE              = 202189, //
+    GO_SNOW_EDGE                = 202190, //
+    GO_ARTHAS_PLATFORM          = 202161, //
+    GO_ARTHAS_PRECIPICE         = 202078, //
 
     TYPE_EVENT_TIMER            = 99,
     TYPE_EVENT                  = 100,

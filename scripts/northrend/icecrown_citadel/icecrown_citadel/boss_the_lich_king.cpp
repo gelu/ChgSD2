@@ -128,6 +128,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
     uint32 nextEvent;
     uint32 nextPoint;
     uint32 UpdateTimer;
+    uint32 oldflag;
     bool movementstarted;
     bool battlestarted;
     bool finalphase;
@@ -372,7 +373,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                 case 13280:
                           UpdateTimer = 2000;
                           pInstance->SetData(TYPE_EVENT,13290);
-                          stage = 12;
+                          stage = 13;
                           if (pFrostmourne) pFrostmourne->ForcedDespawn();
                           if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_FROSTMOURNE_TRIGGER)))
                              pTemp->ForcedDespawn();
@@ -433,7 +434,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                     if (movementstarted) return;
                     bsw->doCast(SPELL_REMORSELESS_WINTER);
                     stage = 3;
-                    return;
+                    break;
             case 3:
                     bsw->timedCast(SPELL_SUMMON_RAGING_SPIRIT, diff);
                     bsw->timedCast(SPELL_SUMMON_ICE_SPHERE, diff);
@@ -448,24 +449,32 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
                     if (bsw->timedQuery(SPELL_REMORSELESS_WINTER, diff))
                        {
                             bsw->doCast(SPELL_QUAKE);
+                            stage = 4;
+                            DoScriptText(-1631524, m_creature);
+                       };
+                    break;
+            case 4:           // Platform destruct
+                    if (bsw->timedQuery(SPELL_QUAKE, diff))
+                       {
                             pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_ICESHARD_1));
                             pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_ICESHARD_2));
                             pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_ICESHARD_3));
                             pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_ICESHARD_4));
-                           if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_FROSTY_WIND)))
-                              {
-//                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
-//                                 pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
-                              }
-                            DoScriptText(-1631524, m_creature);
+                            if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
+                            {
+                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                                 oldflag = pGoFloor->GetUInt32Value(GAMEOBJECT_BYTES_1);
+                                 pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
+                            }
+                            if (GameObject* pGoSnow = pInstance->instance->GetGameObject(pInstance->GetData64(GO_FROSTY_WIND)))
+                                pGoSnow->SetGoState(GO_STATE_READY);
                             m_creature->GetMotionMaster()->Clear();
                             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                             SetCombatMovement(true);
-                            stage = 4;
-                       };
-
+                            stage = 5;
+                       }
                     break;
-            case 4:           // Phase 2
+            case 5:           // Phase 2
 
                     if (bsw->timedQuery(SPELL_SPAWN_DEFILE, diff)) 
                        {
@@ -491,22 +500,29 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
                     if (m_creature->GetHealthPercent() < 40.0f) 
                        {
-                            stage = 5;
+                            stage = 6;
                             DoScriptText(-1631523,m_creature);
                        }
                     break;
-            case 5:           // Go in transition phase
+            case 6:           // Go in transition phase
                     m_creature->AttackStop();
                     SetCombatMovement(false);
                     StartMovement(1,0);
-                    stage = 6;
-                    break;
-            case 6:
-                    if (movementstarted) return;
-                    bsw->doCast(SPELL_REMORSELESS_WINTER);
                     stage = 7;
-                    return;
-            case 7:
+                    break;
+            case 7:          // Platform restore
+                    if (movementstarted) return;
+                    if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
+                    {
+                        pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                        pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,oldflag);
+                    }
+                    if (GameObject* pGoSnow = pInstance->instance->GetGameObject(pInstance->GetData64(GO_FROSTY_WIND)))
+                        pGoSnow->SetGoState(GO_STATE_ACTIVE);
+                    bsw->doCast(SPELL_REMORSELESS_WINTER);
+                    stage = 8;
+                    break;
+            case 8:
                     bsw->timedCast(SPELL_SUMMON_RAGING_SPIRIT, diff);
                     bsw->timedCast(SPELL_SUMMON_ICE_SPHERE, diff);
                     bsw->timedCast(SPELL_PAIN_AND_SUFFERING, diff);
@@ -519,21 +535,33 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
                     if (bsw->timedQuery(SPELL_REMORSELESS_WINTER, diff))
                        {
-                            stage = 8;
                             DoScriptText(-1631524, m_creature);
-                            m_creature->GetMotionMaster()->Clear();
-                            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                            SetCombatMovement(true);
-
                             bsw->doCast(SPELL_SUMMON_VILE_SPIRITS);
                             for (uint8 i = 0; i < 11; ++i)
-                                bsw->doCast(NPC_VILE_SPIRIT);
-
+                                 bsw->doCast(NPC_VILE_SPIRIT);
                             bsw->doCast(SPELL_QUAKE);
+                            stage = 9;
                        };
 
                     break;
-            case 8:           // Phase 3
+            case 9:           // Platform destruct
+                    if (bsw->timedQuery(SPELL_QUAKE, diff))
+                       {
+                            if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
+                            {
+                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                                 oldflag = pGoFloor->GetUInt32Value(GAMEOBJECT_BYTES_1);
+                                 pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
+                            }
+                            if (GameObject* pGoSnow = pInstance->instance->GetGameObject(pInstance->GetData64(GO_FROSTY_WIND)))
+                                pGoSnow->SetGoState(GO_STATE_READY);
+                            m_creature->GetMotionMaster()->Clear();
+                            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                            SetCombatMovement(true);
+                            stage = 10;
+                       }
+                   break;
+            case 10:           // Phase 3
                     if (bsw->timedQuery(SPELL_SPAWN_DEFILE, diff)) 
                        {
                             bsw->doCast(SPELL_SPAWN_DEFILE);
@@ -554,22 +582,20 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public ScriptedAI
 
                     if (m_creature->GetHealthPercent() < 10.0f) 
                        {
-                            stage = 9;
+                            stage = 11;
                             DoScriptText(-1631513,m_creature);
                        }
                     break;
-            case 9:           // Ending Phase start
+            case 11:           // Ending Phase start
                     m_creature->AttackStop();
                     SetCombatMovement(false);
                     StartMovement(6,13000);
-                    stage = 10;
+                    stage = 12;
                     battlestarted = false;
                     break;
-            case 10:
-                    break;
-            case 11:
-                    break;
             case 12:
+                    break;
+            case 13:
                     DoMeleeAttackIfReady();
                     break;
         }
@@ -829,7 +855,7 @@ bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
 
     char const* _message;
 
-    switch (LocaleConstant currentlocale = pPlayer->GetSession()->GetSessionDbcLocale())
+    switch (pPlayer->GetSession()->GetSessionDbcLocale())
     {
      case LOCALE_enUS:
      case LOCALE_koKR:
@@ -867,7 +893,6 @@ bool GossipSelect_boss_tirion_icc(Player* pPlayer, Creature* pCreature, uint32 u
         pInstance->SetData(TYPE_EVENT,12000);
         return true;
     } else return false;
-
 };
 
 CreatureAI* GetAI_boss_tirion_icc(Creature* pCreature)

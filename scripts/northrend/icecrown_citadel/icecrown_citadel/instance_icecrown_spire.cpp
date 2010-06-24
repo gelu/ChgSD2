@@ -91,6 +91,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 
     uint64 m_uiFrostyWindGUID;
     uint64 m_uiFrostyEdgeGUID;
+    uint64 m_uiArthasPlatformGUID;
+    uint64 m_uiArthasPrecipiceGUID;
 
     uint64 m_uiFrostmourneGUID;
     uint64 m_uiFrostmourneTriggerGUID;
@@ -431,6 +433,12 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_FROSTY_EDGE: 
                                   m_uiFrostyEdgeGUID = pGo->GetGUID();
                                   break;
+            case GO_ARTHAS_PLATFORM: 
+                                  m_uiArthasPlatformGUID = pGo->GetGUID();
+                                  break;
+            case GO_ARTHAS_PRECIPICE: 
+                                  m_uiArthasPrecipiceGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -720,6 +728,8 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
             case GO_ICESHARD_4:               return m_uiIceShard4GUID;
             case GO_FROSTY_WIND:              return m_uiFrostyWindGUID;
             case GO_FROSTY_EDGE:              return m_uiFrostyEdgeGUID;
+            case GO_ARTHAS_PLATFORM:          return m_uiArthasPlatformGUID;
+            case GO_ARTHAS_PRECIPICE:         return m_uiArthasPrecipiceGUID;
             case NPC_FROSTMOURNE_TRIGGER:     return m_uiFrostmourneTriggerGUID;
             case NPC_FROSTMOURNE_HOLDER:      return m_uiFrostmourneHolderGUID;
         }
