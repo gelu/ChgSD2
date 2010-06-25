@@ -162,7 +162,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
                     break;
             }
 
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,1))
             {
                 if (pWrapped)
                     if (pTarget == pWrapped)
@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL boss_maexxnaAI : public ScriptedAI
         float x,y,z;
         for(uint8 i = 0; number >= i; i++)
         {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+            if (Unit* pTarget = SelectUnit(SELECT_TARGET_RANDOM,0))
             {
                 m_creature->GetRandomPoint(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),7.0f,x,y,z);
                 if(Creature* spiderling = m_creature->SummonCreature(NPC_SPIDERLING, x, y, z,0, TEMPSUMMON_DEAD_DESPAWN, 0))
