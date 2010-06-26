@@ -1024,7 +1024,10 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                                   else m_chestID = GO_CAPTAIN_CHEST_3;
                       };
                 if(GameObject* pChest = m_creature->SummonGameobject(m_chestID, 5241.047f, 1663.4364f, 784.295166f, 0.54f, 0))
+                {
                    pChest->SetGoState(GO_STATE_READY);
+                   pChest->SetRespawnTime(7*DAY);
+                }
                    m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                    DoScriptText(SAY_ESCAPE_02, m_creature);
               JumpNextStep(10000);

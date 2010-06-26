@@ -33,6 +33,8 @@ enum
    SAY_DEVOURER_DEATH_MALE_01      = -1632018,
    SAY_DEVOURER_SUMMON_MALE_01     = -1632023,
    SAY_DEVOURER_DARK_MALE_01       = -1632027,
+   SAY_DEVOURER_MIRRORED_SOUL      = -1632021, 
+   SAY_DEVOURER_UNLEASHED_SOULS    = -1632022,
 
    SAY_JAINA_FS09_EXTRO            = -1632029,
    SAY_SYLVANA_FS07_EXTRO          = -1632030,
@@ -166,7 +168,7 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
 
        for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                if (i->getSource()->isAlive() && i->getSource()->HasAura(SPELL_MIRRORED_SOUL))
-                   m_creature->DealDamage(i->getSource(), uiDamage*45,NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                   m_creature->DealDamage(i->getSource(), uiDamage/2,NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
       }
 
     void SpawnOutro(uint32 guid)
@@ -219,7 +221,7 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
 
     void KilledUnit(Unit* victim)
     {
-        switch (rand()%2)
+        switch (urand(0,1))
         {
             case 0: DoScriptText(SAY_DEVOURER_SLAY_01_MALE_01, m_creature); break;
             case 1: DoScriptText(SAY_DEVOURER_SLAY_02_MALE_01, m_creature); break;
@@ -254,7 +256,11 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
         if (SummonTimer < diff)
         {
                 m_creature->InterruptNonMeleeSpells(false);
-                DoScriptText(SAY_DEVOURER_SUMMON_MALE_01, m_creature);
+                switch (urand(0,1))
+                {
+                    case 0: DoScriptText(SAY_DEVOURER_SUMMON_MALE_01, m_creature); break;
+                    case 1: DoScriptText(SAY_DEVOURER_UNLEASHED_SOULS, m_creature); break;
+                }
                 DoCast(m_creature, SPELL_UNLEASHED_SOULS);
                 SummonTimer = 50000;
                 Summon = true;
@@ -265,8 +271,11 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
         if (MirroredTimer < diff)
         {
                 if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                {
                     DoCast(Target, SPELL_MIRRORED_SOUL);
-                MirroredTimer = 25000;
+                    DoScriptText(SAY_DEVOURER_MIRRORED_SOUL, m_creature);
+                    MirroredTimer = 25000;
+                }
         }
         else
             MirroredTimer -= diff;
