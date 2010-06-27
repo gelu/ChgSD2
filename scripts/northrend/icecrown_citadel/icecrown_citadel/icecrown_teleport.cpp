@@ -51,31 +51,33 @@ static t_Locations PortalLoc[]=
 };
 
 
-bool GOGossipSelect_go_icecrown_teleporter(Player *player, GameObject* pGo, uint32 sender, uint32 action)
+bool GOGossipSelect_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo, uint32 sender, uint32 action)
 {
     int32 damage = 0;
-    if(sender != GOSSIP_SENDER_MAIN) return true;
+    if(sender != GOSSIP_SENDER_MAIN) return false;
 
-    if(!player->getAttackers().empty()) return true;
+    if(!pPlayer->getAttackers().empty()) return false;
 
     if(action >= 0 && action <= PORTALS_COUNT)
-    player->TeleportTo(MAP_NUM, PortalLoc[action].x, PortalLoc[action].y, PortalLoc[action].z, 0);
+    pPlayer->TeleportTo(MAP_NUM, PortalLoc[action].x, PortalLoc[action].y, PortalLoc[action].z, 0);
     if (PortalLoc[action].spellID !=0 ) 
            if (SpellEntry const* spell = (SpellEntry *)GetSpellStore()->LookupEntry(PortalLoc[action].spellID))
-                  player->AddAura(new BossAura(spell, EFFECT_INDEX_2, &damage,(Unit*)player, (Unit*)player));
+                  pPlayer->AddAura(new BossAura(spell, EFFECT_INDEX_2, &damage,(Unit*)pPlayer, (Unit*)pPlayer));
 
-    player->CLOSE_GOSSIP_MENU();
+    pPlayer->CLOSE_GOSSIP_MENU();
     return true;
 }
 
-bool GOGossipHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
+bool GOGossipHello_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo)
 {
     ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
-    if(!pInstance) return true;
+
+    if (!pInstance || !pPlayer) return false;
+    if (pPlayer->isInCombat()) return true;
 
     uint8 _locale;
 
-    switch (LocaleConstant currentlocale = player->GetSession()->GetSessionDbcLocale())
+    switch (LocaleConstant currentlocale = pPlayer->GetSession()->GetSessionDbcLocale())
     {
      case LOCALE_enUS:
      case LOCALE_koKR:
@@ -96,10 +98,10 @@ bool GOGossipHello_go_icecrown_teleporter(Player *player, GameObject* pGo)
     };
 
     for(uint8 i = 0; i < PORTALS_COUNT; i++) {
-    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter) || player->isGameMaster())
-             player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, PortalLoc[i].name[_locale], GOSSIP_SENDER_MAIN, i);
+    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter) || pPlayer->isGameMaster())
+             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, PortalLoc[i].name[_locale], GOSSIP_SENDER_MAIN, i);
     };
-    player->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
+    pPlayer->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;
 }
 
