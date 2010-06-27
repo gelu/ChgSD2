@@ -35,6 +35,7 @@ enum
    SAY_DEVOURER_DARK_MALE_01       = -1632027,
    SAY_DEVOURER_MIRRORED_SOUL      = -1632021, 
    SAY_DEVOURER_UNLEASHED_SOULS    = -1632022,
+   SAY_DEVOURER_WELL_OF_SOULS      = -1632026,
 
    SAY_JAINA_FS09_EXTRO            = -1632029,
    SAY_SYLVANA_FS07_EXTRO          = -1632030,
@@ -121,7 +122,7 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
       Step = 0;
       StepTimer = 100;
       PhantomBlastTimer = 5000;
-      WellOfSoulTimer = 10000;
+      WellOfSoulTimer = 12000;
       SummonTimer = 20000;
       MirroredTimer = 28000;
       SoulBeamTimer = 33000;
@@ -248,7 +249,8 @@ struct MANGOS_DLL_DECL boss_devourer_of_soulsAI : public ScriptedAI
         {
                 if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(Target, SPELL_WELL_OF_SOULS);
-                WellOfSoulTimer = 12000;
+                    DoScriptText(SAY_DEVOURER_WELL_OF_SOULS, m_creature);
+                WellOfSoulTimer = urand(12000,24000);
         }
         else
             WellOfSoulTimer -= diff;
