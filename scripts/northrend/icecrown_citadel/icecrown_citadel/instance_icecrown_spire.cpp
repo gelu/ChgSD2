@@ -207,7 +207,7 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 
     bool IsEncounterInProgress() const
     {
-        for(uint8 i = 1; i < MAX_ENCOUNTERS-3 ; ++i)
+        for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
             if (m_auiEncounter[i] == IN_PROGRESS) return true;
 
         return false;
