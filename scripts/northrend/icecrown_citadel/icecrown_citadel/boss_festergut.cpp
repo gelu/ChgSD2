@@ -162,6 +162,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
+        if(!pInstance) return;
+
         if (!pet) {
                   if (Creature* pGuard = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_STINKY)))
                                 if (!pGuard->isAlive())  {
