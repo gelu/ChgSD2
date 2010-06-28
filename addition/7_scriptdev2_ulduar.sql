@@ -1,5 +1,5 @@
-DELETE FROM script_texts WHERE entry BETWEEN -1603017 AND -1603000;
-INSERT INTO script_texts VALUES
+DELETE FROM `script_texts` WHERE `entry` BETWEEN -1603017 AND -1603000;
+INSERT INTO `script_texts` VALUES
 (-1603000, "New toys? For me? I promise I won't break them this time!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15724, 1, 0, 0, "XT-002 Aggro"),
 (-1603001, "NO! NO! NO! NO! NO!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15727, 1, 0, 0, "XT-002 Tympanic Tantrum"),
 (-1603002, "I... I think I broke it.", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15728, 1, 0, 0, "XT-002 Slay 1"),
@@ -18,3 +18,15 @@ INSERT INTO script_texts VALUES
 (-1603015, "Welcome to the endless winter.", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15554, 1, 0, 0, "Hodir Slay 2"),
 (-1603016, "Winds of the north consume you!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15555, 1, 0, 0, "Hodir Flash Freeze"),
 (-1603017, "<Furious Roar>", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 15556, 1, 0, 0, "Hodir Frozen Blows");
+
+DELETE FROM `script_texts` WHERE `entry` BETWEEN -1050010 AND -1050000;
+INSERT INTO `script_texts` VALUES
+(-1050001, "Expedition Base Camp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Лагерь экспедиции", 0, 0, 0, 0, "Ulduar teleporter text 1"),
+(-1050002, "Formation Grounds", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Железный двор", 0, 0, 0, 0, "Ulduar teleporter text 2"),
+(-1050003, "Colossal Forge", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Колоссальный горн", 0, 0, 0, 0, "Ulduar teleporter text 3"),
+(-1050004, "Scrapyard", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Мусорная свалка", 0, 0, 0, 0, "Ulduar teleporter text 4"),
+(-1050005, "Antechamber of Ulduar", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Вестибюль Ульдуара", 0, 0, 0, 0, "Ulduar teleporter text 5"),
+(-1050006, "Shattered Walkway", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Обвалившаяся галерея", 0, 0, 0, 0, "Ulduar teleporter text 6"),
+(-1050007, "Conservatory of Life", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Круг наблюдения", 0, 0, 0, 0, "Ulduar teleporter text 7"),
+(-1050008, "Spark of Imagination", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Искра воображения", 0, 0, 0, 0, "Ulduar teleporter text 8"),
+(-1050009, "Prison of Yogg-Saron", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Провал безумия", 0, 0, 0, 0, "Ulduar teleporter text 9");

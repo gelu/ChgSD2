@@ -1,120 +1,104 @@
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+/* ScriptData
+SDName: ulduar_teleport
+SD%Complete: 90%
+SDComment: by /dev/rsa
+SDCategory: Ulduar instance
+EndScriptData */
 
 #include "precompiled.h"
 #include "def_ulduar.h"
+#include "sc_boss_spell_worker.h"
 
-/*
-The teleporter appears to be active and stable.
-
-- Expedition Base Camp
-- Formation Grounds
-- Colossal Forge
-- Scrapyard
-- Antechamber of Ulduar
-- Shattered Walkway
-- Conservatory of Life
-- Spark of Imagination
-- Prison of Yogg-Saron
-*/
-
-#define BASE_CAMP    200
-#define GROUNDS      201
-#define FORGE        202
-#define SCRAPYARD    203
-#define ANTECHAMBER  204
-#define WALKWAY      205
-#define CONSERVATORY 206
-#define SPARK        207
-#define PRISON       208
-
-bool GossipHello_ulduar_teleporter(Player *player, Creature *creature)
+enum
 {
+    PORTALS_COUNT               = 9,
+    TELEPORT_GOSSIP_MESSAGE     = 99322,
+};
 
-    ScriptedInstance *pInstance = (ScriptedInstance *) creature->GetInstanceData();
+struct t_Locations
+{
+    int textNum;
+    uint32 map_num;
+    float x, y, z, o;
+    uint32 spellID;
+    bool state;
+    bool active;
+    uint32 encounter;
+};
 
-    if(!pInstance) return true;
+static t_Locations PortalLoc[]=
+{
+{-1050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // base camp
+{-1050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // formation ground
+{-1050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_FLAME_LEVIATHAN}, //
+{-1050004,603, 926.292f,  -11.4635f, 418.595f, 3.19f, 0,false,true,TYPE_XT002_TP},        //
+{-1050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002_TP},        //
+{-1050006,603, 1859.45f,  -24.1f,    448.9f,   0,     0,false,true,TYPE_KOLOGARN},        //
+{-1050007,603, 2086.27f,  -24.3134f, 421.239f, 0,     0,false,true,TYPE_AURIAYA},         //
+{-1050008,603, 2517.3979f, 2568.89f, 412.69f,  6.17f, 0,false,true,TYPE_THORIM},          //
+{-1050009,603, 1854.297f, -11.0173f, 334.4f,   0, 65042,false,true,TYPE_VEZAX},           //
+};
 
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Expedition Base Camp", GOSSIP_SENDER_MAIN, BASE_CAMP);
-    if(pInstance->GetData(TYPE_LEVIATHAN_TP) == IN_PROGRESS)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Formation Grounds", GOSSIP_SENDER_MAIN, GROUNDS);
-    };
-    if(pInstance->GetData(TYPE_FLAME_LEVIATHAN) == DONE)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Colossal Forge", GOSSIP_SENDER_MAIN, FORGE);
-    };
-    if(pInstance->GetData(TYPE_XT002_TP) == IN_PROGRESS)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Scrapyard", GOSSIP_SENDER_MAIN, SCRAPYARD);
-    };
-    if(pInstance->GetData(TYPE_XT002) == DONE)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Antechamber of Ulduar", GOSSIP_SENDER_MAIN, ANTECHAMBER);
-    };
-    if(pInstance->GetData(TYPE_KOLOGARN) == DONE)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Shattered Walkway", GOSSIP_SENDER_MAIN, WALKWAY);
-    };
-    if(pInstance->GetData(TYPE_AURIAYA) == DONE)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Conservatory of Life", GOSSIP_SENDER_MAIN, CONSERVATORY);
-    };
-    if(pInstance->GetData(TYPE_MIMIRON_TP) == IN_PROGRESS)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Spark of Imagination", GOSSIP_SENDER_MAIN, SPARK);
-    };
-    if(pInstance->GetData(TYPE_VEZAX) == DONE)
-    {
-    player->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, "Teleport to the Prison of Yogg-Saron", GOSSIP_SENDER_MAIN, PRISON);
-    };
-    player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+
+bool GOGossipSelect_go_ulduar_teleporter(Player *pPlayer, GameObject* pGo, uint32 sender, uint32 action)
+{
+    int32 damage = 0;
+    if(sender != GOSSIP_SENDER_MAIN) return false;
+
+    if(!pPlayer->getAttackers().empty()) return false;
+
+    if(action >= 0 && action <= PORTALS_COUNT)
+    pPlayer->TeleportTo(PortalLoc[action].map_num, PortalLoc[action].x, PortalLoc[action].y, PortalLoc[action].z, PortalLoc[action].o);
+    if (PortalLoc[action].spellID != 0 )
+           if (SpellEntry const* spell = (SpellEntry *)GetSpellStore()->LookupEntry(PortalLoc[action].spellID))
+                  pPlayer->AddAura(new BossAura(spell, EFFECT_INDEX_2, &damage,(Unit*)pPlayer, (Unit*)pPlayer));
+
+    pPlayer->CLOSE_GOSSIP_MENU();
     return true;
 }
 
-bool GossipSelect_ulduar_teleporter(Player *player, Creature *creature, uint32 sender, uint32 action)
+bool GOGossipHello_go_ulduar_teleporter(Player *pPlayer, GameObject* pGo)
 {
-    if(sender != GOSSIP_SENDER_MAIN) return true;
-    if(!player->getAttackers().empty()) return true;
+    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
 
-    switch(action)
-    {
-    case BASE_CAMP:
-        player->TeleportTo(603, -706.122, -92.6024, 429.876, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case GROUNDS:
-        player->TeleportTo(603, 131.248, -35.3802, 409.804, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case FORGE:
-        player->TeleportTo(603, 553.233, -12.3247, 409.679, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case SCRAPYARD:
-        player->TeleportTo(603, 926.292, -11.4635, 418.595, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case ANTECHAMBER:
-        player->TeleportTo(603, 1498.09, -24.246, 420.967, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case WALKWAY:
-        player->TeleportTo(603, 1859.45, -24.1, 448.9, 0); 
-        player->CLOSE_GOSSIP_MENU(); break;
-    case CONSERVATORY:
-        player->TeleportTo(603, 2086.27, -24.3134, 421.239, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case SPARK:
-        player->TeleportTo(603, 2536.87, 2569.15, 412.304, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    case PRISON:
-        player->TeleportTo(603, 1854.297, -11.0173, 334.4, 0);
-        player->CLOSE_GOSSIP_MENU(); break;
-    }
+    if (!pInstance || !pPlayer) return false;
+    if (pPlayer->isInCombat()) return true;
 
+    for(uint8 i = 0; i < PORTALS_COUNT; i++) {
+    if ((PortalLoc[i].active == true && 
+        (PortalLoc[i].state == true || 
+        pInstance->GetData(PortalLoc[i].encounter) == DONE ||
+        pInstance->GetData(PortalLoc[i].encounter) == IN_PROGRESS))
+        || pPlayer->isGameMaster())
+             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, GetScriptText(PortalLoc[i].textNum, pPlayer), GOSSIP_SENDER_MAIN, i);
+    };
+    pPlayer->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;
 }
 
 void AddSC_ulduar_teleport()
 {
     Script *newscript;
+
     newscript = new Script;
-    newscript->Name = "ulduar_teleporter";
-    newscript->pGossipHello = &GossipHello_ulduar_teleporter;
-    newscript->pGossipSelect = &GossipSelect_ulduar_teleporter;
+    newscript->Name = "go_ulduar_teleporter";
+    newscript->pGOGossipHello  = &GOGossipHello_go_ulduar_teleporter;
+    newscript->pGOGossipSelect = &GOGossipSelect_go_ulduar_teleporter;
     newscript->RegisterSelf();
 }
