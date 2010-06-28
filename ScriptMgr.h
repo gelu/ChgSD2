@@ -73,6 +73,7 @@ struct Script
 
 //Generic scripting text function
 void DoScriptText(int32 textEntry, WorldObject* pSource, Unit* target = NULL);
+char const* GetScriptText(int32 iTextEntry, Player* pPlayer = NULL);
 
 //DB query
 QueryResult* strSD2Pquery(char*);
