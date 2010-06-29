@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,15 +16,15 @@
 
 /* ScriptData
 SDName: Boss_Volazj
-SD%Complete: 20%
-SDComment:
+SD%Complete: 60%
+SDComment: Insanity does not work blizzlike - custom event made, shiver need core support, timers
+SDAuthor: Tassadar
 SDCategory: Ahn'kahet
 EndScriptData */
 
 #include "precompiled.h"
 #include "ahnkahet.h"
 
-//TODO: fill in texts in database. Also need to add text for whisper.
 enum
 {
     SPELL_MIND_FLAY                 = 57941,
@@ -59,8 +59,19 @@ enum
     http://www.wowhead.com/?spells=0&filter=na=twisted+visage so many spells?!
     */
 
+    //Ancient void spells
+    SPELL_PRISON                    = 43312,
+    SPELL_BLUE_FLAMES               = 42586,
+    SPELL_RED_FLAMES                = 42346,
+    SPELL_BLUE_BEAM                 = 32840,
+    SPELL_SHAKE                     = 44681,
+    SPELL_PSYCHIC_SCREAM            = 34322,
+
     NPC_TWISTED_VISAGE              = 30621,
-    //NPC_TWISTED_VISAGE              = 20058, //Bloodmaul wolf, for testing
+    NPC_ANCIENT_VOID                = 30622, //Custom 
+
+    MODEL_VOID_LIGHT                = 19702,
+    MODEL_VOID_DARK                 = 1132,
 
     SAY_AGGRO                       = -1619033,
     SAY_INSANITY                    = -1619034,
@@ -69,62 +80,38 @@ enum
     SAY_SLAY_3                      = -1619037,
     SAY_DEATH_1                     = -1619038,
     SAY_DEATH_2                     = -1619039,
+    SAY_ANCIENT_VOID                = -1619040,
+
+    SAY_VOID_CORRUPT                = -1619041,
+    SAY_VOID_AGGRO                  = -1619042,
 
     PHASE_NOSTART                   = 0,
     PHASE_FIGHT                     = 1,
     PHASE_INSANITY_1                = 2,  // Wait five seconds until cast is complete, set unattackable
     PHASE_INSANITY_2                = 3, 
-    PHASE_INSANITY_3                = 4
+    PHASE_INSANITY_3                = 4, 
 };
-/*######
-## mob_twisted_visage
-######*/
-struct MANGOS_DLL_DECL mob_twisted_visageAI : public ScriptedAI
+struct Locations
 {
-    mob_twisted_visageAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-        Reset();
-    }
-
-    ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
-
-    uint8 m_uiMyPhase;
-    Player *m_pAttackPlayer;
-    Player *m_pMirrorPlayer;
-
-    void Reset()
-    {
-        if(m_pMirrorPlayer)
-            m_creature->CastSpell(m_creature, 57507, false);
-
-    }
-    void Aggro(Unit *pWho)
-    {
-        if(m_pMirrorPlayer)
-            m_creature->CastSpell(m_creature, 57507, false);
-    }
-    void EnterEvadeMode()
-    {
-        if (m_creature->IsInEvadeMode() || !m_creature->isAlive())
-            return;
-    }
-    void JustDied(Unit *pWho)
-    {
-        pWho->RemoveAurasDueToSpell(SPELL_INSANITY_PHASE+m_uiMyPhase);
-    }
-     
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        DoMeleeAttackIfReady();       
-    }
+    float x, y, z;
+    uint32 id;
 };
+static Locations SpawnLoc[]=
+{
+    //Around room
+    {571.48, -494.01, 26.35},
+    {562.58, -526.48, 28.97},
+    {524.80, -552.07, 26.66},
+    {494.62, -533.39, 28.99},
+    {470.88, -498.74, 26.35},
+    {483.96, -468.54, 28.97},
+    {519.23, -441.54, 26.35},
+    {548.45, -456.50, 29.00},
 
+    //Center of the room
+    {521.67, -496.17, 27.01}
+
+};
 /*######
 ## boss_volazj
 ######*/
@@ -142,7 +129,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
     bool m_bIsRegularMode;
     bool m_bIsDebugMode;  //if only one player(GM) in instance
     uint8 m_uiPhase;
-    Player *m_pLastShiverTarget;
+    uint64 m_uiLastShiverTargetGUID;
     uint8 m_uiShiverJumpTimer;
     uint8 m_uiLastSacrifaceHP;
 
@@ -165,6 +152,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         m_uiShiverTimer = 18000;
         m_uiCheckTimer = 1000;
         m_uiShiverJumpTimer = 0;
+        m_uiLastShiverTargetGUID = 0;
 
 
         //Insanity
@@ -181,7 +169,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_VOLAZJ, IN_PROGRESS);
         m_uiPhase = PHASE_FIGHT;
-        
+
         Map* pMap = m_creature->GetMap();
         if(pMap)
         {
@@ -194,6 +182,8 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
     {
         if(m_uiPhase != PHASE_FIGHT)
             return;
+
+        m_creature->GetMotionMaster()->MoveTargetedHome();
     }
     void KilledUnit(Unit* pVictim)
     {
@@ -210,51 +200,6 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         DoScriptText(urand(0, 1) ? SAY_DEATH_1 : SAY_DEATH_2, m_creature);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_VOLAZJ, DONE);
-    }
-    void DoShiver()
-    {
-        if(m_pLastShiverTarget && m_pLastShiverTarget->isAlive())
-        {
-            Map* pMap = m_creature->GetMap();
-            if(!pMap)
-                return;
-            Map::PlayerList const &lPlayers = pMap->GetPlayers();
-
-            if (lPlayers.isEmpty())
-                return;
-            bool hasJumped = false;
-
-            for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-            {
-                if(m_pLastShiverTarget == itr->getSource())
-                    continue;
-
-                if(itr->getSource()->IsWithinDist(m_pLastShiverTarget, 20.0f, false))
-                {
-                    m_pLastShiverTarget->CastSpell(itr->getSource(),  m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H, true);
-                    m_pLastShiverTarget = itr->getSource();
-                    hasJumped = true;
-                }
-            }
-            if(hasJumped == false)
-            {
-                if(m_uiShiverJumpTimer == 3)
-                {
-                    if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
-                    {
-                        DoCast(pTarget, m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
-                        m_pLastShiverTarget = ((Player*)pTarget);
-                    }
-                    m_uiShiverJumpTimer = 0;
-                }else m_uiShiverJumpTimer++;
-            }
-        }else{
-            if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
-            {
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
-                m_pLastShiverTarget = ((Player*)pTarget);
-            }        
-        }
     }
     void UpdateAI(const uint32 uiDiff)
     {
@@ -281,35 +226,26 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             //Shiver
             if(m_uiShiverTimer <= uiDiff)
             {
-                //DoShiver();
-                m_uiShiverTimer = 5000;
+                DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0), m_bIsRegularMode ? SPELL_SHIVER : SPELL_SHIVER_H);
+                m_uiShiverTimer = 30000;
             }else m_uiShiverTimer -= uiDiff;
 
             //Health check
             if(m_uiCheckTimer <= uiDiff)
             {
                 uint8 health = m_creature->GetHealth()*100 / m_creature->GetMaxHealth();                    
-                if(m_uiLastSacrifaceHP == 0 && health <= 66)
+                if(m_uiLastSacrifaceHP == 0 && health <= 50)
                 {
                     m_creature->InterruptNonMeleeSpells(true);
                     SetCombatMovement(false);    
-                    m_uiLastSacrifaceHP = 66;
-                    DoCast(m_creature, SPELL_INSANITY, false);
-                    m_uiPhase = PHASE_INSANITY_1;
-                    return;
-                }
-                else if(m_uiLastSacrifaceHP == 66 && health <= 33)
-                {
-                    m_creature->InterruptNonMeleeSpells(true);
-                    SetCombatMovement(false);
-                    DoCast(m_creature, SPELL_INSANITY, false);
-                    m_uiLastSacrifaceHP = 33;
+                    m_uiLastSacrifaceHP = 50;
+                    DoCast(m_creature, SPELL_INSANITY);
                     m_uiPhase = PHASE_INSANITY_1;
                     return;
                 }
                 m_uiCheckTimer = 1000;
-            }else m_uiCheckTimer -= uiDiff; 
-    
+            }else m_uiCheckTimer -= uiDiff;  
+
             DoMeleeAttackIfReady();
         }else if(m_uiPhase == PHASE_INSANITY_1)
         {
@@ -317,7 +253,6 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             if(m_uiInsanityCastTimer <= uiDiff)
             {
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                DoCast(m_creature, SPELL_INSANITY_PHASE_1, true);
                 DoCast(m_creature, SPELL_INSANITY_CHANNEL);
                 DoInsanity();
                 m_uiInsanityCastTimer = 5000;
@@ -325,12 +260,13 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
                 m_uiPhase = PHASE_INSANITY_2;
                 SetCombatMovement(false);
                 m_creature->GetMotionMaster()->MovementExpired(false);
+                DoScriptText(SAY_ANCIENT_VOID, m_creature);
             }else m_uiInsanityCastTimer -= uiDiff;
         }else if(m_uiPhase == PHASE_INSANITY_2)
         {
             if(m_uiCheckTimer <= uiDiff)
             {
-                if(Creature *pTemp = GetClosestCreatureWithEntry(m_creature, NPC_TWISTED_VISAGE, 150.0f))
+                if(Creature *pTemp = GetClosestCreatureWithEntry(m_creature, NPC_ANCIENT_VOID, 150.0f))
                 {
                     if(!pTemp->isAlive())
                        m_uiPhase = PHASE_INSANITY_3;
@@ -341,91 +277,207 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         {
             m_creature->RemoveAurasDueToSpell(SPELL_INSANITY_CHANNEL);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->RemoveAurasDueToSpell(SPELL_INSANITY_PHASE_1);
-            //RemoveInsanity();
             SetCombatMovement(true);
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
             m_uiPhase = PHASE_FIGHT;
         }
-        
+
     }
-    //This do everything which is needed by Insanity spell
+    //This do everything which is needed by Insanity spell (CUSTOM)
     void DoInsanity()
     {
-        Map* pMap = m_creature->GetMap();
-        if(!pMap)
-            return;
-        Map::PlayerList const &lPlayers = pMap->GetPlayers();
+        m_creature->SummonCreature(NPC_ANCIENT_VOID, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);             
 
-        if (lPlayers.isEmpty())
-            return;
-        int i = 1;
-        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-        {
-            if(!itr->getSource()->isAlive())
-                continue;
-            //Phase players, so they dont see together
-            DoPhasePlayer(i, itr->getSource());
-            //Spawn Visages and port them to phases
-            DoSpawnTwistedVisages(itr->getSource(), i);
-            i++;
-        }
-        //Set mirror image to twisted visages
-        //DoInitializeVisages();
-    }
-    //Phase players, so they dont see together
-    void DoPhasePlayer(uint8 count, Player *pPlayer)
-    {
-        if(pPlayer)
-            pPlayer->CastSpell(pPlayer, SPELL_INSANITY_PHASE+count, false);
-    }
-    //Spawn Visages and port them to phases
-    void DoSpawnTwistedVisages(Player *pPlayer, uint8 count)
-    {
-        if(!pPlayer)
-            return;
-        if(!pPlayer->isAlive())
-            return;
-        float x,y,z;
-        m_creature->GetPosition(x, y, z);
-        if(m_bIsDebugMode || count < 1)
-        {
-            if(Creature *pTemp = pPlayer->SummonCreature(NPC_TWISTED_VISAGE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-            {
-                 if(!pTemp->isAlive())
-                    return;
+        for(int i = 0; i <= 7; ++i)
+            m_creature->SummonCreature(NPC_TWISTED_VISAGE, SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
 
-                 pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+1, true);
-                 ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = 1;
-                 ((mob_twisted_visageAI*)pTemp->AI())->m_pMirrorPlayer = pPlayer;
-                 pTemp->SetUInt32Value(UNIT_CREATED_BY_SPELL, 57500);
-                 pTemp->SetCreatorGUID(pPlayer->GetGUID());
-                 pPlayer->CastSpell(pTemp, SPELL_TWISTED_VISAGE_MIRROR, true);
-            }
-            return;
-        }
-
-        for(int i = 1; i <= 5; i++)
-        {
-            if(i == count)
-                continue;
-
-            if(Creature *pTemp = pPlayer->SummonCreature(NPC_TWISTED_VISAGE, x, y, z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-            {
-                 if(!pTemp->isAlive())
-                    return;
-
-                 pTemp->CastSpell(pTemp, SPELL_INSANITY_PHASE+i, true);
-                 ((mob_twisted_visageAI*)pTemp->AI())->m_uiMyPhase = i;
-                 ((mob_twisted_visageAI*)pTemp->AI())->m_pMirrorPlayer = pPlayer;
-                 pTemp->SetUInt32Value(UNIT_CREATED_BY_SPELL, 57500);
-                 pTemp->SetCreatorGUID(pPlayer->GetGUID());
-                 pPlayer->CastSpell(pTemp, SPELL_TWISTED_VISAGE_MIRROR, true);
-            }
-        }       
     }
 };
+/*######
+## mob_twisted_visage
+######*/
+struct MANGOS_DLL_DECL mob_twisted_visageAI : public ScriptedAI
+{
+    mob_twisted_visageAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
 
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+
+    void Reset()
+    {
+        m_creature->GetMotionMaster()->MovePoint(0, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z);
+    }
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if(uiType != POINT_MOTION_TYPE)
+                return;
+
+        switch(uiPointId)
+        {
+            case 0:
+                if(Creature *pVoid = GetClosestCreatureWithEntry(m_creature, NPC_ANCIENT_VOID, 30.0f))
+                {
+                    float newsize = pVoid->GetFloatValue(OBJECT_FIELD_SCALE_X) + 0.25f;
+                    uint32 health = pVoid->GetHealth() + 20000;
+                    pVoid->SetHealth(health);
+                    pVoid->SetFloatValue(OBJECT_FIELD_SCALE_X, newsize);
+                }
+                m_creature->ForcedDespawn();
+                break;
+        }
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+
+    }
+};
+/*######
+## mob_ancient_void
+######*/
+struct MANGOS_DLL_DECL mob_ancient_voidAI : public ScriptedAI
+{
+    mob_ancient_voidAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        defaultsize = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+    uint8 m_uiPhase;
+    float defaultsize;
+    uint8 m_uiTransformPhase;
+    uint32 m_uiDelayTimer;
+    uint32 m_uiPhysicScreamTimer;
+    uint32 m_uiShadowBoltTimer;
+    uint32 m_uiOutOfCombatTimer;
+    float m_fVisages;
+
+    void Reset()
+    {
+        m_fVisages = 0.0f;
+        m_uiDelayTimer = 1000;
+        m_uiOutOfCombatTimer = 20000;
+        m_uiPhase = 1;
+        m_uiTransformPhase = 1;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STUN);
+        m_creature->SetDisplayId(MODEL_VOID_LIGHT);
+        SetCombatMovement(false);
+        m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, defaultsize);
+        DoCast(m_creature, SPELL_PRISON);
+        DoCast(m_creature, SPELL_BLUE_BEAM, true);
+
+        m_uiPhysicScreamTimer = 0;
+        m_uiShadowBoltTimer = 8000;
+        if(m_bIsRegularMode)
+            m_creature->SetHealth(200000);
+        else
+            m_creature->SetHealth(300000);
+    }
+    void DoTransform(uint8 phase)
+    {
+        switch(phase)
+        {
+            case 1:
+                m_fVisages = (m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X) - 1.0f) / 0.25;
+                SetPhysicScreamTimer();
+                DoCast(m_creature, SPELL_BLUE_FLAMES);
+                DoScriptText(SAY_VOID_CORRUPT, m_creature);
+                m_creature->RemoveAurasDueToSpell(SPELL_PRISON);
+                break;
+            case 2:
+                DoCast(m_creature, SPELL_RED_FLAMES);
+                m_creature->RemoveAurasDueToSpell(SPELL_BLUE_BEAM);
+                break;
+            case 3:
+                DoCast(m_creature, SPELL_SHAKE);
+                m_creature->SetDisplayId(MODEL_VOID_DARK);
+                break;
+            case 4:
+                m_creature->RemoveAurasDueToSpell(SPELL_RED_FLAMES);
+                break;
+            case 5:
+                DoScriptText(SAY_VOID_AGGRO, m_creature);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                SetCombatMovement(true);
+                if(m_creature->getVictim())
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_uiPhase = 3;
+                break;
+        }
+    }
+    void SetPhysicScreamTimer()
+    {
+        if(m_fVisages < 3)
+            m_uiPhysicScreamTimer = 23000;
+        else if(m_fVisages < 5)
+            m_uiPhysicScreamTimer = 17000;
+        else if(m_fVisages < 7)
+            m_uiPhysicScreamTimer = 11000;
+        else if(m_fVisages < 9)
+            m_uiPhysicScreamTimer = 5000;
+    }
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if(m_uiPhase == 1)
+        {
+            if(m_uiDelayTimer <= uiDiff)
+            {
+                if(!GetClosestCreatureWithEntry(m_creature, NPC_TWISTED_VISAGE, 150.0f))
+                    m_uiPhase = 2;
+                m_uiDelayTimer = 1000;
+            }else m_uiDelayTimer -= uiDiff;
+            return;
+        }
+        if(m_uiPhase == 2)
+        {
+            if(m_uiDelayTimer <= uiDiff)
+            {
+                DoTransform(m_uiTransformPhase);
+                m_uiTransformPhase++;
+                m_uiDelayTimer = 2500;
+            }else m_uiDelayTimer -= uiDiff;
+        }
+
+        if(m_uiPhase != 3)
+            return;
+        if(!m_creature->isInCombat())
+        {
+            if(m_uiOutOfCombatTimer <= uiDiff)
+                m_creature->ForcedDespawn();
+            else m_uiOutOfCombatTimer -= uiDiff;
+
+            return;
+        }
+
+        if(m_uiPhysicScreamTimer <= uiDiff)
+        {
+            DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0),SPELL_PSYCHIC_SCREAM);
+            SetPhysicScreamTimer();
+        }else m_uiPhysicScreamTimer -= uiDiff;
+
+        //Shadowbolt voley
+        if(m_uiShadowBoltTimer <= uiDiff)
+        {
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT_H);
+            m_uiShadowBoltTimer = 8000;
+        }else m_uiShadowBoltTimer -= uiDiff;
+
+        DoMeleeAttackIfReady();
+    }
+};
 CreatureAI* GetAI_boss_volazj(Creature* pCreature)
 {
     return new boss_volazjAI(pCreature);
@@ -434,6 +486,10 @@ CreatureAI* GetAI_boss_volazj(Creature* pCreature)
 CreatureAI* GetAI_mob_twisted_visage(Creature* pCreature)
 {
     return new mob_twisted_visageAI(pCreature);
+}
+CreatureAI* GetAI_mob_ancient_void(Creature* pCreature)
+{
+    return new mob_ancient_voidAI(pCreature);
 }
 
 void AddSC_boss_volazj()
@@ -449,7 +505,9 @@ void AddSC_boss_volazj()
     newscript->Name = "mob_twisted_visage";
     newscript->GetAI = &GetAI_mob_twisted_visage;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_ancient_void";
+    newscript->GetAI = &GetAI_mob_ancient_void;
+    newscript->RegisterSelf();
 }
-/* 
-UPDATE creature_template SET ScriptName = "mob_twisted_visage" WHERE entry =30621;
-*/

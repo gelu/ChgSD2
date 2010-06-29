@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -61,6 +61,7 @@ enum
 
     NPC_TWILIGHT_INITIATE               = 30114,
     NPC_TWILIGHT_VOLUNTEER              = 30385,
+    NPC_JEDOGA                          = 29310,
 
     GO_CIRCLE                           = 194394,           // Propably wrong id
 
@@ -115,7 +116,7 @@ static Locations VolunteerLoc[]=
     {386.19, -725.89, -16.00, 2.491},
     {383.61, -729.29, -16.00, 2.491},
     {380.37, -733.55, -16.00, 2.491},
-
+    
     {402.72, -700.79, -16.00, 3.046}, // Left, first line
     {402.63, -698.86, -16.18, 3.149},
     {402.62, -697.10, -16.17, 3.149},
@@ -137,25 +138,43 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
     npc_twilight_volunteerAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
 
     uint8 m_uiPhase;
     bool m_bIsVulunteerNear;
     uint32 m_uiCheckTimer;
+    bool m_bIsDead;
     void Reset()
     {
         m_uiPhase = 0;
         m_bIsVulunteerNear = false;
         m_uiCheckTimer = 1000;
+        m_bIsDead = false;
     }
     void AttackStart(Unit* pWho)
     {
         return;
+    }
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (m_bIsDead)
+        {
+            uiDamage = 0;
+            return;
+        }
+
+        if (uiDamage > m_creature->GetHealth())
+        {
+            m_creature->ForcedDespawn(10000);
+            m_bIsDead = true;
+            uiDamage = 0;
+
+            m_creature->SetHealth(1);
+            m_creature->SetVisibility(VISIBILITY_OFF);
+        }
     }
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
@@ -166,11 +185,17 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
         {
             case 0:
                 m_bIsVulunteerNear = true;
+                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_creature->ForcedDespawn(10000);
+                m_creature->SetVisibility(VISIBILITY_OFF);
                 break;
         }
     }
     void Sacriface(uint8 phase)
     {
+        if(m_bIsDead)
+            return;
+
         m_uiPhase = phase;
         switch(m_uiPhase)
         {
@@ -191,27 +216,10 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
     }
     void UpdateAI(const uint32 uiDiff)
     {
-        //Despawn if no Jedoga or if she is not in combat
-        // I hope this will not take too CPU time
-        if (m_uiCheckTimer <= uiDiff)
-        {
-            if(Creature *pJedoga = GetClosestCreatureWithEntry(m_creature, NPC_JEDOGA_SHADOWSEEKER, 50.0f))
-            {
-                if(!pJedoga->isAlive())
-                    m_creature->ForcedDespawn();
-                else
-                {
-                    if(Creature *pInitiate = GetClosestCreatureWithEntry(m_creature, NPC_TWILIGHT_INITIATE, 50.0f))
-                    {
-                        if(pInitiate->isAlive())
-                            m_creature->ForcedDespawn();
-                    }
-                }
-            }else m_creature->ForcedDespawn();    
+        if (!m_pInstance || m_bIsDead) return;
 
+        if (m_pInstance->GetData(TYPE_JEDOGA) != IN_PROGRESS) m_creature->ForcedDespawn();
 
-            m_uiCheckTimer = 4000;
-        }else m_uiCheckTimer -= uiDiff;    
     }
 };
 
@@ -232,6 +240,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
     bool m_bIsRegularMode;
     bool m_bIsVulunteerNear;
     bool m_bVolunteerDied;
+    bool m_isRealEvade;
     uint8 m_uiPhase;
     uint8 m_uiSubPhase;
     uint8 m_uiPreachingText;
@@ -254,6 +263,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
         m_bIsVulunteerNear = false;
         m_bVolunteerDied = false;
         m_uiLastSacrifaceHP = 0;
+        m_isRealEvade = true;
 
         m_uiCheckTimer = 1000;
         m_uiSacrifaceTimer = 2000;
@@ -275,7 +285,6 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
          if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, IN_PROGRESS);
     }
-
     void KilledUnit(Unit* pVictim)
     {
         switch(urand(0, 2))
@@ -287,16 +296,28 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
     }
     void EnterEvadeMode()
     {
+        if (m_uiPhase == PHASE_PREACHING && !m_isRealEvade) return;
+
         m_uiPhase = PHASE_PREACHING;
         SetCombatMovement(false);
         m_creature->GetMotionMaster()->MovementExpired();
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->InterruptNonMeleeSpells(true);
         DoCast(m_creature, SPELL_SPHERE_VISUAL);
-        m_creature->MonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, 0);
+        m_creature->GetMap()->CreatureRelocation(m_creature, JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O);
+        m_creature->SendMonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, SPLINETYPE_NORMAL, SPLINEFLAG_NONE, 0);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, NOT_STARTED);
 
+        if (m_isRealEvade)
+        {
+            RespawnInitiates();
+            m_isRealEvade = false;
+        }
+    }
+
+    void RespawnInitiates()
+    {
         std::list<Creature*> lInitiates;                      //respawn Twilight initiates
         GetCreatureListWithEntryInGrid(lInitiates, m_creature, NPC_TWILIGHT_INITIATE, DEFAULT_VISIBILITY_INSTANCE);
 
@@ -308,15 +329,15 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     (*iter)->Respawn();
             }
         }
-
     }
+
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
          if (m_pInstance)
             m_pInstance->SetData(TYPE_JEDOGA, DONE);
     }
- 
+
     Creature* SelectRandomVolunteer(float fRange)
     {
         std::list<Creature* > lVolunteerList;
@@ -360,8 +381,9 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 return;
             }
 
-            if(m_pInstance->GetData(TYPE_TALDARAM) != DONE)
-                return;
+            if (m_pInstance)
+                if(m_pInstance->GetData(TYPE_TALDARAM) != DONE)
+                    return;
 
             switch(m_uiPreachingText)
             {
@@ -401,17 +423,18 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     return;
 
                 SetCombatMovement(true);
-                m_creature->MonsterMove(CENTER_X, CENTER_Y, GROUND_Z, 0);
+                m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
+                m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, SPLINETYPE_NORMAL, SPLINEFLAG_NONE, 0);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->RemoveAurasDueToSpell(SPELL_SPHERE_VISUAL);
                   m_creature->SetInCombatWithZone();
                 //Spawn Volunteers
-                for(int i = 0; i <= 28; i++)
+                for(int i = 0; i <= 28; ++i)
                 {
                     if(Creature *pTemp = m_creature->SummonCreature(NPC_TWILIGHT_VOLUNTEER, VolunteerLoc[i].x, VolunteerLoc[i].y, VolunteerLoc[i].z, VolunteerLoc[i].o, TEMPSUMMON_CORPSE_DESPAWN, 0))
                         pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    
+
                 }
                 m_uiSubPhase = 0;
                 m_uiPhase = PHASE_FIGHT;
@@ -435,7 +458,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
             //Lightning Bolt
             if(m_uiLightningBoltTimer <= uiDiff)
             {
-                if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, m_bIsRegularMode ? SPELL_LIGHTNING_BOLT : SPELL_LIGHTNING_BOLT_H);
                 m_uiLightningBoltTimer = 3000 + rand()%2000;
             }else m_uiLightningBoltTimer -= uiDiff;
@@ -443,7 +466,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
             //Thundershock
             if(m_uiThundershockTimer <= uiDiff)
             {
-                if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+                if(Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, m_bIsRegularMode ? SPELL_THUNDERSHOCK : SPELL_THUNDERSHOCK_H);
                 m_uiThundershockTimer = 20000 + rand()%10000;
             }else m_uiThundershockTimer -= uiDiff;
@@ -487,7 +510,8 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->InterruptNonMeleeSpells(true);
                 DoCast(m_creature, SPELL_SPHERE_VISUAL);
-                m_creature->MonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, 0);
+                m_creature->GetMap()->CreatureRelocation(m_creature, JEDOGA_X, JEDOGA_Y, JEDOGA_Z, JEDOGA_O);
+                m_creature->SendMonsterMove(JEDOGA_X, JEDOGA_Y, JEDOGA_Z, SPLINETYPE_NORMAL, SPLINEFLAG_NONE, 0);
                 m_uiSubPhase = SUBPHASE_CALL_VOLUNTEER;
                 GameObject* pCircle = GetClosestGameObjectWithEntry(m_creature,GO_CIRCLE,50.0f);
                 if (pCircle && !pCircle->isSpawned())
@@ -512,15 +536,19 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 if(m_uiCheckTimer <= uiDiff)
                 {
                     if(pVolunteer && pVolunteer->isAlive()){
-                        m_bVolunteerDied = false;
-                        if(((npc_twilight_volunteerAI*)pVolunteer->AI())->m_bIsVulunteerNear)
+                        if(pVolunteer->GetVisibility() == VISIBILITY_OFF)
+                        {
+                            if(((npc_twilight_volunteerAI*)pVolunteer->AI())->m_bIsVulunteerNear)
+                                m_bVolunteerDied = false;
+                            else
+                                m_bVolunteerDied = true;
                             m_uiSubPhase = SUBPHASE_SACRIFACE;
+                        }
                     }else{
                         m_bIsVulunteerNear = true;
                         m_bVolunteerDied = true;
                         m_uiSubPhase = SUBPHASE_SACRIFACE;
                     }
-                       
                     m_uiCheckTimer = 1000;
                 }else m_uiCheckTimer -= uiDiff;
             }
@@ -531,14 +559,11 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     case 0: DoScriptText(SAY_SACRIFICE_1, m_creature); break;
                     case 1: DoScriptText(SAY_SACRIFICE_2, m_creature); break;
                 }
-
-                if(pVolunteer && pVolunteer->isAlive())
-                    ((npc_twilight_volunteerAI*)pVolunteer->AI())->Sacriface(SACRIFACE_DIE);
-
                 if(!m_bVolunteerDied)
                     DoCast(m_creature, SPELL_GIFT_OF_THE_HERALD);
+
                 m_creature->GetMap()->CreatureRelocation(m_creature, CENTER_X, CENTER_Y, GROUND_Z, JEDOGA_O);
-                m_creature->MonsterMove(CENTER_X, CENTER_Y, GROUND_Z, 0);
+                m_creature->SendMonsterMove(CENTER_X, CENTER_Y, GROUND_Z, SPLINETYPE_NORMAL, SPLINEFLAG_NONE, 0);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                 m_creature->RemoveAurasDueToSpell(SPELL_SPHERE_VISUAL);

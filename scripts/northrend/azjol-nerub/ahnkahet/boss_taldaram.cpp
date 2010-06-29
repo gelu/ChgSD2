@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -109,6 +109,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
         m_creature->RemoveAurasDueToSpell(SPELL_BEAM_VISUAL);
+        m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_TALDARAM, IN_PROGRESS);
     }
@@ -149,6 +150,8 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (!m_pInstance) return;
+
         if(m_uiVanishPhase != 0)
         {
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -170,9 +173,9 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
                     case 0: DoScriptText(SAY_FEED_1, m_creature); break;
                     case 1: DoScriptText(SAY_FEED_2, m_creature); break;
                 }
-                if(m_uEmbraceTarget)
-                    DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
                 m_creature->SetVisibility(VISIBILITY_ON);
+                if(m_uEmbraceTarget && m_uEmbraceTarget->isAlive())
+                    DoCast(m_uEmbraceTarget, m_bIsRegularMode ? SPELL_EMBRACE_OF_THE_VAMPYR : SPELL_EMBRACE_OF_THE_VAMPYR_H);
                 m_uiDamageTaken = 0;
                 m_uiVanishPhase = 2;
             }else m_uiEmbrace_Timer -= uiDiff;    
@@ -189,7 +192,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
         // Summon Flame Orb
         if(m_uiSummonOrb_Timer <= uiDiff)
         {
-            for(int i = 0; i <= 3; i++)
+            for(int i = 0; i <= 3; ++i)
             {
                 m_creature->SummonCreature(NPC_FLAME_ORB, m_creature->GetPositionX(), m_creature->GetPositionY(), FLAME_ORB_Z, 0, TEMPSUMMON_CORPSE_DESPAWN, 0);
                 if(m_bIsRegularMode)
@@ -211,8 +214,18 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
 
             //DoCast(m_creature, SPELL_VANISH); We dont want to drop aggro
             m_uiVanishPhase = 1;
-            if (m_uEmbraceTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+            bool stop = false;
+            while(!stop)
+            {
+                m_uEmbraceTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+                if(m_uEmbraceTarget && m_uEmbraceTarget->isAlive() && m_uEmbraceTarget->GetTypeId() == TYPEID_PLAYER)
+                    stop = true;
+                else
+                    continue;
+
                 m_creature->GetMotionMaster()->MoveChase(m_uEmbraceTarget);
+                break;
+            }
 
             m_creature->SetVisibility(VISIBILITY_OFF);
             m_uiVanish_Timer = 10000 + rand()%10000;
@@ -246,7 +259,7 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
     bool m_bIsRegularMode;
     bool m_bIsFlying;
     int8 direction;
-    
+
     uint32 m_uiDespawn_Timer;
     uint32 m_uiCast_Timer;
 

@@ -275,6 +275,7 @@ extern void AddSC_boss_grand_champions();
 extern void AddSC_instance_trial_of_the_champion();
 
 extern void AddSC_boss_jedoga();                            //ahnkahet
+extern void AddSC_boss_amanitar();
 extern void AddSC_boss_nadox();
 extern void AddSC_boss_taldaram();
 extern void AddSC_boss_volazj();
@@ -765,6 +766,7 @@ void AddScripts()
     AddSC_instance_trial_of_the_champion();
 
     AddSC_boss_jedoga();                                    //ahnkahet
+    AddSC_boss_amanitar();
     AddSC_boss_nadox();
     AddSC_boss_taldaram();
     AddSC_boss_volazj();
