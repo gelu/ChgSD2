@@ -1023,19 +1023,20 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                                if (m_pInstance->GetData(DATA_LIDER) == 1) m_chestID = GO_CAPTAIN_CHEST_4;
                                   else m_chestID = GO_CAPTAIN_CHEST_3;
                       };
-                if(GameObject* pChest = m_creature->SummonGameobject(m_chestID, 5241.047f, 1663.4364f, 784.295166f, 0.54f, 0))
+                if(GameObject* pChest = m_creature->SummonGameobject(m_chestID, 5241.047f, 1663.4364f, 784.295166f, 0.54f, DAY*IN_MILLISECONDS))
                 {
-                   pChest->SetGoState(GO_STATE_READY);
-                   pChest->SetRespawnTime(7*DAY);
+                   pChest->SetPhaseMask(65535,true);
                 }
                    m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                    DoScriptText(SAY_ESCAPE_02, m_creature);
               JumpNextStep(10000);
               break;
            case 13:
-                if(GameObject* pPortal = m_creature->SummonGameobject(GO_PORTAL, 5250.959961f, 1639.359985f, 784.302f, 0.0f, 0))
-                   pPortal->SetGoState(GO_STATE_READY);
+                if(GameObject* pPortal = m_creature->SummonGameobject(GO_PORTAL, 5250.959961f, 1639.359985f, 784.302f, 0.0f, DAY*IN_MILLISECONDS))
+                {
+                   pPortal->SetPhaseMask(65535,true);
                    DoScriptText(SAY_ESCAPE_03, m_creature);
+                }
               JumpNextStep(20000);
               break;
            case 14:

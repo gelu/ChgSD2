@@ -99,6 +99,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                   pLider->AddSplineFlag(SPLINEFLAG_FLYING);
                   pLider->SendMonsterMove(pLider->GetPositionX(), pLider->GetPositionY(), pLider->GetPositionZ() + 4, SPLINETYPE_NORMAL , pLider->GetSplineFlags(), 3000); 
                 }
+                m_creature->SetActiveObjectState(false);
                 break;
         }
    }
@@ -277,6 +278,8 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_creature->RemoveAurasDueToSpell(SPELL_ICE_PRISON);
          if(m_creature->HasAura(SPELL_DARK_ARROW))
             m_creature->RemoveAurasDueToSpell(SPELL_DARK_ARROW);
+
+         m_creature->SetActiveObjectState(true);
 
          NonFight = true;
          m_creature->AttackStop();
