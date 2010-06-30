@@ -16,6 +16,7 @@
 
 #include "precompiled.h"
 #include "def_spire.h"
+#include "World.h"
 
 static Locations SpawnLoc[]=
 {
@@ -200,11 +201,6 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
                              };
     }
 
-    void OnPlayerEnter(Player *m_player)
-    {
-        OpenAllDoors();
-    }
-
     bool IsEncounterInProgress() const
     {
         for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
@@ -212,6 +208,37 @@ struct MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
 
         return false;
     }
+
+    void OnPlayerEnter(Player *pPlayer)
+    {
+        OpenAllDoors();
+
+    enum PhaseControl
+    {
+        HORDE_CONTROL_PHASE_SHIFT_1    = 55773,
+        HORDE_CONTROL_PHASE_SHIFT_2    = 60028,
+        ALLIANCE_CONTROL_PHASE_SHIFT_1 = 55774,
+        ALLIANCE_CONTROL_PHASE_SHIFT_2 = 60027,
+    };
+/*
+
+        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
+
+        switch (pPlayer->GetTeam())
+        {
+            case ALLIANCE:
+                  if (pPlayer && pPlayer->IsInWorld() && pPlayer->HasAura(HORDE_CONTROL_PHASE_SHIFT_1))
+                      pPlayer->RemoveAurasDueToSpell(HORDE_CONTROL_PHASE_SHIFT_1);
+                  pPlayer->CastSpell(pPlayer, HORDE_CONTROL_PHASE_SHIFT_2, false);
+                  break;
+            case HORDE:
+                  if (pPlayer && pPlayer->IsInWorld() && pPlayer->HasAura(ALLIANCE_CONTROL_PHASE_SHIFT_1)) 
+                      pPlayer->RemoveAurasDueToSpell(ALLIANCE_CONTROL_PHASE_SHIFT_1);
+                  pPlayer->CastSpell(pPlayer, ALLIANCE_CONTROL_PHASE_SHIFT_2, false);
+                  break;
+        };
+*/
+    };
 
     void OnCreatureCreate(Creature* pCreature)
     {
