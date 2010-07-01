@@ -33,10 +33,10 @@ enum
     SPELL_EXPLODED_H              = 58824,
     SPELL_FRENZY                  = 58841,
 
-    SAY_MEATHOOK_AGGRO       = -1594111,   
-    SAY_MEATHOOK_DEATH       = -1594112,  
-    SAY_MEATHOOK_SLAY01      = -1594113, 
-    SAY_MEATHOOK_SLAY02      = -1594114, 
+    SAY_MEATHOOK_AGGRO       = -1594111,
+    SAY_MEATHOOK_DEATH       = -1594112,
+    SAY_MEATHOOK_SLAY01      = -1594113,
+    SAY_MEATHOOK_SLAY02      = -1594114,
     SAY_MEATHOOK_SLAY03      = -1594115
 };
 
@@ -63,7 +63,7 @@ struct MANGOS_DLL_DECL boss_meathookAI : public ScriptedAI
      Exploded_Timer = 5000;
      Frenzy_Timer = 22300;
    }
-   
+
    void Aggro(Unit* who)
    {
      DoScriptText(SAY_MEATHOOK_AGGRO, m_creature);
@@ -111,7 +111,7 @@ struct MANGOS_DLL_DECL boss_meathookAI : public ScriptedAI
         }else Exploded_Timer -= diff;
 
         if (Frenzy_Timer < diff)
-        {       
+        {
                 m_creature->InterruptNonMeleeSpells(false);
                 DoCast(m_creature,SPELL_FRENZY);
 

@@ -27,10 +27,10 @@ EndScriptData */
 
 enum
 {
-    SAY_SALRAMM_AGGRO       = -1594130,   
-    SAY_SALRAMM_DEATH       = -1594131,  
-    SAY_SALRAMM_SLAY01      = -1594132, 
-    SAY_SALRAMM_SLAY02      = -1594133, 
+    SAY_SALRAMM_AGGRO       = -1594130,
+    SAY_SALRAMM_DEATH       = -1594131,
+    SAY_SALRAMM_SLAY01      = -1594132,
+    SAY_SALRAMM_SLAY02      = -1594133,
     SAY_SALRAMM_SLAY03      = -1594134,
     SAY_SALRAMM_STEAL01     = -1594135,
     SAY_SALRAMM_STEAL02     = -1594136,
@@ -46,7 +46,7 @@ enum
     SPELL_STEAL                       = 52708,
     SPELL_GNOUL_BLOW                  = 58825,
     SPELL_SUMMON_GNOUL                = 52451,
-    
+
     NPC_GNOUL                         = 27733
 };
 
@@ -77,7 +77,7 @@ struct MANGOS_DLL_DECL boss_salrammAI : public ScriptedAI
      if(m_pInstance)
         m_pInstance->SetData64(NPC_SALRAMM, m_creature->GetGUID());
    }
-   
+
    void Aggro(Unit* who)
    {
       DoScriptText(SAY_SALRAMM_AGGRO, m_creature);
@@ -219,7 +219,7 @@ struct MANGOS_DLL_DECL npc_salramm_gnoulAI : public ScriptedAI
             return;
 
         if(m_uiBlowTimer < uiDiff)
-        {           
+        {
             if(Creature* pSalramm = m_pInstance->instance->GetCreature(m_pInstance->GetData64(NPC_SALRAMM)))
             {
                if(pSalramm->isDead()) return;

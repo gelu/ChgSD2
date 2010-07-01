@@ -52,8 +52,8 @@ struct MANGOS_DLL_DECL npc_cs_gnoulAI : public ScriptedAI
    uint32 WaypointId;
    uint32 MoveTimer;
 
-   void Reset() 
-   { 
+   void Reset()
+   {
      m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
      MoveTimer = (urand(100, 5000));
      m_uiFleshTimer = (urand(3000, 10000));
@@ -140,25 +140,25 @@ struct MANGOS_DLL_DECL npc_cs_gnoulAI : public ScriptedAI
                   case 1:
                      MoveToPoint(2356.659f, 1185.501f, 130.636f);
                      JumpNextStep(10000);
-                     break; 
+                     break;
                   case 2:
-                     MoveToPoint(2301.735f, 1179.265f, 136.944f);    
+                     MoveToPoint(2301.735f, 1179.265f, 136.944f);
                      JumpNextStep(8000);
-                     break;  
+                     break;
                   case 3:
-                     MoveToPoint(2234.787f, 1180.638f, 136.344f);    
+                     MoveToPoint(2234.787f, 1180.638f, 136.344f);
                      JumpNextStep(9000);
-                     break; 
+                     break;
                   case 4:
-                     MoveToPoint(2178.313f, 1244.350f, 136.107f);    
+                     MoveToPoint(2178.313f, 1244.350f, 136.107f);
                      JumpNextStep(12000);
                      break; 
                   case 5:
-                     MoveToPoint(2163.553f, 1277.814f, 133.444f);    
+                     MoveToPoint(2163.553f, 1277.814f, 133.444f);
                      JumpNextStep(5000);
                      break; 
                   case 6:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(5000);
                      break; 
                 }
@@ -190,7 +190,7 @@ struct MANGOS_DLL_DECL npc_cs_gnoulAI : public ScriptedAI
             return;
 
         if(m_uiFleshTimer < uiDiff)
-        {           
+        {
            DoCast(m_creature->getVictim(), SPELL_FLESH);
            m_uiFleshTimer = (urand(3000, 10000));
         }
@@ -245,7 +245,7 @@ struct MANGOS_DLL_DECL npc_cs_necromancerAI : public ScriptedAI
    void Aggro(Unit* pWho)
    {
      m_creature->GetMotionMaster()->MovementExpired(false);
-	 m_creature->StopMoving();
+     m_creature->StopMoving();
    }
 
    void MoveToPoint(float X, float Y, float Z)
@@ -319,7 +319,7 @@ struct MANGOS_DLL_DECL npc_cs_necromancerAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() && m_creature->isTemporarySummon())
         {
           if(MoveTimer < uiDiff)
-          {   
+          {
              if(m_pInstance->GetData(TYPE_WING) == RIGHT)
              {
                 switch(WaypointId)
@@ -329,23 +329,23 @@ struct MANGOS_DLL_DECL npc_cs_necromancerAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2301.735f, 1179.265f, 136.944f);    
+                     MoveToPoint(2301.735f, 1179.265f, 136.944f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2234.787f, 1180.638f, 136.344f);    
+                     MoveToPoint(2234.787f, 1180.638f, 136.344f);
                      JumpNextStep(9000);
                      break; 
                   case 4:
-                     MoveToPoint(2178.313f, 1244.350f, 136.107f);    
+                     MoveToPoint(2178.313f, 1244.350f, 136.107f);
                      JumpNextStep(12000);
                      break; 
                   case 5:
-                     MoveToPoint(2163.553f, 1277.814f, 133.444f);    
+                     MoveToPoint(2163.553f, 1277.814f, 133.444f);
                      JumpNextStep(5000);
                      break; 
                   case 6:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(5000);
                      break; 
                 }
@@ -377,14 +377,14 @@ struct MANGOS_DLL_DECL npc_cs_necromancerAI : public ScriptedAI
             return;
 
         if(m_uiShadowBoltTimer < uiDiff)
-        {           
+        {
            DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT);
            m_uiShadowBoltTimer  = (urand(3000, 5000));
         }
         else m_uiShadowBoltTimer -= uiDiff;
 
         if(m_uiCourseTimer < uiDiff)
-        {        
+        {
            m_creature->InterruptNonMeleeSpells(false);
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))   
               DoCast(target, SPELL_COURSE);
@@ -519,23 +519,23 @@ struct MANGOS_DLL_DECL npc_cs_fieldAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2301.735f, 1179.265f, 136.944f);    
+                     MoveToPoint(2301.735f, 1179.265f, 136.944f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2234.787f, 1180.638f, 136.344f);    
+                     MoveToPoint(2234.787f, 1180.638f, 136.344f);
                      JumpNextStep(9000);
                      break; 
                   case 4:
-                     MoveToPoint(2178.313f, 1244.350f, 136.107f);    
+                     MoveToPoint(2178.313f, 1244.350f, 136.107f);
                      JumpNextStep(12000);
                      break; 
                   case 5:
-                     MoveToPoint(2163.553f, 1277.814f, 133.444f);    
+                     MoveToPoint(2163.553f, 1277.814f, 133.444f);
                      JumpNextStep(5000);
                      break; 
                   case 6:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(5000);
                      break; 
                 }
@@ -550,11 +550,11 @@ struct MANGOS_DLL_DECL npc_cs_fieldAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2165.351f, 1279.156f, 133.388f);    
+                     MoveToPoint(2165.351f, 1279.156f, 133.388f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(9000);
                      break; 
                 }
@@ -567,7 +567,7 @@ struct MANGOS_DLL_DECL npc_cs_fieldAI : public ScriptedAI
             return;
 
         if(m_uiScarabTimer < uiDiff)
-        {        
+        {
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))   
               DoCast(target, SPELL_SCARAB);
            m_uiScarabTimer  = (urand(3000, 5000));
@@ -575,7 +575,7 @@ struct MANGOS_DLL_DECL npc_cs_fieldAI : public ScriptedAI
         else m_uiScarabTimer -= uiDiff;
 
         if(m_uiBlowTimer < uiDiff)
-        {        
+        {
            m_creature->InterruptNonMeleeSpells(false);
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))   
               DoCast(target, SPELL_BLOW);
@@ -643,7 +643,7 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
    void Aggro(Unit* pWho)
    {
      m_creature->GetMotionMaster()->MovementExpired(false);
-	 m_creature->StopMoving();
+     m_creature->StopMoving();
    }
 
    void AttackStart(Unit* pWho)
@@ -713,7 +713,7 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() && m_creature->isTemporarySummon())
         {
           if(MoveTimer < uiDiff)
-          {   
+          {
              if(m_pInstance->GetData(TYPE_WING) == RIGHT)
              {
                 switch(WaypointId)
@@ -723,23 +723,23 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2301.735f, 1179.265f, 136.944f);    
+                     MoveToPoint(2301.735f, 1179.265f, 136.944f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2234.787f, 1180.638f, 136.344f);    
+                     MoveToPoint(2234.787f, 1180.638f, 136.344f);
                      JumpNextStep(9000);
                      break; 
                   case 4:
-                     MoveToPoint(2178.313f, 1244.350f, 136.107f);    
+                     MoveToPoint(2178.313f, 1244.350f, 136.107f);
                      JumpNextStep(12000);
                      break; 
                   case 5:
-                     MoveToPoint(2163.553f, 1277.814f, 133.444f);    
+                     MoveToPoint(2163.553f, 1277.814f, 133.444f);
                      JumpNextStep(5000);
                      break; 
                   case 6:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(5000);
                      break; 
                 }
@@ -754,11 +754,11 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2165.351f, 1279.156f, 133.388f);    
+                     MoveToPoint(2165.351f, 1279.156f, 133.388f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(9000);
                      break; 
                 }
@@ -771,14 +771,14 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
             return;
 
         if(m_uiShadowTimer < uiDiff)
-        {           
+        {
            DoCast(m_creature->getVictim(), SPELL_SHADOW);
            m_uiShadowTimer  = (urand(3000, 8000));
         }
         else m_uiShadowTimer -= uiDiff;
 
         if(m_uiCourseTimer < uiDiff)
-        {        
+        {
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
               DoCast(target, SPELL_COURSEA);
            m_uiCourseTimer  = (urand(7000, 13000));
@@ -786,7 +786,7 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
         else m_uiCourseTimer -= uiDiff;
 
         if(m_uiColdTimer < uiDiff)
-        {        
+        {
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
               DoCast(target, SPELL_COLD);
            m_uiColdTimer  = (urand(13000, 17000));
@@ -794,7 +794,7 @@ struct MANGOS_DLL_DECL npc_cs_acolyteAI : public ScriptedAI
         else m_uiColdTimer -= uiDiff;
 
         if(m_uiFireTimer < uiDiff)
-        {        
+        {
            if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
               DoCast(target, SPELL_FIRE);
            m_uiFireTimer  = (urand(6000, 11000));
@@ -912,7 +912,7 @@ struct MANGOS_DLL_DECL npc_cs_butcherAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() && m_creature->isTemporarySummon())
         {
           if(MoveTimer < uiDiff)
-          {   
+          {
              if(m_pInstance->GetData(TYPE_WING) == RIGHT)
              {
                 switch(WaypointId)
@@ -922,23 +922,23 @@ struct MANGOS_DLL_DECL npc_cs_butcherAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2301.735f, 1179.265f, 136.944f);    
+                     MoveToPoint(2301.735f, 1179.265f, 136.944f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2234.787f, 1180.638f, 136.344f);    
+                     MoveToPoint(2234.787f, 1180.638f, 136.344f);
                      JumpNextStep(9000);
                      break; 
                   case 4:
-                     MoveToPoint(2178.313f, 1244.350f, 136.107f);    
+                     MoveToPoint(2178.313f, 1244.350f, 136.107f);
                      JumpNextStep(12000);
                      break; 
                   case 5:
-                     MoveToPoint(2163.553f, 1277.814f, 133.444f);    
+                     MoveToPoint(2163.553f, 1277.814f, 133.444f);
                      JumpNextStep(5000);
                      break; 
                   case 6:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(5000);
                      break; 
                 }
@@ -953,11 +953,11 @@ struct MANGOS_DLL_DECL npc_cs_butcherAI : public ScriptedAI
                      JumpNextStep(10000);
                      break; 
                   case 2:
-                     MoveToPoint(2165.351f, 1279.156f, 133.388f);    
+                     MoveToPoint(2165.351f, 1279.156f, 133.388f);
                      JumpNextStep(8000);
                      break;  
                   case 3:
-                     MoveToPoint(2083.952f, 1287.716f, 141.146f);    
+                     MoveToPoint(2083.952f, 1287.716f, 141.146f);
                      JumpNextStep(9000);
                      break; 
                 }

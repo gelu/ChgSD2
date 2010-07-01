@@ -23,7 +23,7 @@ SDCategory: Culling of Stratholme
 EndScriptData */
 
 #ifndef DEF_CULLING_OF_STRATHOLME_H
-#define DEF_CULLING_OF_STRATHOLME_H  
+#define DEF_CULLING_OF_STRATHOLME_H
 
 enum Data
 {
@@ -38,6 +38,10 @@ enum Data
     TYPE_MALGANIS        = 9,
 
     DATA_TEMPSUMMON      = 10,
+
+    QUEST_DISPELLING_ILLUSIONS  = 13149,
+    QUEST_A_ROYAL_ESCORT        = 13151,
+    ITEM_ARCANE_DISRUPTOR       = 37888,
 
     NPC_CHROMI01            = 26527,
     NPC_CHROMI02            = 27915,
@@ -86,9 +90,10 @@ enum Data
 
     GO_CRATE_LIGHT         = 190117,
     GO_SHKAF_GATE          = 188686,
-    GO_MALGANIS_GATE1      = 187711,    
-    GO_MALGANIS_GATE2      = 187723, 
+    GO_MALGANIS_GATE1      = 187711,
+    GO_MALGANIS_GATE2      = 187723,
     GO_MALGANIS_CHEST      = 190663,
+    GO_MALGANIS_CHEST_H    = 193597,
     GO_EXIT                = 191788,
 
 

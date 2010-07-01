@@ -27,9 +27,9 @@ EndScriptData */
 
 enum
 {
-    SAY_MALGANIS_AGGRO       = -1594170,  
-    SAY_MALGANIS_SLAY01      = -1594172, 
-    SAY_MALGANIS_SLAY02      = -1594173, 
+    SAY_MALGANIS_AGGRO       = -1594170,
+    SAY_MALGANIS_SLAY01      = -1594172,
+    SAY_MALGANIS_SLAY02      = -1594173,
     SAY_MALGANIS_SLAY03      = -1594174,
     SAY_MALGANIS_SLAY04      = -1594175,
     SAY_MALGANIS_SLAY05      = -1594176,
@@ -83,7 +83,7 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
      Sleep_Timer = 17300;
      Vampire_Timer = 30000;
    }
-   
+
    void AttackStart(Unit* who)
    {
         if(m_pInstance->GetData(TYPE_PHASE) > 9) return;

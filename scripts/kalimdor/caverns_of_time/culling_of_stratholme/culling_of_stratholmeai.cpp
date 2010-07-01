@@ -37,8 +37,6 @@ EndScriptData */
 
 enum
 {
-  QUEST_ILLUSION                   = 13149,
-  ITEM_ENTRY_ARCANE_DISRUPTOR      = 37888,
   GOSSIP_TEXTID_CHROMI1            = 12939,
   GOSSIP_TEXTID_CHROMI2            = 12949,
   GOSSIP_TEXTID_CHROMI3            = 12950,
@@ -50,12 +48,10 @@ bool GossipHello_npc_chromi_start(Player* pPlayer, Creature* pCreature)
     if(pCreature->isQuestGiver())
         pPlayer->PrepareQuestMenu(pCreature->GetGUID());
 
-    if(pPlayer->GetQuestStatus(QUEST_ILLUSION) == QUEST_STATUS_INCOMPLETE) return true;
+    ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    if (pPlayer && pPlayer->GetQuestStatus(QUEST_DISPELLING_ILLUSIONS) == QUEST_STATUS_COMPLETE && pInstance && pInstance->GetData(TYPE_QUEST) == NOT_STARTED)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_CHROMI1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
-    if(ScriptedInstance* m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData())) 
-     if(m_pInstance->GetData(TYPE_QUEST) != DONE && !pPlayer->HasItemCount(ITEM_ENTRY_ARCANE_DISRUPTOR,1)) 
-       pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_CHROMI1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
- 
     pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_CHROMI1, pCreature->GetGUID()); 
 
     return true; 
@@ -64,32 +60,67 @@ bool GossipHello_npc_chromi_start(Player* pPlayer, Creature* pCreature)
 bool GossipSelect_npc_chromi_start(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
     if (uiAction == GOSSIP_ACTION_INFO_DEF+1) 
-    { 
+    {
        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_CHROMI2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2); 
 
        pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_CHROMI2, pCreature->GetGUID()); 
-    } 
+    }
 
     if (uiAction == GOSSIP_ACTION_INFO_DEF+2) 
-    { 
+    {
        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_CHROMI3, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3); 
-       
+
        pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_CHROMI3, pCreature->GetGUID()); 
-    } 
+    }
 
     if (uiAction == GOSSIP_ACTION_INFO_DEF+3) 
-    { 
+    {
        // START COUNTER HERE 
-       if(ScriptedInstance* m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData()))
-          m_pInstance->DoUpdateWorldState(WORLD_STATE_COS_CRATE_ON, 1);
-       if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(ITEM_ENTRY_ARCANE_DISRUPTOR, 1)) 
-           pPlayer->SendNewItem(pItem, 1, true, false); 
- 
-       pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_CHROMI4, pCreature->GetGUID()); 
-    } 
+        if (ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData())
+        {
+            pInstance->DoUpdateWorldState(WORLD_STATE_COS_CRATE_ON, 1);
+            pInstance->SetData(TYPE_QUEST, IN_PROGRESS);
+        }
 
-    return true; 
+        if (pPlayer)
+            if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(ITEM_ARCANE_DISRUPTOR, 1)) 
+                pPlayer->SendNewItem(pItem, 1, true, false); 
+
+       pPlayer->SEND_GOSSIP_MENU(GOSSIP_TEXTID_CHROMI4, pCreature->GetGUID()); 
+    }
+
+    return true;
 }
+
+struct MANGOS_DLL_DECL npc_chromi_startAI : public ScriptedAI
+{
+    npc_chromi_startAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_creature->SetActiveObjectState(true);
+        m_bCounterHere = false;
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+
+    bool m_bCounterHere;
+
+    void Reset()
+    {
+        m_bCounterHere = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (!m_bCounterHere && m_pInstance && pWho && pWho->GetTypeId() == TYPEID_PLAYER && m_creature->GetDistance2d(pWho) <= 15 && ((Player*)pWho)->GetQuestStatus(QUEST_DISPELLING_ILLUSIONS) == QUEST_STATUS_INCOMPLETE)
+        {
+            m_pInstance->DoUpdateWorldState(WORLD_STATE_COS_CRATE_ON, 1);
+            m_pInstance->SetData(TYPE_QUEST, IN_PROGRESS);
+            m_bCounterHere = true;
+        }
+    }
+};
 
 /*###
 ## npc_mike
@@ -130,8 +161,8 @@ struct MANGOS_DLL_DECL npc_mikeAI : public ScriptedAI
     uint32 m_uiStepTimer;
     uint32 m_uiPhase;
 
-    uint64 m_uiForesterGUID;  
-    uint64 m_uiJamesGUID;  
+    uint64 m_uiForesterGUID;
+    uint64 m_uiJamesGUID;
     uint64 m_uiSiabiGUID;
     uint64 m_uiCorricksGUID;
     uint64 m_uiGryanGUID;
@@ -719,7 +750,7 @@ struct MANGOS_DLL_DECL npc_jenaAI : public ScriptedAI
               break;
         }
     }
-    
+
     void MoveToPoint(Creature* unit, float X, float Y, float Z, uint32 Timer)
     {
         unit->GetMap()->CreatureRelocation(unit, X, Y, Z, unit->GetOrientation());
@@ -910,7 +941,7 @@ struct MANGOS_DLL_DECL npc_malcolmAI : public ScriptedAI
               break;
         }
     }
-    
+
     void MoveToPoint(Creature* unit, float X, float Y, float Z, uint32 Timer)
     {
         unit->GetMap()->CreatureRelocation(unit, X, Y, Z, unit->GetOrientation());
@@ -1041,7 +1072,7 @@ struct MANGOS_DLL_DECL npc_bartleby_csAI : public ScriptedAI
               break;
         }
     }
-    
+
     void SpeechEvent()
     {
         switch(m_uiStep)
@@ -1107,7 +1138,7 @@ struct MANGOS_DLL_DECL npc_stratholme_cratesAI : public ScriptedAI
         m_creature->SetActiveObjectState(true);
         Reset();
     }
-    
+
     ScriptedInstance* m_pInstance;
 
     bool Active;
@@ -1121,9 +1152,9 @@ struct MANGOS_DLL_DECL npc_stratholme_cratesAI : public ScriptedAI
        if(!m_pInstance) return;
 
        if(m_creature->HasAura(SPELL_LIGHT) && Active != true)
-       {    
+       {
             if(Creature* pRoger = m_pInstance->instance->GetCreature(m_pInstance->GetData64(NPC_ROGER)))
-            { 
+            {
                if(m_creature->GetDistance2d(pRoger->GetPositionX(), pRoger->GetPositionY()) < 50.0f)
                {
                    ((npc_rogerAI*)pRoger->AI())->StartRoger();
@@ -1173,6 +1204,11 @@ struct MANGOS_DLL_DECL npc_stratholme_cratesAI : public ScriptedAI
     }
 };
 
+CreatureAI* GetAI_npc_chromi_start(Creature* pCreature)
+{
+    return new npc_chromi_startAI(pCreature);
+}
+
 CreatureAI* GetAI_npc_mike(Creature* pCreature)
 {
     return new npc_mikeAI(pCreature);
@@ -1216,6 +1252,7 @@ void AddSC_culling_of_stratholmeAI()
     newscript->Name = "npc_chromi_start";
     newscript->pGossipHello =  &GossipHello_npc_chromi_start;
     newscript->pGossipSelect = &GossipSelect_npc_chromi_start;
+    newscript->GetAI = &GetAI_npc_chromi_start;
     newscript->RegisterSelf();
 
     newscript = new Script;

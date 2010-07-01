@@ -32,13 +32,13 @@ enum
     SPELL_TIME_WARP                = 52766,
     SPELL_SPIKE_N                  = 52771,
     SPELL_SPIKE_H                  = 58830,  
- 
-    SAY_EPOCH_DEATH        = -1594119,  
-    SAY_EPOCH_SLAY01       = -1594120, 
-    SAY_EPOCH_SLAY02       = -1594121, 
+
+    SAY_EPOCH_DEATH        = -1594119,
+    SAY_EPOCH_SLAY01       = -1594120,
+    SAY_EPOCH_SLAY02       = -1594121,
     SAY_EPOCH_SLAY03       = -1594122,
-    SAY_EPOCH_WARP01       = -1594123, 
-    SAY_EPOCH_WARP02       = -1594124, 
+    SAY_EPOCH_WARP01       = -1594123,
+    SAY_EPOCH_WARP02       = -1594124,
     SAY_EPOCH_WARP03       = -1594125
 };
 

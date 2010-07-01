@@ -119,6 +119,14 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
                          pCreature->SetActiveObjectState(true);
                          m_uiChromi01GUID = pCreature->GetGUID();
                          break;
+            case NPC_CHROMI02:
+                         pCreature->SetActiveObjectState(true);
+                         m_uiChromi02GUID = pCreature->GetGUID();
+                         if (m_auiEncounter[0] == DONE)
+                            pCreature->SetVisibility(VISIBILITY_ON);
+                         else
+                            pCreature->SetVisibility(VISIBILITY_OFF);
+                         break;
             case NPC_MIKE: 
                          m_uiMikeGUID = pCreature->GetGUID();
                          break;
@@ -202,11 +210,8 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
         if (pGo->GetEntry() == GO_MALGANIS_GATE2)
             m_uiMalGate2GUID = pGo->GetGUID();
 
-        if (pGo->GetEntry() == GO_MALGANIS_CHEST)
-        {
+        if (pGo->GetEntry() == GO_MALGANIS_CHEST || pGo->GetEntry() == GO_MALGANIS_CHEST_H)
             m_uiMalChestGUID = pGo->GetGUID();
-            pGo->SetUInt32Value(GAMEOBJECT_FACTION, 1375);
-        }
 
         if (pGo->GetEntry() == GO_EXIT)
             m_uiExitGUID = pGo->GetGUID();
@@ -220,11 +225,18 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
        if (PlayerList.isEmpty())
            return;
 
-       for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+       if (Creature* pChromi = instance->GetCreature(m_uiChromi01GUID))
        {
-            if(Creature* pChromi = instance->GetCreature(m_uiChromi01GUID))
-               pChromi->MonsterWhisper("Good work with crates! Come to me in front of Stratholme for your next assighment!", i->getSource()->GetGUID(), false);
-       }
+           for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+           {
+                pChromi->MonsterWhisper("Good work with crates! Come to me in front of Stratholme for your next assignment!", i->getSource()->GetGUID(), false);
+                i->getSource()->KilledMonsterCredit(30996, pChromi->GetGUID());
+                i->getSource()->DestroyItemCount(ITEM_ARCANE_DISRUPTOR, 1, true);
+            }
+            pChromi->SetVisibility(VISIBILITY_OFF);
+        }
+        if (Creature* pChromi2 = instance->GetCreature(m_uiChromi02GUID))
+            pChromi2->SetVisibility(VISIBILITY_ON);
     }
 
     void SetData(uint32 uiType, uint32 uiData)
@@ -267,6 +279,14 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
                 break;
             case TYPE_MALGANIS:
                 m_auiEncounter[6] = uiData;
+                if (uiData == DONE)
+                {
+                    DoRespawnGameObject(m_uiMalChestGUID, 30*MINUTE);
+                    if (GameObject* pGo = instance->GetGameObject(m_uiMalChestGUID))
+                        pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                    if (Creature* pChromi2 = instance->GetCreature(m_uiChromi02GUID))
+                        pChromi2->SetVisibility(VISIBILITY_OFF);
+                }
                 break;
         }
     }
@@ -305,7 +325,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
         }
         return 0;
     }
-   
+
     uint64 GetData64(uint32 uiData)
     {
         switch(uiData)
