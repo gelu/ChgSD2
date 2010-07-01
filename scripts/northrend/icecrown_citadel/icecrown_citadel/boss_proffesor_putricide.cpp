@@ -91,6 +91,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
         intro = false;
         UpdateTimer = 1000;
         bsw->resetTimers();
+        m_creature->SetRespawnDelay(7*DAY);
     }
 
     void MoveInLineOfSight(Unit* pWho) 

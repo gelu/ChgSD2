@@ -247,6 +247,9 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         if(!pInstance || !summoned || !battlestarted) return;
 
         if ( summoned->GetEntry() != NPC_NIGHTMARE_PORTAL ) {
+             m_creature->SetInCombatWithZone();
+             m_creature->SetInCombatWith(summoned);
+             summoned->SetInCombatWith(m_creature);
              summoned->AddThreat(m_creature, 100.0f);
              summoned->GetMotionMaster()->MoveChase(m_creature);
              }
