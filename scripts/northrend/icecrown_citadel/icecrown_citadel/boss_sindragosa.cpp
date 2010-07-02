@@ -478,20 +478,23 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public ScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_SINDRAGOSA, NOT_STARTED);
+        if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE)
+            pInstance->SetData(TYPE_SINDRAGOSA, NOT_STARTED);
         bsw->resetTimers();
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(30*MINUTE);
     }
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
+        if (pInstance)
+            if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE)
+                pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
     }
 
     void Aggro(Unit *who) 
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
+        if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
         pBrother = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_SPINESTALKER));
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
         if (pBrother) pBrother->SetInCombatWithZone();
@@ -501,14 +504,22 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) return;
         if (pBrother && !pBrother->isAlive())
                  m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_MANUAL_DESPAWN, DESPAWN_TIME);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!pInstance || !m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
+        {
+            m_creature->SetRespawnDelay(DAY);
+            m_creature->ForcedDespawn();
+            return;
+        }
 
         bsw->timedCast(SPELL_FROST_BREATH, diff);
 
@@ -540,20 +551,23 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public ScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_SINDRAGOSA, NOT_STARTED);
+        if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE)
+            pInstance->SetData(TYPE_SINDRAGOSA, NOT_STARTED);
         bsw->resetTimers();
-        m_creature->SetRespawnDelay(DAY);
+        m_creature->SetRespawnDelay(30*MINUTE);
     }
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
+        if (pInstance)
+            if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) 
+                pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
     }
 
     void Aggro(Unit *who) 
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
+        if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
         pBrother = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_RIMEFANG));
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
         if (pBrother) pBrother->SetInCombatWithZone();
@@ -561,15 +575,25 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public ScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(!pInstance) return;
+        if (!pInstance) return;
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) return;
         if (pBrother && !pBrother->isAlive())
                  m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_MANUAL_DESPAWN, DESPAWN_TIME);
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+
+
+        if (!pInstance || !m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
+        {
+            m_creature->SetRespawnDelay(DAY);
+            m_creature->ForcedDespawn();
+            return;
+        }
 
         bsw->timedCast(SPELL_BELLOWING_ROAR, diff);
 

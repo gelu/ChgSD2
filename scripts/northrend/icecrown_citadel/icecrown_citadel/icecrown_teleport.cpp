@@ -40,14 +40,14 @@ struct t_Locations
 
 static t_Locations PortalLoc[]=
 {
-{"Hammer of the World","Молот света",-17.1928, 2211.44, 30.1158,0,true,true,TYPE_TELEPORT}, //
-{"Chapel of Damned","Молельня проклятых",-503.62, 2211.47, 62.8235,70856,false,true,TYPE_MARROWGAR},  //
-{"Skulls plato","Черепной вал",-615.145, 2211.47, 199.972,70857,false,true,TYPE_DEATHWHISPER}, //
-{"The Rise of Deadly","Подъем смертоносного",-549.131, 2211.29, 539.291,70858,false,true,TYPE_FLIGHT_WAR}, //
-{"Icecrown Citadel","Цитадель Ледяной Короны",4198.42, 2769.22, 351.065,70859,false,true,TYPE_SAURFANG}, //
-{"Sanctuary of Blood","Святилище крови",4490.205566, 2769.275635, 403.983765,0,false,true,TYPE_BLOOD_COUNCIL}, //
-{"Lair of the Queen of Ice","Логово Королевы льда",4356.580078, 2565.75, 220.401993,70861,false,true,TYPE_VALITHRIA}, //
-{"Frozen Throne","Ледяной трон",528.767273f, -2124.845947f, 1041.86f, 70860,false,true,TYPE_SINDRAGOSA}, //
+{{"Hammer of the World","Молот света"},-17.1928, 2211.44, 30.1158,0,true,true,TYPE_TELEPORT}, //
+{{"Chapel of Damned","Молельня проклятых"},-503.62, 2211.47, 62.8235,70856,false,true,TYPE_MARROWGAR},  //
+{{"Skulls plato","Черепной вал"},-615.145, 2211.47, 199.972,70857,false,true,TYPE_DEATHWHISPER}, //
+{{"The Rise of Deadly","Подъем смертоносного"},-549.131, 2211.29, 539.291,70858,false,true,TYPE_FLIGHT_WAR}, //
+{{"Icecrown Citadel","Цитадель Ледяной Короны"},4198.42, 2769.22, 351.065,70859,false,true,TYPE_SAURFANG}, //
+{{"Sanctuary of Blood","Святилище крови"},4490.205566, 2769.275635, 403.983765,0,false,true,TYPE_BLOOD_COUNCIL}, //
+{{"Lair of the Queen of Ice","Логово Королевы льда"},4356.580078, 2565.75, 220.401993,70861,false,true,TYPE_VALITHRIA}, //
+{{"Frozen Throne","Ледяной трон"},528.767273f, -2124.845947f, 1041.86f, 70860,false,true,TYPE_SINDRAGOSA}, //
 };
 
 
@@ -107,35 +107,37 @@ bool GOGossipHello_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo)
 
 bool GOGossipHello_go_plague_sigil(Player *player, GameObject* pGo)
 {
-    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
 
-    if (pInstance->GetData(TYPE_FESTERGUT) == DONE)
-           pInstance->SetData(TYPE_FESTERGUT, DONE);
-    if (pInstance->GetData(TYPE_ROTFACE) == DONE)
-           pInstance->SetData(TYPE_ROTFACE, DONE);
-
+    if (pInstance->GetData(TYPE_FESTERGUT) == DONE
+        && pInstance->GetData(TYPE_ROTFACE) == DONE)
+        {
+            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_ORANGE));
+            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_GREEN));
+            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_COLLISION));
+        };
     return true;
 }
 
 bool GOGossipHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
 {
-    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
 
     if (pInstance->GetData(TYPE_PUTRICIDE) == DONE)
-           pInstance->SetData(TYPE_PUTRICIDE, DONE);
+            pInstance->OpenDoor(pInstance->GetData64(GO_BLOODWING_DOOR));
 
     return true;
 }
 
 bool GOGossipHello_go_frostwing_sigil(Player *player, GameObject* pGo)
 {
-    ScriptedInstance *pInstance = (ScriptedInstance *) pGo->GetInstanceData();
+    instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
 
     if (pInstance->GetData(TYPE_LANATHEL) == DONE)
-           pInstance->SetData(TYPE_LANATHEL, DONE);
+        pInstance->OpenDoor(pInstance->GetData64(GO_FROSTWING_DOOR));
 
     return true;
 }

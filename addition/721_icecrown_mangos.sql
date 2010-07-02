@@ -113,6 +113,8 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 UPDATE `creature_template` SET `ScriptName`='boss_blood_queen_lanathel', `AIName`='' WHERE `entry`= 37955;
 UPDATE `creature_template` SET  `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14,`ScriptName`='mob_swarming_shadows' WHERE `entry`= 38163;
 
+UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_frostwing_sigil' WHERE `gameobject_template`.`entry` IN (202181);
+
 -- Valithria dreamwalker
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10067;
