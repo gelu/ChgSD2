@@ -441,7 +441,7 @@ Unit* BossSpellWorker::_doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType su
     return boss->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ, 0, summontype, delay);
 };
 
-bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
+bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
 {
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
@@ -494,9 +494,15 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIn
            return false;
         }
 
-        if (_auraCount(m_uiSpellIdx,pTarget,index) > 1)
+        if (index == EFFECT_INDEX_ALL)
         {
-            if (pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty], index)->modStackAmount(-1))
+            pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+            return true;
+        }
+
+        if (_auraCount(m_uiSpellIdx,pTarget,(SpellEffectIndex)index) > 1)
+        {
+            if (pTarget->GetAura(pSpell->m_uiSpellEntry[currentDifficulty],(SpellEffectIndex)index)->modStackAmount(-1))
                 return true;
             else return false;
         }

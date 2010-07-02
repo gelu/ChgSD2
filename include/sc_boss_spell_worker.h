@@ -15,10 +15,11 @@
 
 enum
 {
-  DIFFICULTY_LEVELS = 4,
-  MAX_BOSS_SPELLS   = 32,
-  SPELL_INDEX_ERROR = 255,
+  DIFFICULTY_LEVELS    = 4,
+  MAX_BOSS_SPELLS      = 32,
+  SPELL_INDEX_ERROR    = 255,
   INSTANCE_MAX_PLAYERS = 40,
+  EFFECT_INDEX_ALL     = 255,
 };
 
 enum BossSpellFlag
@@ -146,7 +147,7 @@ class MANGOS_DLL_DECL BossSpellWorker
                       else return CAST_FAIL_OTHER;
              };
 
-        bool doRemove(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
+        bool doRemove(uint32 SpellID, Unit* pTarget = NULL, uint8 index = EFFECT_INDEX_ALL)
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
                  if (!queryIndex(m_uiSpellIdx)) return false;
@@ -260,7 +261,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         CanCastResult _CanCastSpell(Unit* pTarget, const SpellEntry *pSpell, bool isTriggered = false);
 
-        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
+        bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, uint8 index = EFFECT_INDEX_ALL);
 
         bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
