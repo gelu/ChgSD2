@@ -15,9 +15,9 @@
  */
 
 /* ScriptData
-SDName: boss_forgemaster_garfrost
+SDName: boss_forgemaster_gafrost
 SD%Complete: 0%
-SDComment: by ..., modified by /dev/rsa
+SDComment: by /dev/rsa
 SDCategory: Pit of Saron
 EndScriptData */
 
@@ -38,11 +38,9 @@ struct MANGOS_DLL_DECL boss_forgemaster_gafrostAI : public ScriptedAI
     boss_forgemaster_gafrostAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Regular = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    bool Regular;
     ScriptedInstance *pInstance;
 
     void Reset()

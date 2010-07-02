@@ -35,6 +35,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     uint64 m_uiKrickGUID;
     uint64 m_uiIckGUID;
     uint64 m_uiTirannusGUID;
+    uint64 m_uiRimefangGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -54,10 +55,14 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
             m_auiEncounter[i] = NOT_STARTED;
-        m_uiGafrostGUID =0;
-        m_uiKrickGUID =0;
-        m_uiIckGUID =0;
-        m_uiTirannusGUID =0;
+    }
+
+    bool IsEncounterInProgress() const
+    {
+        for (uint8 i = 0; i < MAX_ENCOUNTERS; ++i)
+            if (m_auiEncounter[i] == IN_PROGRESS)
+                return true;
+        return false;
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -68,6 +73,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
             case NPC_KRICK:    m_uiKrickGUID = pCreature->GetGUID(); break;
             case NPC_ICK:      m_uiIckGUID = pCreature->GetGUID(); break;
             case NPC_TYRANNUS: m_uiTirannusGUID = pCreature->GetGUID(); break;
+            case NPC_RIMEFANG: m_uiRimefangGUID = pCreature->GetGUID(); break;
         }
     }
 
@@ -81,9 +87,9 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_GAFROST: m_auiEncounter[0] = uiData; break;
-            case TYPE_KRICK: m_auiEncounter[1] = uiData; break;
-            case TYPE_ICK: m_auiEncounter[2] = uiData; break;
+            case TYPE_GAFROST:  m_auiEncounter[0] = uiData; break;
+            case TYPE_KRICK:    m_auiEncounter[1] = uiData; break;
+            case TYPE_ICK:      m_auiEncounter[2] = uiData; break;
             case TYPE_TYRANNUS: m_auiEncounter[3] = uiData; break;
         }
 
@@ -112,10 +118,10 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_GAFROST: return m_auiEncounter[0];
-            case TYPE_KRICK: return m_auiEncounter[1];
-            case TYPE_ICK: return m_auiEncounter[2];
-            case TYPE_TYRANNUS: return m_auiEncounter[3];
+            case TYPE_GAFROST:   return m_auiEncounter[0];
+            case TYPE_KRICK:     return m_auiEncounter[1];
+            case TYPE_ICK:       return m_auiEncounter[2];
+            case TYPE_TYRANNUS:  return m_auiEncounter[3];
         }
         return 0;
     }
@@ -128,6 +134,7 @@ struct MANGOS_DLL_DECL instance_pit_of_saron : public ScriptedInstance
             case NPC_KRICK:    return m_uiKrickGUID;
             case NPC_ICK:      return m_uiIckGUID;
             case NPC_TYRANNUS: return m_uiTirannusGUID;
+            case NPC_RIMEFANG: return m_uiRimefangGUID;
         }
         return 0;
     }
