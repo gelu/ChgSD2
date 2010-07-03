@@ -356,6 +356,7 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public ScriptedAI
     {
         SetCombatMovement(false);
         pVictim = NULL;
+        m_creature->SetRespawnDelay(7*DAY);
     }
 
     void Aggro(Unit* pWho)
@@ -421,7 +422,6 @@ struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 //        m_creature->SetDisplayId(15880);
         m_creature->SetDisplayId(22523);
-//        m_creature->SetDisplayId(19075);
     }
 
     void AttackStart(Unit *pWho)
