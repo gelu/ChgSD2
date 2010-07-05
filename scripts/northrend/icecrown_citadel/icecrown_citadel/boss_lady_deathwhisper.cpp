@@ -104,6 +104,23 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
+        if (m_creature->CanInitiateAttack() && pWho->isTargetableForAttack() &&
+        m_creature->IsHostileTo(pWho) && pWho->isInAccessablePlaceFor(m_creature))
+        {
+        if (m_creature->IsWithinDistInMap(pWho, m_creature->GetAttackDistance(pWho)) && m_creature->IsWithinLOSInMap(pWho))
+        {
+            if (!m_creature->getVictim())
+            {
+                pWho->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+                AttackStart(pWho);
+            }
+            else if (m_creature->GetMap()->IsDungeon())
+            {
+                pWho->SetInCombatWith(m_creature);
+                m_creature->AddThreat(pWho);
+            }
+        }
+    }
         if (stage) return;
         else intro = true;
     }

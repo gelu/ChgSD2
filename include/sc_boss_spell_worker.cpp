@@ -188,11 +188,8 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
 
             case APPLY_AURA_TARGET:
                    if (!pTarget || !pTarget->IsInMap(boss)) return CAST_FAIL_OTHER;
-                   spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]);
-                   if (spell)
-                       if (pTarget->AddAura(new BossAura(spell, EFFECT_INDEX_0, &pSpell->varData, pTarget, pTarget)))
-                              return CAST_OK;
-                       return CAST_FAIL_OTHER;
+                       _doAura(m_uiSpellIdx, pTarget, EFFECT_INDEX_0);
+                       return CAST_OK;
                    break;
 
             case SUMMON_NORMAL:
@@ -284,6 +281,20 @@ CanCastResult BossSpellWorker::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarg
                        else return CAST_FAIL_OTHER;
                    break;
 
+            case APPLY_AURA_ALLPLAYERS:
+                   {
+                       Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                       for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+                       {
+                           pTarget = itr->getSource();
+                           if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(boss, pSpell->LocData.x))
+                               _doAura(m_uiSpellIdx, pTarget, EFFECT_INDEX_0);
+                       }
+                   return CAST_OK;
+                   }
+                   break;
+
+            case SPELLTABLEPARM_NUMBER:
             default:
                    return CAST_FAIL_OTHER;
                    break;
@@ -369,7 +380,8 @@ BossSpellTableParameters BossSpellWorker::_getBSWCastType(uint32 pTemp)
                 case 14: return CAST_ON_FRENDLY_LOWHP;
                 case 15: return CAST_ON_RANDOM_POINT;
                 case 16: return CAST_ON_RANDOM_PLAYER;
-                case 17: return SPELLTABLEPARM_NUMBER;
+                case 17: return APPLY_AURA_ALLPLAYERS;
+                case 18: return SPELLTABLEPARM_NUMBER;
      default: return DO_NOTHING;
      };
 };
@@ -471,6 +483,7 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
 
                 case CAST_ON_RANDOM:
                 case CAST_ON_RANDOM_PLAYER:
+                case APPLY_AURA_ALLPLAYERS:
                 case CAST_ON_ALLPLAYERS:
                      {
                          Map::PlayerList const& pPlayers = pMap->GetPlayers();
@@ -481,8 +494,8 @@ bool BossSpellWorker::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
                                  pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
                           }
                           return true;
-                      break;
                       }
+                      break;
                   default: 
                       debug_log("BSW: FAILED Removing effects of spell %u type %u - unsupported type",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
                       return false;

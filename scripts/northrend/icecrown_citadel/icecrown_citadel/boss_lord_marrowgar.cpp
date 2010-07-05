@@ -68,6 +68,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
+        ScriptedAI::MoveInLineOfSight(pWho);
         if (intro) return;
         DoScriptText(-1631000,m_creature);
         intro = true;

@@ -311,7 +311,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                            bsw->doCast(SPELL_VAMPIRIC_BITE);
                         }
 
-                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff))
+                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff) && m_creature->GetHealthPercent() > 10.0f)
                         {
                             stage = 1;
                         };
@@ -338,14 +338,16 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                     bsw->doCast(SPELL_BLOODBOLT_WHIRL);
                     return;
             case 3:
-                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 5;
+//                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 5;
+
+                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bsw->doCast(SPELL_BLOODBOLT_WHIRL);
 
                     if (bsw->timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
                         doPactOfDarkfallen(true);
 
                     bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
 
-                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff))
+                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff) || m_creature->GetHealthPercent() < 10.0f)
                         {
                             stage = 4;
                             DoScriptText(-1631325,m_creature);

@@ -80,6 +80,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
+        ScriptedAI::MoveInLineOfSight(pWho);
         if(!pInstance || intro) return;
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
 

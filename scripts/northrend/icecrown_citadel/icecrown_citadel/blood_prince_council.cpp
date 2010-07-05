@@ -83,6 +83,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
 
     void MoveInLineOfSight(Unit* pWho) 
     {
+        ScriptedAI::MoveInLineOfSight(pWho);
         if(!m_pInstance || intro) return;
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
         m_pInstance->SetData(TYPE_EVENT, 800);
