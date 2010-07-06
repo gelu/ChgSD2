@@ -16,28 +16,31 @@
 
 /* ScriptData
 SDName: boss_proffesor_putricide
-SD%Complete: 20%
+SD%Complete: 60%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need implement model (aura?) for phase 2 and visual effects
+// I don't know how do mutated_abomination :(
 #include "precompiled.h"
 #include "def_spire.h"
 
 enum BossSpells
 {
-    SPELL_SLIME_PUDDLE            = 70346,
     SPELL_UNSTABLE_EXPERIMENT     = 71968,
     SPELL_TEAR_GAS                = 71617,
     SPELL_TEAR_GAS_1              = 71615,
     SPELL_TEAR_GAS_2              = 71618,
     SPELL_CREATE_CONCOCTION       = 71621,
-    SPELL_CHOKING_GAS             = 71278,
-    SPELL_CHOKING_GAS_EXPLODE     = 71279,
     SPELL_MALLEABLE_GOO           = 70852,
-    SPELL_GUZZLE_POTIONS          = 73122,
+    SPELL_GUZZLE_POTIONS          = 71893,
     SPELL_MUTATED_STRENGTH        = 71603,
     SPELL_MUTATED_PLAGUE          = 72672,
+//
+    SPELL_GREEN_BOTTLE_0          = 71826,
+    SPELL_ORANGE_BOTTLE_0         = 71827,
+    SPELL_GREEN_BOTTLE_1          = 71702,
+    SPELL_ORANGE_BOTTLE_1         = 71703,
 //
     NPC_GAS_CLOUD                 = 37562,
     SPELL_GASEOUS_BLOAT           = 70672,
@@ -56,6 +59,16 @@ enum BossSpells
     SPELL_REGURGITATED_OOZE       = 70539,
     SPELL_MUTATED_SLASH           = 70542,
     SPELL_MUTATED_AURA            = 70405,
+//
+    NPC_CHOKING_GAS_BOMB          = 38159,
+    SPELL_CHOKING_GAS             = 71259,
+    SPELL_CHOKING_GAS_AURA        = 71278,
+    SPELL_CHOKING_GAS_EXPLODE     = 71279,
+    SPELL_ORANGE_RADIATION        = 45857,
+//
+    NPC_OOZE_PUDDLE               = 37690,
+    SPELL_SLIME_PUDDLE            = 70343,
+    SPELL_SLIME_PUDDLE_AURA       = 70346,
 
     SPELL_BERSERK                 = 47008,
 //
@@ -104,7 +117,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
         if (!pInstance || intro) return;
         if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_PROFESSOR_PUTRICIDE
-            || !pWho->IsWithinDistInMap(m_creature, 40.0f)) return;
+            || !pWho->IsWithinDistInMap(m_creature, 60.0f)) return;
 
         DoScriptText(-1631240,m_creature, pWho);
         intro = true;
@@ -235,7 +248,6 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
         switch(stage)
         {
             case 0: 
-                    timedCast(SPELL_SLIME_PUDDLE, diff);
 
                     if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
                         switch(urand(0,1))
@@ -248,7 +260,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                                  break;
                           }
 
-                    timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(NPC_OOZE_PUDDLE, diff);
 
                     if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
@@ -284,7 +296,6 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                     stage = 4;
                     break;
             case 4: 
-                    timedCast(SPELL_SLIME_PUDDLE, diff);
 
                     if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
                         switch(urand(0,1))
@@ -297,11 +308,11 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                                  break;
                           }
 
-                    timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(NPC_CHOKING_GAS_BOMB, diff);
+
+                    timedCast(NPC_OOZE_PUDDLE, diff);
 
                     timedCast(SPELL_MALLEABLE_GOO, diff);
-
-                    timedCast(SPELL_CHOKING_GAS, diff);
 
                     if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
@@ -353,7 +364,9 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                                  doSummon(NPC_GAS_CLOUD);
                                  break;
                           }
-                    timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(NPC_CHOKING_GAS_BOMB, diff);
+
+                    timedCast(NPC_OOZE_PUDDLE, diff);
 
                     timedCast(SPELL_MUTATED_PLAGUE, diff);
 
@@ -409,6 +422,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
            else return;
         if (!hasAura(SPELL_GASEOUS_BLOAT, pTarget))
              doCast(SPELL_GASEOUS_BLOAT, pTarget);
+             DoStartMovement(who);
     }
 
     void JustReachedHome()
@@ -433,9 +447,6 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
         if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
             doCast(SPELL_SOUL_FEAST);
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-            SetCombatMovement(true);
         }
 
         if (pTarget->IsWithinDistInMap(m_creature, 3.0f)
@@ -472,6 +483,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     {
         if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
         doCast(SPELL_OOZE_ADHESIVE, who);
+        DoStartMovement(who);
     }
 
     void JustReachedHome()
@@ -493,9 +505,6 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
         if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
             doCast(SPELL_SOUL_FEAST);
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-            SetCombatMovement(true);
         }
 
         if (timedQuery(SPELL_OOZE_ERUPTION, uiDiff))
@@ -511,6 +520,122 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
 CreatureAI* GetAI_mob_icc_volatile_ooze(Creature* pCreature)
 {
     return new mob_icc_volatile_oozeAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL mob_choking_gas_bombAI : public ScriptedAI
+{
+    mob_choking_gas_bombAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    uint32 boom_timer;
+    bool finita;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(7*DAY);
+        m_creature->SetInCombatWithZone();
+        m_creature->SetDisplayId(11686);
+        m_creature->SetObjectScale(0.5f);
+        SetCombatMovement(false);
+        boom_timer = 20000;
+        finita = false;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->CastSpell(m_creature, SPELL_ORANGE_RADIATION, false);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_pInstance) return;
+
+        if (m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS || finita)
+            m_creature->ForcedDespawn();
+
+        if (!m_creature->HasAura(SPELL_CHOKING_GAS_AURA))
+            m_creature->CastSpell(m_creature, SPELL_CHOKING_GAS, false);
+
+        if (boom_timer <= uiDiff)
+        {
+            m_creature->CastSpell(m_creature,SPELL_CHOKING_GAS_EXPLODE,false);
+            finita = true;
+        }
+        else boom_timer -= uiDiff;
+    }
+
+};
+
+CreatureAI* GetAI_mob_choking_gas_bomb(Creature* pCreature)
+{
+    return new mob_choking_gas_bombAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
+{
+    mob_ooze_puddleAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *m_pInstance;
+    float m_Size;
+    float m_Size0;
+    uint32 grow_timer;
+
+    void Reset()
+    {
+        if(!m_pInstance) return;
+        m_creature->SetRespawnDelay(7*DAY);
+        m_creature->SetDisplayId(11686);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetInCombatWithZone();
+        SetCombatMovement(false);
+        m_Size0 = m_creature->GetObjectScale();
+        m_Size = m_Size0;
+        grow_timer = 500;
+    }
+
+    void AttackStart(Unit *who)
+    {
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_pInstance) return;
+
+        if (m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
+            m_creature->ForcedDespawn();
+
+        if (!m_creature->HasAura(SPELL_SLIME_PUDDLE_AURA))
+            m_creature->CastSpell(m_creature, SPELL_SLIME_PUDDLE, false);
+
+        // Override especially for clean core
+                   if (m_Size / m_Size0 >= 3.0f) m_creature->ForcedDespawn();
+
+        if (grow_timer <= uiDiff)
+        {
+            m_Size = m_Size*1.01;
+            m_creature->SetObjectScale(m_Size);
+            grow_timer = 500;
+        } else grow_timer -= uiDiff;
+    }
+
+};
+
+CreatureAI* GetAI_mob_ooze_puddle(Creature* pCreature)
+{
+    return new mob_ooze_puddleAI(pCreature);
 }
 
 void AddSC_boss_proffesor_putricide()
@@ -529,5 +654,15 @@ void AddSC_boss_proffesor_putricide()
     newscript = new Script;
     newscript->Name = "mob_icc_gas_cloud";
     newscript->GetAI = &GetAI_mob_icc_gas_cloud;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_choking_gas_bomb";
+    newscript->GetAI = &GetAI_mob_choking_gas_bomb;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_ooze_puddle";
+    newscript->GetAI = &GetAI_mob_ooze_puddle;
     newscript->RegisterSelf();
 }

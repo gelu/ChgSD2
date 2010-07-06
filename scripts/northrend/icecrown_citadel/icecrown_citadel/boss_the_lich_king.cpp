@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_the_lich_king
-SD%Complete: 40%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need implement "in sword" phase
 #include "precompiled.h"
 #include "def_spire.h"
 

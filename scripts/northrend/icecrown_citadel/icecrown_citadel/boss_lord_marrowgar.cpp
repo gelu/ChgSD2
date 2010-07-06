@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_lord_marrowgar
-SD%Complete: 70%
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need implement properly traectory for cold flames
 #include "precompiled.h"
 #include "def_spire.h"
 enum

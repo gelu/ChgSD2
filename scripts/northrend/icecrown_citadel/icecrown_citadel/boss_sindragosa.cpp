@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_sindragosa
-SD%Complete: 60%
+SD%Complete: 80%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need correct timers and models
 #include "precompiled.h"
 #include "def_spire.h"
 
@@ -408,6 +408,7 @@ struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
     void Reset()
     {
         SetCombatMovement(false);
+        m_creature->SetRespawnDelay(7*DAY);
         visual_timer = 6000;
         boom_timer = 9000;
         finita = false;
@@ -446,7 +447,6 @@ struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
         }
         else boom_timer -= uiDiff;
     }
-
 };
 
 CreatureAI* GetAI_mob_frost_bomb(Creature* pCreature)

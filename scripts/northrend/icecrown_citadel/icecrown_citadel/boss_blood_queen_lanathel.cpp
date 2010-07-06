@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_blood_queen_lanathel
-SD%Complete: 20%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need correct work of spells and timers
 #include "precompiled.h"
 #include "def_spire.h"
 

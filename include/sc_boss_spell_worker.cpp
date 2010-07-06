@@ -437,7 +437,7 @@ Unit* BSWScriptedAI::_doSummon(uint8 m_uiSpellIdx, TempSummonType summontype, ui
             }
         m_creature->GetPosition(fPosX, fPosY, fPosZ);
         m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand((uint32)pSpell->LocData.x, (uint32)pSpell->LocData.y), fPosX, fPosY, fPosZ);
-        return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ, 0, summontype, delay);
+        return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ+0.8f, 0, summontype, delay);
     }
     else return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z, 0, summontype, delay);
 };

@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: blood_prince_council
-SD%Complete: 30%
+SD%Complete: 50%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need implement vortexes, mobs and power orb
 #include "precompiled.h"
 #include "def_spire.h"
 

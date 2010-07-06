@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_deathbringer_saurfang
-SD%Complete: 30%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need implement (in core) energy for boss and adds
 #include "precompiled.h"
 #include "def_spire.h"
 

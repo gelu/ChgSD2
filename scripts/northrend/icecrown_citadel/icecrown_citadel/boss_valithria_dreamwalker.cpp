@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: boss_valithria
-SD%Complete: 60%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-
+// Need move emerald dream to phase 16, correct timers and other
 #include "precompiled.h"
 #include "def_spire.h"
 

@@ -14,6 +14,13 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+/* ScriptData
+SDName: instance_icecrown_spire
+SD%Complete: 90%
+SDComment: by /dev/rsa
+SDCategory: Icecrown Citadel
+EndScriptData */
+
 #include "precompiled.h"
 #include "def_spire.h"
 #include "World.h"
