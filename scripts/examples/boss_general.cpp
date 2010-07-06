@@ -29,28 +29,22 @@ enum BossSpells
     SPELL_SUPERSPELL         = 99999,
 };
 
-struct MANGOS_DLL_DECL boss_generalAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_generalAI : public BSWScriptedAI
 {
-    boss_generalAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_generalAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
 
     void Reset()
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_GENERAL, NOT_STARTED);
-        bsw->resetTimers();
-    }
-
-    void MoveInLineOfSight(Unit* pWho) 
-    {
+        resetTimers();
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -72,7 +66,8 @@ struct MANGOS_DLL_DECL boss_generalAI : public ScriptedAI
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_GENERAL, FAIL);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_GENERAL, FAIL);
     }
 
     void JustSummoned(Creature* summoned)
@@ -81,12 +76,14 @@ struct MANGOS_DLL_DECL boss_generalAI : public ScriptedAI
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_GENERAL, IN_PROGRESS);
+        if(!pInstance) return;
+        pInstance->SetData(TYPE_GENERAL, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_GENERAL, DONE);
+        if(!pInstance) return; 
+        pInstance->SetData(TYPE_GENERAL, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -94,7 +91,7 @@ struct MANGOS_DLL_DECL boss_generalAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_SUPERSPELL, diff);
+        timedCast(SPELL_SUPERSPELL, diff);
 
         DoMeleeAttackIfReady();
     }

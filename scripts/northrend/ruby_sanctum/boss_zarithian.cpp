@@ -29,24 +29,22 @@ enum BossSpells
     SPELL_TWILIGHT_PRECISION         = 78243,
 };
 
-struct MANGOS_DLL_DECL boss_zarithianAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
 {
-    boss_zarithianAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_zarithianAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
 
     void Reset()
     {
         if(!pInstance) return;
         pInstance->SetData(TYPE_ZARITHIAN, NOT_STARTED);
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -94,7 +92,7 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_TWILIGHT_PRECISION, diff);
+        timedCast(SPELL_TWILIGHT_PRECISION, diff);
 
         DoMeleeAttackIfReady();
     }

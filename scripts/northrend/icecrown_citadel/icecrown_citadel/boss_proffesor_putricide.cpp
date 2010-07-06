@@ -71,17 +71,15 @@ static Locations SpawnLoc[]=
     {4417.302246f, 3188.219971f, 389.332520f},  // 2 Putricide Rotface say o=5.102
 };
 
-struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 {
-    boss_proffesor_putricideAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_proffesor_putricideAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool intro;
     uint32 UpdateTimer;
@@ -96,7 +94,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
         intro = false;
         movementstarted = false;
         UpdateTimer = 1000;
-        bsw->resetTimers();
+        resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
     }
 
@@ -154,7 +152,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
 
         if ( summoned->GetEntry() == NPC_VOLATILE_OOZE
              || summoned->GetEntry() == NPC_GAS_CLOUD)
-              if (Unit* pTarget = bsw->SelectRandomPlayer())
+              if (Unit* pTarget = doSelectRandomPlayer())
                  {
                      summoned->SetInCombatWith(pTarget);
                      summoned->AddThreat(pTarget, 100.0f);
@@ -237,24 +235,24 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                    bsw->timedCast(SPELL_SLIME_PUDDLE, diff);
+                    timedCast(SPELL_SLIME_PUDDLE, diff);
 
-                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                    if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
                         switch(urand(0,1))
                           {
                           case 0:
-                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 doSummon(NPC_VOLATILE_OOZE);
                                  break;
                           case 1:
-                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 doSummon(NPC_GAS_CLOUD);
                                  break;
                           }
 
-                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(SPELL_CHOKING_GAS, diff);
 
-                    if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
+                    if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
-                          bsw->doCast(SPELL_MALLEABLE_GOO);
+                          doCast(SPELL_MALLEABLE_GOO);
                        }
 
                     DoMeleeAttackIfReady();
@@ -265,19 +263,19 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
             case 1: 
                     m_creature->AttackStop();
                     SetCombatMovement(false);
-                    bsw->doCast(SPELL_TEAR_GAS_1);
+                    doCast(SPELL_TEAR_GAS_1);
                     DoScriptText(-1631245,m_creature);
                     StartMovement(0);
                     stage = 2;
                     break;
             case 2:
                     if (movementstarted) return;
-                    bsw->doCast(SPELL_CREATE_CONCOCTION);
+                    doCast(SPELL_CREATE_CONCOCTION);
                     stage = 3;
                     break;
             case 3:
                     if (m_creature->IsNonMeleeSpellCasted(true,false,false) ||
-                    !bsw->SelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
+                    !doSelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
                     DoScriptText(-1631246,m_creature);
                     m_creature->SetDisplayId(VIEW_2);
                     m_creature->GetMotionMaster()->Clear();
@@ -286,28 +284,28 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
                     stage = 4;
                     break;
             case 4: 
-                    bsw->timedCast(SPELL_SLIME_PUDDLE, diff);
+                    timedCast(SPELL_SLIME_PUDDLE, diff);
 
-                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                    if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
                         switch(urand(0,1))
                           {
                           case 0:
-                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 doSummon(NPC_VOLATILE_OOZE);
                                  break;
                           case 1:
-                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 doSummon(NPC_GAS_CLOUD);
                                  break;
                           }
 
-                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(SPELL_CHOKING_GAS, diff);
 
-                    bsw->timedCast(SPELL_MALLEABLE_GOO, diff);
+                    timedCast(SPELL_MALLEABLE_GOO, diff);
 
-                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(SPELL_CHOKING_GAS, diff);
 
-                    if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
+                    if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
-                          bsw->doCast(SPELL_MALLEABLE_GOO);
+                          doCast(SPELL_MALLEABLE_GOO);
                        }
 
                     DoMeleeAttackIfReady();
@@ -318,45 +316,45 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
             case 5:
                     m_creature->AttackStop();
                     SetCombatMovement(false);
-                    bsw->doCast(SPELL_TEAR_GAS_1);
+                    doCast(SPELL_TEAR_GAS_1);
                     DoScriptText(-1631245,m_creature);
                     StartMovement(0);
                     stage = 6;
                     break;
             case 6:
                     if (movementstarted) return;
-                    bsw->doCast(SPELL_GUZZLE_POTIONS);
+                    doCast(SPELL_GUZZLE_POTIONS);
                     stage = 7;
                     break;
             case 7:
                     if (m_creature->IsNonMeleeSpellCasted(true,false,false) ||
-                    !bsw->SelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
+                    !doSelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
                     DoScriptText(-1631247,m_creature);
-                    bsw->doCast(SPELL_MUTATED_STRENGTH);
+                    doCast(SPELL_MUTATED_STRENGTH);
                     m_creature->GetMotionMaster()->Clear();
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
                     SetCombatMovement(true);
                     stage = 8;
                     break;
             case 8:
-                    if (bsw->timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
+                    if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
                         switch(urand(0,1))
                           {
                           case 0:
-                                 bsw->doSummon(NPC_VOLATILE_OOZE);
+                                 doSummon(NPC_VOLATILE_OOZE);
                                  break;
                           case 1:
-                                 bsw->doSummon(NPC_GAS_CLOUD);
+                                 doSummon(NPC_GAS_CLOUD);
                                  break;
                           }
-                    bsw->timedCast(SPELL_CHOKING_GAS, diff);
+                    timedCast(SPELL_CHOKING_GAS, diff);
 
-                    bsw->timedCast(SPELL_MUTATED_PLAGUE, diff);
+                    timedCast(SPELL_MUTATED_PLAGUE, diff);
 
-                    if (bsw->timedQuery(SPELL_MALLEABLE_GOO, diff))
+                    if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
                           m_creature->SetDisplayId(VIEW_3);
-                          bsw->doCast(SPELL_MALLEABLE_GOO);
+                          doCast(SPELL_MALLEABLE_GOO);
                        }
                     DoMeleeAttackIfReady();
 
@@ -366,8 +364,8 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public ScriptedAI
                     break;
             }
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, diff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631244,m_creature);
                  }
     }
@@ -378,17 +376,15 @@ CreatureAI* GetAI_boss_proffesor_putricide(Creature* pCreature)
     return new boss_proffesor_putricideAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
 {
-    mob_icc_gas_cloudAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_icc_gas_cloudAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     Unit* pTarget;
     bool expunded;
 
@@ -405,8 +401,8 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
         if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
         if (!pTarget || pTarget != who ) pTarget = who;
            else return;
-        if (!bsw->hasAura(SPELL_GASEOUS_BLOAT, pTarget))
-             bsw->doCast(SPELL_GASEOUS_BLOAT, pTarget);
+        if (!hasAura(SPELL_GASEOUS_BLOAT, pTarget))
+             doCast(SPELL_GASEOUS_BLOAT, pTarget);
     }
 
     void JustReachedHome()
@@ -428,18 +424,18 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public ScriptedAI
 
         if (expunded) m_creature->ForcedDespawn();
 
-        if (bsw->timedQuery(SPELL_SOUL_FEAST, uiDiff))
+        if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
-            bsw->doCast(SPELL_SOUL_FEAST);
+            doCast(SPELL_SOUL_FEAST);
             m_creature->GetMotionMaster()->Clear();
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
             SetCombatMovement(true);
         }
 
         if (pTarget->IsWithinDistInMap(m_creature, 3.0f)
-            && bsw->hasAura(SPELL_GASEOUS_BLOAT, pTarget))
+            && hasAura(SPELL_GASEOUS_BLOAT, pTarget))
             {
-               bsw->doCast(SPELL_EXPUNGED_GAS, pTarget);
+               doCast(SPELL_EXPUNGED_GAS, pTarget);
                expunded = true;
             };
     }
@@ -450,17 +446,15 @@ CreatureAI* GetAI_mob_icc_gas_cloud(Creature* pCreature)
     return new mob_icc_gas_cloudAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
 {
-    mob_icc_volatile_oozeAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_icc_volatile_oozeAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -471,7 +465,7 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
-        bsw->doCast(SPELL_OOZE_ADHESIVE, who);
+        doCast(SPELL_OOZE_ADHESIVE, who);
     }
 
     void JustReachedHome()
@@ -490,19 +484,19 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (bsw->timedQuery(SPELL_SOUL_FEAST, uiDiff))
+        if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
-            bsw->doCast(SPELL_SOUL_FEAST);
+            doCast(SPELL_SOUL_FEAST);
             m_creature->GetMotionMaster()->Clear();
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
             SetCombatMovement(true);
         }
 
-        if (bsw->timedQuery(SPELL_OOZE_ERUPTION, uiDiff))
+        if (timedQuery(SPELL_OOZE_ERUPTION, uiDiff))
              if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 3.0f)
-                && bsw->hasAura(SPELL_OOZE_ADHESIVE, m_creature->getVictim()))
+                && hasAura(SPELL_OOZE_ADHESIVE, m_creature->getVictim()))
                 {
-                    bsw->doCast(SPELL_OOZE_ERUPTION);
+                    doCast(SPELL_OOZE_ERUPTION);
                     m_creature->ForcedDespawn();
                 };
     }

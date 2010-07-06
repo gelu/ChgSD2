@@ -48,17 +48,15 @@ enum BossSpells
 
 };
 
-struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_bronjahmAI : public BSWScriptedAI
 {
-    boss_bronjahmAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_bronjahmAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     uint32 BattleMusicTimer;
     uint32 Music;
@@ -66,7 +64,7 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
     void Reset()
     {
         if(pInstance) pInstance->SetData(TYPE_BRONJAHM, NOT_STARTED);
-        bsw->resetTimers();
+        resetTimers();
         stage = 0;
     }
 
@@ -97,7 +95,7 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
     void JustDied(Unit *killer)
     {
         if(pInstance) pInstance->SetData(TYPE_BRONJAHM, DONE);
-        bsw->doRemove(SPELL_SOULSTORM);
+        doRemove(SPELL_SOULSTORM);
                DoScriptText(-1632004,m_creature,killer);
     }
 
@@ -121,38 +119,38 @@ struct MANGOS_DLL_DECL boss_bronjahmAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                    if  (bsw->timedQuery(SPELL_CORRUPT_SOUL, diff))
+                    if  (timedQuery(SPELL_CORRUPT_SOUL, diff))
                         {
                             if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                                 {
-                                if (bsw->doCast(SPELL_CORRUPT_SOUL, pTarget) == CAST_OK)
+                                if (doCast(SPELL_CORRUPT_SOUL, pTarget) == CAST_OK)
                                     {
                                     DoScriptText(-1632006,m_creature,pTarget);
                                     float fPosX, fPosY, fPosZ;
                                     pTarget->GetPosition(fPosX, fPosY, fPosZ);
-                                    bsw->doSummon(NPC_SOUL_FRAGMENT,fPosX, fPosY, fPosZ);
+                                    doSummon(NPC_SOUL_FRAGMENT,fPosX, fPosY, fPosZ);
                                     }
                                 }
                         }
                     break;
             case 1: 
-                        if (bsw->timedCast(SPELL_TELEPORT, diff) == CAST_OK) stage = 2;
+                        if (timedCast(SPELL_TELEPORT, diff) == CAST_OK) stage = 2;
                     break;
             case 2:
-                        if (bsw->timedCast(SPELL_SOULSTORM, diff) == CAST_OK) {
+                        if (timedCast(SPELL_SOULSTORM, diff) == CAST_OK) {
                                DoScriptText(-1632005,m_creature);
                                SetCombatMovement(false);
                                stage = 3;
                                }
                     break;
             case 3: 
-                        bsw->timedCast(SPELL_FEAR, diff);
+                        timedCast(SPELL_FEAR, diff);
                     break;
         }
 
-        bsw->timedCast(SPELL_SHADOW_BOLT, diff);
+        timedCast(SPELL_SHADOW_BOLT, diff);
 
-        bsw->timedCast(SPELL_MAGIC_BANE, diff);
+        timedCast(SPELL_MAGIC_BANE, diff);
 
         if (m_creature->GetHealthPercent() <= 30.0f && stage == 0) stage = 1;
 

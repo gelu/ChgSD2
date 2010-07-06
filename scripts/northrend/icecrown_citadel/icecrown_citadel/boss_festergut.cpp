@@ -49,17 +49,15 @@ enum BossSpells
     MAX_SPORE_TARGETS        = 6,
 };
 
-struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 {
-    boss_festergutAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_festergutAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool intro;
     bool pet;
@@ -69,7 +67,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        bsw->resetTimers();
+        resetTimers();
         pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
         stage = 0;
         intro = false;
@@ -117,9 +115,9 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
         pInstance->SetData(TYPE_EVENT, 550);
-        bsw->doRemove(SPELL_PUNGENT_BLIGHT);
-        bsw->doRemove(SPELL_PUNGENT_BLIGHT_1);
-        bsw->doRemove(SPELL_PUNGENT_BLIGHT_2);
+        doRemove(SPELL_PUNGENT_BLIGHT);
+        doRemove(SPELL_PUNGENT_BLIGHT_1);
+        doRemove(SPELL_PUNGENT_BLIGHT_2);
         DoScriptText(-1631206,m_creature);
     }
 
@@ -127,16 +125,16 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
     {
          for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
              if (spored[i])
-                if (!bsw->hasAura(SPELL_SPORE_AURA_1,spored[i]))
+                if (!hasAura(SPELL_SPORE_AURA_1,spored[i]))
                 {
-                   bsw->doCast(SPELL_INOCULATE,spored[i]);
+                   doCast(SPELL_INOCULATE,spored[i]);
                    spored[i] = NULL;
                 }
     }
 
     void doSearchSpored()
     {
-         Unit* searched = bsw->SelectRandomPlayer(SPELL_SPORE_AURA_1, true, 80.0f);
+         Unit* searched = doSelectRandomPlayer(SPELL_SPORE_AURA_1, true, 80.0f);
 
          if (!searched) return;
 
@@ -179,9 +177,9 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
                         {
-                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            doCast(SPELL_GASEOUS_BLIGHT);
                             stage = 1;
                         }
                     break;
@@ -191,13 +189,13 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                             case 1:  DoScriptText(-1631211,m_creature); break;
                             case 2:  DoScriptText(-1631212,m_creature); break;
                             }
-                        bsw->doCast(SPELL_INHALE_BLIGHT);
+                        doCast(SPELL_INHALE_BLIGHT);
                         stage = 2;
                     break;
             case 2:
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
                         {
-                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            doCast(SPELL_GASEOUS_BLIGHT);
                             stage = 3;
                         }
                     break;
@@ -207,13 +205,13 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                             case 1:  DoScriptText(-1631211,m_creature); break;
                             case 2:  DoScriptText(-1631212,m_creature); break;
                             }
-                        bsw->doCast(SPELL_INHALE_BLIGHT);
+                        doCast(SPELL_INHALE_BLIGHT);
                         stage = 4;
                     break;
             case 4:
-                    if (bsw->timedQuery(SPELL_GASEOUS_BLIGHT, diff))
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
                         {
-                            bsw->doCast(SPELL_GASEOUS_BLIGHT);
+                            doCast(SPELL_GASEOUS_BLIGHT);
                             stage = 5;
                         }
                     break;
@@ -223,14 +221,14 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
                             case 1:  DoScriptText(-1631211,m_creature); break;
                             case 2:  DoScriptText(-1631212,m_creature); break;
                             }
-                        bsw->doCast(SPELL_INHALE_BLIGHT);
+                        doCast(SPELL_INHALE_BLIGHT);
                         stage = 6;
                     break;
             case 6:
-                    if (bsw->timedQuery(SPELL_PUNGENT_BLIGHT, diff))
+                    if (timedQuery(SPELL_PUNGENT_BLIGHT, diff))
                         {
                             DoScriptText(-1631208,m_creature);
-                            bsw->doCast(SPELL_PUNGENT_BLIGHT);
+                            doCast(SPELL_PUNGENT_BLIGHT);
                             stage = 7;
                         }
                     break;
@@ -247,26 +245,26 @@ struct MANGOS_DLL_DECL boss_festergutAI : public ScriptedAI
 
         doTriggerUnoculated();
 
-        bsw->timedCast(SPELL_GAS_SPORE, diff);
+        timedCast(SPELL_GAS_SPORE, diff);
 
         doSearchSpored();
 
-        bsw->timedCast(SPELL_GASTRIC_BLOAT, diff);
+        timedCast(SPELL_GASTRIC_BLOAT, diff);
 
-        if (bsw->auraCount(SPELL_GASTRIC_BLOAT,m_creature->getVictim(),EFFECT_INDEX_1) > 9)
+        if (auraCount(SPELL_GASTRIC_BLOAT,m_creature->getVictim(),EFFECT_INDEX_1) > 9)
         {
-            bsw->doCast(SPELL_GASTRIC_EXPLOSION,m_creature->getVictim());
+            doCast(SPELL_GASTRIC_EXPLOSION,m_creature->getVictim());
             m_creature->getVictim()->RemoveAurasDueToSpell(SPELL_GASTRIC_BLOAT);
         }
 
-        if (bsw->timedQuery(SPELL_VILE_GAS, diff)) {
-//                        if (Unit* pTemp = bsw->doSummon(NPC_VILE_GAS_STALKER))
-                            bsw->doCast(SPELL_VILE_GAS);
+        if (timedQuery(SPELL_VILE_GAS, diff)) {
+//                        if (Unit* pTemp = doSummon(NPC_VILE_GAS_STALKER))
+                            doCast(SPELL_VILE_GAS);
                         DoScriptText(-1631213,m_creature);
                         };
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, diff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631207,m_creature);
                  };
 

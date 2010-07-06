@@ -63,17 +63,15 @@ static Locations SpawnLoc[]=
 };
 
 
-struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
 {
-    boss_rotfaceAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_rotfaceAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     Unit* InfectionTarget[MAX_INFECTION_TARGETS];
     bool intro;
@@ -89,7 +87,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
         pet = false;
         nexttick = false;
         memset(&InfectionTarget, 0, sizeof(InfectionTarget));
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -147,53 +145,53 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public ScriptedAI
 
         if (nexttick)
               {
-                  bsw->doCast(SPELL_OOZE_FLOOD_1);
+                  doCast(SPELL_OOZE_FLOOD_1);
                   DoScriptText(-1631227,m_creature);
                   nexttick = false;
               };
 
-        if (bsw->timedQuery(SPELL_OOZE_FLOOD_1, diff))
+        if (timedQuery(SPELL_OOZE_FLOOD_1, diff))
               {
                    uint8 i = urand(0,3);
-                   if (Unit* pTemp = bsw->doSummon(NPC_OOZE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z))
+                   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z))
                    {
-                       bsw->doCast(SPELL_OOZE_FLOOD, pTemp);
+                       doCast(SPELL_OOZE_FLOOD, pTemp);
                        nexttick = true;
                    }
               };
 
-        if (bsw->timedQuery(SPELL_SLIME_SPRAY, diff))
-            if (bsw->doSummon(NPC_OOZE_SPRAY_STALKER))
-                bsw->doCast(SPELL_SLIME_SPRAY);
+        if (timedQuery(SPELL_SLIME_SPRAY, diff))
+            if (doSummon(NPC_OOZE_SPRAY_STALKER))
+                doCast(SPELL_SLIME_SPRAY);
 
-        if (bsw->timedQuery(SPELL_MUTATED_INFECTION_AURA, diff))
+        if (timedQuery(SPELL_MUTATED_INFECTION_AURA, diff))
             for(uint8 i = 0; i < MAX_INFECTION_TARGETS; ++i)
                if (InfectionTarget[i] && InfectionTarget[i]->isAlive() && InfectionTarget[i]->IsInMap(m_creature))
-                  if (!bsw->hasAura(SPELL_MUTATED_INFECTION_AURA,InfectionTarget[i]))
+                  if (!hasAura(SPELL_MUTATED_INFECTION_AURA,InfectionTarget[i]))
                   {
                        float fPosX, fPosY, fPosZ;
                        InfectionTarget[i]->GetPosition(fPosX, fPosY, fPosZ);
-                       if (Unit* pTemp = bsw->doSummon(NPC_SMALL_OOZE,fPosX, fPosY, fPosZ))
+                       if (Unit* pTemp = doSummon(NPC_SMALL_OOZE,fPosX, fPosY, fPosZ))
                            pTemp->AddThreat(InfectionTarget[i], 1000.0f);
                        InfectionTarget[i] = NULL;
                    };
 
-        if (bsw->timedQuery(SPELL_MUTATED_INFECTION, diff))
-            if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_MUTATED_INFECTION_AURA, false, 60.0f))
+        if (timedQuery(SPELL_MUTATED_INFECTION, diff))
+            if (Unit* pTarget = doSelectRandomPlayer(SPELL_MUTATED_INFECTION_AURA, false, 60.0f))
                 {
                     for(uint8 i = 0; i < MAX_INFECTION_TARGETS; ++i)
                        if (!InfectionTarget[i])
                            {
                               InfectionTarget[i] = pTarget;
-                              bsw->doCast(SPELL_MUTATED_INFECTION, InfectionTarget[i]);
+                              doCast(SPELL_MUTATED_INFECTION, InfectionTarget[i]);
                               DoScriptText(-1631226,m_creature);
                               break;
                            }
                        else continue;
                 };
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, diff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631225,m_creature);
                  };
 
@@ -207,23 +205,21 @@ CreatureAI* GetAI_boss_rotface(Creature* pCreature)
     return new boss_rotfaceAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL  mob_small_oozeAI : public ScriptedAI
+struct MANGOS_DLL_DECL  mob_small_oozeAI : public BSWScriptedAI
 {
-    mob_small_oozeAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_small_oozeAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
-        bsw->resetTimers();
+        resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
-        bsw->doCast(SPELL_RADIATING_OOZE);
+        doCast(SPELL_RADIATING_OOZE);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5);
         m_creature->SetSpeedRate(MOVE_WALK, 0.5);
@@ -237,12 +233,12 @@ struct MANGOS_DLL_DECL  mob_small_oozeAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_STICKY_OOZE, uiDiff);
+        timedCast(SPELL_STICKY_OOZE, uiDiff);
 
-        if (Creature* pTemp = bsw->SelectNearestCreature(m_creature->GetEntry(),7.0f))
+        if (Creature* pTemp = doSelectNearestCreature(m_creature->GetEntry(),7.0f))
            {
-            bsw->doCast(SPELL_MERGE_OOZE, pTemp);
-            bsw->doSummon(NPC_BIG_OOZE);
+            doCast(SPELL_MERGE_OOZE, pTemp);
+            doSummon(NPC_BIG_OOZE);
             pTemp->ForcedDespawn();
             m_creature->ForcedDespawn();
             };
@@ -254,24 +250,22 @@ CreatureAI* GetAI_mob_small_ooze(Creature* pCreature)
     return new mob_small_oozeAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL  mob_big_oozeAI : public ScriptedAI
+struct MANGOS_DLL_DECL  mob_big_oozeAI : public BSWScriptedAI
 {
-    mob_big_oozeAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_big_oozeAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     bool exploded;
 
     void Reset()
     {
-        bsw->resetTimers();
+        resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
-        bsw->doCast(SPELL_UNSTABLE_OOZE);
+        doCast(SPELL_UNSTABLE_OOZE);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5);
         m_creature->SetSpeedRate(MOVE_WALK, 0.5);
@@ -286,23 +280,23 @@ struct MANGOS_DLL_DECL  mob_big_oozeAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_STICKY_OOZE, uiDiff);
+        timedCast(SPELL_STICKY_OOZE, uiDiff);
 
-        if (Creature* pSmall = bsw->SelectNearestCreature(NPC_SMALL_OOZE,5.0f))
+        if (Creature* pSmall = doSelectNearestCreature(NPC_SMALL_OOZE,5.0f))
             {
                 pSmall->ForcedDespawn();
-                bsw->doCast(SPELL_UNSTABLE_OOZE);
+                doCast(SPELL_UNSTABLE_OOZE);
             };
 
-        if (Creature* pBig = bsw->SelectNearestCreature(NPC_BIG_OOZE, 8.0f))
+        if (Creature* pBig = doSelectNearestCreature(NPC_BIG_OOZE, 8.0f))
             {
                 pBig->ForcedDespawn();
-                bsw->doCast(SPELL_UNSTABLE_OOZE);
+                doCast(SPELL_UNSTABLE_OOZE);
             }
 
-        if ( bsw->auraCount(SPELL_UNSTABLE_OOZE_AURA) > 4 && !exploded)
+        if ( auraCount(SPELL_UNSTABLE_OOZE_AURA) > 4 && !exploded)
             {
-                bsw->doCast(SPELL_OOZE_EXPLODE);
+                doCast(SPELL_OOZE_EXPLODE);
                 exploded = true;
             }
 
@@ -385,18 +379,16 @@ CreatureAI* GetAI_mob_ooze_stalker(Creature* pCreature)
     return new mob_ooze_stalkerAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL  mob_ooze_explode_stalkerAI : public ScriptedAI
+struct MANGOS_DLL_DECL  mob_ooze_explode_stalkerAI : public BSWScriptedAI
 {
-    mob_ooze_explode_stalkerAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_ooze_explode_stalkerAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
     Creature* creator;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -405,8 +397,8 @@ struct MANGOS_DLL_DECL  mob_ooze_explode_stalkerAI : public ScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         SetCombatMovement(false);
         m_creature->SetInCombatWithZone();
-        bsw->doCast(SPELL_OOZE_EXPLODE_AURA);
-        creator = bsw->SelectNearestCreature(NPC_BIG_OOZE, 20.0f);
+        doCast(SPELL_OOZE_EXPLODE_AURA);
+        creator = doSelectNearestCreature(NPC_BIG_OOZE, 20.0f);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -417,7 +409,7 @@ struct MANGOS_DLL_DECL  mob_ooze_explode_stalkerAI : public ScriptedAI
         if (creator && creator->isAlive())
               creator->ForcedDespawn();
 
-        if (bsw->timedQuery(SPELL_OOZE_EXPLODE_AURA, uiDiff))
+        if (timedQuery(SPELL_OOZE_EXPLODE_AURA, uiDiff))
               m_creature->ForcedDespawn();
 
     }

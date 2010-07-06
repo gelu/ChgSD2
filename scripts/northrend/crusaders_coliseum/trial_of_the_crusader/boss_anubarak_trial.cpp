@@ -62,19 +62,17 @@ SPELL_BERSERK           = 26662,
 SPELL_PERMAFROST        = 66193,
 };
 
-struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_anubarak_trialAI : public BSWScriptedAI
 {
-    boss_anubarak_trialAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_anubarak_trialAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
     bool intro;
-    BossSpellWorker* bsw;
     Unit* pTarget;
 
     void Reset() {
@@ -132,60 +130,60 @@ struct MANGOS_DLL_DECL boss_anubarak_trialAI : public ScriptedAI
         switch(stage)
         {
             case 0: {
-                bsw->timedCast(SPELL_POUND, uiDiff);
-                bsw->timedCast(SPELL_COLD, uiDiff);
-                if (bsw->timedQuery(SUMMON_BORROWER, uiDiff)) {
-                        bsw->doCast(SUMMON_BORROWER);
+                timedCast(SPELL_POUND, uiDiff);
+                timedCast(SPELL_COLD, uiDiff);
+                if (timedQuery(SUMMON_BORROWER, uiDiff)) {
+                        doCast(SUMMON_BORROWER);
                         DoScriptText(-1713556,m_creature);
                         };
-                if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 1;
+                if (timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 1;
 
                     break;}
             case 1: {
-                    bsw->doCast(SPELL_SUBMERGE_0);
+                    doCast(SPELL_SUBMERGE_0);
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     break;}
             case 2: {
-                    if (bsw->timedQuery(SPELL_SPIKE_CALL, uiDiff)) {
+                    if (timedQuery(SPELL_SPIKE_CALL, uiDiff)) {
                          pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0);
-//                         bsw->doCast(SPELL_SPIKE_CALL);
+//                         doCast(SPELL_SPIKE_CALL);
 //                         This summon not supported in database. Temporary override.
-                         Unit* spike = bsw->doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,60000);
+                         Unit* spike = doSummon(NPC_SPIKE,TEMPSUMMON_TIMED_DESPAWN,60000);
                          if (spike) { spike->AddThreat(pTarget, 1000.0f);
                                       DoScriptText(-1713558,m_creature,pTarget);
-                                      bsw->doCast(SPELL_MARK,pTarget);
+                                      doCast(SPELL_MARK,pTarget);
                                       spike->GetMotionMaster()->MoveChase(pTarget);
                                      }
                          };
-                    if (bsw->timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
-                            bsw->doCast(SPELL_SUMMON_BEATLES);
-                            bsw->doCast(SUMMON_SCARAB);
+                    if (timedQuery(SPELL_SUMMON_BEATLES, uiDiff)) {
+                            doCast(SPELL_SUMMON_BEATLES);
+                            doCast(SUMMON_SCARAB);
                             DoScriptText(-1713560,m_creature);
                          };
-                    if (bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 3;
+                    if (timedQuery(SPELL_SUBMERGE_0, uiDiff)) stage = 3;
                     break;}
             case 3: {
                     stage = 0;
                     DoScriptText(-1713559,m_creature);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                    bsw->doRemove(SPELL_SUBMERGE_0,m_creature);
+                    doRemove(SPELL_SUBMERGE_0,m_creature);
                     break;}
             case 4: {
-                            bsw->doCast(SPELL_LEECHING_SWARM);
+                            doCast(SPELL_LEECHING_SWARM);
                             DoScriptText(-1713561,m_creature);
                     stage = 5;
                     break;}
             case 5: {
-                        bsw->timedCast(SPELL_POUND, uiDiff);
-                        bsw->timedCast(SPELL_COLD, uiDiff);
+                        timedCast(SPELL_POUND, uiDiff);
+                        timedCast(SPELL_COLD, uiDiff);
                         break;}
 
         }
-        bsw->timedCast(SUMMON_FROSTSPHERE, uiDiff);
+        timedCast(SUMMON_FROSTSPHERE, uiDiff);
 
-        bsw->timedCast(SPELL_BERSERK, uiDiff);
+        timedCast(SPELL_BERSERK, uiDiff);
 
         if (m_creature->GetHealthPercent() < 30.0f && stage == 0) stage = 4;
 
@@ -198,17 +196,15 @@ CreatureAI* GetAI_boss_anubarak_trial(Creature* pCreature)
     return new boss_anubarak_trialAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_swarm_scarabAI : public BSWScriptedAI
 {
-    mob_swarm_scarabAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_swarm_scarabAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -238,9 +234,9 @@ struct MANGOS_DLL_DECL mob_swarm_scarabAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_DETERMINATION, uiDiff);
+        timedCast(SPELL_DETERMINATION, uiDiff);
 
-        bsw->timedCast(SPELL_ACID_MANDIBLE, uiDiff);
+        timedCast(SPELL_ACID_MANDIBLE, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -251,18 +247,16 @@ CreatureAI* GetAI_mob_swarm_scarab(Creature* pCreature)
     return new mob_swarm_scarabAI(pCreature);
 };
 
-struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public BSWScriptedAI
 {
-    mob_nerubian_borrowerAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_nerubian_borrowerAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
     bool submerged;
-    BossSpellWorker* bsw;
     Unit* currentTarget;
 
     void Reset()
@@ -295,25 +289,25 @@ struct MANGOS_DLL_DECL mob_nerubian_borrowerAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_EXPOSE_WEAKNESS, uiDiff);
+        timedCast(SPELL_EXPOSE_WEAKNESS, uiDiff);
 
-        if (bsw->timedQuery(SPELL_SPIDER_FRENZY, uiDiff))
+        if (timedQuery(SPELL_SPIDER_FRENZY, uiDiff))
             if(Creature* pTemp = GetClosestCreatureWithEntry(m_creature, NPC_BURROWER, 50.0f))
             {
             currentTarget = pTemp;
-            bsw->doCast(SPELL_SPIDER_FRENZY);
+            doCast(SPELL_SPIDER_FRENZY);
             };
 
-        if (m_creature->GetHealthPercent() < 20.0f && bsw->timedQuery(SPELL_SUBMERGE_1, uiDiff) && !submerged)
+        if (m_creature->GetHealthPercent() < 20.0f && timedQuery(SPELL_SUBMERGE_1, uiDiff) && !submerged)
            {
-            bsw->doCast(SPELL_SUBMERGE_1);
+            doCast(SPELL_SUBMERGE_1);
             submerged = true;
             DoScriptText(-1713557,m_creature);
             };
 
         if (m_creature->GetHealthPercent() > 50.0f && submerged)
             {
-             bsw->doRemove(SPELL_SUBMERGE_1,m_creature);
+             doRemove(SPELL_SUBMERGE_1,m_creature);
              submerged = false;
              DoScriptText(-1713559,m_creature);
              };
@@ -327,17 +321,15 @@ CreatureAI* GetAI_mob_nerubian_borrower(Creature* pCreature)
     return new mob_nerubian_borrowerAI(pCreature);
 };
 
-struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_frost_sphereAI : public BSWScriptedAI
 {
-    mob_frost_sphereAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_frost_sphereAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -349,7 +341,7 @@ struct MANGOS_DLL_DECL mob_frost_sphereAI : public ScriptedAI
 
     void EnterCombat(Unit* attacker)
     {
-        bsw->doCast(SPELL_PERMAFROST);
+        doCast(SPELL_PERMAFROST);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -364,17 +356,15 @@ CreatureAI* GetAI_mob_frost_sphere(Creature* pCreature)
     return new mob_frost_sphereAI(pCreature);
 };
 
-struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public BSWScriptedAI
 {
-    mob_anubarak_spikeAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_anubarak_spikeAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     Unit* defaultTarget;
 
     void Reset()
@@ -389,7 +379,7 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
     void Aggro(Unit *who)
     {
         if (!m_pInstance) return;
-        bsw->doCast(SPELL_IMPALE);
+        doCast(SPELL_IMPALE);
         defaultTarget = who;
     }
 
@@ -398,15 +388,15 @@ struct MANGOS_DLL_DECL mob_anubarak_spikeAI : public ScriptedAI
         if (m_pInstance && m_pInstance->GetData(TYPE_ANUBARAK) != IN_PROGRESS) 
             m_creature->ForcedDespawn();
         if (defaultTarget)
-            if (!defaultTarget->isAlive() || !bsw->hasAura(SPELL_MARK,defaultTarget))
+            if (!defaultTarget->isAlive() || !hasAura(SPELL_MARK,defaultTarget))
                  m_creature->ForcedDespawn();
 
-/*        if (bsw->timedQuery(SPELL_IMPALE,uiDiff)) {
+/*        if (timedQuery(SPELL_IMPALE,uiDiff)) {
         if (m_creature->IsWithinDist(m_creature->getVictim(), 4.0f)
-            && !bsw->hasAura(SPELL_PERMAFROST,m_creature->getVictim()))
+            && !hasAura(SPELL_PERMAFROST,m_creature->getVictim()))
            {
-              bsw->doCast(SPELL_IMPALE);
-           }  else bsw->doRemove(SPELL_IMPALE);
+              doCast(SPELL_IMPALE);
+           }  else doRemove(SPELL_IMPALE);
         }*/
     }
 };

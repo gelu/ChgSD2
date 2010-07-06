@@ -56,18 +56,16 @@ enum BossSpells
 
 };
 
-struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
 {
-    boss_valanar_iccAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_valanar_iccAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
-    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-    bsw = new BossSpellWorker(this);
-    Reset();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
     }
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
-    BossSpellWorker* bsw;
     Creature* pBrother1;
     Creature* pBrother2;
     bool intro;
@@ -78,7 +76,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
         intro = false;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -173,12 +171,12 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public ScriptedAI
                  break;
          }
 
-        bsw->timedCast(SPELL_KINETIC_BOMB, uiDiff);
+        timedCast(SPELL_KINETIC_BOMB, uiDiff);
 
-        bsw->timedCast(SPELL_SHOCK_VORTEX, uiDiff);
+        timedCast(SPELL_SHOCK_VORTEX, uiDiff);
 
-        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, uiDiff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631305,m_creature);
                  };
 
@@ -191,18 +189,16 @@ CreatureAI* GetAI_boss_valanar_icc(Creature* pCreature)
     return new boss_valanar_iccAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL boss_taldaram_iccAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
 {
-    boss_taldaram_iccAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_taldaram_iccAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
-    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-    bsw = new BossSpellWorker(this);
-    Reset();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
     }
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
-    BossSpellWorker* bsw;
     Creature* pBrother1;
     Creature* pBrother2;
 
@@ -211,7 +207,7 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public ScriptedAI
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void JustReachedHome()
@@ -288,14 +284,14 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public ScriptedAI
                  break;
          }
 
-        bsw->timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
+        timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
 
-        bsw->timedCast(SPELL_CONJURE_FLAME, uiDiff);
+        timedCast(SPELL_CONJURE_FLAME, uiDiff);
 
-        bsw->timedCast(SPELL_FLAMES, uiDiff);
+        timedCast(SPELL_FLAMES, uiDiff);
 
-        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, uiDiff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631305,m_creature);
                  };
 
@@ -308,18 +304,16 @@ CreatureAI* GetAI_boss_taldaram_icc(Creature* pCreature)
     return new boss_taldaram_iccAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL boss_keleseth_iccAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
 {
-    boss_keleseth_iccAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_keleseth_iccAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
-    m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-    bsw = new BossSpellWorker(this);
-    Reset();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
     }
 
     ScriptedInstance* m_pInstance;
     uint8 stage;
-    BossSpellWorker* bsw;
     Creature* pBrother1;
     Creature* pBrother2;
 
@@ -327,7 +321,7 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public ScriptedAI
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         stage = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void JustReachedHome()
@@ -404,12 +398,12 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public ScriptedAI
                  break;
          }
 
-        bsw->timedCast(SPELL_SHADOW_LANCE, uiDiff);
+        timedCast(SPELL_SHADOW_LANCE, uiDiff);
 
-        bsw->timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
+        timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
 
-        if (bsw->timedQuery(SPELL_BERSERK, uiDiff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, uiDiff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631305,m_creature);
                  };
 

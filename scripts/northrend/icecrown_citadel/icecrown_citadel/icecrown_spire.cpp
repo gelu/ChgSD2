@@ -35,24 +35,22 @@ enum
         SPELL_DEATH_PLAGUE                      = 72865,
 };
 
-struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public BSWScriptedAI
 {
-    mob_spire_frostwyrmAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_spire_frostwyrmAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
     uint8 stage;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
         stage = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void UpdateAI(const uint32 diff)
@@ -63,23 +61,23 @@ struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public ScriptedAI
         switch(stage)
         {
             case 0: {
-                    bsw->timedCast(SPELL_SOUL_FEAST, diff);
+                    timedCast(SPELL_SOUL_FEAST, diff);
                     break;}
             case 1: {
-                    bsw->doCast(SPELL_BERSERK);
+                    doCast(SPELL_BERSERK);
                     stage = 2;
                     break;}
             case 2: {
                     break;}
             }
 
-                    bsw->timedCast(SPELL_CLEAVE, diff);
-                    bsw->timedCast(SPELL_BLIZZARD, diff);
-                    bsw->timedCast(SPELL_FROST_BREATH, diff);
+                    timedCast(SPELL_CLEAVE, diff);
+                    timedCast(SPELL_BLIZZARD, diff);
+                    timedCast(SPELL_FROST_BREATH, diff);
 
         if (m_creature->GetHealthPercent() < 10.0f && stage == 0) stage = 1;
 
-        bsw->timedCast(SPELL_BERSERK, diff);
+        timedCast(SPELL_BERSERK, diff);
 
         DoMeleeAttackIfReady();
 
@@ -91,18 +89,16 @@ CreatureAI* GetAI_mob_spire_frostwyrm(Creature* pCreature)
     return new mob_spire_frostwyrmAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_frost_giantAI : public BSWScriptedAI
 {
-    mob_frost_giantAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_frost_giantAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
     uint8 stage;
-    BossSpellWorker* bsw;
 
     void Aggro(Unit *who)
     {
@@ -125,7 +121,7 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
     {
         m_creature->SetRespawnDelay(7*DAY);
         stage = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void UpdateAI(const uint32 diff)
@@ -136,21 +132,21 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public ScriptedAI
         switch(stage)
         {
             case 0: {
-                    bsw->timedCast(SPELL_SOUL_FEAST, diff);
+                    timedCast(SPELL_SOUL_FEAST, diff);
                     break;}
             case 1: {
-                    bsw->doCast(SPELL_BERSERK);
+                    doCast(SPELL_BERSERK);
                     stage = 2;
                     break;}
             case 2: {
                     break;}
             }
-                    bsw->timedCast(SPELL_STOMP, diff);
-                    bsw->timedCast(SPELL_DEATH_PLAGUE, diff);
+                    timedCast(SPELL_STOMP, diff);
+                    timedCast(SPELL_DEATH_PLAGUE, diff);
 
         if (m_creature->GetHealthPercent() < 2.0f && stage == 0) stage = 1;
 
-        bsw->timedCast(SPELL_BERSERK, diff);
+        timedCast(SPELL_BERSERK, diff);
 
         DoMeleeAttackIfReady();
 

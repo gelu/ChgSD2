@@ -53,17 +53,15 @@ static Locations SpawnLoc[]=
 };
 
 
-struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
 {
-    boss_blood_queen_lanathelAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_blood_queen_lanathelAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     uint8 nextPoint;
     uint8 bloodbolts;
@@ -85,7 +83,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         movementstarted = false;
         MirrorMarked = NULL;
         MirrorTarget = NULL;
-        bsw->resetTimers();
+        resetTimers();
         memset(&Darkfallen, 0, sizeof(Darkfallen));
         darkfallened = 0;
         MirrorDamage = 0;
@@ -110,10 +108,10 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         }
 
         if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_1))
-           bsw->doRemove(SPELL_BLOOD_MIRROR_1,pVictim);
+           doRemove(SPELL_BLOOD_MIRROR_1,pVictim);
 
         if (pVictim && pVictim->HasAura(SPELL_BLOOD_MIRROR_2))
-           bsw->doRemove(SPELL_BLOOD_MIRROR_2,pVictim);
+           doRemove(SPELL_BLOOD_MIRROR_2,pVictim);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -139,7 +137,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         if(!pInstance) return; 
         pInstance->SetData(TYPE_LANATHEL, IN_PROGRESS);
 
-        bsw->doCast(SPELL_SHROUD_OF_SORROW);
+        doCast(SPELL_SHROUD_OF_SORROW);
 
         DoScriptText(-1631321,m_creature,who);
     }
@@ -159,9 +157,9 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
        {
           uint8 num = urand(3,5);
           for(uint8 i = 0; i <= num; ++i)
-              if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 60.0f))
+              if (Unit* pTarget = doSelectRandomPlayer(SPELL_PACT_OF_DARKFALLEN, false, 60.0f))
               {
-                  if (bsw->doCast(SPELL_PACT_OF_DARKFALLEN,pTarget) == CAST_OK)
+                  if (doCast(SPELL_PACT_OF_DARKFALLEN,pTarget) == CAST_OK)
                   {
                       Darkfallen[i] = pTarget;
                       ++darkfallened;
@@ -173,14 +171,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
           for(uint8 i = 0; i < darkfallened; ++i)
               if (Darkfallen[i])
               {
-                 if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
                     {
                     for(uint8 j = 0; j < darkfallened; ++j)
                        if (j != i && Darkfallen[j])
                        {
                           if(Darkfallen[j])
                           {
-                             if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
+                             if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[j]))
                                 {
                                     if (!Darkfallen[j]->IsWithinDistInMap(Darkfallen[i], 5.0f)) return;
                                 } else Darkfallen[j] = NULL;
@@ -189,8 +187,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                     } else Darkfallen[i] = NULL;
               }
           for(uint8 i = 0; i < darkfallened; ++i)
-                 if (bsw->hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
-                       bsw->doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
+                 if (hasAura(SPELL_PACT_OF_DARKFALLEN,Darkfallen[i]))
+                       doRemove(SPELL_PACT_OF_DARKFALLEN, Darkfallen[i]);
           darkfallened = 0;
        };
     }
@@ -200,39 +198,39 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         if (command)
         {
         if (MirrorMarked)
-            if (!bsw->hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
+            if (!hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
                MirrorMarked = NULL;
 
         if (MirrorTarget)
-            if (!bsw->hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
+            if (!hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
                MirrorTarget = NULL;
 
         if (!MirrorMarked && m_creature->getVictim())
            {
                MirrorMarked = m_creature->getVictim();
                if (MirrorMarked)
-                  bsw->doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+                  doCast(SPELL_BLOOD_MIRROR_1, MirrorMarked);
            }
 
         if (!MirrorTarget)
            {
-              MirrorTarget = bsw->SelectRandomPlayer(SPELL_BLOOD_MIRROR_1, false, 40.0f);
+              MirrorTarget = doSelectRandomPlayer(SPELL_BLOOD_MIRROR_1, false, 40.0f);
               if (MirrorTarget)
-                   bsw->doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+                   doCast(SPELL_BLOOD_MIRROR_2, MirrorTarget);
            }
         } else
         {
         if (MirrorMarked)
-            if (bsw->hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
+            if (hasAura(SPELL_BLOOD_MIRROR_1,MirrorMarked))
             {
-               bsw->doRemove(SPELL_BLOOD_MIRROR_1, MirrorMarked);
+               doRemove(SPELL_BLOOD_MIRROR_1, MirrorMarked);
                MirrorMarked = NULL;
             }
 
         if (MirrorTarget)
-            if (bsw->hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
+            if (hasAura(SPELL_BLOOD_MIRROR_2,MirrorTarget))
             {
-               bsw->doRemove(SPELL_BLOOD_MIRROR_2, MirrorTarget);
+               doRemove(SPELL_BLOOD_MIRROR_2, MirrorTarget);
                MirrorTarget = NULL;
             }
         }
@@ -287,18 +285,18 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
         {
             case 0: 
 
-                    bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
+                    timedCast(SPELL_SWARMING_SHADOWS, diff);
 
-                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 1;
+                    if (timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 1;
 
-                    if (bsw->timedQuery(SPELL_DELRIOUS_SLASH, diff))
+                    if (timedQuery(SPELL_DELRIOUS_SLASH, diff))
                         if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
-                            bsw->doCast(SPELL_DELRIOUS_SLASH, pTarget);
+                            doCast(SPELL_DELRIOUS_SLASH, pTarget);
 
-                    if (bsw->timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
+                    if (timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
                         doPactOfDarkfallen(true);
 
-                    if (bsw->timedQuery(SPELL_VAMPIRIC_BITE,diff))
+                    if (timedQuery(SPELL_VAMPIRIC_BITE,diff))
                         {
                            switch (urand(0,1)) {
                                case 0:
@@ -308,10 +306,10 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                                       DoScriptText(-1631323,m_creature);
                                       break;
                                }
-                           bsw->doCast(SPELL_VAMPIRIC_BITE);
+                           doCast(SPELL_VAMPIRIC_BITE);
                         }
 
-                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff) && m_creature->GetHealthPercent() > 10.0f)
+                    if (timedQuery(SPELL_BLOODBOLT_WHIRL,diff) && m_creature->GetHealthPercent() > 10.0f)
                         {
                             stage = 1;
                         };
@@ -335,19 +333,19 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
                     if (movementstarted) return;
                     DoScriptText(-1631327,m_creature);
                     stage = 3;
-                    bsw->doCast(SPELL_BLOODBOLT_WHIRL);
+                    doCast(SPELL_BLOODBOLT_WHIRL);
                     return;
             case 3:
-//                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 5;
+//                    if (timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bloodbolts = 5;
 
-                    if (bsw->timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) bsw->doCast(SPELL_BLOODBOLT_WHIRL);
+                    if (timedQuery(SPELL_TWILIGHT_BLOODBOLT, diff)) doCast(SPELL_BLOODBOLT_WHIRL);
 
-                    if (bsw->timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
+                    if (timedQuery(SPELL_PACT_OF_DARKFALLEN, diff))
                         doPactOfDarkfallen(true);
 
-                    bsw->timedCast(SPELL_SWARMING_SHADOWS, diff);
+                    timedCast(SPELL_SWARMING_SHADOWS, diff);
 
-                    if (bsw->timedQuery(SPELL_BLOODBOLT_WHIRL,diff) || m_creature->GetHealthPercent() < 10.0f)
+                    if (timedQuery(SPELL_BLOODBOLT_WHIRL,diff) || m_creature->GetHealthPercent() < 10.0f)
                         {
                             stage = 4;
                             DoScriptText(-1631325,m_creature);
@@ -378,12 +376,12 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public ScriptedAI
 
         if (bloodbolts > 0)
             {
-                bsw->doCast(SPELL_TWILIGHT_BLOODBOLT);
+                doCast(SPELL_TWILIGHT_BLOODBOLT);
                 --bloodbolts;
             };
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, diff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631332,m_creature);
                  };
 

@@ -43,17 +43,15 @@ enum
         SPELL_BONE_STORM_STRIKE                 = 69075,
 };
 
-struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
 {
-    boss_lord_marrowgarAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_lord_marrowgarAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool intro;
     uint8 flames;
@@ -63,7 +61,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         if(pInstance) pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
         stage = 0;
         flames = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -112,9 +110,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         switch(stage)
         {
             case 0: 
-                    if (bsw->timedQuery(SPELL_BONE_STRIKE, diff))
+                    if (timedQuery(SPELL_BONE_STRIKE, diff))
                         if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1))
-                            if (bsw->doCast(SPELL_BONE_STRIKE, pTarget) == CAST_OK)
+                            if (doCast(SPELL_BONE_STRIKE, pTarget) == CAST_OK)
                               {
                               switch (urand(0,1)) {
                                                    case 0:
@@ -130,51 +128,51 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
                                float fPosX, fPosY, fPosZ;
                                m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                               if (Unit* pSpike = bsw->doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ))
+                               if (Unit* pSpike = doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ))
                                    pSpike->AddThreat(pTarget, 100.0f);
                               };
                     if (m_creature->GetHealthPercent() <= 30.0f) stage = 1;
 
-                    if (bsw->timedQuery(SPELL_CALL_COLD_FLAME, diff)) flames = 2;
+                    if (timedQuery(SPELL_CALL_COLD_FLAME, diff)) flames = 2;
 
-                    bsw->timedCast(SPELL_SABER_LASH, diff);
+                    timedCast(SPELL_SABER_LASH, diff);
 
                     DoMeleeAttackIfReady();
 
                     break;
             case 1:
                     m_creature->InterruptNonMeleeSpells(true);
-                    bsw->doCast(SPELL_BONE_STORM);
+                    doCast(SPELL_BONE_STORM);
                     stage = 2;
                     DoScriptText(-1631002,m_creature);
                     break;
             case 2:
 
-                    if (bsw->timedQuery(SPELL_BONE_STORM, diff)) stage = 3;
+                    if (timedQuery(SPELL_BONE_STORM, diff)) stage = 3;
 
-                    bsw->timedCast(SPELL_BONE_STORM_STRIKE, diff);
+                    timedCast(SPELL_BONE_STORM_STRIKE, diff);
 
                     break;
 
             case 3:
-                    bsw->timedCast(SPELL_SABER_LASH, diff);
+                    timedCast(SPELL_SABER_LASH, diff);
                     DoMeleeAttackIfReady();
 
-                    if (bsw->timedQuery(SPELL_CALL_COLD_FLAME, diff)) flames = 4;
+                    if (timedQuery(SPELL_CALL_COLD_FLAME, diff)) flames = 4;
 
                     break;
             }
 
         if (flames > 0)
             {
-                if (urand(0,1)) bsw->doCast(SPELL_CALL_COLD_FLAME);
-                   else  bsw->doCast(SPELL_CALL_COLD_FLAME_1);
+                if (urand(0,1)) doCast(SPELL_CALL_COLD_FLAME);
+                   else  doCast(SPELL_CALL_COLD_FLAME_1);
                 --flames;
             };
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff))
+        if (timedQuery(SPELL_BERSERK, diff))
             {
-                bsw->doCast(SPELL_BERSERK);
+                doCast(SPELL_BERSERK);
                 DoScriptText(-1631008,m_creature);
             }
 
@@ -182,18 +180,16 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     }
 };
 
-struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_coldflameAI : public BSWScriptedAI
 {
-    mob_coldflameAI(Creature *pCreature) : ScriptedAI(pCreature)
+    mob_coldflameAI(Creature *pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
     uint32 m_uiRangeCheck_Timer;
-    BossSpellWorker* bsw;
     float fPosX, fPosY, fPosZ;
 
     void Reset()
@@ -205,7 +201,7 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
         m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
         SetCombatMovement(false);
         m_creature->SetSpeedRate(MOVE_RUN, 0.8f);
-        bsw->doCast(SPELL_COLD_FLAME_0);
+        doCast(SPELL_COLD_FLAME_0);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -225,23 +221,21 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        bsw->timedCast(SPELL_COLD_FLAME_0, uiDiff);
+        timedCast(SPELL_COLD_FLAME_0, uiDiff);
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
     }
 };
 
-struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
 {
-    mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
+    mob_bone_spikeAI(Creature *pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
-    BossSpellWorker* bsw;
     Unit* pVictim;
 
     void Reset()
@@ -263,24 +257,24 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+            doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void KilledUnit(Unit* _Victim)
     {
-        bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+        doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void JustDied(Unit* Killer)
     {
-        bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+        doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_MARROWGAR) != IN_PROGRESS)
         {
-            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+            doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->ForcedDespawn();
         }
 
@@ -288,7 +282,7 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 
         if(pVictim && !pVictim->isAlive())
         {
-//            bsw->doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
+//            doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->ForcedDespawn();
         }
 
@@ -297,7 +291,7 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
                  && pVictim->isAlive()
                  && !pVictim->HasAura(SPELL_BONE_STRIKE_IMPALE))
         {
-            bsw->doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
+            doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->GetMotionMaster()->Clear();
             SetCombatMovement(false);
         }

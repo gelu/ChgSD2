@@ -47,36 +47,32 @@ enum
 
 };
 
-struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 {
-    boss_deathbringer_saurfangAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_deathbringer_saurfangAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
-    uint8 Difficulty;
     uint8 beasts;
 
     void Reset()
     {
         if(!pInstance) return;
-        Difficulty = pInstance->GetData(TYPE_DIFFICULTY);
         pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
         stage = 0;
         beasts = 0;
-        bsw->resetTimers();
+        resetTimers();
     }
 
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
         DoScriptText(-1631100,m_creature);
-        bsw->doCast(SPELL_BLOOD_LINK);
+        doCast(SPELL_BLOOD_LINK);
     }
 
     void JustReachedHome()
@@ -121,7 +117,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
            if (Player* pPlayer = i->getSource())
                if (pPlayer && pPlayer->isAlive())
                   if (pPlayer->HasAura(SPELL_MARK))
-                     bsw->doRemove(SPELL_MARK,pPlayer);
+                     doRemove(SPELL_MARK,pPlayer);
     }
 
     void doBloodPower()
@@ -135,7 +131,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
             return;
 
         if (!m_creature->HasAura(SPELL_BLOOD_POWER))
-            bsw->doCast(SPELL_BLOOD_POWER);
+            doCast(SPELL_BLOOD_POWER);
 
         switch(stage)
         {
@@ -144,7 +140,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     break;
 
             case 1: 
-                        bsw->doCast(SPELL_FRENZY);
+                        doCast(SPELL_FRENZY);
                         stage = 2;
                         DoScriptText(-1631101,m_creature);
                     break;
@@ -156,37 +152,37 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                     break;
         }
 
-            if (bsw->timedQuery(SPELL_MARK, diff))
+            if (timedQuery(SPELL_MARK, diff))
             {
-                if (Unit* pTarget = bsw->SelectRandomPlayer(SPELL_MARK,false,120.0f))
-                   if (bsw->doCast(SPELL_MARK, pTarget) == CAST_OK) 
+                if (Unit* pTarget = doSelectRandomPlayer(SPELL_MARK,false,120.0f))
+                   if (doCast(SPELL_MARK, pTarget) == CAST_OK) 
                        doBloodPower();
             }
 
-            if (bsw->timedCast(SPELL_BLOOD_NOVA, diff) == CAST_OK) doBloodPower();
+            if (timedCast(SPELL_BLOOD_NOVA, diff) == CAST_OK) doBloodPower();
 
-            if (bsw->timedCast(SPELL_BOILING_BLOOD, diff) == CAST_OK) doBloodPower();
+            if (timedCast(SPELL_BOILING_BLOOD, diff) == CAST_OK) doBloodPower();
 
-            if (bsw->timedCast(SPELL_RUNE_OF_BLOOD, diff) == CAST_OK) doBloodPower();
+            if (timedCast(SPELL_RUNE_OF_BLOOD, diff) == CAST_OK) doBloodPower();
 
-            if (bsw->timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
+            if (timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
                     {
-                        if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                            || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 4;
+                        if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
+                            || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 4;
                             else beasts = 2;
 
                         DoScriptText(-1631102,m_creature);
                      };
 
                      if (beasts > 0)
-                        if (bsw->doCast(SPELL_CALL_BLOOD_BEASTS) == CAST_OK)
+                        if (doCast(SPELL_CALL_BLOOD_BEASTS) == CAST_OK)
                            {
                                doBloodPower();
                                --beasts;
                            };
 
-        if (bsw->timedQuery(SPELL_BERSERK, diff)){
-                 bsw->doCast(SPELL_BERSERK);
+        if (timedQuery(SPELL_BERSERK, diff)){
+                 doCast(SPELL_BERSERK);
                  DoScriptText(-1631108,m_creature);
                  };
 
@@ -199,25 +195,23 @@ CreatureAI* GetAI_boss_deathbringer_saurfang(Creature* pCreature)
     return new boss_deathbringer_saurfangAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
+struct MANGOS_DLL_DECL  mob_blood_beastAI : public BSWScriptedAI
 {
-    mob_blood_beastAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_blood_beastAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *pInstance;
     Creature* pOwner;
     bool scentcasted;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
          pOwner = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DEATHBRINGER_SAURFANG));
-         bsw->resetTimers();
-         bsw->doCast(SPELL_BLOOD_LINK_BEAST);
+         resetTimers();
+         doCast(SPELL_BLOOD_LINK_BEAST);
          scentcasted = false;
     }
 
@@ -236,12 +230,12 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
             return;
 
         if (!m_creature->HasAura(SPELL_RESISTANT_SKIN))
-            bsw->doCast(SPELL_RESISTANT_SKIN);
+            doCast(SPELL_RESISTANT_SKIN);
 
         if (!scentcasted && (m_creature->GetHealthPercent() <= 20.0f))
            {
                if (urand(0,1))                            //50%
-                   bsw->doCast(SPELL_SCENT_OF_BLOOD);
+                   doCast(SPELL_SCENT_OF_BLOOD);
                scentcasted = true;
            }
 

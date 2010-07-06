@@ -60,27 +60,22 @@ enum BossSpells
     SPELL_VOID_BUFF              = 71085, 
 };
 
-struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
 {
-    boss_valithria_dreamwalkerAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_valithria_dreamwalkerAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
-        pMap = m_creature->GetMap();
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool battlestarted;
     bool intro;
     uint8 currentDoor;
     uint8 currentDoor2;
     int8 portalscount;
-    Map* pMap;
     std::list<uint64> mobsGUIDList;
-    uint8 Difficulty;
     uint32 speedK;
 
     void Reset()
@@ -88,9 +83,9 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         if(!pInstance) return;
         m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
         pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
-        bsw->resetTimers();
+        resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
-        bsw->doCast(SPELL_CORRUPTION);
+        doCast(SPELL_CORRUPTION);
         SetCombatMovement(false);
         stage = 0;
         speedK = 0;
@@ -100,7 +95,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         currentDoor = 0;
         currentDoor2 = 0;
         mobsGUIDList.clear();
-        Difficulty = pMap->GetDifficulty();
         if (Unit* pTemp = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_VALITHRIA_QUEST)))
                 if (pTemp->GetVisibility() == VISIBILITY_ON)
                             pTemp->SetVisibility(VISIBILITY_OFF);
@@ -151,7 +145,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         uint8 mobs;
         uint32 randommob;
 
-        switch (Difficulty) {
+        switch (currentDifficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
                                        mobs = urand(1,3);
                                        break;
@@ -179,7 +173,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                               case 4: randommob = NPC_GLUTTONOUS_ABOMINATION;break;
                               default: randommob = NPC_RISEN_ARCHMAGE;       break;
                               }
-                       if (Unit* pTemp = bsw->doSummon(randommob, SpawnLoc[door].x, SpawnLoc[door].y, SpawnLoc[door].z, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000))
+                       if (Unit* pTemp = doSummon(randommob, SpawnLoc[door].x, SpawnLoc[door].y, SpawnLoc[door].z, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 300000))
                             mobsGUIDList.push_back(pTemp->GetGUID());
                        }
     }
@@ -219,7 +213,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         if (!intro)  {
                      DoScriptText(-1631401,m_creature,pWho);
                      intro = true;
-                     bsw->doCast(SPELL_IMMUNITY);
+                     doCast(SPELL_IMMUNITY);
                      }
         if (!battlestarted && pWho->isAlive() && pWho->IsWithinDistInMap(m_creature, 40.0f))  {
                      DoScriptText(-1631401,m_creature,pWho);
@@ -300,8 +294,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
-        if (!bsw->hasAura(SPELL_CORRUPTION,m_creature) && stage == 0)
-             bsw->doCast(SPELL_CORRUPTION);
+        if (!hasAura(SPELL_CORRUPTION,m_creature) && stage == 0)
+             doCast(SPELL_CORRUPTION);
 
         if (!battlestarted) return;
 
@@ -329,21 +323,21 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                     break;
             case 5: 
                     DoScriptText(-1631408,m_creature);
-                    if (bsw->hasAura(SPELL_CORRUPTION,m_creature)) bsw->doRemove(SPELL_CORRUPTION);
+                    if (hasAura(SPELL_CORRUPTION,m_creature)) doRemove(SPELL_CORRUPTION);
                     stage = 6;
                     return;
                     break;
             case 6: 
-                    if (bsw->timedQuery(SPELL_CORRUPTION, diff)) stage = 7;
+                    if (timedQuery(SPELL_CORRUPTION, diff)) stage = 7;
                     return;
                     break;
             case 7: 
-                    bsw->doCast(SPELL_DREAMWALKER_RAGE);
+                    doCast(SPELL_DREAMWALKER_RAGE);
                     stage = 8;
                     return;
                     break;
             case 8: 
-                    if (bsw->timedQuery(SPELL_CORRUPTION, diff)) stage = 9;
+                    if (timedQuery(SPELL_CORRUPTION, diff)) stage = 9;
                     return;
                     break;
             case 9: 
@@ -363,11 +357,11 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
         } 
 
 
-        if (bsw->timedQuery(NPC_RISEN_ARCHMAGE, (uint32)(diff + diff*(speedK/100)))) {
+        if (timedQuery(NPC_RISEN_ARCHMAGE, (uint32)(diff + diff*(speedK/100)))) {
                 if (urand(0,1) == 1) DoScriptText(-1631402,m_creature);
                 speedK = speedK+10;
-                if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL 
-                   || Difficulty == RAID_DIFFICULTY_25MAN_HEROIC) {
+                if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL 
+                   || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) {
                                                         CloseDoor(GetDoor(currentDoor2));
                                                         currentDoor2 = urand(1,2);
                                                         OpenDoor(GetDoor(currentDoor2));
@@ -385,17 +379,17 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public ScriptedAI
                                                         }
                                                         };
 
-        if (bsw->timedQuery(SPELL_NIGHTMARE_PORTAL, diff) || portalscount > 0) 
+        if (timedQuery(SPELL_NIGHTMARE_PORTAL, diff) || portalscount > 0) 
                                                         {
                                                         if (!portalscount) {
                                                                            portalscount = 3;
                                                                            DoScriptText(-1631405,m_creature);
                                                                            };
-                                                        bsw->doCast(SPELL_NIGHTMARE_PORTAL);
+                                                        doCast(SPELL_NIGHTMARE_PORTAL);
                                                         --portalscount;
                                                         };
 
-        bsw->timedCast(SPELL_ICE_SPIKE, diff);
+        timedCast(SPELL_ICE_SPIKE, diff);
 
         return;
     }
@@ -406,18 +400,16 @@ CreatureAI* GetAI_boss_valithria_dreamwalker(Creature* pCreature)
     return new boss_valithria_dreamwalkerAI(pCreature);
 };
 
-struct MANGOS_DLL_DECL mob_nightmare_portalAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_nightmare_portalAI : public BSWScriptedAI
 {
-    mob_nightmare_portalAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    mob_nightmare_portalAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
     bool portalcasted;
-    BossSpellWorker* bsw;
 
     void Reset()
     {
@@ -434,10 +426,10 @@ struct MANGOS_DLL_DECL mob_nightmare_portalAI : public ScriptedAI
 
         if (pWho->isAlive() && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 2.0f))
                  {
-                 bsw->doCast(SPELL_EMERALD_VIGOR, pWho);
-                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_0);
-                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_1);
-                 bsw->doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_2);
+                 doCast(SPELL_EMERALD_VIGOR, pWho);
+                 doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_0);
+                 doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_1);
+                 doAura(SPELL_EMERALD_VIGOR, pWho,EFFECT_INDEX_2);
                  portalcasted = true;
                  }
     }
