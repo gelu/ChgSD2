@@ -61,7 +61,7 @@ enum BossSpells
 //
     VIEW_1                        = 30881,
     VIEW_2                        = 30881,
-    VIEW_3                        = 30881,
+    VIEW_3                        = 30993,
 };
 
 static Locations SpawnLoc[]=
@@ -308,6 +308,9 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                           doCast(SPELL_MALLEABLE_GOO);
                        }
 
+                    if (m_creature->GetDisplayId() != VIEW_2)
+                        m_creature->SetDisplayId(VIEW_2);
+
                     DoMeleeAttackIfReady();
 
                     if (m_creature->GetHealthPercent() < 35.0f ) stage = 5;
@@ -327,9 +330,12 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                     stage = 7;
                     break;
             case 7:
-                    if (m_creature->IsNonMeleeSpellCasted(true,false,false) ||
-                    !doSelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
+                    if (m_creature->IsNonMeleeSpellCasted(true,false,false)) return;
+                    if (m_creature->GetDisplayId() != VIEW_3)
+                        m_creature->SetDisplayId(VIEW_3);
+                    if (!doSelectRandomPlayer(SPELL_TEAR_GAS_1, false)) return;
                     DoScriptText(-1631247,m_creature);
+                    m_creature->SetDisplayId(VIEW_3);
                     doCast(SPELL_MUTATED_STRENGTH);
                     m_creature->GetMotionMaster()->Clear();
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
@@ -353,13 +359,13 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
                     if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
-                          m_creature->SetDisplayId(VIEW_3);
                           doCast(SPELL_MALLEABLE_GOO);
                        }
+
+
                     DoMeleeAttackIfReady();
 
                     break;
-
             default:
                     break;
             }

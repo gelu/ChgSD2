@@ -64,11 +64,11 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
 {
     boss_valithria_dreamwalkerAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        pInstance = (instance_icecrown_spire*)pCreature->GetInstanceData();
         Reset();
     }
 
-    ScriptedInstance *pInstance;
+    instance_icecrown_spire* pInstance;
     uint8 stage;
     bool battlestarted;
     bool intro;
@@ -119,24 +119,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                return 0;
                break;
         };
-    }
-
-    void OpenDoor(uint64 guid)
-    {
-        if(!guid) return;
-
-        if (Map* pMap = m_creature->GetMap())
-           if (GameObject* pGo = pMap->GetGameObject(guid))
-              pGo->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
-    }
-
-    void CloseDoor(uint64 guid)
-    {
-        if(!guid) return;
-
-        if (Map* pMap = m_creature->GetMap())
-           if (GameObject* pGo = pMap->GetGameObject(guid))
-              pGo->SetGoState(GO_STATE_READY);
     }
 
     void CallMobs(uint8 door)
@@ -199,8 +181,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
               if (m_creature->isAlive())
                   m_creature->GetMotionMaster()->MoveTargetedHome();
               m_creature->SetLootRecipient(NULL);
-              CloseDoor(GetDoor(currentDoor));
-              CloseDoor(GetDoor(currentDoor2));
+              pInstance->CloseDoor(GetDoor(currentDoor));
+              pInstance->CloseDoor(GetDoor(currentDoor2));
               Reset();
     }
 
@@ -362,19 +344,19 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                 speedK = speedK+10;
                 if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL 
                    || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) {
-                                                        CloseDoor(GetDoor(currentDoor2));
+                                                        pInstance->CloseDoor(GetDoor(currentDoor2));
                                                         currentDoor2 = urand(1,2);
-                                                        OpenDoor(GetDoor(currentDoor2));
+                                                        pInstance->OpenDoor(GetDoor(currentDoor2));
                                                         CallMobs(currentDoor2);
 
-                                                        CloseDoor(GetDoor(currentDoor));
+                                                        pInstance->CloseDoor(GetDoor(currentDoor));
                                                         currentDoor = urand(3,4);
-                                                        OpenDoor(GetDoor(currentDoor));
+                                                        pInstance->OpenDoor(GetDoor(currentDoor));
                                                         CallMobs(currentDoor);
                                                         } else {
-                                                        CloseDoor(GetDoor(currentDoor));
+                                                        pInstance->CloseDoor(GetDoor(currentDoor));
                                                         currentDoor = urand(1,4);
-                                                        OpenDoor(GetDoor(currentDoor));
+                                                        pInstance->OpenDoor(GetDoor(currentDoor));
                                                         CallMobs(currentDoor);
                                                         }
                                                         };
