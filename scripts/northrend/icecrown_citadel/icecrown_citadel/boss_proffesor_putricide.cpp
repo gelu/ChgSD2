@@ -27,7 +27,7 @@ EndScriptData */
 
 enum BossSpells
 {
-    SPELL_UNSTABLE_EXPERIMENT     = 71968,
+    SPELL_UNSTABLE_EXPERIMENT     = 70351, // Script effect not work on 10154. Spawn manually.
     SPELL_TEAR_GAS                = 71617,
     SPELL_TEAR_GAS_1              = 71615,
     SPELL_TEAR_GAS_2              = 71618,
@@ -36,6 +36,7 @@ enum BossSpells
     SPELL_GUZZLE_POTIONS          = 71893,
     SPELL_MUTATED_STRENGTH        = 71603,
     SPELL_MUTATED_PLAGUE          = 72672,
+    SPELL_OOZE_THROW              = 70342, // is triggered spell
 //
     SPELL_GREEN_BOTTLE_0          = 71826,
     SPELL_ORANGE_BOTTLE_0         = 71827,
@@ -105,12 +106,14 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
     uint32 UpdateTimer;
     bool movementstarted;
     uint8 nextPoint;
+    uint8 slimetype;
 
     void Reset()
     {
         if (!pInstance) return;
         pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
         stage = 0;
+        slimetype = 0;
         intro = false;
         movementstarted = false;
         UpdateTimer = 1000;
@@ -188,6 +191,24 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
         movementstarted = true;
     }
 
+    void CallOoze()
+    {
+         if (doCast(SPELL_UNSTABLE_EXPERIMENT) == CAST_OK)
+             switch(slimetype)
+             {
+                 case 0:
+                     doSummon(NPC_VOLATILE_OOZE);
+                     slimetype = 1;
+                     break;
+                 case 1:
+                     doSummon(NPC_GAS_CLOUD);
+                     slimetype = 0;
+                     break;
+
+                 default: break;
+              }
+    }
+
     void JustReachedHome()
     {
         if (pInstance) pInstance->SetData(TYPE_PUTRICIDE, FAIL);
@@ -257,17 +278,9 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
             case 0: 
 
                     if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
-                        switch(urand(0,1))
-                          {
-                          case 0:
-                                 doSummon(NPC_VOLATILE_OOZE);
-                                 break;
-                          case 1:
-                                 doSummon(NPC_GAS_CLOUD);
-                                 break;
-                          }
+                        CallOoze();
 
-                    timedCast(NPC_OOZE_PUDDLE, diff);
+                    timedCast(SPELL_OOZE_THROW, diff);
 
                     if (timedQuery(SPELL_MALLEABLE_GOO, diff))
                        {
@@ -306,16 +319,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
             case 4: 
 
                     if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
-                        switch(urand(0,1))
-                          {
-                          case 0:
-                                 doSummon(NPC_VOLATILE_OOZE);
-                                 break;
-                          case 1:
-                                 doSummon(NPC_GAS_CLOUD);
-                                 break;
-                          default: break;
-                          }
+                        CallOoze();
 
                     if (timedQuery(SPELL_THROW_BOTTLE_1, diff))
                         switch(urand(0,2))
@@ -332,7 +336,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                           default: break;
                           }
 
-                    timedCast(NPC_OOZE_PUDDLE, diff);
+                    timedCast(SPELL_OOZE_THROW, diff);
 
                     timedCast(SPELL_MALLEABLE_GOO, diff);
 
@@ -409,13 +413,24 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
     ScriptedInstance* m_pInstance;
     Unit* pTarget;
     bool expunded;
+    uint32 delay;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(7*DAY);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.5);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.2);
         pTarget = NULL;
         expunded = false;
+        delay = 10000;
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if (!m_pInstance) return;
+        if (pTarget && pTarget->isAlive())
+            doRemove(SPELL_GASEOUS_BLOAT, pTarget);
     }
 
     void Aggro(Unit *who)
@@ -425,10 +440,15 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
         if (!pTarget || pTarget != who ) pTarget = who;
            else return;
 
-        doCast(SPELL_OOZE_TANK_PROTECTION, pTarget);
-        if (!hasAura(SPELL_GASEOUS_BLOAT, pTarget))
-             doCast(SPELL_GASEOUS_BLOAT, pTarget);
-             DoStartMovement(who);
+        delay = 10000;
+
+        if (pTarget)
+        {
+            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_0);
+            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_1);
+            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_2);
+        }
+        DoStartMovement(who);
     }
 
     void JustReachedHome()
@@ -447,21 +467,25 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
 
         if (expunded) m_creature->ForcedDespawn();
 
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || !pTarget)
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (!pTarget) Aggro(m_creature->getVictim());
 
         if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
             doCast(SPELL_SOUL_FEAST);
         }
 
-        if (pTarget->IsWithinDistInMap(m_creature, 3.0f)
-            && hasAura(SPELL_GASEOUS_BLOAT, pTarget))
+        if (delay <= uiDiff)
+        {
+            if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(m_creature, 3.0f))
             {
                doCast(SPELL_EXPUNGED_GAS, pTarget);
+               doRemove(SPELL_GASEOUS_BLOAT, pTarget);
                expunded = true;
             };
+        } else delay -= uiDiff;
     }
 };
 
@@ -480,12 +504,25 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
 
     ScriptedInstance* m_pInstance;
     Unit* pTarget;
+    bool finita;
+    uint32 delay;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(7*DAY);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.5);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.2);
         pTarget = NULL;
+        finita = false;
+        delay = 10000;
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if (!m_pInstance) return;
+        if (pTarget && pTarget->isAlive())
+            doRemove(SPELL_OOZE_ADHESIVE, pTarget);
     }
 
     void Aggro(Unit *who)
@@ -495,10 +532,14 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
         if (!pTarget || pTarget != who ) pTarget = who;
            else return;
 
-        doCast(SPELL_OOZE_TANK_PROTECTION, pTarget);
+        delay = 10000;
 
-        if (!hasAura(SPELL_OOZE_ADHESIVE, pTarget))
-            doCast(SPELL_OOZE_ADHESIVE, pTarget);
+        if (pTarget)
+        {
+            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_0);
+            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_1);
+            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_2);
+        }
 
         DoStartMovement(pTarget);
     }
@@ -513,24 +554,28 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     {
         if (!m_pInstance ) return;
 
-        if(m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
+        if ((m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS) || finita)
             m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (!pTarget) Aggro(m_creature->getVictim());
 
         if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
             doCast(SPELL_SOUL_FEAST);
         }
 
-        if (timedQuery(SPELL_OOZE_ERUPTION, uiDiff))
-             if (m_creature->getVictim()->IsWithinDistInMap(m_creature, 3.0f)
-                && hasAura(SPELL_OOZE_ADHESIVE, m_creature->getVictim()))
-                {
-                    doCast(SPELL_OOZE_ERUPTION);
-                    m_creature->ForcedDespawn();
-                };
+        if (delay <= uiDiff)
+        {
+            if (pTarget && pTarget->isAlive() && pTarget->IsWithinDistInMap(m_creature, 3.0f))
+            {
+                doCast(SPELL_OOZE_ERUPTION);
+                doRemove(SPELL_OOZE_ADHESIVE, pTarget);
+                finita = true;
+            };
+        } else delay -= uiDiff;
     }
 };
 
