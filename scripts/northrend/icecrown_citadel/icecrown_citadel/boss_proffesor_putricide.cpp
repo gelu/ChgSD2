@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_proffesor_putricide
-SD%Complete: 60%
+SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -42,6 +42,10 @@ enum BossSpells
     SPELL_GREEN_BOTTLE_1          = 71702,
     SPELL_ORANGE_BOTTLE_1         = 71703,
 //
+    SPELL_THROW_BOTTLE_1          = 71273,
+    SPELL_THROW_BOTTLE_2          = 71275,
+    SPELL_THROW_BOTTLE_3          = 71276,
+//
     NPC_GAS_CLOUD                 = 37562,
     SPELL_GASEOUS_BLOAT           = 70672,
     SPELL_EXPUNGED_GAS            = 70701,
@@ -49,9 +53,11 @@ enum BossSpells
 //
     NPC_VOLATILE_OOZE             = 37697,
     SPELL_OOZE_ADHESIVE           = 70447,
-    SPELL_OOZE_ADHESIVE_1         = 71530,
-    SPELL_OOZE_ADHESIVE_2         = 71770,
     SPELL_OOZE_ERUPTION           = 70492,
+//
+    SPELL_OOZE_GAS_PROTECTION     = 70812,
+    SPELL_OOZE_BEAM_PROTECTION    = 71530,
+    SPELL_OOZE_TANK_PROTECTION    = 71770,
 //
     NPC_MUTATED_ABOMINATION       = 37672,
     SPELL_MUTATED_TRANSFORMATION  = 70311,
@@ -64,7 +70,8 @@ enum BossSpells
     SPELL_CHOKING_GAS             = 71259,
     SPELL_CHOKING_GAS_AURA        = 71278,
     SPELL_CHOKING_GAS_EXPLODE     = 71279,
-    SPELL_ORANGE_RADIATION        = 45857,
+    SPELL_CHOKING_GAS_EXPLODE_TRIGGER     = 71280,
+    SPELL_ORANGE_RADIATION        = 45857, //Additional visual
 //
     NPC_OOZE_PUDDLE               = 37690,
     SPELL_SLIME_PUDDLE            = 70343,
@@ -273,6 +280,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
                     break;
             case 1: 
+                    m_creature->InterruptNonMeleeSpells(true);
                     m_creature->AttackStop();
                     SetCombatMovement(false);
                     doCast(SPELL_TEAR_GAS_1);
@@ -306,9 +314,23 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                           case 1:
                                  doSummon(NPC_GAS_CLOUD);
                                  break;
+                          default: break;
                           }
 
-                    timedCast(NPC_CHOKING_GAS_BOMB, diff);
+                    if (timedQuery(SPELL_THROW_BOTTLE_1, diff))
+                        switch(urand(0,2))
+                          {
+                          case 0:
+                                 doCast(SPELL_THROW_BOTTLE_1);
+                                 break;
+                          case 1:
+                                 doCast(SPELL_THROW_BOTTLE_2);
+                                 break;
+                          case 2:
+                                 doCast(SPELL_THROW_BOTTLE_3);
+                                 break;
+                          default: break;
+                          }
 
                     timedCast(NPC_OOZE_PUDDLE, diff);
 
@@ -328,6 +350,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
                     break;
             case 5:
+                    m_creature->InterruptNonMeleeSpells(true);
                     m_creature->AttackStop();
                     SetCombatMovement(false);
                     doCast(SPELL_TEAR_GAS_1);
@@ -354,27 +377,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                     stage = 8;
                     break;
             case 8:
-                    if (timedQuery(SPELL_UNSTABLE_EXPERIMENT, diff))
-                        switch(urand(0,1))
-                          {
-                          case 0:
-                                 doSummon(NPC_VOLATILE_OOZE);
-                                 break;
-                          case 1:
-                                 doSummon(NPC_GAS_CLOUD);
-                                 break;
-                          }
-                    timedCast(NPC_CHOKING_GAS_BOMB, diff);
-
-                    timedCast(NPC_OOZE_PUDDLE, diff);
-
                     timedCast(SPELL_MUTATED_PLAGUE, diff);
-
-                    if (timedQuery(SPELL_MALLEABLE_GOO, diff))
-                       {
-                          doCast(SPELL_MALLEABLE_GOO);
-                       }
-
 
                     DoMeleeAttackIfReady();
 
@@ -418,8 +421,11 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
     void Aggro(Unit *who)
     {
         if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
+
         if (!pTarget || pTarget != who ) pTarget = who;
            else return;
+
+        doCast(SPELL_OOZE_TANK_PROTECTION, pTarget);
         if (!hasAura(SPELL_GASEOUS_BLOAT, pTarget))
              doCast(SPELL_GASEOUS_BLOAT, pTarget);
              DoStartMovement(who);
@@ -439,10 +445,11 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
         if(m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
+        if (expunded) m_creature->ForcedDespawn();
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || !pTarget)
             return;
 
-        if (expunded) m_creature->ForcedDespawn();
 
         if (timedQuery(SPELL_SOUL_FEAST, uiDiff))
         {
@@ -472,18 +479,28 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
+    Unit* pTarget;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+        pTarget = NULL;
     }
 
     void Aggro(Unit *who)
     {
-        if (!m_pInstance || who->GetTypeId() != TYPEID_PLAYER) return;
-        doCast(SPELL_OOZE_ADHESIVE, who);
-        DoStartMovement(who);
+        if (!m_pInstance || !who || who->GetTypeId() != TYPEID_PLAYER) return;
+
+        if (!pTarget || pTarget != who ) pTarget = who;
+           else return;
+
+        doCast(SPELL_OOZE_TANK_PROTECTION, pTarget);
+
+        if (!hasAura(SPELL_OOZE_ADHESIVE, pTarget))
+            doCast(SPELL_OOZE_ADHESIVE, pTarget);
+
+        DoStartMovement(pTarget);
     }
 
     void JustReachedHome()
@@ -531,21 +548,20 @@ struct MANGOS_DLL_DECL mob_choking_gas_bombAI : public ScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint32 boom_timer;
     bool finita;
+    uint32 copy_timer;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();
         m_creature->SetDisplayId(11686);
-        m_creature->SetObjectScale(0.5f);
         SetCombatMovement(false);
-        boom_timer = 20000;
-        finita = false;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->CastSpell(m_creature, SPELL_ORANGE_RADIATION, false);
+        finita = false;
+        copy_timer = 8000;
     }
 
     void AttackStart(Unit *pWho)
@@ -553,22 +569,44 @@ struct MANGOS_DLL_DECL mob_choking_gas_bombAI : public ScriptedAI
         return;
     }
 
+    void JustReachedHome()
+    {
+        return;
+    }
+
+    void JustDied(Unit *killer)
+    {
+        if (finita) return;
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance) return;
 
-        if (m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS || finita)
+        if (m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
-        if (!m_creature->HasAura(SPELL_CHOKING_GAS_AURA))
+        if (!m_creature->HasAura(SPELL_CHOKING_GAS))
             m_creature->CastSpell(m_creature, SPELL_CHOKING_GAS, false);
 
-        if (boom_timer <= uiDiff)
+        if (!finita && m_creature->HasAura(SPELL_CHOKING_GAS_EXPLODE_TRIGGER))
         {
-            m_creature->CastSpell(m_creature,SPELL_CHOKING_GAS_EXPLODE,false);
+//            m_creature->CastSpell(m_creature,SPELL_CHOKING_GAS_EXPLODE,false);
             finita = true;
         }
-        else boom_timer -= uiDiff;
+
+        if (!finita)
+        {
+            if (copy_timer <= uiDiff)
+            {
+                float fPosX, fPosY, fPosZ;
+                m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                if (Creature* pCopy = m_creature->SummonCreature(m_creature->GetEntry(), fPosX, fPosY, fPosZ, 0, TEMPSUMMON_TIMED_DESPAWN, 11200))
+                     pCopy->CastSpell(pCopy, SPELL_CHOKING_GAS_EXPLODE_TRIGGER, false);
+                copy_timer = 3600000;
+            } else copy_timer -= uiDiff;
+        }
+
     }
 
 };
@@ -617,11 +655,11 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_PUTRICIDE) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
-        if (!m_creature->HasAura(SPELL_SLIME_PUDDLE_AURA))
+        if (!m_creature->HasAura(SPELL_SLIME_PUDDLE))
             m_creature->CastSpell(m_creature, SPELL_SLIME_PUDDLE, false);
 
         // Override especially for clean core
-                   if (m_Size / m_Size0 >= 3.0f) m_creature->ForcedDespawn();
+                   if (m_Size / m_Size0 >= 2.0f) m_creature->ForcedDespawn();
 
         if (grow_timer <= uiDiff)
         {
