@@ -16,10 +16,12 @@
 
 /* ScriptData
 SDName: boss_ragefire
-SD%Complete: 0%
-SDComment: by /dev/rsa
+SD%Complete: 50%
+SDComment: by notagain, corrected by /dev/rsa
 SDCategory: ruby_sanctum
 EndScriptData */
+
+//TODO: work on air phase movement/cast/co-ords, sql spells, sql npcs, TEST
 
 #include "precompiled.h"
 #include "def_ruby_sanctum.h"
@@ -27,6 +29,10 @@ EndScriptData */
 enum BossSpells
 {
     SPELL_TWILIGHT_PRECISION         = 78243,
+    SPELL_ENRAGE                     = 78722, //soft enrage
+    SPELL_FLAME_BREATH               = 74404,
+    SPELL_BEACON                     = 74453, //mark for conflag
+    SPELL_CONFLAG                    = 74452,
 };
 
 struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
@@ -38,13 +44,16 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
+    uint8 phase;
 
     void Reset()
     {
-        if(!pInstance) return;
+        if(!pInstance)
+            return;
+
         pInstance->SetData(TYPE_RAGEFIRE, NOT_STARTED);
         resetTimers();
+        phase = 0;
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -53,24 +62,26 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if (type != POINT_MOTION_TYPE) return;
+        if (type != POINT_MOTION_TYPE)
+            return;
     }
 
     void KilledUnit(Unit* pVictim)
     {
-/*    switch (urand(0,1)) {
+    switch (urand(0,1)) {
         case 0:
-               DoScriptText(-1631006,m_creature,pVictim);
+               DoScriptText(-1666401,m_creature,pVictim);
                break;
         case 1:
-               DoScriptText(-1631007,m_creature,pVictim);
+               DoScriptText(-1666402,m_creature,pVictim);
                break;
-        };*/
+        };
     }
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_RAGEFIRE, FAIL);
+        if (pInstance)
+            pInstance->SetData(TYPE_RAGEFIRE, FAIL);
     }
 
     void JustSummoned(Creature* summoned)
@@ -79,12 +90,21 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_RAGEFIRE, IN_PROGRESS);
+        if(pInstance)
+            pInstance->SetData(TYPE_RAGEFIRE, IN_PROGRESS);
+
+        m_creature->SetInCombatWithZone();
+        pInstance->SetData(TYPE_RAGEFIRE, IN_PROGRESS);
+        DoScriptText(-1666400,m_creature);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_RAGEFIRE, DONE);
+        if(pInstance)
+            pInstance->SetData(TYPE_RAGEFIRE, DONE);
+
+        DoScriptText(-1666403,m_creature);
+        pInstance->SetData(TYPE_BALTHARUS, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -94,10 +114,56 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
         timedCast(SPELL_TWILIGHT_PRECISION, diff);
 
+        if ( m_creature->GetHealthPercent() <= 80.0f && phase == 0)
+        {
+            phase = 1;
+        }
+        if ( m_creature->GetHealthPercent() <= 60.0f && phase == 1)
+        {
+            phase = 2;
+        }
+        if ( m_creature->GetHealthPercent() <= 40.0f && phase == 2)
+        {
+           phase = 3;
+        }
+        if ( m_creature->GetHealthPercent() <= 20.0f && phase == 3)
+        {
+           phase = 4;
+        }
+
+        switch (phase)
+        {
+            case 0: //GROUND
+                 doCast(SPELL_FLAME_BREATH);
+                 doCast(SPELL_ENRAGE);
+                 break;
+            case 1: //AIR
+                    //NEED SCRIPT AIR MOVEMENT
+                DoScriptText(-1666404,m_creature);
+                doCast(SPELL_BEACON);
+                doCast(SPELL_CONFLAG);
+                break;
+            case 2: //GROUND
+                doCast(SPELL_FLAME_BREATH);
+                doCast(SPELL_ENRAGE);
+                break;
+            case 3: //AIR
+                    //NEED SCRIPT AIR MOVEMENT
+                DoScriptText(-1666404,m_creature);
+                doCast(SPELL_BEACON);
+                doCast(SPELL_CONFLAG);
+                break;
+            case 4: //GROUND
+                doCast(SPELL_FLAME_BREATH);
+                doCast(SPELL_ENRAGE);
+                break;
+            default:
+                break;
+        }
+
         DoMeleeAttackIfReady();
     }
 };
-
 
 CreatureAI* GetAI_boss_ragefire(Creature* pCreature)
 {
