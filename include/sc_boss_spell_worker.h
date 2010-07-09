@@ -7,6 +7,7 @@
 
 #include "Player.h"
 #include "SpellAuras.h"
+#include "SpellMgr.h"
 #include "Unit.h"
 #include "precompiled.h"
 #include "Database/DatabaseEnv.h"
@@ -87,13 +88,6 @@ struct SpellTable
     bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
     bool   m_IsBugged;                                 // Need override for this spell
     int32  textEntry;                                  // Text entry from script_text for this spell
-};
-
-class MANGOS_DLL_DECL BossAura : public Aura
-{
-    public:
-        BossAura(const SpellEntry *spell, SpellEffectIndex effect, int32 *basepoints, Unit *target, Unit *caster) : Aura(spell, effect, basepoints, target, caster)
-            {}
 };
 
 struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
