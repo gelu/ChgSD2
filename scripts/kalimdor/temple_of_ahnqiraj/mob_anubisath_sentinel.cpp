@@ -53,19 +53,6 @@ EndScriptData */
 #define SPELL_STORM_BUFF        2148
 #define SPELL_STORM             26546
 
-struct MANGOS_DLL_DECL aqsentinelAI;
-class MANGOS_DLL_DECL SentinelAbilityAura : public Aura
-{
-    public:
-        ~SentinelAbilityAura();
-        Unit* GetTriggerTarget() const;
-        SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, SpellEffectIndex eff);
-    protected:
-        aqsentinelAI *aOwner;
-        int32 currentBasePoints;
-        uint32 abilityId;
-};
-
 struct MANGOS_DLL_DECL aqsentinelAI : public ScriptedAI
 {
     uint32 ability;
@@ -228,8 +215,27 @@ struct MANGOS_DLL_DECL aqsentinelAI : public ScriptedAI
         {
             if (!spell->Effect[i])
                 continue;
-            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, SpellEffectIndex(i));
-            m_creature->AddAura(a);
+/*    switch (abilityId)
+    {
+        case SPELL_KNOCK_BUFF:
+        case SPELL_THUNDER_BUFF:
+        case SPELL_MSTRIKE_BUFF:
+        case SPELL_STORM_BUFF:
+            return aOwner->m_creature->getVictim();
+
+        case SPELL_MANAB_BUFF:
+            return aOwner->GetHatedManaUser();
+
+        case SPELL_MENDING_BUFF:
+        case SPELL_REFLECTAF_BUFF:
+        case SPELL_REFLECTSFr_BUFF:
+        case SPELL_THORNS_BUFF:
+        default:
+            return aOwner->m_creature;
+    }
+*/
+//            SentinelAbilityAura *a = new SentinelAbilityAura(this, (SpellEntry *)spell, id, SpellEffectIndex(i));
+//            m_creature->AddAura(a);
         }
     }
 
@@ -286,33 +292,3 @@ void AddSC_mob_anubisath_sentinel()
     newscript->RegisterSelf();
 }
 
-SentinelAbilityAura::~SentinelAbilityAura() {}
-Unit* SentinelAbilityAura::GetTriggerTarget() const
-{
-    switch (abilityId)
-    {
-        case SPELL_KNOCK_BUFF:
-        case SPELL_THUNDER_BUFF:
-        case SPELL_MSTRIKE_BUFF:
-        case SPELL_STORM_BUFF:
-            return aOwner->m_creature->getVictim();
-
-        case SPELL_MANAB_BUFF:
-            return aOwner->GetHatedManaUser();
-
-        case SPELL_MENDING_BUFF:
-        case SPELL_REFLECTAF_BUFF:
-        case SPELL_REFLECTSFr_BUFF:
-        case SPELL_THORNS_BUFF:
-        default:
-            return aOwner->m_creature;
-    }
-}
-
-SentinelAbilityAura::SentinelAbilityAura(aqsentinelAI *abilityOwner, SpellEntry *spell, uint32 ability, SpellEffectIndex eff)
-: Aura(spell, eff, NULL, abilityOwner->m_creature, abilityOwner->m_creature, NULL)
-{
-    aOwner = abilityOwner;
-    abilityId = ability;
-    currentBasePoints = 0;
-}

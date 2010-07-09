@@ -3,6 +3,9 @@
 #include "def_ulduar.h"
 
 #define SP_ATTUNED_TO_NATURE        62519 //increases healing, start at 150 stacks
+#define SP_ATTUNED_TO_NATURE_REMOVE10        62525 // -10 stacks ATN
+#define SP_ATTUNED_TO_NATURE_REMOVE2         62524 // -2 stacks ATN
+#define SP_ATTUNED_TO_NATURE_REMOVE25        62521 // -25 stacks ATN
 #define SP_TOUCH_OF_EONAR           62528 //heals Freya, 6k per second
 #define H_SP_TOUCH_OF_EONAR         62892 //heals Freya, 24k per second
 #define SP_SUNBEAM                  62623
@@ -16,24 +19,18 @@
 #define CR_STORM_LASHER             32919
 #define CR_SNAPLASHER               32916
 
-class MANGOS_DLL_DECL AttunedToNatureAura : public Aura
-{
-    public:
-        AttunedToNatureAura(const SpellEntry *spell, SpellEffectIndex eff, int32 *bp, Unit *target, Unit *caster) : Aura(spell, eff, bp, target, caster, NULL)
-            {}
-};
-
 struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 {
     boss_freyaAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Regular = pCreature->GetMap()->IsRegularDifficulty();
-        sp = (SpellEntry *)GetSpellStore()->LookupEntry(SP_ATTUNED_TO_NATURE);
+/*        sp = (SpellEntry *)GetSpellStore()->LookupEntry(SP_ATTUNED_TO_NATURE);
         bp = 8;
         if(!pCreature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
             pCreature->AddAura(new AttunedToNatureAura(sp, EFFECT_INDEX_0, &bp, pCreature, pCreature));
         pCreature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->SetStackAmount(150);
+*/
         Reset();
     }
 
@@ -58,19 +55,19 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         SunbeamTimer = rand()%10000;
         EnrageTimer = 600000; //10 minutes
 
-        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
+/*        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
             m_creature->AddAura(new AttunedToNatureAura(sp, EFFECT_INDEX_0, &bp, m_creature, m_creature));
         m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->SetStackAmount(150);
-
+*/
         if(pInstance) pInstance->SetData(TYPE_FREYA, NOT_STARTED);
     }
 
     void Aggro(Unit *who) 
     {
-        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
+/*        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0))
             m_creature->AddAura(new AttunedToNatureAura(sp, EFFECT_INDEX_0, &bp, m_creature, m_creature));
         m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->SetStackAmount(150);
-
+*/
         DoCast(m_creature, Regular ? SP_TOUCH_OF_EONAR : H_SP_TOUCH_OF_EONAR);
 
         if(pInstance) pInstance->SetData(TYPE_FREYA, IN_PROGRESS);
@@ -128,24 +125,24 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
     void SummonedCreatureDespawn(Creature* mob)
     {
-        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)) return;
+        if(!m_creature->HasAura(SP_ATTUNED_TO_NATURE)) return;
 
         switch(mob->GetEntry())
         {
             case CR_DETONATING_LASHER:
-                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-2))
-                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);
+/*                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-2))
+                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);*/
                 break;
             case CR_ANCIENT_CONSERVATOR:
-                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-25))
-                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);
+/*                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-25))
+                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);*/
                 break;
             case CR_SNAPLASHER:
             case CR_STORM_LASHER:
             case CR_WATER_SPIRIT:
-                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-10))
-                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);
-
+/*                if(m_creature->GetAura(SP_ATTUNED_TO_NATURE, EFFECT_INDEX_0)->modStackAmount(-10))
+                    m_creature->RemoveAurasDueToSpell(SP_ATTUNED_TO_NATURE);*/
+               break;
         }
     }
 
@@ -171,7 +168,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
             }
             else SummonTimer -= diff;
         }
-            
+
 
         //All phases
         if(SunbeamTimer < diff)

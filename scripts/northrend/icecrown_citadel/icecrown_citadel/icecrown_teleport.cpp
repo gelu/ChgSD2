@@ -53,7 +53,6 @@ static t_Locations PortalLoc[]=
 
 bool GOGossipSelect_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo, uint32 sender, uint32 action)
 {
-    int32 damage = 0;
     if(sender != GOSSIP_SENDER_MAIN) return false;
 
     if(!pPlayer->getAttackers().empty()) return false;
@@ -62,7 +61,11 @@ bool GOGossipSelect_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo, uin
     pPlayer->TeleportTo(MAP_NUM, PortalLoc[action].x, PortalLoc[action].y, PortalLoc[action].z, 0);
     if (PortalLoc[action].spellID !=0 ) 
            if (SpellEntry const* spell = (SpellEntry *)GetSpellStore()->LookupEntry(PortalLoc[action].spellID))
-                  pPlayer->AddAura(new BossAura(spell, EFFECT_INDEX_2, &damage,(Unit*)pPlayer, (Unit*)pPlayer));
+           {
+               SpellAuraHolder *holder = CreateSpellAuraHolder(spell, pPlayer, pPlayer);
+               Aura *aura = CreateAura(spell, EFFECT_INDEX_2, NULL, holder, pPlayer);
+               holder->AddAura(aura, EFFECT_INDEX_2);
+           }
 
     pPlayer->CLOSE_GOSSIP_MENU();
     return true;
