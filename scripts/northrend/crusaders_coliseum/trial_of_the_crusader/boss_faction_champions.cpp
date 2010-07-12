@@ -31,18 +31,16 @@ EndScriptData */
 #define SPELL_ANTI_AOE     68595
 #define SPELL_PVP_TRINKET  65547
 
-struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_faction_championsAI : public BSWScriptedAI
 {
-    boss_faction_championsAI(Creature* pCreature, uint32 aitype) : ScriptedAI(pCreature) 
+    boss_faction_championsAI(Creature* pCreature, uint32 aitype) : BSWScriptedAI(pCreature) 
     {
         m_pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
         mAIType = aitype;
-        bsw = new BossSpellWorker(this);
         Init();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
 
     uint32 mAIType;
     uint32 ThreatTimer;
@@ -52,7 +50,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
     {
         CCTimer = rand()%10000;
         ThreatTimer = 5000;
-        bsw->resetTimers();
+        resetTimers();
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
     }
@@ -122,7 +120,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public ScriptedAI
         m_pInstance->SetData(TYPE_CRUSADERS, IN_PROGRESS);
         DoCast(m_creature, SPELL_ANTI_AOE, true);
             if(who->GetTypeId() != TYPEID_PLAYER)
-                  if (Unit* player = bsw->SelectRandomPlayerAtRange(80.0f))
+                  if (Unit* player = doSelectRandomPlayerAtRange(80.0f))
                        m_creature->AddThreat(player, 100.0f);
     }
 
@@ -237,32 +235,32 @@ struct MANGOS_DLL_DECL mob_toc_druidAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-          bsw->timedCast(SPELL_NATURE_GRASP, diff);
+          timedCast(SPELL_NATURE_GRASP, diff);
 
-          bsw->timedCast(SPELL_TRANQUILITY, diff);
+          timedCast(SPELL_TRANQUILITY, diff);
 
-          if(bsw->timedQuery(SPELL_BARKSKIN, diff))
+          if(timedQuery(SPELL_BARKSKIN, diff))
                 if(m_creature->GetHealthPercent() < 50.0f)
-                    bsw->doCast(SPELL_BARKSKIN);
+                    doCast(SPELL_BARKSKIN);
 
-        if(bsw->timedQuery(SPELL_LIFEBLOOM, diff))
+        if(timedQuery(SPELL_LIFEBLOOM, diff))
             switch(urand(0,4))
             {
                 case 0:
-                        bsw->doCast(SPELL_LIFEBLOOM);
+                        doCast(SPELL_LIFEBLOOM);
                     break;
                 case 1:
-                        bsw->doCast(SPELL_NOURISH);
+                        doCast(SPELL_NOURISH);
                     break;
                 case 2:
-                        bsw->doCast(SPELL_REGROWTH);
+                        doCast(SPELL_REGROWTH);
                     break;
                 case 3:
-                        bsw->doCast(SPELL_REJUVENATION);
+                        doCast(SPELL_REJUVENATION);
                     break;
                 case 4:
                     if(Creature* target = SelectRandomFriendlyMissingBuff(SPELL_THORNS))
-                        bsw->doCast(SPELL_THORNS, target);
+                        doCast(SPELL_THORNS, target);
                     break;
             }
 
@@ -292,29 +290,29 @@ struct MANGOS_DLL_DECL mob_toc_shamanAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_HEROISM, diff);
+            timedCast(SPELL_HEROISM, diff);
 
-            bsw->timedCast(SPELL_HEX, diff);
+            timedCast(SPELL_HEX, diff);
 
-        if(bsw->timedQuery(SPELL_HEALING_WAVE, diff))
+        if(timedQuery(SPELL_HEALING_WAVE, diff))
         {
             switch(urand(0,5))
             {
                 case 0: case 1:
-                        bsw->doCast(SPELL_HEALING_WAVE);
+                        doCast(SPELL_HEALING_WAVE);
                     break;
                 case 2:
-                        bsw->doCast(SPELL_RIPTIDE);
+                        doCast(SPELL_RIPTIDE);
                     break;
                 case 3:
-                        bsw->doCast(SPELL_EARTH_SHOCK);
+                        doCast(SPELL_EARTH_SHOCK);
                     break;
                 case 4:
-                        bsw->doCast(SPELL_SPIRIT_CLEANSE);
+                        doCast(SPELL_SPIRIT_CLEANSE);
                     break;
                 case 5:
                     if(Unit *target = SelectRandomFriendlyMissingBuff(SPELL_EARTH_SHIELD))
-                        bsw->doCast(target, SPELL_EARTH_SHIELD);
+                        doCast(target, SPELL_EARTH_SHIELD);
                     break;
             }
         }
@@ -347,31 +345,31 @@ struct MANGOS_DLL_DECL mob_toc_paladinAI : public boss_faction_championsAI
 
         //cast bubble at 20% hp
         if(m_creature->GetHealthPercent() < 20.0f)
-             bsw->timedCast(SPELL_BUBBLE, diff);
+             timedCast(SPELL_BUBBLE, diff);
 
             if(Unit *target = DoSelectLowestHpFriendly(40.0f))
                 if(target->GetHealthPercent() < 15.0f)
-                    bsw->timedCast(SPELL_HAND_OF_PROTECTION, diff);
+                    timedCast(SPELL_HAND_OF_PROTECTION, diff);
 
-            bsw->timedCast(SPELL_HOLY_SHOCK, diff);
+            timedCast(SPELL_HOLY_SHOCK, diff);
 
             if(Unit *target = SelectRandomFriendlyMissingBuff(SPELL_HAND_OF_FREEDOM))
-                bsw->timedCast(SPELL_HAND_OF_FREEDOM, diff, target);
+                timedCast(SPELL_HAND_OF_FREEDOM, diff, target);
 
-            bsw->timedCast(SPELL_HAMMER_OF_JUSTICE, diff);
+            timedCast(SPELL_HAMMER_OF_JUSTICE, diff);
 
-        if(bsw->timedQuery(SPELL_FLASH_OF_LIGHT, diff))
+        if(timedQuery(SPELL_FLASH_OF_LIGHT, diff))
         {
             switch(urand(0,4))
             {
                 case 0: case 1:
-                        bsw->doCast(SPELL_FLASH_OF_LIGHT);
+                        doCast(SPELL_FLASH_OF_LIGHT);
                     break;
                 case 2: case 3:
-                        bsw->doCast(SPELL_HOLY_LIGHT);
+                        doCast(SPELL_HOLY_LIGHT);
                     break;
                 case 4:
-                        bsw->doCast(SPELL_CLEANSE);
+                        doCast(SPELL_CLEANSE);
                     break;
             }
         }
@@ -401,27 +399,27 @@ struct MANGOS_DLL_DECL mob_toc_priestAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
             if(EnemiesInRange(10.0f) > 2)
-                bsw->timedCast(SPELL_PSYCHIC_SCREAM, diff);
+                timedCast(SPELL_PSYCHIC_SCREAM, diff);
 
-        if(bsw->timedQuery(SPELL_RENEW, diff))
+        if(timedQuery(SPELL_RENEW, diff))
         {
             switch(urand(0,5))
             {
                 case 0:
-                        bsw->doCast(SPELL_RENEW);
+                        doCast(SPELL_RENEW);
                     break;
                 case 1:
-                        bsw->doCast(SPELL_SHIELD);
+                        doCast(SPELL_SHIELD);
                     break;
                 case 2: case 3:
-                        bsw->doCast(SPELL_FLASH_HEAL);
+                        doCast(SPELL_FLASH_HEAL);
                     break;
                 case 4:
                     if(Unit *target = urand(0,1) ? m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0) : DoSelectLowestHpFriendly(40.0f))
-                        bsw->doCast(target, SPELL_DISPEL);
+                        doCast(target, SPELL_DISPEL);
                     break;
                 case 5:
-                        bsw->doCast(SPELL_MANA_BURN);
+                        doCast(SPELL_MANA_BURN);
                     break;
             }
         }
@@ -455,7 +453,7 @@ struct MANGOS_DLL_DECL mob_toc_shadow_priestAI : public boss_faction_championsAI
     void Aggro(Unit *who)
     {
         boss_faction_championsAI::Aggro(who);
-        bsw->doCast(SPELL_SHADOWFORM);
+        doCast(SPELL_SHADOWFORM);
     }
 
     void UpdateAI(const uint32 diff)
@@ -463,31 +461,31 @@ struct MANGOS_DLL_DECL mob_toc_shadow_priestAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
             if(EnemiesInRange(10.0f) > 2)
-                bsw->timedCast(SPELL_PSYCHIC_SCREAM, diff);
+                timedCast(SPELL_PSYCHIC_SCREAM, diff);
 
             if(m_creature->GetHealthPercent() < 20.0f)
-                bsw->timedCast(SPELL_DISPERSION, diff);
+                timedCast(SPELL_DISPERSION, diff);
 
             if(Unit *target = SelectEnemyCaster(false))
-                bsw->timedCast(SPELL_SILENCE, diff, target);
+                timedCast(SPELL_SILENCE, diff, target);
 
-            bsw->timedCast(SPELL_MIND_BLAST, diff);
+            timedCast(SPELL_MIND_BLAST, diff);
 
-        if(bsw->timedQuery(SPELL_MIND_FLAY, diff))
+        if(timedQuery(SPELL_MIND_FLAY, diff))
         {
             switch(urand(0,4))
             {
                 case 0: case 1:
-                    bsw->doCast(SPELL_MIND_FLAY);
+                    doCast(SPELL_MIND_FLAY);
                     break;
                 case 2:
-                    bsw->doCast(SPELL_VAMPIRIC_TOUCH);
+                    doCast(SPELL_VAMPIRIC_TOUCH);
                     break;
                case 3:
-                    bsw->doCast(SPELL_SW_PAIN);
+                    doCast(SPELL_SW_PAIN);
                     break;
                case 4:
-                    bsw->doCast(SPELL_DISPEL);
+                    doCast(SPELL_DISPEL);
                     break;
             }
         }
@@ -518,31 +516,31 @@ struct MANGOS_DLL_DECL mob_toc_warlockAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_Fear, diff);
+            timedCast(SPELL_Fear, diff);
 
             if(EnemiesInRange(10.0f) > 2)
-                bsw->timedCast(SPELL_HELLFIRE, diff);
+                timedCast(SPELL_HELLFIRE, diff);
 
-            bsw->timedCast(SPELL_Unstable_Affliction, diff);
+            timedCast(SPELL_Unstable_Affliction, diff);
 
-        if(bsw->timedQuery(SPELL_Shadow_Bolt, diff))
+        if(timedQuery(SPELL_Shadow_Bolt, diff))
         {
             switch(urand(0,5))
             {
                 case 0:
-                    bsw->doCast(SPELL_Searing_Pain);
+                    doCast(SPELL_Searing_Pain);
                     break;
                 case 1: case 2:
-                    bsw->doCast(SPELL_Shadow_Bolt);
+                    doCast(SPELL_Shadow_Bolt);
                     break;
                 case 3:
-                    bsw->doCast(SPELL_CORRUPTION);
+                    doCast(SPELL_CORRUPTION);
                     break;
                 case 4:
-                    bsw->doCast(SPELL_Curse_of_Agony);
+                    doCast(SPELL_Curse_of_Agony);
                     break;
                 case 5:
-                    bsw->doCast(SPELL_Curse_of_Exhaustion);
+                    doCast(SPELL_Curse_of_Exhaustion);
                     break;
              }
          }
@@ -574,32 +572,32 @@ struct MANGOS_DLL_DECL mob_toc_mageAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
             if(Unit *target = SelectEnemyCaster(false))
-                bsw->timedCast(SPELL_Counterspell, diff, target);
+                timedCast(SPELL_Counterspell, diff, target);
 
             if(m_creature->GetHealthPercent() < 50.0f 
             && EnemiesInRange(10.0f)>3 )
             {
-                bsw->timedCast(SPELL_Frost_Nova, diff);
-                bsw->timedCast(SPELL_Blink, diff);
+                timedCast(SPELL_Frost_Nova, diff);
+                timedCast(SPELL_Blink, diff);
             }
 
             if(m_creature->GetHealthPercent() < 20.0f)
-                   bsw->timedCast(SPELL_Ice_Block, diff);
+                   timedCast(SPELL_Ice_Block, diff);
 
-            bsw->timedCast(SPELL_Polymorph, diff);
+            timedCast(SPELL_Polymorph, diff);
 
-        if(bsw->timedQuery(SPELL_Arcane_Barrage, diff))
+        if(timedQuery(SPELL_Arcane_Barrage, diff))
         {
             switch(urand(0,2))
             {
                 case 0:
-                    bsw->doCast(SPELL_Arcane_Barrage);
+                    doCast(SPELL_Arcane_Barrage);
                     break;
                 case 1:
-                    bsw->doCast(SPELL_Arcane_Blast);
+                    doCast(SPELL_Arcane_Blast);
                     break;
                 case 2:
-                    bsw->doCast(SPELL_Frostbolt);
+                    doCast(SPELL_Frostbolt);
                     break;
             }
         }
@@ -632,30 +630,30 @@ struct MANGOS_DLL_DECL mob_toc_hunterAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
             if(EnemiesInRange(10.0f) > 3)
-                bsw->timedCast(SPELL_Disengage, diff);
+                timedCast(SPELL_Disengage, diff);
 
             if(m_creature->GetHealthPercent() < 20.0f)
-                bsw->timedCast(SPELL_Deterrence, diff);
+                timedCast(SPELL_Deterrence, diff);
 
-            bsw->timedCast(SPELL_Wyvern_Sting, diff);
+            timedCast(SPELL_Wyvern_Sting, diff);
 
-            bsw->timedCast(SPELL_Frost_Trap, diff );
+            timedCast(SPELL_Frost_Trap, diff );
 
             if(m_creature->GetDistance2d(m_creature->getVictim()) < 5.0f)
-                bsw->timedCast(SPELL_WING_CLIP, diff);
+                timedCast(SPELL_WING_CLIP, diff);
 
-        if(bsw->timedQuery(SPELL_SHOOT, diff))
+        if(timedQuery(SPELL_SHOOT, diff))
         {
             switch(urand(0,3))
             {
                 case 0: case 1:
-                    bsw->doCast(SPELL_SHOOT);
+                    doCast(SPELL_SHOOT);
                     break;
                 case 2:
-                    bsw->doCast(SPELL_EXPLOSIVE_SHOT);
+                    doCast(SPELL_EXPLOSIVE_SHOT);
                     break;
                 case 3:
-                    bsw->doCast(SPELL_AIMED_SHOT);
+                    doCast(SPELL_AIMED_SHOT);
                     break;
             }
         }
@@ -686,29 +684,29 @@ struct MANGOS_DLL_DECL mob_toc_boomkinAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
         if(m_creature->GetHealthPercent() < 50.0f)
-                bsw->timedCast(SPELL_BARKSKIN, diff);
+                timedCast(SPELL_BARKSKIN, diff);
 
-        bsw->timedCast(SPELL_Cyclone, diff);
+        timedCast(SPELL_Cyclone, diff);
 
-        bsw->timedCast(SPELL_Entangling_Roots, diff);
+        timedCast(SPELL_Entangling_Roots, diff);
 
-        bsw->timedCast(SPELL_Faerie_Fire, diff);
+        timedCast(SPELL_Faerie_Fire, diff);
 
-        if(bsw->timedQuery(SPELL_Moonfire, diff))
+        if(timedQuery(SPELL_Moonfire, diff))
         {
             switch(urand(0,6))
             {
                 case 0: case 1:
-                      bsw->doCast(SPELL_Moonfire);
+                      doCast(SPELL_Moonfire);
                       break;
                 case 2:
-                      bsw->doCast(SPELL_Insect_Swarm);
+                      doCast(SPELL_Insect_Swarm);
                       break;
                 case 3:
-                      bsw->doCast(SPELL_Starfire);
+                      doCast(SPELL_Starfire);
                       break;
                 case 4: case 5: case 6:
-                      bsw->doCast(SPELL_Wrath);
+                      doCast(SPELL_Wrath);
                       break;
             }
         }
@@ -743,23 +741,23 @@ struct MANGOS_DLL_DECL mob_toc_warriorAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_BLADESTORM, diff);
+            timedCast(SPELL_BLADESTORM, diff);
 
-            bsw->timedCast(SPELL_INTIMIDATING_SHOUT, diff);
+            timedCast(SPELL_INTIMIDATING_SHOUT, diff);
 
-            bsw->timedCast(SPELL_MORTAL_STRIKE, diff);
+            timedCast(SPELL_MORTAL_STRIKE, diff);
 
-            bsw->timedCast(SPELL_SUNDER_ARMOR, diff);
+            timedCast(SPELL_SUNDER_ARMOR, diff);
 
-            bsw->timedCast(SPELL_CHARGE, diff);
+            timedCast(SPELL_CHARGE, diff);
 
-            bsw->timedCast(SPELL_RETALIATION, diff);
+            timedCast(SPELL_RETALIATION, diff);
 
-            bsw->timedCast(SPELL_OVERPOWER, diff);
+            timedCast(SPELL_OVERPOWER, diff);
 
-            bsw->timedCast(SPELL_SHATTERING_THROW, diff);
+            timedCast(SPELL_SHATTERING_THROW, diff);
 
-            bsw->timedCast(SPELL_DISARM, diff);
+            timedCast(SPELL_DISARM, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -787,21 +785,21 @@ struct MANGOS_DLL_DECL mob_toc_dkAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
             if(m_creature->GetHealthPercent() < 50.0f)
-                bsw->timedCast(SPELL_Icebound_Fortitude, diff);
+                timedCast(SPELL_Icebound_Fortitude, diff);
 
-            bsw->timedCast(SPELL_Chains_of_Ice, diff);
+            timedCast(SPELL_Chains_of_Ice, diff);
 
-            bsw->timedCast(SPELL_Death_Coil, diff);
+            timedCast(SPELL_Death_Coil, diff);
 
             if(Unit *target = SelectEnemyCaster(false))
-                bsw->timedCast(SPELL_Strangulate, diff, target);
+                timedCast(SPELL_Strangulate, diff, target);
 
-            bsw->timedCast(SPELL_Frost_Strike, diff);
+            timedCast(SPELL_Frost_Strike, diff);
 
-            bsw->timedCast(SPELL_Icy_Touch, diff);
+            timedCast(SPELL_Icy_Touch, diff);
 
             if(m_creature->IsInRange(m_creature->getVictim(), 10.0f, 30.0f, false))
-                bsw->timedCast(SPELL_Death_Grip, diff); 
+                timedCast(SPELL_Death_Grip, diff); 
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -829,23 +827,23 @@ struct MANGOS_DLL_DECL mob_toc_rogueAI : public boss_faction_championsAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
         if(EnemiesInRange(15.0f) > 2)
-            bsw->timedCast(SPELL_FAN_OF_KNIVES, diff);
+            timedCast(SPELL_FAN_OF_KNIVES, diff);
 
-        bsw->timedCast(SPELL_HEMORRHAGE, diff);
+        timedCast(SPELL_HEMORRHAGE, diff);
 
-        bsw->timedCast(SPELL_EVISCERATE, diff);
+        timedCast(SPELL_EVISCERATE, diff);
 
         if(m_creature->IsInRange(m_creature->getVictim(), 10.0f, 40.0f))
-            bsw->timedCast(SPELL_SHADOWSTEP, diff);
+            timedCast(SPELL_SHADOWSTEP, diff);
 
         if(Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
             if(m_creature->IsInRange(target, 0.0f, 15.0f, false))
-                bsw->timedCast(SPELL_BLIND, diff, target);
+                timedCast(SPELL_BLIND, diff, target);
 
         if(m_creature->GetHealthPercent() < 50.0f)
-            bsw->timedCast(SPELL_CLOAK, diff);
+            timedCast(SPELL_CLOAK, diff);
 
-        bsw->timedCast(SPELL_Blade_Flurry, diff);
+        timedCast(SPELL_Blade_Flurry, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -868,13 +866,13 @@ struct MANGOS_DLL_DECL mob_toc_enh_shamanAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_HEROISM, diff);
+            timedCast(SPELL_HEROISM, diff);
 
-            bsw->timedCast(SPELL_EARTH_SHOCK, diff);
+            timedCast(SPELL_EARTH_SHOCK, diff);
 
-            bsw->timedCast(SPELL_STORMSTRIKE, diff);
+            timedCast(SPELL_STORMSTRIKE, diff);
 
-            bsw->timedCast(SPELL_LAVA_LASH, diff);
+            timedCast(SPELL_LAVA_LASH, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -902,25 +900,25 @@ struct MANGOS_DLL_DECL mob_toc_retro_paladinAI : public boss_faction_championsAI
     void Aggro(Unit *who)
     {
         boss_faction_championsAI::Aggro(who);
-        bsw->doCast(SPELL_Seal_of_Command);
+        doCast(SPELL_Seal_of_Command);
     }
 
     void UpdateAI(const uint32 diff)
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_REPENTANCE, diff);
+            timedCast(SPELL_REPENTANCE, diff);
 
-            bsw->timedCast(SPELL_Crusader_Strike, diff);
+            timedCast(SPELL_Crusader_Strike, diff);
 
-            bsw->timedCast(SPELL_Avenging_Wrath, diff);
+            timedCast(SPELL_Avenging_Wrath, diff);
 
             if(m_creature->GetHealthPercent() < 20.0f)
-                 bsw->timedCast(SPELL_Divine_Shield, diff);
+                 timedCast(SPELL_Divine_Shield, diff);
 
-            bsw->timedCast(SPELL_Divine_Storm, diff);
+            timedCast(SPELL_Divine_Storm, diff);
 
-            bsw->timedCast(SPELL_Judgement_of_Command, diff);
+            timedCast(SPELL_Judgement_of_Command, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -942,9 +940,9 @@ struct MANGOS_DLL_DECL mob_toc_pet_warlockAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_WPET0, diff);
+            timedCast(SPELL_WPET0, diff);
 
-            bsw->timedCast(SPELL_WPET1, diff);
+            timedCast(SPELL_WPET1, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }
@@ -964,7 +962,7 @@ struct MANGOS_DLL_DECL mob_toc_pet_hunterAI : public boss_faction_championsAI
     {
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim()) return;
 
-            bsw->timedCast(SPELL_HPET0, diff);
+            timedCast(SPELL_HPET0, diff);
 
         boss_faction_championsAI::UpdateAI(diff);
     }

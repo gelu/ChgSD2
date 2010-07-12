@@ -84,18 +84,16 @@ SPELL_SLIME_POOL_2     = 66882,
 SPELL_SLIME_POOL_VISUAL  = 63084,
 };
 
-struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_gormokAI : public BSWScriptedAI
 {
-    boss_gormokAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_gormokAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
     uint8 SnoboldsCount;
-    BossSpellWorker* bsw; 
 
     void Reset() {
 
@@ -129,12 +127,12 @@ struct MANGOS_DLL_DECL boss_gormokAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_IMPALE, uiDiff);
+        timedCast(SPELL_IMPALE, uiDiff);
 
-        bsw->timedCast(SPELL_STAGGERING_STOMP, uiDiff);
+        timedCast(SPELL_STAGGERING_STOMP, uiDiff);
 
-        if (bsw->timedQuery(SUMMON_SNOBOLD, uiDiff) && SnoboldsCount > 0 ) {
-                        bsw->doCast(SUMMON_SNOBOLD);
+        if (timedQuery(SUMMON_SNOBOLD, uiDiff) && SnoboldsCount > 0 ) {
+                        doCast(SUMMON_SNOBOLD);
                         DoScriptText(-1713601,m_creature);
                         --SnoboldsCount;
                         };
@@ -148,17 +146,15 @@ CreatureAI* GetAI_boss_gormok(Creature* pCreature)
     return new boss_gormokAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_snobold_vassalAI : public BSWScriptedAI
 {
-    mob_snobold_vassalAI(Creature* pCreature) : ScriptedAI(pCreature)
+    mob_snobold_vassalAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     Unit* pBoss;
     Unit* defaultTarget;
 
@@ -169,14 +165,14 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
         pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));
-        if (pBoss) bsw->doCast(SPELL_RISING_ANGER,pBoss);
+        if (pBoss) doCast(SPELL_RISING_ANGER,pBoss);
     }
 
     void Aggro(Unit *who)
     {
         if (!m_pInstance) return;
         defaultTarget = who;
-        bsw->doCast(SPELL_SNOBOLLED, defaultTarget);
+        doCast(SPELL_SNOBOLLED, defaultTarget);
     }
 
     void JustReachedHome()
@@ -187,8 +183,8 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-    if (defaultTarget && defaultTarget->isAlive()) bsw->doRemove(SPELL_SNOBOLLED, defaultTarget);
-//      if (pBoss && pBoss->isAlive()) bsw->doRemove(SPELL_RISING_ANGER,pBoss);
+    if (defaultTarget && defaultTarget->isAlive()) doRemove(SPELL_SNOBOLLED, defaultTarget);
+//      if (pBoss && pBoss->isAlive()) doRemove(SPELL_RISING_ANGER,pBoss);
 //      This string - not offlike, in off this buff not removed! especially for small servers.
     }
 
@@ -198,14 +194,14 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        bsw->timedCast(SPELL_BATTER, uiDiff);
+        timedCast(SPELL_BATTER, uiDiff);
 
-        if (bsw->timedCast(SPELL_FIRE_BOMB, uiDiff, m_creature->getVictim()) == CAST_OK) {
-        bsw->doCast(SPELL_FIRE_BOMB_1, m_creature->getVictim());
-        bsw->doCast(SPELL_FIRE_BOMB_DOT, m_creature->getVictim());
+        if (timedCast(SPELL_FIRE_BOMB, uiDiff, m_creature->getVictim()) == CAST_OK) {
+        doCast(SPELL_FIRE_BOMB_1, m_creature->getVictim());
+        doCast(SPELL_FIRE_BOMB_DOT, m_creature->getVictim());
         }
 
-        bsw->timedCast(SPELL_HEAD_CRACK, uiDiff);
+        timedCast(SPELL_HEAD_CRACK, uiDiff);
 
         DoMeleeAttackIfReady();
     }
@@ -216,17 +212,15 @@ CreatureAI* GetAI_mob_snobold_vassal(Creature* pCreature)
     return new mob_snobold_vassalAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_acidmawAI : public BSWScriptedAI
 {
-    boss_acidmawAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_acidmawAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool enraged;
 
@@ -271,15 +265,15 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
     switch (stage) 
         {
         case 0: {
-                bsw->timedCast(SPELL_ACID_SPEW, uiDiff);
+                timedCast(SPELL_ACID_SPEW, uiDiff);
 
-                bsw->timedCast(SPELL_PARALYTIC_BITE, uiDiff);
+                timedCast(SPELL_PARALYTIC_BITE, uiDiff);
 
-                bsw->timedCast(SPELL_ACID_SPIT, uiDiff);
+                timedCast(SPELL_ACID_SPIT, uiDiff);
 
-                bsw->timedCast(SPELL_PARALYTIC_SPRAY, uiDiff);
+                timedCast(SPELL_PARALYTIC_SPRAY, uiDiff);
 
-                bsw->timedCast(SPELL_SWEEP_0, uiDiff);
+                timedCast(SPELL_SWEEP_0, uiDiff);
 
                 if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
                      stage = 1;
@@ -288,22 +282,22 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         case 1: {
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     m_creature->InterruptNonMeleeSpells(true);
-                    bsw->doCast(SPELL_SUBMERGE_0);
+                    doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
                     break;}
         case 2: {
-                if (bsw->timedQuery(SPELL_SLIME_POOL, uiDiff))
-                    bsw->doCast(NPC_SLIME_POOL);
+                if (timedQuery(SPELL_SLIME_POOL, uiDiff))
+                    doCast(NPC_SLIME_POOL);
 
-                if ((bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
+                if ((timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
                     || m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
                         stage = 3;
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
-                    bsw->doRemove(SPELL_SUBMERGE_0);
+                    doRemove(SPELL_SUBMERGE_0);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 0;
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
@@ -313,9 +307,9 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
                         DoScriptText(-1713559,m_creature);
-                        bsw->doRemove(SPELL_SUBMERGE_0);
+                        doRemove(SPELL_SUBMERGE_0);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        bsw->doCast(SPELL_ENRAGE);
+                        doCast(SPELL_ENRAGE);
                         enraged = true;
                         stage = 0;
                         DoScriptText(-1713504,m_creature);
@@ -330,17 +324,15 @@ CreatureAI* GetAI_boss_acidmaw(Creature* pCreature)
     return new boss_acidmawAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_dreadscaleAI : public BSWScriptedAI
 {
-    boss_dreadscaleAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_dreadscaleAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     uint8 stage;
     bool enraged;
 
@@ -383,15 +375,15 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         switch (stage) 
         {
         case 0: {
-                bsw->timedCast(SPELL_BURNING_BITE, uiDiff);
+                timedCast(SPELL_BURNING_BITE, uiDiff);
 
-                bsw->timedCast(SPELL_MOLTEN_SPEW, uiDiff);
+                timedCast(SPELL_MOLTEN_SPEW, uiDiff);
 
-                bsw->timedCast(SPELL_FIRE_SPIT, uiDiff);
+                timedCast(SPELL_FIRE_SPIT, uiDiff);
 
-                bsw->timedCast(SPELL_BURNING_SPRAY, uiDiff);
+                timedCast(SPELL_BURNING_SPRAY, uiDiff);
 
-                bsw->timedCast(SPELL_SWEEP_0, uiDiff);
+                timedCast(SPELL_SWEEP_0, uiDiff);
 
                 if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
                      stage = 1;
@@ -400,23 +392,23 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         case 1: {
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     m_creature->InterruptNonMeleeSpells(true);
-                    bsw->doCast(SPELL_SUBMERGE_0);
+                    doCast(SPELL_SUBMERGE_0);
                     stage = 2;
                     DoScriptText(-1713557,m_creature);
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, DREADSCALE_SUBMERGED);
                     break;}
         case 2: {
 
-                if (bsw->timedQuery(SPELL_SLIME_POOL, uiDiff))
-                    bsw->doCast(NPC_SLIME_POOL);
+                if (timedQuery(SPELL_SLIME_POOL, uiDiff))
+                    doCast(NPC_SLIME_POOL);
 
-                if ((bsw->timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
+                if ((timedQuery(SPELL_SUBMERGE_0, uiDiff) && m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == DREADSCALE_SUBMERGED)
                     || m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == ACIDMAW_SUBMERGED)
                          stage = 3;
                     break;}
         case 3: {
                     DoScriptText(-1713559,m_creature);
-                    bsw->doRemove(SPELL_SUBMERGE_0);
+                    doRemove(SPELL_SUBMERGE_0);
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     stage = 0;
                     m_pInstance->SetData(TYPE_NORTHREND_BEASTS, ACIDMAW_SUBMERGED);
@@ -426,9 +418,9 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public ScriptedAI
         if (m_pInstance->GetData(TYPE_NORTHREND_BEASTS) == SNAKES_SPECIAL && !enraged)
                         {
                         DoScriptText(-1713559,m_creature);
-                        bsw->doRemove(SPELL_SUBMERGE_0);
+                        doRemove(SPELL_SUBMERGE_0);
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        bsw->doCast(SPELL_ENRAGE);
+                        doCast(SPELL_ENRAGE);
                         enraged = true;
                         stage = 0;
                         DoScriptText(-1713504,m_creature);
@@ -443,17 +435,15 @@ CreatureAI* GetAI_boss_dreadscale(Creature* pCreature)
     return new boss_dreadscaleAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_slime_poolAI : public BSWScriptedAI
 {
-    mob_slime_poolAI(Creature *pCreature) : ScriptedAI(pCreature)
+    mob_slime_poolAI(Creature *pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance *m_pInstance;
-    BossSpellWorker* bsw;
     float m_Size;
     bool cloudcasted;
 
@@ -465,7 +455,7 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
         m_creature->SetSpeedRate(MOVE_RUN, 0.05f);
         SetCombatMovement(false);
         m_creature->GetMotionMaster()->MoveRandom();
-        bsw->doCast(SPELL_SLIME_POOL_2);
+        doCast(SPELL_SLIME_POOL_2);
         m_Size = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
         cloudcasted = false;
     }
@@ -478,11 +468,11 @@ struct MANGOS_DLL_DECL mob_slime_poolAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!cloudcasted) {
-                          bsw->doCast(SPELL_SLIME_POOL_VISUAL);
+                          doCast(SPELL_SLIME_POOL_VISUAL);
                           cloudcasted = true;
                           }
 
-        if (bsw->timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
+        if (timedQuery(SPELL_SLIME_POOL_2,uiDiff)) {
                 m_Size = m_Size*1.035;
                 m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
                 }
@@ -497,17 +487,15 @@ CreatureAI* GetAI_mob_slime_pool(Creature* pCreature)
     return new mob_slime_poolAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_icehowlAI : public BSWScriptedAI
 {
-    boss_icehowlAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_icehowlAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        bsw = new BossSpellWorker(this);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    BossSpellWorker* bsw;
     bool MovementStarted;
     bool TrampleCasted;
     uint8 stage;
@@ -564,22 +552,22 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         switch (stage) 
         {
         case 0: {
-                 bsw->timedCast(SPELL_FEROCIOUS_BUTT, uiDiff);
+                 timedCast(SPELL_FEROCIOUS_BUTT, uiDiff);
 
-                 bsw->timedCast(SPELL_ARCTIC_BREATH, uiDiff);
+                 timedCast(SPELL_ARCTIC_BREATH, uiDiff);
 
-                 bsw->timedCast(SPELL_WHIRL, uiDiff);
+                 timedCast(SPELL_WHIRL, uiDiff);
 
-                if (bsw->timedQuery(SPELL_MASSIVE_CRASH, uiDiff)) stage = 1;
+                if (timedQuery(SPELL_MASSIVE_CRASH, uiDiff)) stage = 1;
 
-                bsw->timedCast(SPELL_FROTHING_RAGE, uiDiff);
+                timedCast(SPELL_FROTHING_RAGE, uiDiff);
 
                 DoMeleeAttackIfReady();
 
                 break;
                 }
         case 1: {
-                         if (bsw->doCast(SPELL_MASSIVE_CRASH) == CAST_OK)
+                         if (doCast(SPELL_MASSIVE_CRASH) == CAST_OK)
                              stage = 2;
                  break;
                 }
@@ -588,7 +576,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                         TrampleCasted = false;
                         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         stage = 3;
-                        bsw->resetTimer(SPELL_TRAMPLE);
+                        resetTimer(SPELL_TRAMPLE);
                         DoScriptText(-1713506,m_creature,pTarget);
                         SetCombatMovement(false);
                         m_creature->GetMotionMaster()->MoveIdle();
@@ -596,14 +584,14 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                  break;
                 }
         case 3: {
-                if (bsw->timedQuery(SPELL_TRAMPLE,uiDiff)) {
+                if (timedQuery(SPELL_TRAMPLE,uiDiff)) {
                         if (pTarget && pTarget->isAlive() && (pTarget->IsWithinDistInMap(m_creature, 200.0f))) {
                                     pTarget->GetPosition(fPosX, fPosY, fPosZ);
                                     TrampleCasted = false;
                                     MovementStarted = true;
                                     m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
                                     DoScriptText(-1713508,m_creature);
-                                    bsw->doCast(SPELL_ADRENALINE);
+                                    doCast(SPELL_ADRENALINE);
                                     stage = 4;
                                     }
                         else        {
@@ -616,14 +604,13 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
         case 4: {
                 if (MovementStarted)
                     {
-                    Map* pMap = m_creature->GetMap();
                     Map::PlayerList const &lPlayers = pMap->GetPlayers();
                     for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
                     {
                         Unit* pPlayer = itr->getSource();
                         if (!pPlayer) continue;
                         if (pPlayer->isAlive() && pPlayer->IsWithinDistInMap(m_creature, 5.0f)) {
-                                bsw->doCast(SPELL_TRAMPLE, pPlayer);
+                                doCast(SPELL_TRAMPLE, pPlayer);
                                 TrampleCasted = true;
                                 MovementStarted = false;
                                 m_creature->GetMotionMaster()->MovementExpired();
@@ -637,7 +624,7 @@ struct MANGOS_DLL_DECL boss_icehowlAI : public ScriptedAI
                 }
         case 5: {
                 if (!TrampleCasted) {
-                                    bsw->doCast(SPELL_STAGGERED_DAZE);
+                                    doCast(SPELL_STAGGERED_DAZE);
                                     DoScriptText(-1713507,m_creature);
                                     }
                 MovementStarted = false;
