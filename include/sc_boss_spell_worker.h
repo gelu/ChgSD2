@@ -7,6 +7,7 @@
 
 #include "Player.h"
 #include "SpellAuras.h"
+#include "SpellMgr.h"
 #include "Unit.h"
 #include "precompiled.h"
 #include "Database/DatabaseEnv.h"
@@ -49,6 +50,7 @@ enum BossSpellTableParameters
   CAST_ON_FRENDLY_LOWHP     = 14,
   CAST_ON_RANDOM_POINT      = 15,
   CAST_ON_RANDOM_PLAYER     = 16,
+  APPLY_AURA_ALLPLAYERS     = 17,
   SPELLTABLEPARM_NUMBER
 };
 
@@ -88,21 +90,14 @@ struct SpellTable
     int32  textEntry;                                  // Text entry from script_text for this spell
 };
 
-class MANGOS_DLL_DECL BossAura : public Aura
+struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 {
     public:
-        BossAura(const SpellEntry *spell, SpellEffectIndex effect, int32 *basepoints, Unit *target, Unit *caster) : Aura(spell, effect, basepoints, target, caster)
-            {}
-};
+        explicit BSWScriptedAI(Creature* pCreature);
 
-class MANGOS_DLL_DECL BossSpellWorker
-{
-    public:
-        explicit BossSpellWorker(ScriptedAI* bossAI);
+        ~BSWScriptedAI();
 
-        ~BossSpellWorker();
-
-        void Reset();
+        void doReset();
 
         void resetTimer(uint32 SpellID)
              {
@@ -165,7 +160,7 @@ class MANGOS_DLL_DECL BossSpellWorker
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
                  if (!queryIndex(m_uiSpellIdx)) return false;
-                 if (!pTarget) pTarget = boss;
+                 if (!pTarget) pTarget = m_creature;
                  return _hasAura(m_uiSpellIdx,pTarget);
              };
 
@@ -173,7 +168,7 @@ class MANGOS_DLL_DECL BossSpellWorker
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
                  if (!queryIndex(m_uiSpellIdx)) return 0;
-                 if (!pTarget) pTarget = boss;
+                 if (!pTarget) pTarget = m_creature;
                  return _auraCount(m_uiSpellIdx,pTarget,index);
              };
 
@@ -184,12 +179,12 @@ class MANGOS_DLL_DECL BossSpellWorker
                      return _doSummon(m_uiSpellIdx, type, delay);
              };
 
-        Unit* SelectRandomPlayer(uint32 SpellID = 0, bool spellsearchtype = false, float range = 100.0f)
+        Unit* doSelectRandomPlayer(uint32 SpellID = 0, bool spellsearchtype = false, float range = 100.0f)
              {
                  return _doSelect(SpellID, spellsearchtype, range);
              };
 
-        Unit* SelectRandomPlayerAtRange(float range)
+        Unit* doSelectRandomPlayerAtRange(float range)
              {
                  return _doSelect(0, false, range);
              };
@@ -201,21 +196,7 @@ class MANGOS_DLL_DECL BossSpellWorker
                  return _doSummonAtPosition(m_uiSpellIdx, type, delay, fPosX, fPosY, fPosZ);
              };
 
-        CanCastResult BSWSpellSelector(uint32 SpellID, Unit* pTarget = NULL)
-             {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
-                 return _BSWSpellSelector(m_uiSpellIdx, pTarget);
-             };
-
-        CanCastResult BSWDoCast(uint32 SpellID, Unit* pTarget)
-             {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
-                 return _BSWDoCast(m_uiSpellIdx, pTarget);
-             };
-
-        Unit* SelectLowHPFriendly(float fRange = 40.0f, uint32 uiMinHPDiff = 0);
+        Unit* doSelectLowHPFriendly(float fRange = 40.0f, uint32 uiMinHPDiff = 0);
 
         uint8 bossSpellCount()
              {
@@ -231,7 +212,13 @@ class MANGOS_DLL_DECL BossSpellWorker
                  else return false;
              };
 
-        Creature* SelectNearestCreature(uint32 guid, float range = 120.0f);
+        Creature* doSelectNearestCreature(uint32 guid, float range = 120.0f);
+
+    protected:
+
+        Map*          pMap;
+
+        Difficulty    currentDifficulty;
 
     private:
 
@@ -239,7 +226,7 @@ class MANGOS_DLL_DECL BossSpellWorker
 
         uint8         _findSpellIDX(uint32 SpellID);
 
-        void          LoadSpellTable();
+        void          _loadSpellTable();
 
         void          _resetTimer(uint8 m_uiSpellIdx);
 
@@ -272,14 +259,9 @@ class MANGOS_DLL_DECL BossSpellWorker
         void          _fillEmptyDataField();
 
 // Constants
-        ScriptedAI*   bossAI;
-        Creature*     boss;
-        uint32        bossID;
         uint8         _bossSpellCount;
-        Difficulty    currentDifficulty;
         uint32        m_uiSpell_Timer[MAX_BOSS_SPELLS];
         SpellTable    m_BossSpell[MAX_BOSS_SPELLS];
-        Map*          pMap;
 };
 
 #endif
