@@ -35,8 +35,8 @@ In this repository you found this custom scripts:
 - Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
 - Icecrown Citadel (alfatesting phase, by me)
-- Ruby Sanctum (placeholders, by me)
-- NPC special (by me, thanks for all)
+- Ruby Sanctum (by notagain, not finished, awaiting DB support)
+- NPC special (partially by me, thanks for all)
 
 Attention please! In my project only correct Linux Makefile provided. 
 If you want compile this branch on Windows, please convert Makefile to your c++ compiler.
@@ -46,6 +46,7 @@ Thanks to:
 - Insider42 - for your work;
 - MaxXx2021 aka Mioka - for your scripts;
 - Tassadar;
+- notagain;
 - griffonheart (original texts/sounds for TOC);
 - Cristy (re-translation to english);
 - Selector - Faction champions base script, testing, bugreports;
