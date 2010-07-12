@@ -67,13 +67,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="mangosd.lib ACEd.lib"
-				OutputFile="$(OutDir)/MaNGOSScript.dll"
+				OutputFile="$(OutDir)/mangosscript.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\mangosd__Win32_Debug;..\..\..\..\dep\lib\win32_debug\"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
+				ProgramDatabaseFile="$(OutDir)/mangosscript.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/MaNGOSScript.lib"
+				ImportLibrary="$(OutDir)/mangosscript.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -151,13 +151,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="mangosd.lib ACEd.lib"
-				OutputFile="$(OutDir)/MaNGOSScript.dll"
+				OutputFile="$(OutDir)/mangosscript.dll"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\mangosd__x64_Debug;..\..\..\..\dep\lib\x64_Debug\"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/MaNGOSScript.pdb"
+				ProgramDatabaseFile="$(OutDir)/mangosscript.pdb"
 				SubSystem="2"
-				ImportLibrary="$(OutDir)/MaNGOSScript.lib"
+				ImportLibrary="$(OutDir)/mangosscript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -232,14 +232,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="mangosd.lib ACE.lib"
-				OutputFile="$(OutDir)/MaNGOSScript.dll"
+				OutputFile="$(OutDir)/mangosscript.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\mangosd__Win32_Release;..\..\..\..\dep\lib\win32_release\"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/MaNGOSScript.lib"
+				ImportLibrary="$(OutDir)/mangosscript.lib"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -315,14 +315,14 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="mangosd.lib ACE.lib"
-				OutputFile="$(OutDir)/MaNGOSScript.dll"
+				OutputFile="$(OutDir)/mangosscript.dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\..\..\win\VC80\mangosd__x64_Release;..\..\..\..\dep\lib\x64_release\"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				ImportLibrary="$(OutDir)/MaNGOSScript.lib"
+				ImportLibrary="$(OutDir)/mangosscript.lib"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -489,6 +489,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\scripts\eastern_kingdoms\swamp_of_sorrows.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\scripts\eastern_kingdoms\tirisfal_glades.cpp"
 					>
 				</File>
@@ -609,6 +613,14 @@
 					</File>
 					<File
 						RelativePath="..\scripts\eastern_kingdoms\blackrock_spire\boss_warmaster_voone.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\eastern_kingdoms\blackrock_spire\instance_blackrock_spire.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\eastern_kingdoms\blackrock_spire\blackrock_spire.h"
 						>
 					</File>
 				</Filter>
@@ -1310,6 +1322,18 @@
 					<Filter
 						Name="culling_of_stratholme"
 						>
+						<File
+							RelativePath="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\culling_of_stratholme.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\culling_of_stratholme.h"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\instance_culling_of_stratholme.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="dark_portal"
@@ -1447,6 +1471,14 @@
 				<Filter
 					Name="razorfen_kraul"
 					>
+					<File
+						RelativePath="..\scripts\kalimdor\razorfen_kraul\instance_razorfen_kraul.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\kalimdor\razorfen_kraul\razorfen_kraul.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="ruins_of_ahnqiraj"
@@ -1545,6 +1577,10 @@
 					>
 					<File
 						RelativePath="..\scripts\kalimdor\wailing_caverns\instance_wailing_caverns.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\scripts\kalimdor\wailing_caverns\wailing_caverns.h"
 						>
 					</File>
 				</Filter>

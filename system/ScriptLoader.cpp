@@ -52,6 +52,7 @@ extern void AddSC_boss_quatermasterzigris();
 extern void AddSC_boss_pyroguard_emberseer();
 extern void AddSC_boss_gyth();
 extern void AddSC_boss_rend_blackhand();
+extern void AddSC_instance_blackrock_spire();
 extern void AddSC_boss_razorgore();                         //blackwing_lair
 extern void AddSC_boss_vael();
 extern void AddSC_boss_broodlord();
@@ -185,6 +186,7 @@ extern void AddSC_silvermoon_city();
 extern void AddSC_silverpine_forest();
 extern void AddSC_stormwind_city();
 extern void AddSC_stranglethorn_vale();
+extern void AddSC_swamp_of_sorrows();
 extern void AddSC_tirisfal_glades();
 extern void AddSC_undercity();
 extern void AddSC_western_plaguelands();
@@ -206,6 +208,8 @@ extern void AddSC_boss_epoch_hunter();
 extern void AddSC_boss_lieutenant_drake();
 extern void AddSC_instance_old_hillsbrad();
 extern void AddSC_old_hillsbrad();
+extern void AddSC_culling_of_stratholme();                  //Culling of Stratholme
+extern void AddSC_instance_culling_of_stratholme();
 extern void AddSC_boss_celebras_the_cursed();               //maraudon
 extern void AddSC_boss_landslide();
 extern void AddSC_boss_noxxion();
@@ -213,6 +217,7 @@ extern void AddSC_boss_ptheradras();
 extern void AddSC_boss_onyxia();                            //onyxias_lair
 extern void AddSC_boss_amnennar_the_coldbringer();          //razorfen_downs
 extern void AddSC_razorfen_downs();
+extern void AddSC_instance_razorfen_kraul();                //razorfen_kraul
 extern void AddSC_boss_ayamiss();                           //ruins_of_ahnqiraj
 extern void AddSC_boss_kurinnaxx();
 extern void AddSC_boss_moam();
@@ -226,6 +231,7 @@ extern void AddSC_boss_skeram();
 extern void AddSC_boss_twinemperors();
 extern void AddSC_mob_anubisath_sentinel();
 extern void AddSC_instance_temple_of_ahnqiraj();
+extern void AddSC_instance_wailing_caverns();               // Wailing Caverns
 extern void AddSC_zulfarrak();                              //zulfarrak
 
 extern void AddSC_ashenvale();
@@ -457,6 +463,7 @@ void AddScripts()
     AddSC_boss_pyroguard_emberseer();
     AddSC_boss_gyth();
     AddSC_boss_rend_blackhand();
+    AddSC_instance_blackrock_spire();
     AddSC_boss_razorgore();                                 //blackwing_lair
     AddSC_boss_vael();
     AddSC_boss_broodlord();
@@ -590,6 +597,7 @@ void AddScripts()
     AddSC_silverpine_forest();
     AddSC_stormwind_city();
     AddSC_stranglethorn_vale();
+    AddSC_swamp_of_sorrows();
     AddSC_tirisfal_glades();
     AddSC_undercity();
     AddSC_western_plaguelands();
@@ -597,20 +605,22 @@ void AddScripts()
     AddSC_wetlands();
 
     //kalimdor
-    AddSC_instance_blackfathom_deeps();                     //blackfathom_deeps
-    AddSC_boss_aeonus();                                    //COT, dark_portal
+    AddSC_instance_blackfathom_deeps();                     // blackfathom deeps
+    AddSC_boss_aeonus();                                    // Opening the Dark Portal
     AddSC_boss_chrono_lord_deja();
     AddSC_boss_temporus();
     AddSC_dark_portal();
     AddSC_instance_dark_portal();
-    AddSC_hyjal();                                          //COT, hyjal
+    AddSC_hyjal();                                          // Battle of Mount Hyjal
     AddSC_boss_archimonde();
     AddSC_instance_mount_hyjal();
-    AddSC_boss_captain_skarloc();                           //COT, old_hillsbrad
+    AddSC_boss_captain_skarloc();                           // Escape from Durnholde Keep
     AddSC_boss_epoch_hunter();
     AddSC_boss_lieutenant_drake();
     AddSC_instance_old_hillsbrad();
     AddSC_old_hillsbrad();
+    AddSC_culling_of_stratholme();                          // Culling of Stratholme
+    AddSC_instance_culling_of_stratholme();
     AddSC_boss_celebras_the_cursed();                       //maraudon
     AddSC_boss_landslide();
     AddSC_boss_noxxion();
@@ -618,6 +628,7 @@ void AddScripts()
     AddSC_boss_onyxia();                                    //onyxias_lair
     AddSC_boss_amnennar_the_coldbringer();                  //razorfen_downs
     AddSC_razorfen_downs();
+    AddSC_instance_razorfen_kraul();                        //razorfen_kraul
     AddSC_boss_ayamiss();                                   //ruins_of_ahnqiraj
     AddSC_boss_kurinnaxx();
     AddSC_boss_moam();
@@ -631,6 +642,7 @@ void AddScripts()
     AddSC_boss_twinemperors();
     AddSC_mob_anubisath_sentinel();
     AddSC_instance_temple_of_ahnqiraj();
+    AddSC_instance_wailing_caverns();                       // Wailing Caverns
     AddSC_zulfarrak();                                      //zulfarrak
 
     AddSC_ashenvale();

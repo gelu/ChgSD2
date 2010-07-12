@@ -70,6 +70,7 @@ scripts/eastern_kingdoms/silvermoon_city.cpp \
 scripts/eastern_kingdoms/silverpine_forest.cpp \
 scripts/eastern_kingdoms/stormwind_city.cpp \
 scripts/eastern_kingdoms/stranglethorn_vale.cpp \
+scripts/eastern_kingdoms/swamp_of_sorrows.cpp \
 scripts/eastern_kingdoms/tirisfal_glades.cpp \
 scripts/eastern_kingdoms/undercity.cpp \
 scripts/eastern_kingdoms/western_plaguelands.cpp \
@@ -87,6 +88,7 @@ scripts/eastern_kingdoms/blackrock_depths/boss_high_interrogator_gerstahn.cpp \
 scripts/eastern_kingdoms/blackrock_depths/boss_magmus.cpp \
 scripts/eastern_kingdoms/blackrock_depths/boss_tomb_of_seven.cpp \
 scripts/eastern_kingdoms/blackrock_depths/instance_blackrock_depths.cpp \
+scripts/eastern_kingdoms/blackrock_spire/blackrock_spire.h \
 scripts/eastern_kingdoms/blackrock_spire/boss_drakkisath.cpp \
 scripts/eastern_kingdoms/blackrock_spire/boss_gyth.cpp \
 scripts/eastern_kingdoms/blackrock_spire/boss_halycon.cpp \
@@ -99,6 +101,7 @@ scripts/eastern_kingdoms/blackrock_spire/boss_rend_blackhand.cpp \
 scripts/eastern_kingdoms/blackrock_spire/boss_shadow_hunter_voshgajin.cpp \
 scripts/eastern_kingdoms/blackrock_spire/boss_the_beast.cpp \
 scripts/eastern_kingdoms/blackrock_spire/boss_warmaster_voone.cpp \
+scripts/eastern_kingdoms/blackrock_spire/instance_blackrock_spire.cpp \
 scripts/eastern_kingdoms/blackwing_lair/boss_broodlord_lashlayer.cpp \
 scripts/eastern_kingdoms/blackwing_lair/boss_chromaggus.cpp \
 scripts/eastern_kingdoms/blackwing_lair/boss_ebonroc.cpp \
@@ -252,6 +255,9 @@ scripts/kalimdor/ungoro_crater.cpp \
 scripts/kalimdor/winterspring.cpp \
 scripts/kalimdor/blackfathom_deeps/blackfathom_deeps.h \
 scripts/kalimdor/blackfathom_deeps/instance_blackfathom_deeps.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/culling_of_stratholme.h \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/culling_of_stratholme.cpp \
+scripts/kalimdor/caverns_of_time/culling_of_stratholme/instance_culling_of_stratholme.cpp \
 scripts/kalimdor/caverns_of_time/dark_portal/boss_aeonus.cpp \
 scripts/kalimdor/caverns_of_time/dark_portal/boss_chrono_lord_deja.cpp \
 scripts/kalimdor/caverns_of_time/dark_portal/boss_temporus.cpp \
@@ -277,6 +283,8 @@ scripts/kalimdor/maraudon/boss_princess_theradras.cpp \
 scripts/kalimdor/onyxias_lair/boss_onyxia.cpp \
 scripts/kalimdor/razorfen_downs/boss_amnennar_the_coldbringer.cpp \
 scripts/kalimdor/razorfen_downs/razorfen_downs.cpp \
+scripts/kalimdor/razorfen_kraul/instance_razorfen_kraul.cpp \
+scripts/kalimdor/razorfen_kraul/razorfen_kraul.h \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_ayamiss.cpp \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_buru.cpp \
 scripts/kalimdor/ruins_of_ahnqiraj/boss_kurinnaxx.cpp \
@@ -299,6 +307,7 @@ scripts/kalimdor/temple_of_ahnqiraj/instance_temple_of_ahnqiraj.cpp \
 scripts/kalimdor/temple_of_ahnqiraj/mob_anubisath_sentinel.cpp \
 scripts/kalimdor/temple_of_ahnqiraj/temple_of_ahnqiraj.h \
 scripts/kalimdor/wailing_caverns/instance_wailing_caverns.cpp \
+scripts/kalimdor/wailing_caverns/wailing_caverns.h \
 scripts/kalimdor/zulfarrak/zulfarrak.cpp \
 scripts/northrend/borean_tundra.cpp \
 scripts/northrend/dalaran.cpp \

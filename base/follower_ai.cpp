@@ -44,28 +44,31 @@ void FollowerAI::AttackStart(Unit* pWho)
 
 //This part provides assistance to a player that are attacked by pWho, even if out of normal aggro range
 //It will cause m_creature to attack pWho that are attacking _any_ player (which has been confirmed may happen also on offi)
-//The flag (type_flag) is unconfirmed, but used here for further research and is a good candidate.
 bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
 {
-    if (!pWho || !pWho->getVictim())
+    if (!pWho->getVictim())
         return false;
 
-    //experimental (unknown) flag not present
-    if (!(m_creature->GetCreatureInfo()->type_flags & CREATURE_TYPEFLAGS_UNK13))
+    // experimental (unknown) flag not present
+    if (!(m_creature->GetCreatureInfo()->type_flags & CREATURE_TYPEFLAGS_CAN_ASSIST))
         return false;
 
-    //not a player
+    // unit state prevents (similar check is done in CanInitiateAttack which also include checking unit_flags. We skip those here)
+    if (m_creature->hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_DIED))
+        return false;
+
+    // victim of pWho is not a player
     if (!pWho->getVictim()->GetCharmerOrOwnerPlayerOrPlayerItself())
         return false;
 
-    //never attack friendly
+    // never attack friendly
     if (m_creature->IsFriendlyTo(pWho))
         return false;
 
-    //too far away and no free sight?
+    // too far away and no free sight?
     if (m_creature->IsWithinDistInMap(pWho, MAX_PLAYER_DISTANCE) && m_creature->IsWithinLOSInMap(pWho))
     {
-        //already fighting someone?
+        // already fighting someone?
         if (!m_creature->getVictim())
         {
             AttackStart(pWho);
@@ -84,9 +87,13 @@ bool FollowerAI::AssistPlayerInCombat(Unit* pWho)
 
 void FollowerAI::MoveInLineOfSight(Unit* pWho)
 {
-    if (m_creature->CanInitiateAttack() && pWho->isTargetableForAttack() && pWho->isInAccessablePlaceFor(m_creature))
+    if (pWho->isTargetableForAttack() && pWho->isInAccessablePlaceFor(m_creature))
     {
+        // AssistPlayerInCombat can start attack, so return if true
         if (HasFollowState(STATE_FOLLOW_INPROGRESS) && AssistPlayerInCombat(pWho))
+            return;
+
+        if (!m_creature->CanInitiateAttack())
             return;
 
         if (!m_creature->canFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
