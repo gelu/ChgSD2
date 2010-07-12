@@ -18,6 +18,7 @@ enum Data
 
     DATA_ESCAPE_LIDER       = 101,
     DATA_LIDER              = 102,
+    DATA_SUMMONS            = 103,
 
     /*UNITS*/
     NPC_DARK_1                   = 38177, //Shadowy Mercenary

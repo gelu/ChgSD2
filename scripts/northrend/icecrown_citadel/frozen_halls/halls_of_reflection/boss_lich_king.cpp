@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                 SetEscortPaused(true);
                 Finish = true;
                 DoCast(m_creature, SPELL_LICH_KING_CAST);
-                m_pInstance->SetData(TYPE_LICH_KING, DONE);
+                m_pInstance->SetData(TYPE_LICH_KING, SPECIAL);
                 DoScriptText(SAY_LICH_KING_END_DUN, m_creature);
                 if(Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
                 {
@@ -116,11 +116,19 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
      npc_escortAI::AttackStart(who);
    }
 
+    void SummonedCreatureDespawn(Creature* summoned)
+    {
+         if(!m_pInstance || !summoned) return;
+         m_pInstance->SetData(DATA_SUMMONS, m_pInstance->GetData(DATA_SUMMONS)-1);
+    }
+
     void JustSummoned(Creature* summoned)
     {
          if(!m_pInstance || !summoned) return;
 
+         summoned->SetPhaseMask(65535, true);
          summoned->SetInCombatWithZone();
+         m_pInstance->SetData(DATA_SUMMONS, m_pInstance->GetData(DATA_SUMMONS)+1);
 
          if (Unit* pLider = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
          {
@@ -131,7 +139,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
    void CallGuard(uint32 GuardID)
    {
-       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,180000);
+       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_DEAD_DESPAWN,3000);
    }
 
    void Wall01()

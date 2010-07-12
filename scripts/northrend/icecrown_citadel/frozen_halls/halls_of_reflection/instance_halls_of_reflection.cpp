@@ -31,7 +31,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
 {
     instance_halls_of_reflection(Map* pMap) : ScriptedInstance(pMap) 
     {
-        Regular = pMap->IsRegularDifficulty();
+        Difficulty = pMap->GetDifficulty();
         Initialize();
     }
 
@@ -39,7 +39,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     uint32 m_auiLider;
     std::string strSaveData;
 
-    bool Regular;
+    uint8 Difficulty;
+    uint8 m_uiSummons;
 
     uint64 m_uiFalricGUID;
     uint64 m_uiMarwynGUID;
@@ -56,6 +57,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
     uint64 m_uiCaptainsChestAllianceGUID;
     uint64 m_uiFrostmourneGUID;
     uint64 m_uiFrostmourneAltarGUID;
+    uint64 m_uiPortalGUID;
 
     void Initialize()
     {
@@ -67,6 +69,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         m_uiLiderGUID = 0;
         m_uiLichKingGUID = 0;
         m_uiExitGateGUID = 0;
+        m_uiSummons = 0;
     }
 
     void OpenDoor(uint64 guid)
@@ -112,7 +115,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         ALLIANCE_CONTROL_PHASE_SHIFT_1 = 55774,
         ALLIANCE_CONTROL_PHASE_SHIFT_2 = 60027,
     };
-        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
+/*        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
 
         switch (pPlayer->GetTeam())
         {
@@ -127,6 +130,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
                   pPlayer->CastSpell(pPlayer, ALLIANCE_CONTROL_PHASE_SHIFT_2, false);
                   break;
         };
+*/
     };
 
     void OnObjectCreate(GameObject* pGo)
@@ -138,6 +142,24 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case GO_ICECROWN_DOOR:     m_uiExitGateGUID = pGo->GetGUID(); break;
             case GO_ICECROWN_DOOR_2:   m_uiDoor2GUID = pGo->GetGUID(); break;
             case GO_ICECROWN_DOOR_3:   m_uiDoor3GUID = pGo->GetGUID(); break;
+            case GO_PORTAL:            m_uiPortalGUID = pGo->GetGUID(); break;
+            case  GO_CAPTAIN_CHEST_1:
+                                  if (Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiCaptainsChestHordeGUID = pGo->GetGUID(); 
+                                  break;
+            case  GO_CAPTAIN_CHEST_3:
+                                  if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiCaptainsChestHordeGUID = pGo->GetGUID(); 
+                                  break;
+            case  GO_CAPTAIN_CHEST_2:
+                                  if (Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
+                                  m_uiCaptainsChestAllianceGUID = pGo->GetGUID(); 
+                                  break;
+            case  GO_CAPTAIN_CHEST_4:
+                                  if (Difficulty == RAID_DIFFICULTY_25MAN_NORMAL)
+                                  m_uiCaptainsChestAllianceGUID = pGo->GetGUID(); 
+                                  break;
+
         }
     }
 
@@ -167,6 +189,24 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case TYPE_LICH_KING:            m_auiEncounter[uiType] = uiData;
                                             if(uiData == IN_PROGRESS)
                                                OpenDoor(m_uiDoor3GUID);
+                                            if(uiData == DONE)
+                                            {
+                                            if (m_auiLider == 1)
+                                            {
+                                            if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
+                                                if (pChest && !pChest->isSpawned()) {
+                                                    pChest->SetRespawnTime(DAY);
+                                                };
+                                            } else
+                                            if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
+                                                if (pChest && !pChest->isSpawned()) {
+                                                    pChest->SetRespawnTime(DAY);
+                                                };
+                                            if (GameObject* pPortal = instance->GetGameObject(m_uiPortalGUID))
+                                                if (pPortal && !pPortal->isSpawned()) {
+                                                    pPortal->SetRespawnTime(DAY);
+                                                };
+                                            }
                 break;
             case TYPE_ICE_WALL_01:          m_auiEncounter[uiType] = uiData; break;
             case TYPE_ICE_WALL_02:          m_auiEncounter[uiType] = uiData; break;
@@ -174,6 +214,9 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case TYPE_ICE_WALL_04:          m_auiEncounter[uiType] = uiData; break;
             case TYPE_HALLS:                m_auiEncounter[uiType] = uiData; break;
             case DATA_LIDER:                m_auiLider = uiData;
+                                            uiData = NOT_STARTED;
+                break;
+            case DATA_SUMMONS:              m_uiSummons = uiData;
                                             uiData = NOT_STARTED;
                 break;
         }
@@ -215,6 +258,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case TYPE_ICE_WALL_04:          return m_auiEncounter[uiType];
             case TYPE_HALLS:                return m_auiEncounter[uiType];
             case DATA_LIDER:                return m_auiLider;
+            case DATA_SUMMONS:              return m_uiSummons;
             default:                        return 0;
         }
         return 0;

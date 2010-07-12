@@ -900,7 +900,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
            case 1:
               if(pLichKing)
               {
-                 pLichKing->SetPhaseMask(m_creature->GetPhaseMask(), true);
+                 pLichKing->SetPhaseMask(65535, true);
                  if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                     DoScriptText(SAY_LICH_KING_AGGRO_A, pLichKing);
                  if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
@@ -1013,38 +1013,23 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               JumpNextStep(10000);
               break;
            case 12:
-                if (Map* pMap = m_creature->GetMap())
-                      switch (pMap->GetDifficulty())
-                      {
-                          case DUNGEON_DIFFICULTY_NORMAL:
-                               if (m_pInstance->GetData(DATA_LIDER) == 1) m_chestID = GO_CAPTAIN_CHEST_2;
-                                  else m_chestID = GO_CAPTAIN_CHEST_1;
-                          case DUNGEON_DIFFICULTY_HEROIC:
-                               if (m_pInstance->GetData(DATA_LIDER) == 1) m_chestID = GO_CAPTAIN_CHEST_4;
-                                  else m_chestID = GO_CAPTAIN_CHEST_3;
-                      };
-                if(GameObject* pChest = m_creature->SummonGameobject(m_chestID, 5241.047f, 1663.4364f, 784.295166f, 0.54f, DAY*IN_MILLISECONDS))
-                {
-                   pChest->SetPhaseMask(65535,true);
-                }
-                   m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+                   m_pInstance->SetData(TYPE_LICH_KING, DONE);
                    DoScriptText(SAY_ESCAPE_02, m_creature);
               JumpNextStep(10000);
               break;
            case 13:
-                if(GameObject* pPortal = m_creature->SummonGameobject(GO_PORTAL, 5250.959961f, 1639.359985f, 784.302f, 0.0f, DAY*IN_MILLISECONDS))
-                {
-                   pPortal->SetPhaseMask(65535,true);
                    DoScriptText(SAY_ESCAPE_03, m_creature);
-                }
               JumpNextStep(20000);
               break;
            case 14:
-              m_creature->GetMotionMaster()->MovePoint(0, 5250.959961f, 1639.359985f, 784.302f);
+              m_creature->GetMotionMaster()->MovePoint(0, 5251.959961f, 1632.359985f, 784.302f);
               JumpNextStep(5000);
               break;
            case 15:
-                   m_creature->ForcedDespawn();
+//                   m_creature->ForcedDespawn();
+//              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+//              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+//              if (m_creature->isQuestGiver())
               JumpNextStep(5000);
               break;
         }
@@ -1064,7 +1049,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
          else StepTimer -= diff;
       }
 
-      if(m_pInstance->GetData(TYPE_LICH_KING) == DONE
+      if(m_pInstance->GetData(TYPE_LICH_KING) == SPECIAL
          && m_pInstance->GetData(TYPE_PHASE) != 6)       //End Cinematic
       {
           m_pInstance->SetData(TYPE_PHASE, 6);
