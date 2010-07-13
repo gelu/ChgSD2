@@ -851,29 +851,7 @@ bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
             return true;
         };
 
-    char const* _message;
-
-    switch (pPlayer->GetSession()->GetSessionDbcLocale())
-    {
-     case LOCALE_enUS:
-     case LOCALE_koKR:
-     case LOCALE_frFR:
-     case LOCALE_deDE:
-     case LOCALE_zhCN:
-     case LOCALE_zhTW:
-     case LOCALE_esES:
-     case LOCALE_esMX:
-                      _message = "We are ready, Tirion!";
-                      break;
-     case LOCALE_ruRU:
-                      _message = "Всегда готовы, дедуля!";
-                      break;
-     default:
-                      _message = "We are ready, Tirion!";
-                      break;
-    };
-
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1631608, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
     pPlayer->PlayerTalkClass->SendGossipMenu(721001, pCreature->GetGUID());
     return true;
 };

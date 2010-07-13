@@ -606,44 +606,15 @@ bool GossipHello_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCreat
     if(pCreature->isQuestGiver())
        pPlayer->PrepareQuestMenu( pCreature->GetGUID());
 
-    char const* _message1a;
-    char const* _message2a;
-    char const* _message1h;
-    char const* _message2h;
-
-    switch (pPlayer->GetSession()->GetSessionDbcLocale())
-    {
-     case LOCALE_ruRU:
-                      _message1a = "Джайна, мы готовы!";
-                      _message2a = "Давай быстрее!";
-                      _message1h = "Сильвана, мы готовы!";
-                      _message2h = "Поехали!";
-                      break;
-     case LOCALE_enUS:
-     case LOCALE_koKR:
-     case LOCALE_frFR:
-     case LOCALE_deDE:
-     case LOCALE_zhCN:
-     case LOCALE_zhTW:
-     case LOCALE_esES:
-     case LOCALE_esMX:
-     default:
-                      _message1a = "Lady Jaina, we are ready for next mission!";
-                      _message2a = "Lady Jaina, Let's go!";
-                      _message1h = "Lady Sylvanas, we are ready for next mission!";
-                      _message2h = "Lady Sylvanas, Let's go!";
-                      break;
-    };
-
     switch(pCreature->GetEntry())
     {
        case NPC_JAINA:
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message1a, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message2a, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594536, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594537, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             break;
        case NPC_SYLVANA: 
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message1h, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
-            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message2h, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594538, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594539, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
             break;
     }
 
@@ -1131,27 +1102,7 @@ bool GossipHello_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreat
     if(pCreature->isQuestGiver())
        pPlayer->PrepareQuestMenu( pCreature->GetGUID());
 
-    char const* _message;
-
-    switch (pPlayer->GetSession()->GetSessionDbcLocale())
-    {
-     case LOCALE_ruRU:
-                      _message = "Побежали!";
-                      break;
-     case LOCALE_enUS:
-     case LOCALE_koKR:
-     case LOCALE_frFR:
-     case LOCALE_deDE:
-     case LOCALE_zhCN:
-     case LOCALE_zhTW:
-     case LOCALE_esES:
-     case LOCALE_esMX:
-     default:
-                      _message = "Let's go!";
-                      break;
-    };
-
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, _message, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1594540, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
 

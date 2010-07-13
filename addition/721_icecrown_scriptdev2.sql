@@ -183,3 +183,16 @@ INSERT INTO `script_texts` (`entry`,`content_loc8`, `content_default`, `sound`, 
 ('-1631592','ДД поднажали!','<need translate>','0','6','0','0','custom message'),
 ('-1631593','Лидер, гони лентяев из рейда! А то еще час возиться будете!','<need translate>','0','6','0','0','custom message'),
 ('-1631594','Ну вот вы и прикончили Артаса. Теперь будем ждать Катаклизм.','<need translate>','0','6','0','0','custom message');
+
+-- Gossips
+DELETE FROM `script_texts` WHERE `entry` BETWEEN -1631610 AND -1631600;
+INSERT INTO `script_texts` VALUES
+('-1631600', "Hammer of the World", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молот света", 0, 0, 0, 0, "IceCrown citadel teleporter text 1"),
+('-1631601', "Chapel of Damned", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молельня проклятых", 0, 0, 0, 0, "IceCrown citadel teleporter text 2"),
+('-1631602', "Skulls plato", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Черепной вал", 0, 0, 0, 0, "IceCrown citadel teleporter text 3"),
+('-1631603', "The Rise of Deadly", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Подъем смертоносного", 0, 0, 0, 0, "IceCrown citadel teleporter text 4"),
+('-1631604', "Icecrown Citadel", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Цитадель Ледяной Короны", 0, 0, 0, 0, "IceCrown citadel teleporter text 5"),
+('-1631605', "Sanctuary of Blood", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Святилище крови", 0, 0, 0, 0, "IceCrown citadel teleporter text 6"),
+('-1631606', "Lair of the Queen of Ice", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Логово Королевы льда", 0, 0, 0, 0, "IceCrown citadel teleporter text 7"),
+('-1631607', "Frozen Throne", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Ледяной трон", 0, 0, 0, 0, "IceCrown citadel teleporter text 8"),
+('-1631608', "We are ready, Tirion!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Всегда готовы, дедуля!", 0, 0, 0, 0, "IceCrown citadel Tirion gossip");
