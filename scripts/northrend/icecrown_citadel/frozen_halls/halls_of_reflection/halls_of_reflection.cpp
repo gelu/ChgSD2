@@ -730,13 +730,22 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 CastTimer = 1000;
                 HoldTimer = 30000;
                 SetEscortPaused(true);
-                pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+                if (pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_MANUAL_DESPAWN,5000))
+                {
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                }
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                    m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_01, false);
                 WallCast = true;
                 break;
             case 6:
                 m_pInstance->SetData(TYPE_ICE_WALL_02, IN_PROGRESS);
+                if (pWallTarget && pWallTarget->isAlive())
+                {
+                    pWallTarget->ForcedDespawn();
+                    pWallTarget = NULL;
+                }
                 break;
             case 8:
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -746,7 +755,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 CastTimer = 1000;
                 HoldTimer = 30000;
                 SetEscortPaused(true);
-                pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+                if (pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_MANUAL_DESPAWN,5000))
+                {
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                };
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                    m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_01, false);
                 WallCast = true;
@@ -759,6 +772,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 break;
             case 11:
                 m_pInstance->SetData(TYPE_ICE_WALL_03, IN_PROGRESS);
+                if (pWallTarget && pWallTarget->isAlive())
+                {
+                    pWallTarget->ForcedDespawn();
+                    pWallTarget = NULL;
+                }
                 break;
             case 12:
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -768,7 +786,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 CastTimer = 1000;
                 HoldTimer = 30000;
                 SetEscortPaused(true);
-                pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+                if (pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_MANUAL_DESPAWN,5000))
+                {
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                };
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                    m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_01, false);
                 WallCast = true;
@@ -781,6 +803,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 break;
             case 15:
                 m_pInstance->SetData(TYPE_ICE_WALL_04, IN_PROGRESS);
+                if (pWallTarget && pWallTarget->isAlive())
+                {
+                    pWallTarget->ForcedDespawn();
+                    pWallTarget = NULL;
+                }
                 break;
             case 16:
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -790,7 +817,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 CastTimer = 1000;
                 HoldTimer = 30000;
                 SetEscortPaused(true);
-                pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000);
+                if (pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_MANUAL_DESPAWN,5000))
+                {
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                };
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                    m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_01, false);
                 WallCast = true;
@@ -802,6 +833,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                    DoScriptText(SAY_SYLVANA_TRAP, m_creature);
                 break;
             case 20:
+                if (pWallTarget && pWallTarget->isAlive())
+                {
+                    pWallTarget->ForcedDespawn();
+                    pWallTarget = NULL;
+                }
                 SetEscortPaused(true);
                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
                    m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY2HL);
@@ -993,10 +1029,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               JumpNextStep(20000);
               break;
            case 14:
-              m_creature->GetMotionMaster()->MovePoint(0, 5251.959961f, 1632.359985f, 784.302f);
+              m_creature->GetMotionMaster()->MovePoint(0, 5252.1621f, 1632.95f, 784.302f);
               JumpNextStep(5000);
               break;
+
            case 15:
+                m_creature->SetOrientation(4.38f);
 //                   m_creature->ForcedDespawn();
 //              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
 //              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);

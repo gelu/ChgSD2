@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 3:
             DoCast(m_creature, SPELL_WINTER);
             DoScriptText(SAY_LICH_KING_WINTER, m_creature);
-            m_creature->SetSpeedRate(MOVE_WALK, 0.9f, true);
+            m_creature->SetSpeedRate(MOVE_WALK, 1.0f, true);
             StepTimer = 1000;
             ++Step;
             break;
@@ -292,7 +292,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          NonFight = true;
          m_creature->AttackStop();
          m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-         m_creature->SetSpeedRate(MOVE_WALK, 2.4f, true);
+         m_creature->SetSpeedRate(MOVE_WALK, 2.5f, true);
          if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
              pEscortAI->Start(false, false);
          Step = 0;
