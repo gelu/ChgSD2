@@ -134,6 +134,7 @@ enum
     MAP_NUM                     = 631,
     TYPE_DIFFICULTY             = 1001,
     DATA_BLOOD_COUNCIL_HEALTH   = 1002,
+    DATA_BLOOD_INVOCATION       = 1003,
     DESPAWN_TIME                = 300000,
 
 };
@@ -240,6 +241,7 @@ private:
     uint64 m_uiGunshipArmoryA_ID;
 
     uint32 m_uiDataCouncilHealth;
+    uint32 m_uiCouncilInvocation;
 
     uint32 m_auiEvent;
     uint32 m_auiEventTimer;

@@ -102,6 +102,8 @@ static Locations SpawnLoc[]=
         m_uiSDoorCollisionGUID = 0;
         m_auiEvent = 0;
         m_auiEventTimer = 1000;
+        m_uiCouncilInvocation = 0;
+
         switch (Difficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
                                        m_uiGunshipArmoryH_ID = GO_GUNSHIP_ARMORY_H_10;
@@ -508,6 +510,9 @@ static Locations SpawnLoc[]=
              case DATA_BLOOD_COUNCIL_HEALTH:     m_uiDataCouncilHealth = uiData; 
                                                  uiData = NOT_STARTED; 
                                                  break;
+             case DATA_BLOOD_INVOCATION:         m_uiCouncilInvocation = uiData;
+                                                 uiData = NOT_STARTED;
+                                                 break;
              case TYPE_EVENT:            m_auiEvent = uiData; uiData = NOT_STARTED; break;
              case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
@@ -549,6 +554,7 @@ static Locations SpawnLoc[]=
              case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
              case TYPE_COUNT:         return m_auiEncounter[14];
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
+             case DATA_BLOOD_INVOCATION:         return m_uiCouncilInvocation; 
              case TYPE_EVENT:         return m_auiEvent;
              case TYPE_EVENT_TIMER:   return m_auiEventTimer;
              case TYPE_EVENT_NPC:     switch (m_auiEvent) 
