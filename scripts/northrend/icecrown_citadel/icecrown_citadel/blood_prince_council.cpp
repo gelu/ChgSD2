@@ -16,11 +16,11 @@
 
 /* ScriptData
 SDName: blood_prince_council
-SD%Complete: 50%
+SD%Complete: 75%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-// Need implement vortexes, mobs and power orb
+// Need implement kinetic bomb and correct work of invocation.
 #include "precompiled.h"
 #include "def_spire.h"
 
@@ -29,7 +29,8 @@ enum BossSpells
         SPELL_BERSERK                           = 47008,
 
         //Darkfallen Orb
-        SPELL_INVOCATION_OF_BLOOD               = 70952,
+        SPELL_INVOCATION_OF_BLOOD               = 70952, // Not worked in core
+        SPELL_INVOCATION_OF_BLOOD_AURA          = 70983,  // Triggered, override
 
         //Valanar
         SPELL_KINETIC_BOMB                      = 72053,
@@ -44,8 +45,10 @@ enum BossSpells
         //Taldaram
         SPELL_GLITTERING_SPARKS                 = 71807,
         SPELL_CONJURE_FLAME_1                   = 71718,
+        SPELL_SUMMON_FLAME_1                    = 71719, //Dummy effect
         NPC_BALL_OF_FLAMES_1                    = 38332,
         SPELL_CONJURE_FLAME_2                   = 72040,
+        SPELL_SUMMON_FLAME_2                    = 72041, //Dummy effect
         NPC_BALL_OF_FLAMES_2                    = 38451,
         SPELL_FLAMES_AURA                       = 71709,
         SPELL_FLAMES                            = 71393,
@@ -137,6 +140,8 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
 
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, IN_PROGRESS);
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+//        invocated = true;
+        m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_VALANAR);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -162,46 +167,27 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
                                       m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
                 m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
 
-    switch (m_pInstance->GetData(DATA_BLOOD_INVOCATION))
+        if (m_pInstance->GetData(DATA_BLOOD_INVOCATION) == NPC_VALANAR)
         {
-          case NPC_VALANAR:
                 if (!invocated)
                 {
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_0);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_1);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_2);
                     DoScriptText(-1631307,m_creature);
                     invocated = true;
                 }
+                if (timedQuery(SPELL_INVOCATION_OF_BLOOD, uiDiff))
+                {
+                    m_pInstance->SetData(DATA_BLOOD_INVOCATION, urand(0,1) ? NPC_TALDARAM : NPC_KELESETH);
+                    doRemove(SPELL_INVOCATION_OF_BLOOD, m_creature);
+                }
+                timedCast(SPELL_INVOCATION_OF_BLOOD_AURA, uiDiff);
                 timedCast(SPELL_KINETIC_BOMB, uiDiff);
                 timedCast(SPELL_SHOCK_VORTEX_2, uiDiff);
-                if (timedQuery(SPELL_INVOCATION_OF_BLOOD, uiDiff))
-                {
+        } else 
+        {
                 invocated = false;
-                switch (urand(0,1))
-                    case 0:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_TALDARAM);
-                           break;
-                    case 1:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_KELESETH);
-                           break;
-                }
-                break;
 
-          case 0:
-                if (timedQuery(SPELL_INVOCATION_OF_BLOOD, uiDiff))
-                {
-                    m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_VALANAR);
-                    DoScriptText(-1631306,m_creature);
-                };
-          default:
-                if (hasAura(SPELL_INVOCATION_OF_BLOOD, m_creature))
-                {
-                    doRemove(SPELL_INVOCATION_OF_BLOOD);
-                }
                 timedCast(SPELL_KINETIC_BOMB, uiDiff);
                 timedCast(SPELL_SHOCK_VORTEX, uiDiff);
-                break;
         }
 
         if (timedQuery(SPELL_BERSERK, uiDiff))
@@ -231,6 +217,7 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
     Creature* pBrother1;
     Creature* pBrother2;
     bool invocated;
+    uint8 ballscount;
 
 
     void Reset() {
@@ -238,6 +225,7 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         resetTimers();
         invocated = false;
+        ballscount = 0;
     }
 
     void JustReachedHome()
@@ -302,41 +290,36 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
                                       m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
                 m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
 
-    switch (m_pInstance->GetData(DATA_BLOOD_INVOCATION))
+        if (m_pInstance->GetData(DATA_BLOOD_INVOCATION) == NPC_TALDARAM)
         {
-          case NPC_TALDARAM:
                 if (!invocated)
                 {
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_0);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_1);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_2);
                     DoScriptText(-1631307,m_creature);
                     invocated = true;
                 }
                 if (timedQuery(SPELL_INVOCATION_OF_BLOOD, uiDiff))
                 {
-                invocated = false;
-                switch (urand(0,1))
-                    case 0:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_VALANAR);
-                           break;
-                    case 1:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_KELESETH);
-                           break;
+                    m_pInstance->SetData(DATA_BLOOD_INVOCATION, urand(0,1) ? NPC_VALANAR : NPC_KELESETH);
                 }
-                timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
-                timedCast(SPELL_CONJURE_FLAME_2, uiDiff);
-                break;
-
-          default:
-                if (hasAura(SPELL_INVOCATION_OF_BLOOD, m_creature))
+                if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
                 {
-                    doRemove(SPELL_INVOCATION_OF_BLOOD);
-                }
+                     doCast(SPELL_SUMMON_FLAME_2);
+                     --ballscount;
+                };
+                timedCast(SPELL_INVOCATION_OF_BLOOD_AURA, uiDiff);
                 timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
-                timedCast(SPELL_CONJURE_FLAME_1, uiDiff);
-                break;
-        }
+                if (timedCast(SPELL_CONJURE_FLAME_2, uiDiff) == CAST_OK) ballscount = 1;
+         } else
+         {
+                invocated = false;
+                if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
+                {
+                     doCast(SPELL_SUMMON_FLAME_1);
+                     --ballscount;
+                };
+                timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
+                if (timedCast(SPELL_CONJURE_FLAME_1, uiDiff) == CAST_OK) ballscount = 1;
+         }
 
 
         if (timedQuery(SPELL_BERSERK, uiDiff)){
@@ -436,42 +419,28 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
                                       m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
                 m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
 
-    switch (m_pInstance->GetData(DATA_BLOOD_INVOCATION))
+        if (m_pInstance->GetData(DATA_BLOOD_INVOCATION) == NPC_KELESETH)
         {
-          case NPC_KELESETH:
                 if (!invocated)
                 {
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_0);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_1);
-                    doAura(SPELL_INVOCATION_OF_BLOOD, m_creature, EFFECT_INDEX_2);
                     DoScriptText(-1631307,m_creature);
                     invocated = true;
                 };
 
                 if (timedQuery(SPELL_INVOCATION_OF_BLOOD, uiDiff))
                 {
-                invocated = false;
-                switch (urand(0,1))
-                    case 0:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_VALANAR);
-                           break;
-                    case 1:
-                           m_pInstance->SetData(DATA_BLOOD_INVOCATION, NPC_TALDARAM);
-                           break;
+                    m_pInstance->SetData(DATA_BLOOD_INVOCATION, urand(0,1) ? NPC_TALDARAM : NPC_VALANAR);
                 }
+
+                timedCast(SPELL_INVOCATION_OF_BLOOD_AURA, uiDiff);
                 timedCast(SPELL_SHADOW_LANCE_2, uiDiff);
                 timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
-                break;
-
-          default:
-                if (hasAura(SPELL_INVOCATION_OF_BLOOD, m_creature))
-                {
-                    doRemove(SPELL_INVOCATION_OF_BLOOD);
-                }
+         } else
+         {
+                invocated = false;
                 timedCast(SPELL_SHADOW_LANCE, uiDiff);
                 timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
-                break;
-        }
+         }
 
 
         if (timedQuery(SPELL_BERSERK, uiDiff)){
@@ -503,10 +472,15 @@ struct MANGOS_DLL_DECL mob_dark_nucleusAI : public ScriptedAI
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();
-        m_lifetimer = 45000;
-        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        m_lifetimer = 60000;
+    }
+
+    void Aggro(Unit* pWho)
+    {
+        if (!m_pInstance) return;
+        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
         SetCombatMovement(true);
-        DoCast(m_creature, SPELL_SHADOW_RESONANCE_AURA);
+        DoStartMovement(pWho);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -514,12 +488,15 @@ struct MANGOS_DLL_DECL mob_dark_nucleusAI : public ScriptedAI
         if (!m_pInstance || m_pInstance->GetData(TYPE_BLOOD_COUNCIL) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
 
-/*        if (!m_creature->HasAura(SPELL_SHADOW_RESONANCE_AURA))
-              DoCast(m_creature, SPELL_SHADOW_RESONANCE_AURA);
-*/
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (!m_creature->getVictim()->HasAura(SPELL_SHADOW_RESONANCE_AURA))
+              DoCast(m_creature->getVictim(), SPELL_SHADOW_RESONANCE_AURA);
+
         if (m_lifetimer <= uiDiff)
             m_creature->ForcedDespawn();
-        else m_lifetimer -= uiDiff;
+            else m_lifetimer -= uiDiff;
 
     }
 };
@@ -551,17 +528,19 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         finita = false;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
+        m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
         SetCombatMovement(false);
         m_creature->GetPosition(fPosX, fPosY, fPosZ);
         m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, urand(40, 60), fPosX, fPosY, fPosZ);
         m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
-        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-
         m_Size0 = m_creature->GetObjectScale();
         m_Size = m_Size0;
         grow_timer = 500;
 
-        if (m_creature->GetEntry() == NPC_BALL_OF_FLAMES_2)
+        m_creature->SetDisplayId(26767);
+//        if (m_creature->GetEntry() == NPC_BALL_OF_FLAMES_2)
             DoCast(m_creature, SPELL_FLAMES_AURA);
     }
 
@@ -570,7 +549,7 @@ struct MANGOS_DLL_DECL mob_ball_of_flamesAI : public ScriptedAI
         if (!m_pInstance || type != POINT_MOTION_TYPE) return;
         if (id != 1)
             m_creature->GetMotionMaster()->MovePoint(1, fPosX, fPosY, fPosZ);
-            else 
+            else
             {
                 DoCast(m_creature, SPELL_FLAMES);
                 finita = true;
@@ -624,7 +603,9 @@ struct MANGOS_DLL_DECL mob_kinetic_bombAI : public ScriptedAI
         m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
         SetCombatMovement(false);
         m_lifetimer = 45000;
-    }
+//        m_creature->SetDisplayId(26767);
+//        m_creature->SetDisplayId(19725);
+  }
 
 /*
 Place shock bomb movement here
@@ -666,8 +647,9 @@ struct MANGOS_DLL_DECL mob_shock_vortexAI : public ScriptedAI
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();
-        m_lifetimer = 10000;
-        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_lifetimer = 8000;
         SetCombatMovement(false);
         DoCast(m_creature, SPELL_SHOCK_VORTEX_AURA);
     }
