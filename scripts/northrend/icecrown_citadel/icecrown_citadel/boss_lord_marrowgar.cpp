@@ -148,12 +148,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                     break;
             case 2:
 
-                    if (timedQuery(SPELL_BONE_STORM, diff)) stage = 3;
-
-                    timedCast(SPELL_BONE_STORM_STRIKE, diff);
-
+                    if (!m_creature->IsNonMeleeSpellCasted(false)) stage = 3;
+//                    if (timedQuery(SPELL_BONE_STORM, diff)) stage = 3;
                     break;
-
             case 3:
                     timedCast(SPELL_SABER_LASH, diff);
                     DoMeleeAttackIfReady();
