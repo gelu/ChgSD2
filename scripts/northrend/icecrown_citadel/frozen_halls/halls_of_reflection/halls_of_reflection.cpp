@@ -1157,6 +1157,7 @@ bool GossipHello_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreat
 
 bool GossipSelect_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
+    ScriptedInstance* m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
     switch (uiAction)
     {
         case GOSSIP_ACTION_INFO_DEF+1:
@@ -1166,7 +1167,6 @@ bool GossipSelect_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCrea
            pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
            pCreature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
 
-           ScriptedInstance* m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
            if(m_pInstance)
            {
               m_pInstance->SetData64(DATA_ESCAPE_LIDER, pCreature->GetGUID());

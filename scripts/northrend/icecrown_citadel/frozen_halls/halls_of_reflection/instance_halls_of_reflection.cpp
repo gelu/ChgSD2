@@ -115,7 +115,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
         ALLIANCE_CONTROL_PHASE_SHIFT_1 = 55774,
         ALLIANCE_CONTROL_PHASE_SHIFT_2 = 60027,
     };
-/*        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
+        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
 
         switch (pPlayer->GetTeam())
         {
@@ -130,7 +130,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
                   pPlayer->CastSpell(pPlayer, ALLIANCE_CONTROL_PHASE_SHIFT_2, false);
                   break;
         };
-*/
+
     };
 
     void OnObjectCreate(GameObject* pGo)
@@ -216,8 +216,9 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case DATA_LIDER:                m_auiLider = uiData;
                                             uiData = NOT_STARTED;
                 break;
-            case DATA_SUMMONS:              if (uiData) ++m_uiSummons;
-                                                else --m_uiSummons;
+            case DATA_SUMMONS:              if (uiData == 3) m_uiSummons = 0;
+                                            else if (uiData == 1) ++m_uiSummons;
+                                            else if (uiData == 0) --m_uiSummons;
                                             uiData = NOT_STARTED;
                 break;
         }

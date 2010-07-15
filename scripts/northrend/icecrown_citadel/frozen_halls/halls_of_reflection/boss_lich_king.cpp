@@ -142,7 +142,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
    void CallGuard(uint32 GuardID)
    {
-       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,300000);
+       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-15)+rand()%10, (m_creature->GetPositionY()-15)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,300000);
    }
 
    void Wall01()
@@ -151,6 +151,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       {
          case 0:
             SetEscortPaused(true);
+            m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_WALL_01, m_creature);
             DoCast(m_creature, SPELL_DESTROY_ICE_WALL_02);
             StepTimer = 2000;
@@ -169,7 +170,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 3:
             DoCast(m_creature, SPELL_WINTER);
             DoScriptText(SAY_LICH_KING_WINTER, m_creature);
-            m_creature->SetSpeedRate(MOVE_WALK, 1.0f, true);
+            m_creature->SetSpeedRate(MOVE_WALK, 1.1f, true);
             StepTimer = 1000;
             ++Step;
             break;
@@ -192,6 +193,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       switch(Step)
       {
           case 0:
+            m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
@@ -215,6 +217,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       switch(Step)
       {
          case 0:
+           m_pInstance->SetData(DATA_SUMMONS, 3);
            SetEscortPaused(true);
            DoCast(m_creature, SPELL_RAISE_DEAD);
            DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
@@ -241,6 +244,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       switch(Step)
       {
          case 0:
+           m_pInstance->SetData(DATA_SUMMONS, 3);
            SetEscortPaused(true);
            DoCast(m_creature, SPELL_RAISE_DEAD);
            DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
@@ -249,6 +253,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
            break;
          case 1:
             SetEscortPaused(false);
+            m_creature->SetSpeedRate(MOVE_WALK, 1.2f, true);
             CallGuard(NPC_RISEN_WITCH_DOCTOR);
             CallGuard(NPC_RISEN_WITCH_DOCTOR);
             CallGuard(NPC_RISEN_WITCH_DOCTOR);
@@ -295,7 +300,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          NonFight = true;
          m_creature->AttackStop();
          m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-         m_creature->SetSpeedRate(MOVE_WALK, 2.5f, true);
+         m_creature->SetSpeedRate(MOVE_WALK, 2.6f, true);
          if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
              pEscortAI->Start(false, false);
          Step = 0;
@@ -305,12 +310,13 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       if (Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
          if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
          {
-            DoScriptText(SAY_LICH_KING_WIN, m_creature);
-            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             SetEscortPaused(true);
+            npc_escortAI::EnterEvadeMode();
+            DoScriptText(SAY_LICH_KING_WIN, m_creature);
+            m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
+//            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
             m_pInstance->SetData(TYPE_LICH_KING, FAIL);
-            npc_escortAI::EnterEvadeMode();
          };
 
       if(m_pInstance->GetData(TYPE_ICE_WALL_01) == IN_PROGRESS)
