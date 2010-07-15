@@ -883,7 +883,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
         if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && WallCast == true)
         {
-          HoldTimer = HoldTimer + 1000;
+          HoldTimer = HoldTimer + 500;
           return;
         }
    }
@@ -1029,16 +1029,14 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               JumpNextStep(20000);
               break;
            case 14:
-              m_creature->GetMotionMaster()->MovePoint(0, 5252.1621f, 1632.95f, 784.302f);
+              m_creature->GetMotionMaster()->MovePoint(0, 5240.66f, 1646.93f, 784.302f);
               JumpNextStep(5000);
               break;
 
            case 15:
-                m_creature->SetOrientation(4.38f);
-//                   m_creature->ForcedDespawn();
-//              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-//              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-//              if (m_creature->isQuestGiver())
+              m_creature->SetOrientation(0.68f);
+              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
               JumpNextStep(5000);
               break;
         }
@@ -1083,7 +1081,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
          }
       } else CastTimer -= diff;
 
-      if(WallCast == true && HoldTimer < diff)
+      if (WallCast == true && HoldTimer < 10000 && m_pInstance->GetData(DATA_SUMMONS) == 0)
       {
          WallCast = false;
          m_creature->InterruptNonMeleeSpells(false);
@@ -1129,7 +1127,10 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               }
               break;
          }
-      } else HoldTimer -= diff;
+      } else  {
+              HoldTimer -= diff;
+              if (HoldTimer <= 0) HoldTimer = 0;;
+              }
 
       return;
    }
@@ -1137,6 +1138,13 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
 bool GossipHello_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreature)
 {
+
+    ScriptedInstance*   m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+    if(!m_pInstance) return false;
+
+    if(m_pInstance->GetData(TYPE_LICH_KING) == DONE) return false;
+
     if(pCreature->isQuestGiver())
        pPlayer->PrepareQuestMenu( pCreature->GetGUID());
 
@@ -1165,9 +1173,10 @@ bool GossipSelect_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCrea
               m_pInstance->SetData(TYPE_LICH_KING, IN_PROGRESS);
               m_pInstance->SetData(TYPE_PHASE, 5);
            }
+           return true;
            break;
+       default:  return false;
     }
-    return true;
 }
 
 struct MANGOS_DLL_DECL npc_lich_king_hrAI : public ScriptedAI

@@ -53,6 +53,7 @@ enum
   SAY_LICH_KING_ABON                 = -1594483,
   SAY_LICH_KING_WINTER               = -1594481,
   SAY_LICH_KING_END_DUN              = -1594504,
+  SAY_LICH_KING_WIN                  = -1594485,
 };
 
 struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
@@ -116,10 +117,10 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
      npc_escortAI::AttackStart(who);
    }
 
-    void SummonedCreatureDespawn(Creature* summoned)
+    void SummonedCreatureJustDied(Creature* summoned)
     {
          if(!m_pInstance || !summoned) return;
-         m_pInstance->SetData(DATA_SUMMONS, m_pInstance->GetData(DATA_SUMMONS)-1);
+         m_pInstance->SetData(DATA_SUMMONS, 0);
     }
 
     void JustSummoned(Creature* summoned)
@@ -128,7 +129,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
          summoned->SetPhaseMask(65535, true);
          summoned->SetInCombatWithZone();
-         m_pInstance->SetData(DATA_SUMMONS, m_pInstance->GetData(DATA_SUMMONS)+1);
+         summoned->SetActiveObjectState(true);
+
+         m_pInstance->SetData(DATA_SUMMONS, 1);
 
          if (Unit* pLider = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
          {
@@ -139,7 +142,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
    void CallGuard(uint32 GuardID)
    {
-       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_DEAD_DESPAWN,3000);
+       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,300000);
    }
 
    void Wall01()
@@ -298,6 +301,17 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          Step = 0;
          StepTimer = 100;
       }
+
+      if (Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
+         if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
+         {
+            DoScriptText(SAY_LICH_KING_WIN, m_creature);
+            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            SetEscortPaused(true);
+            m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
+            m_pInstance->SetData(TYPE_LICH_KING, FAIL);
+            npc_escortAI::EnterEvadeMode();
+         };
 
       if(m_pInstance->GetData(TYPE_ICE_WALL_01) == IN_PROGRESS)
       {

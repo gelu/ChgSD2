@@ -216,7 +216,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public ScriptedInstance
             case DATA_LIDER:                m_auiLider = uiData;
                                             uiData = NOT_STARTED;
                 break;
-            case DATA_SUMMONS:              m_uiSummons = uiData;
+            case DATA_SUMMONS:              if (uiData) ++m_uiSummons;
+                                                else --m_uiSummons;
                                             uiData = NOT_STARTED;
                 break;
         }
