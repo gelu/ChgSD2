@@ -100,11 +100,9 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(pInstance)
+        if(!pInstance) return;
             pInstance->SetData(TYPE_RAGEFIRE, DONE);
-
-        DoScriptText(-1666403,m_creature);
-        pInstance->SetData(TYPE_BALTHARUS, DONE);
+            DoScriptText(-1666403,m_creature);
     }
 
     void UpdateAI(const uint32 diff)
@@ -114,53 +112,38 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
         timedCast(SPELL_TWILIGHT_PRECISION, diff);
 
-        if ( m_creature->GetHealthPercent() <= 80.0f && phase == 0)
-        {
-            phase = 1;
-        }
-        if ( m_creature->GetHealthPercent() <= 60.0f && phase == 1)
-        {
-            phase = 2;
-        }
-        if ( m_creature->GetHealthPercent() <= 40.0f && phase == 2)
-        {
-           phase = 3;
-        }
-        if ( m_creature->GetHealthPercent() <= 20.0f && phase == 3)
-        {
-           phase = 4;
-        }
-
         switch (phase)
         {
             case 0: //GROUND
-                 doCast(SPELL_FLAME_BREATH);
-                 doCast(SPELL_ENRAGE);
+                 timedCast(SPELL_FLAME_BREATH, diff);
+                 if ( m_creature->GetHealthPercent() <= 80.0f) phase = 1;
                  break;
             case 1: //AIR
                     //NEED SCRIPT AIR MOVEMENT
-                DoScriptText(-1666404,m_creature);
-                doCast(SPELL_BEACON);
-                doCast(SPELL_CONFLAG);
-                break;
+                 DoScriptText(-1666404,m_creature);
+                 timedCast(SPELL_BEACON, diff);
+                 timedCast(SPELL_CONFLAG, diff);
+                 if ( m_creature->GetHealthPercent() <= 60.0f) phase = 2;
+                 break;
             case 2: //GROUND
-                doCast(SPELL_FLAME_BREATH);
-                doCast(SPELL_ENRAGE);
-                break;
+                 timedCast(SPELL_FLAME_BREATH, diff);
+                 if ( m_creature->GetHealthPercent() <= 40.0f) phase == 3;
+                 break;
             case 3: //AIR
                     //NEED SCRIPT AIR MOVEMENT
-                DoScriptText(-1666404,m_creature);
-                doCast(SPELL_BEACON);
-                doCast(SPELL_CONFLAG);
-                break;
+                 DoScriptText(-1666404,m_creature);
+                 timedCast(SPELL_BEACON, diff);
+                 timedCast(SPELL_CONFLAG, diff);
+                 if ( m_creature->GetHealthPercent() <= 20.0f) phase == 4;
+                 break;
             case 4: //GROUND
-                doCast(SPELL_FLAME_BREATH);
-                doCast(SPELL_ENRAGE);
-                break;
+                 timedCast(SPELL_FLAME_BREATH, diff);
+                 break;
             default:
                 break;
         }
 
+        timedCast(SPELL_ENRAGE, diff);
         DoMeleeAttackIfReady();
     }
 };

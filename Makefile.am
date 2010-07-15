@@ -376,6 +376,7 @@ scripts/northrend/icecrown_citadel/icecrown_citadel/icecrown_spire.cpp \
 scripts/northrend/icecrown_citadel/icecrown_citadel/def_spire.h \
 scripts/northrend/ruby_sanctum/def_ruby_sanctum.h \
 scripts/northrend/ruby_sanctum/instance_ruby_sanctum.cpp \
+scripts/northrend/ruby_sanctum/ruby_sanctum.cpp \
 scripts/northrend/ruby_sanctum/boss_halion.cpp \
 scripts/northrend/ruby_sanctum/boss_zarithian.cpp \
 scripts/northrend/ruby_sanctum/boss_baltharus.cpp \

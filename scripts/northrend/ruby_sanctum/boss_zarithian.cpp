@@ -36,10 +36,11 @@ enum
     NPC_FLAMECALLER                  = 39814,
 };
 
-static float add[2][4]=
+static float add[3][4]=
 {
         {0.0f,0.0f,0.0f,0.0f}, //x y z o
         {0.0f,0.0f,0.0f,0.0f},
+        {0.0f,0.0f,0.0f,0.0f}, // HALION
 };
 
 struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
@@ -110,6 +111,8 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
             pInstance->SetData(TYPE_ZARITHIAN, DONE);
 
         DoScriptText(-1666203,m_creature);
+//        m_creature->SummonCreature(NPC_HALION_P, add[2][0], add[2][1], add[2][2], add[2][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
+// Don't summon Halion there! Xerestrasza can made this.
     }
 
     void UpdateAI(const uint32 diff)

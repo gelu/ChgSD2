@@ -421,6 +421,7 @@ extern void AddSC_boss_marwyn();
 extern void AddSC_boss_lich_king_hr();
 
 extern void AddSC_instance_ruby_sanctum();                  // Ruby Sanctum
+extern void AddSC_ruby_sanctum();
 extern void AddSC_boss_halion();
 extern void AddSC_boss_ragefire();
 extern void AddSC_boss_zarithian();
@@ -914,6 +915,7 @@ void AddScripts()
     AddSC_boss_lich_king_hr();
 
     AddSC_instance_ruby_sanctum();                         // Ruby Sanctum
+    AddSC_ruby_sanctum();
     AddSC_boss_halion();
     AddSC_boss_ragefire();
     AddSC_boss_zarithian();

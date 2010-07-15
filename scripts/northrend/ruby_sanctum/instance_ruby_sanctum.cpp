@@ -43,6 +43,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiZarithianGUID;
     uint64 m_uiBaltharusGUID;
     uint64 m_uiCloneGUID;
+    uint64 m_uiXerestraszaGUID;
 
     //object GUID
     uint64 m_uiHalionFireRingGUID;
@@ -50,6 +51,9 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiHalionPortal1GUID;
     uint64 m_uiHalionPortal2GUID;
     uint64 m_uiHalionPortal3GUID;
+    uint64 m_uiHalionFireWallSGUID;
+    uint64 m_uiHalionFireWallMGUID;
+    uint64 m_uiHalionFireWallLGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -89,6 +93,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         m_uiHalionPortal1GUID = 0;
         m_uiHalionPortal2GUID = 0;
         m_uiHalionPortal3GUID = 0;
+        m_uiXerestraszaGUID = 0;
+        m_uiHalionFireWallSGUID = 0;
+        m_uiHalionFireWallMGUID = 0;
+        m_uiHalionFireWallLGUID = 0;
     }
 
     bool IsEncounterInProgress() const
@@ -122,6 +130,9 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_CLONE:
                 m_uiCloneGUID = pCreature->GetGUID();
                 break;
+            case NPC_XERESTRASZA:
+                m_uiXerestraszaGUID = pCreature->GetGUID();
+                break;
         }
     }
 
@@ -151,17 +162,12 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     {
         switch(uiType)
         {
-            case TYPE_BALTHARUS: 
-                 m_auiEncounter[0] = uiData;
-                 //FREE XERESTRASZA
-                 break;
-            case TYPE_ZARITHIAN: 
-                 m_auiEncounter[1] = uiData; 
-                //SPAWN HALION
-                break;
-            case TYPE_RAGEFIRE:  m_auiEncounter[2] = uiData; break;
+            case TYPE_BALTHARUS:    m_auiEncounter[0] = uiData; break;
+            case TYPE_XERESTRASZA:  m_auiEncounter[1] = uiData; break;
+            case TYPE_ZARITHIAN:    m_auiEncounter[2] = uiData; break;     //SPAWN HALION?
+            case TYPE_RAGEFIRE:     m_auiEncounter[3] = uiData; break;
             case TYPE_HALION:
-                m_auiEncounter[3] = uiData;
+                m_auiEncounter[4] = uiData;
                 if (uiData == IN_PROGRESS)
                     CloseDoor(m_uiHalionFireRingGUID);
                 else
@@ -198,9 +204,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         switch(uiType)
         {
             case TYPE_BALTHARUS:     return m_auiEncounter[0];
-            case TYPE_ZARITHIAN:     return m_auiEncounter[1];
-            case TYPE_RAGEFIRE:      return m_auiEncounter[2];
-            case TYPE_HALION:        return m_auiEncounter[3];
+            case TYPE_XERESTRASZA:   return m_auiEncounter[1];
+            case TYPE_ZARITHIAN:     return m_auiEncounter[2];
+            case TYPE_RAGEFIRE:      return m_auiEncounter[3];
+            case TYPE_HALION:        return m_auiEncounter[4];
         }
         return 0;
     }
@@ -215,6 +222,11 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_RAGEFIRE:   return m_uiRagefireGUID;
             case NPC_HALION_P:   return m_uiHalion_pGUID;
             case NPC_HALION_T:   return m_uiHalion_tGUID;
+            case NPC_XERESTRASZA:               return m_uiXerestraszaGUID;
+            case GO_HALION_FIRE_RING:           return m_uiHalionFireRingGUID;
+            case GO_HALION_FIRE_WALL_S:         return m_uiHalionFireWallSGUID;
+            case GO_HALION_FIRE_WALL_M:         return m_uiHalionFireWallMGUID;
+            case GO_HALION_FIRE_WALL_L:         return m_uiHalionFireWallLGUID;
         }
         return 0;
     }
