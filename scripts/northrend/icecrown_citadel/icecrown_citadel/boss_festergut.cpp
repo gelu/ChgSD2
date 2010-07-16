@@ -115,9 +115,9 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
         pInstance->SetData(TYPE_EVENT, 550);
-        doRemove(SPELL_PUNGENT_BLIGHT);
-        doRemove(SPELL_PUNGENT_BLIGHT_1);
-        doRemove(SPELL_PUNGENT_BLIGHT_2);
+        doRemoveFromAll(SPELL_PUNGENT_BLIGHT);
+        doRemoveFromAll(SPELL_PUNGENT_BLIGHT_1);
+        doRemoveFromAll(SPELL_PUNGENT_BLIGHT_2);
         DoScriptText(-1631206,m_creature);
     }
 

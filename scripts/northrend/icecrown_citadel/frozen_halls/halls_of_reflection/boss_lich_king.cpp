@@ -310,6 +310,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
       if (Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
          if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
          {
+            m_creature->SetActiveObjectState(false);
             SetEscortPaused(true);
             npc_escortAI::EnterEvadeMode();
             DoScriptText(SAY_LICH_KING_WIN, m_creature);

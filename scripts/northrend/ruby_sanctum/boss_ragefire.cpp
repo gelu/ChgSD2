@@ -127,14 +127,14 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  break;
             case 2: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);
-                 if ( m_creature->GetHealthPercent() <= 40.0f) phase == 3;
+                 if ( m_creature->GetHealthPercent() <= 40.0f) phase = 3;
                  break;
             case 3: //AIR
                     //NEED SCRIPT AIR MOVEMENT
                  DoScriptText(-1666404,m_creature);
                  timedCast(SPELL_BEACON, diff);
                  timedCast(SPELL_CONFLAG, diff);
-                 if ( m_creature->GetHealthPercent() <= 20.0f) phase == 4;
+                 if ( m_creature->GetHealthPercent() <= 20.0f) phase = 4;
                  break;
             case 4: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);

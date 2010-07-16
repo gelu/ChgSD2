@@ -209,7 +209,6 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
 
             case CAST_ON_ALLPLAYERS:
             {
-                    CanCastResult res1 = CAST_FAIL_OTHER;
                     Map::PlayerList const& pPlayers = pMap->GetPlayers();
                     for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
                     {
@@ -218,16 +217,15 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                            {
                                if (!pSpell->m_IsBugged) 
                                    {
-                                       res1 = _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                                       m_creature->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
                                    }
                                    else 
                                    {
                                        _BSWDoCast(m_uiSpellIdx, pTarget);
-                                       res1 = CAST_OK;
                                    };
                            };
-                           return res1;
                      }
+                   return CAST_OK;
                    break;
             }
 
@@ -396,7 +394,6 @@ CanCastResult BSWScriptedAI::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 
     pTarget->InterruptNonMeleeSpells(false);
 
-    pTarget->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
          return CAST_OK;
 };
 
@@ -494,7 +491,7 @@ bool BSWScriptedAI::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
                              if (_hasAura(m_uiSpellIdx,pTarget))
                                  pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
                           }
-                          return true;
+                      return true;
                       }
                       break;
                   default: 
@@ -524,6 +521,25 @@ bool BSWScriptedAI::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
             } else return false;
         } else pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
     return true;
+};
+
+bool BSWScriptedAI::_doRemoveFromAll(uint8 m_uiSpellIdx)
+{
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    debug_log("BSW: Removing effects of spell %u from all players",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
+
+    Map::PlayerList const& pPlayers = pMap->GetPlayers();
+
+    for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
+    {
+         Unit* pTarget = itr->getSource();
+         if (_hasAura(m_uiSpellIdx,pTarget))
+         pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+    }
+
+    return true;
+
 };
 
 bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)

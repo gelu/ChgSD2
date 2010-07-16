@@ -382,7 +382,8 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                     break;
             case 8:
                     timedCast(SPELL_MUTATED_PLAGUE, diff);
-
+                    if (m_creature->GetDisplayId() != VIEW_3)
+                        m_creature->SetDisplayId(VIEW_3);
                     DoMeleeAttackIfReady();
 
                     break;

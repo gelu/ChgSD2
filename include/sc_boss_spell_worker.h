@@ -149,6 +149,13 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
                      return _doRemove(m_uiSpellIdx,pTarget, index);
              };
 
+        bool doRemoveFromAll(uint32 SpellID)
+             {
+                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
+                 if (!queryIndex(m_uiSpellIdx)) return false;
+                     return _doRemoveFromAll(m_uiSpellIdx);
+             };
+
         bool doAura(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
@@ -249,6 +256,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         CanCastResult _CanCastSpell(Unit* pTarget, const SpellEntry *pSpell, bool isTriggered = false);
 
         bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, uint8 index = EFFECT_INDEX_ALL);
+
+        bool          _doRemoveFromAll(uint8 m_uiSpellIdx);
 
         bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
