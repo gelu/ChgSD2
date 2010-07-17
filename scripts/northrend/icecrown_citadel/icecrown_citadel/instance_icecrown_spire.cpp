@@ -451,7 +451,11 @@ static Locations SpawnLoc[]=
                                       else OpenDoor(m_uiOrangePlagueGUID);
                 if (uiData == DONE)  {
                                      OpenDoor(m_uiSDoorOrangeGUID);
-                                     if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     if (m_auiEncounter[6] == DONE) 
+                                         {
+                                             OpenDoor(m_uiSDoorCollisionGUID);
+                                             OpenDoor(m_uiGreenPlagueGUID);
+                                         }
                                      }
                 break;
              case TYPE_ROTFACE:
@@ -460,7 +464,11 @@ static Locations SpawnLoc[]=
                                       else OpenDoor(m_uiGreenPlagueGUID);
                 if (uiData == DONE) {
                                      OpenDoor(m_uiSDoorGreenGUID);
-                                     if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+                                     if (m_auiEncounter[5] == DONE) 
+                                         {
+                                             OpenDoor(m_uiSDoorOrangeGUID);
+                                             OpenDoor(m_uiSDoorCollisionGUID);
+                                         }
                                      }
                 break;
              case TYPE_PUTRICIDE:
