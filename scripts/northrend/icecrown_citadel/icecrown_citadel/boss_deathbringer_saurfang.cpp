@@ -39,7 +39,11 @@ enum
         SPELL_BOILING_BLOOD                     = 72385,
         SPELL_BLOOD_NOVA                        = 72380,
         SPELL_RUNE_OF_BLOOD                     = 72408,
-        SPELL_CALL_BLOOD_BEASTS                 = 72173,
+        SPELL_CALL_BLOOD_BEAST_1                = 72172,
+        SPELL_CALL_BLOOD_BEAST_2                = 72173,
+        SPELL_CALL_BLOOD_BEAST_3                = 72356,
+        SPELL_CALL_BLOOD_BEAST_4                = 72357,
+        SPELL_CALL_BLOOD_BEAST_5                = 72358,
 
         SPELL_SCENT_OF_BLOOD                    = 72769,
         SPELL_RESISTANT_SKIN                    = 72723,
@@ -165,26 +169,38 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 
             if (timedCast(SPELL_RUNE_OF_BLOOD, diff) == CAST_OK) doBloodPower();
 
-            if (timedQuery(SPELL_CALL_BLOOD_BEASTS, diff))
-                    {
-                        if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                            || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 4;
-                            else beasts = 2;
+            if (timedQuery(SPELL_CALL_BLOOD_BEAST_1, diff))
+                {
+                    if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
+                        || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 5;
+                        else beasts = 2;
+                    DoScriptText(-1631102,m_creature);
+                };
 
-                        DoScriptText(-1631102,m_creature);
-                     };
+            if (beasts > 0)
+            {
+                CanCastResult res = CAST_FAIL_OTHER;
+                switch (beasts)
+                {
+                    case 1: res = doCast(SPELL_CALL_BLOOD_BEAST_1); break;
+                    case 2: res = doCast(SPELL_CALL_BLOOD_BEAST_2); break;
+                    case 3: res = doCast(SPELL_CALL_BLOOD_BEAST_3); break;
+                    case 4: res = doCast(SPELL_CALL_BLOOD_BEAST_4); break;
+                    case 5: res = doCast(SPELL_CALL_BLOOD_BEAST_5); break;
+                    default: break;
+                };
 
-                     if (beasts > 0)
-                        if (doCast(SPELL_CALL_BLOOD_BEASTS) == CAST_OK)
-                           {
-                               doBloodPower();
-                               --beasts;
-                           };
+                if ( res == CAST_OK)
+                {
+                    doBloodPower();
+                    --beasts;
+                };
+            };
 
         if (timedQuery(SPELL_BERSERK, diff)){
-                 doCast(SPELL_BERSERK);
-                 DoScriptText(-1631108,m_creature);
-                 };
+             doCast(SPELL_BERSERK);
+             DoScriptText(-1631108,m_creature);
+             };
 
         DoMeleeAttackIfReady();
     }
