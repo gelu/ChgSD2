@@ -883,7 +883,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
         if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && WallCast == true)
         {
-          HoldTimer = HoldTimer + 500;
+          HoldTimer = HoldTimer + 100;
           return;
         }
    }
@@ -1081,7 +1081,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
          }
       } else CastTimer -= diff;
 
-      if (WallCast == true && HoldTimer < 10000 && m_pInstance->GetData(DATA_SUMMONS) == 0)
+      if (WallCast == true && HoldTimer < 10000 && ( m_pInstance->GetData(DATA_SUMMONS) == 0 || !m_creature->isInCombat()))
       {
          WallCast = false;
          m_creature->InterruptNonMeleeSpells(false);
