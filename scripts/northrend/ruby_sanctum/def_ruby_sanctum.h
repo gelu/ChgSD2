@@ -74,11 +74,4 @@ enum uiWorldStates
     UPDATE_STATE_UI_COUNT           = 5050,
 };
 
-static Locations SpawnLoc[]=
-{
-    {0.0f, 0.0f, 0.0f}, // 0 HALION
-    {0.0f, 0.0f, 0.0f}, // 1 PULSAR0
-    {0.0f, 0.0f, 0.0f}, // 2 PULSAR1
-};
-
 #endif
