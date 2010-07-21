@@ -416,7 +416,9 @@ CanCastResult BSWScriptedAI::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 
     pTarget->InterruptNonMeleeSpells(false);
 
-         return CAST_OK;
+    pTarget->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
+
+    return CAST_OK;
 };
 
 void BSWScriptedAI::_fillEmptyDataField()

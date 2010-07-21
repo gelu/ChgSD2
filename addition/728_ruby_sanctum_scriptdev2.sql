@@ -38,11 +38,11 @@ INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc8`, `sound`,
 
 -- baltharus
 ('-1666300','Ah, the entertainment has arrived...','А-а-а, цирк приехал.','17520','6','0','0','SAY_BALTHARUS_AGGRO'),
-('-1666301','Baltharus leaves no survivors!','','17521','6','0','0','SAY_BALTHARUS_SLAY_1'),
+('-1666301','Baltharus leaves no survivors!','Балтар не оставляет живых!','17521','6','0','0','SAY_BALTHARUS_SLAY_1'),
 ('-1666302','This world has enough heroes!','В мире хватает героев и без тебя...','17522','6','0','0','SAY_BALTHARUS_SLAY_2'),
 ('-1666303','I...didn\'t see that coming...','Как… это могло произойти?..','17523','1','0','0','SAY_BALTHARUS_DEATH'),
 ('-1666304','Twice the pain and half the fun!','Вдвое сильнее страдание.','17524','6','0','0','SAY_BALTHARUS_SPECIAL_1'),
-('-1666305','Your power wanes, ancient one! Soon, you will join your friends!','','17525','1','0','0','SAY_BALTHARUS_YELL'),
+('-1666305','Your power wanes, ancient one! Soon, you will join your friends!','Твоя сила на исходе, Древнейшая! Скоро ты присоединишься к своим друзьям!','17525','6','0','0','SAY_BALTHARUS_YELL'),
 
 -- saviana
 ('-1666400','You will suffer for this intrusion...','Ваш-ш-ши муки с-cтанут платой за это вторжение!','17528','6','0','0','SAY_SAVIANA_AGGRO'),

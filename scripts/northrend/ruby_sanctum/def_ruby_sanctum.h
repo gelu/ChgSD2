@@ -28,6 +28,8 @@ enum
 
     NPC_XERESTRASZA                = 40429,
 
+    NPC_BALTHARUS_TARGET           = 39900,
+
     NPC_ORB0                       = 40144,
     NPC_ORB1                       = 40145,
 
@@ -42,8 +44,6 @@ enum
     GO_HALION_FIRE_WALL_L          = 203002, //9485
     GO_HALION_FIRE_WALL_M          = 203003, //9624
 
-    DATA_HEALTH_BALTHARUS          = 201,
-    DATA_HEALTH_CLONE              = 202,
     DATA_HEALTH_HALION_P           = 203,
     DATA_HEALTH_HALION_T           = 204,
 

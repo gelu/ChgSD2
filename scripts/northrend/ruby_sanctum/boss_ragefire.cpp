@@ -58,6 +58,7 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
     {
         if(!pInstance)
             return;
+        m_creature->SetRespawnDelay(DAY);
         pInstance->SetData(TYPE_RAGEFIRE, NOT_STARTED);
         resetTimers();
         stage = 0;

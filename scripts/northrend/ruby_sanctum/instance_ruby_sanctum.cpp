@@ -54,6 +54,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiHalionFireWallSGUID;
     uint64 m_uiHalionFireWallMGUID;
     uint64 m_uiHalionFireWallLGUID;
+    uint64 m_uiBaltharusTargetGUID;
 
     void OpenDoor(uint64 guid)
     {
@@ -97,6 +98,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         m_uiHalionFireWallSGUID = 0;
         m_uiHalionFireWallMGUID = 0;
         m_uiHalionFireWallLGUID = 0;
+        m_uiBaltharusTargetGUID = 0;
     }
 
     bool IsEncounterInProgress() const
@@ -126,6 +128,9 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
                 break;
             case NPC_BALTHARUS:
                 m_uiBaltharusGUID = pCreature->GetGUID();
+                break;
+            case NPC_BALTHARUS_TARGET:
+                m_uiBaltharusTargetGUID = pCreature->GetGUID();
                 break;
             case NPC_CLONE:
                 m_uiCloneGUID = pCreature->GetGUID();
@@ -223,6 +228,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_HALION_P:   return m_uiHalion_pGUID;
             case NPC_HALION_T:   return m_uiHalion_tGUID;
             case NPC_XERESTRASZA:               return m_uiXerestraszaGUID;
+            case NPC_BALTHARUS_TARGET:          return m_uiBaltharusTargetGUID;
             case GO_HALION_FIRE_RING:           return m_uiHalionFireRingGUID;
             case GO_HALION_FIRE_WALL_S:         return m_uiHalionFireWallSGUID;
             case GO_HALION_FIRE_WALL_M:         return m_uiHalionFireWallMGUID;
