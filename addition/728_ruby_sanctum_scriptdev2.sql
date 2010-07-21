@@ -50,4 +50,4 @@ INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc8`, `sound`,
 ('-1666402','Halion will be pleased...','Халион будет доволен!','17530','6','0','0','SAY_SAVIANA_SLAY_2'),
 ('-1666403','<screaming>','О...','17531','6','0','0','SAY_SAVIANA_DEATH'),
 ('-1666404','Burn in the master\'s flame!','Горите в огне хозяина!','17532','6','0','0','SAY_SAVIANA_SPECIAL_1'),
-('-1666405','<need translate>','впадает в исступление!','0','3','0','0','');
+('-1666405','<need translate>','|3-3(%s) впадает в исступление!','0','3','0','0','');

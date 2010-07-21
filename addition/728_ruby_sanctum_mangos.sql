@@ -17,8 +17,12 @@ UPDATE `creature_template` SET `ScriptName`='mob_baltharus_target', `AIName` =''
 -- Zarithian
 UPDATE `creature_template` SET `ScriptName`='boss_zarithian', `AIName` ='' WHERE `entry`=39746;
 UPDATE `creature_template` SET `ScriptName`='mob_flamecaller_ruby', `AIName` ='' WHERE `entry`=39814;
--- Ragefire
+-- Saviana Ragefire
 UPDATE `creature_template` SET `ScriptName`='boss_ragefire', `AIName` ='' WHERE `entry`=39747;
+DELETE FROM `spell_script_target` WHERE `entry` IN (74455);
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES 
+('74455', '1', '39747');
+
 -- Xerestrasza
 UPDATE `creature_template` SET `ScriptName`='mob_xerestrasza', `AIName` ='' WHERE `entry`=40029;
 -- objects

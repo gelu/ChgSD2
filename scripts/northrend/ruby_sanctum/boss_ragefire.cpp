@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_ragefire
-SD%Complete: 80%
+SD%Complete: 90%
 SDComment: by notagain && /dev/rsa
 SDCategory: ruby_sanctum
 EndScriptData */
@@ -30,6 +30,8 @@ enum BossSpells
     SPELL_FLAME_BREATH               = 74404,
     SPELL_BEACON                     = 74453, //mark for conflag, in enter to fly phase, 2 in 10, 5 in 25
     SPELL_CONFLAGATION               = 74452, // after fly up
+    SPELL_CONFLAGATION_1             = 74455, // Triggered?
+    SPELL_CONFLAGATION_2             = 74456, // Aura
 };
 
 static Locations SpawnLoc[]=
@@ -159,48 +161,55 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                     if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, false, 100.0f))
                         doCast(SPELL_BEACON, pTarget);
                  }
-                 DoScriptText(-1666404,m_creature);
                  stage = 2;
                  break;
 
             case 2: // Wait for movement
                  if (MovementStarted) return;
-/*                 for(uint8 i = 0; i < marked+1; ++i)
-                 {
-                    if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
-                        doCast(SPELL_CONFLAGATION, pTarget);
-                 }
-*/
                  doCast(SPELL_CONFLAGATION);
+                 DoScriptText(-1666404,m_creature);
                  stage = 3;
                  break;
 
-            case 3: // Air phase
+            case 3: // Wait for cast finish
+                 if (!m_creature->IsNonMeleeSpellCasted(false))
+                 {
+                     for(uint8 i = 0; i < marked+1; ++i)
+                     {
+                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
+                            doCast(SPELL_CONFLAGATION_2, pTarget);
+                     }
+                     doCast(SPELL_CONFLAGATION_1);
+                     stage = 4;
+                 }
+                 break;
+
+            case 4: // Air phase
                  timedCast(SPELL_FLAME_BREATH, diff);
-                 if ( m_creature->GetHealthPercent() <= 60.0f) stage = 4;
+                 if ( m_creature->GetHealthPercent() <= 60.0f) stage = 5;
                  break;
 
-            case 4: //Air phase end
+            case 5: //Air phase end
                  StartMovement(0);
-                 stage = 5;
+                 stage = 6;
                  break;
 
-            case 5: // Wait for movement
+            case 6: // Wait for movement
                  if (MovementStarted) return;
                  SetFly(false);
                  SetCombatMovement(true);
                  m_creature->GetMotionMaster()->Clear();
                  m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                 stage = 6;
+                 stage = 7;
                  break;
 
-            case 6: //GROUND
+            case 7: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);
                  timedCast(SPELL_ENRAGE, diff);
-                 if ( m_creature->GetHealthPercent() <= 40.0f) stage = 7;
+                 if ( m_creature->GetHealthPercent() <= 40.0f) stage = 8;
                  break;
 
-            case 7: //Air phase start
+            case 8: //Air phase start
                  SetCombatMovement(false);
                  SetFly(true);
                  StartMovement(1);
@@ -209,44 +218,51 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                     if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, false, 100.0f))
                         doCast(SPELL_BEACON, pTarget);
                  }
-                 DoScriptText(-1666404,m_creature);
-                 stage = 8;
-                 break;
-
-            case 8: // Wait for movement
-                 if (MovementStarted) return;
-/*                 for(uint8 i = 0; i < marked+1; ++i)
-                 {
-                    if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
-                        doCast(SPELL_CONFLAGATION, pTarget);
-                 }
-*/
-                 doCast(SPELL_CONFLAGATION);
                  stage = 9;
                  break;
 
-            case 9: // Air phase
+            case 9: // Wait for movement
+                 if (MovementStarted) return;
+                 doCast(SPELL_CONFLAGATION);
+                 DoScriptText(-1666404,m_creature);
+                 stage = 10;
+                 break;
+
+            case 10: // Wait for cast finish
+                 if (!m_creature->IsNonMeleeSpellCasted(false))
+                 {
+                     for(uint8 i = 0; i < marked+1; ++i)
+                     {
+                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
+                            doCast(SPELL_CONFLAGATION_2, pTarget);
+                     }
+                     doCast(SPELL_CONFLAGATION_1);
+                     stage = 11;
+                 }
+                 break;
+
+            case 11: // Air phase
                  timedCast(SPELL_FLAME_BREATH, diff);
-                 if ( m_creature->GetHealthPercent() <= 20.0f) stage = 10;
+                 if ( m_creature->GetHealthPercent() <= 20.0f) stage = 12;
                  break;
 
-            case 10: //Air phase end
+            case 12: //Air phase end
                  StartMovement(0);
-                 stage = 11;
+                 stage = 13;
                  break;
 
-            case 11: // Wait for movement
+            case 13: // Wait for movement
                  if (MovementStarted) return;
                  SetFly(false);
                  SetCombatMovement(true);
                  m_creature->GetMotionMaster()->Clear();
                  m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                 stage = 12;
+                 stage = 14;
                  break;
 
-            case 12: //GROUND
+            case 14: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);
-                 timedCast(SPELL_ENRAGE, diff);
+                 timedCast(SPELL_ENRAGE, diff*2);
                  break;
 
             default:
