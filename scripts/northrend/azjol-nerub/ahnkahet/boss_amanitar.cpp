@@ -71,6 +71,7 @@ struct MANGOS_DLL_DECL boss_amanitarAI : public ScriptedAI
         m_uiVenomBoltTimer = 12000;
         m_uiRootsTimer = 19000;
         m_uiMiniTimer = 30000;
+        m_creature->SetRespawnDelay(DAY);
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_AMANITAR, NOT_STARTED);

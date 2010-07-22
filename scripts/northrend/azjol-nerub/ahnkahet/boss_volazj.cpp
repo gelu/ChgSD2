@@ -154,6 +154,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         m_uiShiverJumpTimer = 0;
         m_uiLastShiverTargetGUID = 0;
 
+        m_creature->SetRespawnDelay(DAY);
 
         //Insanity
         m_uiInsanityCastTimer = 5000;

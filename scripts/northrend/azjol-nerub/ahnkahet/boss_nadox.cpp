@@ -121,6 +121,7 @@ struct MANGOS_DLL_DECL boss_nadoxAI : public ScriptedAI
         m_uiSummonTimer = 5000;
         m_uiBroodPlagueTimer = 15000;
         m_uiBroodRageTimer = 20000;
+        m_creature->SetRespawnDelay(DAY);
     }
 
     Creature* SelectRandomCreatureOfEntryInRange(uint32 uiEntry, float fRange)

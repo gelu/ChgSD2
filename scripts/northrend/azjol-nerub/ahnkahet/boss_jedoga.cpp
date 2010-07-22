@@ -153,11 +153,14 @@ struct MANGOS_DLL_DECL npc_twilight_volunteerAI : public ScriptedAI
         m_bIsVulunteerNear = false;
         m_uiCheckTimer = 1000;
         m_bIsDead = false;
+        m_creature->SetRespawnDelay(DAY);
     }
+
     void AttackStart(Unit* pWho)
     {
         return;
     }
+
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (m_bIsDead)

@@ -94,6 +94,7 @@ struct MANGOS_DLL_DECL boss_taldaramAI : public ScriptedAI
 
     void Reset()
     {
+        m_creature->SetRespawnDelay(DAY);
         m_uiBloodthirst_Timer = 4000;
         m_uiSummonOrb_Timer = 13000;
         m_uiVanish_Timer = 17000;
