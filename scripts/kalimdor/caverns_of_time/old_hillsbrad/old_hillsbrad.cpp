@@ -355,8 +355,8 @@ struct MANGOS_DLL_DECL npc_thrall_old_hillsbradAI : public npc_escortAI
                 {
                     if (Player* pPlayer = GetPlayerForEscort())
                     {
-                        if (npc_tarethaAI* pTarethaAI = dynamic_cast<npc_tarethaAI*>(pTaretha->AI()))
-                            pTarethaAI->Start(true, pPlayer->GetGUID());
+//                        if (npc_tarethaAI* pTarethaAI = dynamic_cast<npc_tarethaAI*>(pTaretha->AI()))
+//                            pTarethaAI->Start(true, pPlayer->GetGUID());
                     }
                 }
 
