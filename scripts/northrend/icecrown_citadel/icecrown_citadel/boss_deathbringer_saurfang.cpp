@@ -66,7 +66,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
         stage = 0;
         beasts = 0;
         resetTimers();

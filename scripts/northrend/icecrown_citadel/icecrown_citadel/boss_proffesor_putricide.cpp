@@ -111,7 +111,7 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
     void Reset()
     {
         if (!pInstance) return;
-        pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_PUTRICIDE, NOT_STARTED);
         stage = 0;
         slimetype = 0;
         intro = false;

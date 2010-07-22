@@ -68,7 +68,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     {
         if(!pInstance) return;
         resetTimers();
-        pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
         stage = 0;
         intro = false;
         pet = false;

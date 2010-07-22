@@ -58,7 +58,8 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
 
     void Reset()
     {
-        if(pInstance) pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
+        if (!pInstance) return;
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
         stage = 0;
         flames = 0;
         resetTimers();

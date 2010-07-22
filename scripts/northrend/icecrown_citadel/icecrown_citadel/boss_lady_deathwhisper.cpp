@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_DEATHWHISPER, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_DEATHWHISPER, NOT_STARTED);
         stage = 0;
         MovementStarted = false;
         intro = false;

@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
         stage = 0;
         UpdateTimer = 1000;
         bloodbolts = 0;
