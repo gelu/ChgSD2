@@ -15,32 +15,32 @@
  */
 /* ScriptData
 SDName: boss_zarithian
-SD%Complete: 50%
-SDComment: by notagain, corrected by /dev/rsa
+SD%Complete: 90%
+SDComment: by /dev/rsa && notagain
 SDCategory: ruby_sanctum
 EndScriptData */
 
-//TODO: Add spawn Locs, sql spells, sql npcs, TEST
+// Need correct timers
 
 #include "precompiled.h"
 #include "def_ruby_sanctum.h"
 
 enum
 {
-    SPELL_TWILIGHT_PRECISION         = 78243,
-    SPELL_SUNDER_ARMOR               = 74367,
+    SPELL_CALL_FLAMECALLER           = 74398,
+    SPELL_CLEAVE_ARMOR               = 74367,
     SPELL_IMTIMIDATING_ROAR          = 74384,
-    SPELL_LAVA_GOUT                  = 74395,
-    SPELL_BLAST_NOVA                 = 74393,
+    SPELL_LAVA_GOUT                  = 74394,
+    SPELL_BLAST_NOVA                 = 74392,
 
     NPC_FLAMECALLER                  = 39814,
 };
 
-static float add[3][4]=
+static Locations SpawnLoc[]=
 {
-        {0.0f,0.0f,0.0f,0.0f}, //x y z o
-        {0.0f,0.0f,0.0f,0.0f},
-        {0.0f,0.0f,0.0f,0.0f}, // HALION
+    {3008.552734f, 530.471680f, 89.195290f},     // 0 - Zarithian start point, o = 6,16
+    {3014.313477f, 486.453735f, 89.255096f},    // 1 - Mob spawn 1
+    {3025.324951f, 580.588501f, 88.593185f},    // 2 - Mob spawn 2
 };
 
 struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
@@ -52,26 +52,14 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
-    uint32 uiTimer;
 
     void Reset()
     {
         if(!pInstance)
             return;
 
-        pInstance->SetData(TYPE_ZARITHIAN, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_ZARITHIAN, NOT_STARTED);
         resetTimers();
-    }
-
-    void MoveInLineOfSight(Unit* pWho) 
-    {
-    }
-
-    void MovementInform(uint32 type, uint32 id)
-    {
-        if (type != POINT_MOTION_TYPE)
-            return;
     }
 
     void KilledUnit(Unit* pVictim)
@@ -88,31 +76,37 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
 
     void JustReachedHome()
     {
-        if (pInstance)
-            pInstance->SetData(TYPE_ZARITHIAN, FAIL);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_ZARITHIAN, FAIL);
     }
 
     void JustSummoned(Creature* summoned)
     {
+        if(!pInstance || !summoned) return;
+
+        summoned->SetInCombatWithZone();
+        if (Unit* pTarget = doSelectRandomPlayerAtRange(60.0f))
+        {
+            summoned->AddThreat(pTarget, 100.0f);
+            summoned->GetMotionMaster()->MoveChase(pTarget);
+        }
+
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance)
-            pInstance->SetData(TYPE_ZARITHIAN, IN_PROGRESS);
+        if(!pInstance) return;
 
+        pInstance->SetData(TYPE_ZARITHIAN, IN_PROGRESS);
         DoScriptText(-1666200,m_creature);
-        uiTimer = 45000;
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance)
-            pInstance->SetData(TYPE_ZARITHIAN, DONE);
+        if(!pInstance) return;
 
+        pInstance->SetData(TYPE_ZARITHIAN, DONE);
         DoScriptText(-1666203,m_creature);
-//        m_creature->SummonCreature(NPC_HALION_P, add[2][0], add[2][1], add[2][2], add[2][3], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
-// Don't summon Halion there! Xerestrasza can made this.
     }
 
     void UpdateAI(const uint32 diff)
@@ -120,17 +114,19 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //TODO every 45 secs summon adds
-
-        if (uiTimer < diff)
+        if (timedQuery(SPELL_CALL_FLAMECALLER, diff))
         {
+            doSummon(NPC_FLAMECALLER, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
+            doSummon(NPC_FLAMECALLER, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z);
+
+//            if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
+//                || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
+//                doCast(SPELL_CALL_FLAMECALLER);
+
             DoScriptText(-1666204,m_creature);
-            m_creature->SummonCreature(NPC_FLAMECALLER, add[0][0], add[0][1], add[0][2], add[0][3], TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 20000);
-            m_creature->SummonCreature(NPC_FLAMECALLER, add[1][0], add[1][1], add[1][2], add[1][3], TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 20000);
-            uiTimer = 45000;
         }
-        timedCast(SPELL_TWILIGHT_PRECISION, diff);
-        timedCast(SPELL_SUNDER_ARMOR, diff);
+
+        timedCast(SPELL_CLEAVE_ARMOR, diff);
         timedCast(SPELL_IMTIMIDATING_ROAR, diff);
 
         DoMeleeAttackIfReady();
@@ -140,7 +136,7 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
 CreatureAI* GetAI_boss_zarithian(Creature* pCreature)
 {
     return new boss_zarithianAI(pCreature);
-}
+};
 
 struct MANGOS_DLL_DECL mob_flamecaller_rubyAI : public BSWScriptedAI
 {
@@ -154,26 +150,32 @@ struct MANGOS_DLL_DECL mob_flamecaller_rubyAI : public BSWScriptedAI
 
     void Reset()
     {
-    }
-
-    void AttackStart(Unit *who)
-    {
+        if(!pInstance) return;
+        resetTimers();
+        m_creature->SetRespawnDelay(7*DAY);
     }
 
     void UpdateAI(const uint32 diff)
     {
+
+        if (pInstance && pInstance->GetData(TYPE_ZARITHIAN) != IN_PROGRESS)
+            m_creature->ForcedDespawn();
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+
         timedCast(SPELL_LAVA_GOUT, diff);
         timedCast(SPELL_BLAST_NOVA, diff);
+
+        DoMeleeAttackIfReady();
     }
 };
 
 CreatureAI* GetAI_mob_flamecaller_ruby(Creature* pCreature)
 {
     return new mob_flamecaller_rubyAI(pCreature);
-}
+};
 
 void AddSC_boss_zarithian()
 {

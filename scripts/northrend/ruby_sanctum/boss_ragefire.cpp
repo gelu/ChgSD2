@@ -58,8 +58,8 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
     {
         if(!pInstance)
             return;
-        m_creature->SetRespawnDelay(DAY);
-        pInstance->SetData(TYPE_RAGEFIRE, NOT_STARTED);
+        m_creature->SetRespawnDelay(7*DAY);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_RAGEFIRE, NOT_STARTED);
         resetTimers();
         stage = 0;
         nextPoint = 0;
@@ -155,6 +155,7 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
             case 1: //Air phase start
                  SetCombatMovement(false);
+                 m_creature->InterruptNonMeleeSpells(true);
                  SetFly(true);
                  StartMovement(1);
                  for(uint8 i = 0; i < marked+1; ++i)
@@ -212,6 +213,7 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
 
             case 8: //Air phase start
                  SetCombatMovement(false);
+                 m_creature->InterruptNonMeleeSpells(true);
                  SetFly(true);
                  StartMovement(1);
                  for(uint8 i = 0; i < marked+1; ++i)

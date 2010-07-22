@@ -154,18 +154,20 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             return;
 
         p_phase = 0;
-        pInstance->SetData(TYPE_HALION, NOT_STARTED);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_HALION, NOT_STARTED);
         resetTimers();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
     {
-        if (intro) return;
-        else
-        {
-        DoScriptText(-1666100,m_creature);
-        intro = true;
-        }
+        ScriptedAI::MoveInLineOfSight(pWho);
+
+        if (intro || !pInstance) return;
+            else
+            {
+                DoScriptText(-1666100,m_creature);
+                intro = true;
+            }
     }
 
     void JustReachedHome()
@@ -183,7 +185,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             return;
 
         DoScriptText(-1666104,m_creature);
-        if (Creature* pclone = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_T)))
+        if (Creature* pclone = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT)))
             if (!pclone->isAlive())
                 pInstance->SetData(TYPE_HALION, DONE);
         else

@@ -73,8 +73,8 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if(!pInstance)
             return;
 
-        pInstance->SetData(TYPE_BALTHARUS, NOT_STARTED);
-        m_creature->SetRespawnDelay(DAY);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_BALTHARUS, NOT_STARTED);
+        m_creature->SetRespawnDelay(7*DAY);
         resetTimers();
         stage = 0;
         Clone = NULL;
@@ -107,8 +107,9 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         ScriptedAI::MoveInLineOfSight(pWho);
         if(!pInstance || intro ||
             pWho->GetTypeId() != TYPEID_PLAYER ||
-            !pWho->IsWithinDistInMap(m_creature, 80.0f)) return;
+            !pWho->IsWithinDistInMap(m_creature, 60.0f)) return;
 
+        pInstance->SetData(TYPE_EVENT, 10);
         DoScriptText(-1666305,m_creature);
         intro = true;
     }
@@ -277,6 +278,7 @@ struct MANGOS_DLL_DECL mob_baltharus_cloneAI : public BSWScriptedAI
     {
         if(!pInstance) return;
         resetTimers();
+        m_creature->SetRespawnDelay(7*DAY);
     }
 
     void KilledUnit(Unit* pVictim)
