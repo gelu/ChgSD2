@@ -740,7 +740,7 @@ bool GossipSelect_npc_brann_hos(Player* pPlayer, Creature* pCreature, uint32 uiS
     {
         pPlayer->CLOSE_GOSSIP_MENU();
         ((npc_brann_hosAI*)pCreature->AI())->m_uiStep = 1;
-        ((npc_brann_hosAI*)pCreature->AI())->Start(true, false, pPlayer->GetGUID());
+        ((npc_brann_hosAI*)pCreature->AI())->Start(false, pPlayer->GetGUID());
     }
 
     return true;
