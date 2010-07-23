@@ -49,7 +49,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiXerestraszaGUID;
 
     //object GUID
-    uint64 m_uiHalionFireRingGUID;
     uint64 m_uiHalionPortal0GUID;
     uint64 m_uiHalionPortal1GUID;
     uint64 m_uiHalionPortal2GUID;
@@ -96,7 +95,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         m_uiZarithianGUID = 0;
         m_uiBaltharusGUID = 0;
         m_uiCloneGUID = 0;
-        m_uiHalionFireRingGUID = 0;
         m_uiHalionPortal0GUID = 0;
         m_uiHalionPortal1GUID = 0;
         m_uiHalionPortal2GUID = 0;
@@ -167,8 +165,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
-            case GO_HALION_FIRE_RING: m_uiHalionFireRingGUID = pGo->GetGUID(); break;
-            case GO_HALION_PORTAL_0:  m_uiHalionPortal0GUID = pGo->GetGUID();  break;
             case GO_HALION_PORTAL_1:  m_uiHalionPortal1GUID = pGo->GetGUID();  break;
             case GO_HALION_PORTAL_2:  m_uiHalionPortal2GUID = pGo->GetGUID();  break;
             case GO_HALION_PORTAL_3:  m_uiHalionPortal3GUID = pGo->GetGUID();  break;
@@ -219,17 +215,13 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
                                     else if (uiData == IN_PROGRESS)
                                        CloseDoor(m_uiFlameWallsGUID);
                                     break;
-            case TYPE_HALION:
-                m_auiEncounter[4] = uiData;
-                if (uiData == IN_PROGRESS)
-                    CloseDoor(m_uiHalionFireRingGUID);
-                else
-                    OpenDoor(m_uiHalionFireRingGUID);
-
-                if (uiData == DONE)
-                    OpenDoor(m_uiHalionFireRingGUID);
-                break;
-            case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+            case TYPE_HALION:       m_auiEncounter[uiType] = uiData;
+                                    if (uiData == IN_PROGRESS)
+                                          CloseDoor(m_uiFlameRingGUID);
+                                    else
+                                          OpenDoor(m_uiFlameRingGUID);
+                                    break;
+            case TYPE_EVENT_TIMER:  m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
 
         if (uiData == DONE)
@@ -304,7 +296,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_HALION_TWILIGHT:           return m_uiHalion_tGUID;
             case NPC_XERESTRASZA:               return m_uiXerestraszaGUID;
             case NPC_BALTHARUS_TARGET:          return m_uiBaltharusTargetGUID;
-            case GO_HALION_FIRE_RING:           return m_uiHalionFireRingGUID;
             case GO_HALION_FIRE_WALL_S:         return m_uiHalionFireWallSGUID;
             case GO_HALION_FIRE_WALL_M:         return m_uiHalionFireWallMGUID;
             case GO_HALION_FIRE_WALL_L:         return m_uiHalionFireWallLGUID;

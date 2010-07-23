@@ -39,12 +39,11 @@ enum
     NPC_ORB1                       = 40145,
 
 //    GO_HALION_FIRE_RING            = 202800, //9482
-    GO_HALION_PORTAL_0             = 193988, //1327 ENTRY
+//    GO_HALION_PORTAL_0             = 193988, //1327 ENTRY
     GO_HALION_PORTAL_1             = 202794, //1327 ENTRY
-    GO_HALION_PORTAL_2             = 202795, //1327 EXIT
-    GO_HALION_PORTAL_3             = 202797, //1327 EXIT
+    GO_HALION_PORTAL_2             = 202795, //1327 ENTRY
+    GO_HALION_PORTAL_3             = 202796, //1327 EXIT
 
-    GO_HALION_FIRE_RING            = 203000, //9482
     GO_HALION_FIRE_WALL_S          = 203001, //9484
     GO_HALION_FIRE_WALL_L          = 203002, //9485
     GO_HALION_FIRE_WALL_M          = 203003, //9624
