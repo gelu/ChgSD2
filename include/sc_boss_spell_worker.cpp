@@ -143,6 +143,8 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
 
     debug_log("BSW: Casting spell number %u type %u",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
 
+        if (pSpell->m_uiSpellTimerMax[currentDifficulty] >= HOUR*IN_MILLISECONDS)
+            m_creature->InterruptNonMeleeSpells(true);
 
         switch (pSpell->m_CastTarget) {
 
@@ -777,5 +779,35 @@ Creature* BSWScriptedAI::doSelectNearestCreature(uint32 guid, float range)
     }
         else return NULL;
 }
+
+uint32 BSWScriptedAI::_getSpellData(uint8 m_uiSpellIdx)
+{
+    SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
+
+    return pSpell->m_uiSpellData[currentDifficulty];
+};
+
+bool BSWScriptedAI::doCastAll(uint32 diff)
+{
+
+    uint8 succesfulCast = 0;
+
+    if (bossSpellCount() > 0)
+    {
+        for(uint8 i = 0; i < bossSpellCount(); ++i)
+            if (_QuerySpellPeriod(i, diff))
+                if (_BSWSpellSelector(i) == CAST_OK)
+                    ++succesfulCast;
+
+        debug_log("BSW: Casting all spells for creature %u done. Successful casted %u spells from %u.", m_creature->GetEntry(),succesfulCast,bossSpellCount());
+    }
+    else
+    {
+        error_log("BSW: Casting all spells for creature %u failed. Database has no spells.", m_creature->GetEntry());
+    }
+
+    return (succesfulCast >= 1) ? true : false;
+
+};
 
 #endif

@@ -5,11 +5,11 @@
 #ifndef DEF_BOSS_SPELL_WORKER_H
 #define DEF_BOSS_SPELL_WORKER_H
 
+#include "precompiled.h"
 #include "Player.h"
 #include "SpellAuras.h"
 #include "SpellMgr.h"
 #include "Unit.h"
-#include "precompiled.h"
 #include "Database/DatabaseEnv.h"
 #include "../ScriptMgr.h"
 
@@ -221,6 +221,14 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         Creature* doSelectNearestCreature(uint32 guid, float range = 120.0f);
 
+        uint32 getSpellData(uint32 SpellID)
+             {
+                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
+                  return queryIndex(m_uiSpellIdx) ?  _getSpellData(m_uiSpellIdx): 0;
+             };
+
+        bool doCastAll(uint32 diff);
+
     protected:
 
         Map*          pMap;
@@ -266,6 +274,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         uint8         _auraCount(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
 
         void          _fillEmptyDataField();
+
+        uint32        _getSpellData(uint8 m_uiSpellIdx);
 
 // Constants
         uint8         _bossSpellCount;
