@@ -25,7 +25,7 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_ruby_sanctum.h"
 
-enum
+enum BossSpells
 {
     SPELL_CALL_FLAMECALLER           = 74398,
     SPELL_CLEAVE_ARMOR               = 74367,
@@ -34,6 +34,14 @@ enum
     SPELL_BLAST_NOVA                 = 74392,
 
     NPC_FLAMECALLER                  = 39814,
+};
+
+enum Equipment
+{
+    EQUIP_MAIN           = 47156,
+    EQUIP_OFFHAND        = 51812,
+    EQUIP_RANGED         = EQUIP_NO_CHANGE,
+    EQUIP_DONE           = EQUIP_NO_CHANGE,
 };
 
 static Locations SpawnLoc[]=
@@ -97,6 +105,7 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
     {
         if(!pInstance) return;
 
+        SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         pInstance->SetData(TYPE_ZARITHIAN, IN_PROGRESS);
         DoScriptText(-1666200,m_creature);
     }
@@ -164,9 +173,7 @@ struct MANGOS_DLL_DECL mob_flamecaller_rubyAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-
-        timedCast(SPELL_LAVA_GOUT, diff);
-        timedCast(SPELL_BLAST_NOVA, diff);
+        doCastAll(diff);
 
         DoMeleeAttackIfReady();
     }

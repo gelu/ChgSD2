@@ -208,6 +208,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                      || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                      {
                         doCast(SPELL_SUMMON_CLONE);
+                        doCast(SPELL_REPELLING_WAVE);
                      };
                  stage = 2;
                  break;
@@ -222,6 +223,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                      || currentDifficulty == RAID_DIFFICULTY_10MAN_HEROIC)
                      {
                         doCast(SPELL_SUMMON_CLONE);
+                        doCast(SPELL_REPELLING_WAVE);
                      };
                  stage = 4;
                  break;
@@ -236,6 +238,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                      || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                      {
                         doCast(SPELL_SUMMON_CLONE);
+                        doCast(SPELL_REPELLING_WAVE);
                      };
                  stage = 6;
                  break;
@@ -247,7 +250,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
 
         if (m_creature->IsNonMeleeSpellCasted(false)) return;
 
-        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
+//        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
         timedCast(SPELL_ENERVATING_BRAND, uiDiff);
         timedCast(SPELL_REPELLING_WAVE, uiDiff);
 
@@ -317,9 +320,9 @@ struct MANGOS_DLL_DECL mob_baltharus_cloneAI : public BSWScriptedAI
         if (pInstance->GetData(TYPE_BALTHARUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
-        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
+        doCastAll(uiDiff);
+        DoMeleeAttackIfReady();
 
-        timedCast(SPELL_ENERVATING_BRAND, uiDiff);
     }
 };
 

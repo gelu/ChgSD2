@@ -32,6 +32,8 @@ enum BossSpells
     SPELL_CONFLAGATION               = 74452, // after fly up
     SPELL_CONFLAGATION_1             = 74455, // Triggered?
     SPELL_CONFLAGATION_2             = 74456, // Aura
+
+    MAX_BEACON_TARGETS               = 5,
 };
 
 static Locations SpawnLoc[]=
@@ -51,8 +53,9 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
     ScriptedInstance *pInstance;
     uint8 stage;
     uint8 nextPoint;
-    uint8 marked;
+    Unit* marked[MAX_BEACON_TARGETS];
     bool MovementStarted;
+    bool conflagated;
 
     void Reset()
     {
@@ -63,9 +66,9 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
         resetTimers();
         stage = 0;
         nextPoint = 0;
-        if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
-            || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) marked = 5;
-            else marked = 2;
+        conflagated = false;
+        for (uint8 i = 0; i < MAX_BEACON_TARGETS; ++i)
+            marked[i] = NULL;
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -140,6 +143,35 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
         DoScriptText(-1666403,m_creature);
     }
 
+    void doBeacon(bool command = false)
+    {
+        if (command)
+        {
+             for(uint8 i = 0; i < getSpellData(SPELL_BEACON); ++i)
+             {
+                if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, false, 100.0f))
+                {
+                    if (doCast(SPELL_BEACON, pTarget) == CAST_OK)
+                        marked[i] = pTarget;
+                    else marked[i] = NULL;
+                }
+             }
+             conflagated = true;
+        }
+        else
+        {
+             m_creature->InterruptNonMeleeSpells(true);
+             for(uint8 i = 0; i < getSpellData(SPELL_BEACON); ++i)
+             {
+                if (marked[i])
+                    doCast(SPELL_CONFLAGATION_2, marked[i]);
+                marked[i] = NULL;
+             }
+             doCast(SPELL_CONFLAGATION_1);
+             conflagated = false;
+        }
+    }
+
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -157,12 +189,8 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetCombatMovement(false);
                  m_creature->InterruptNonMeleeSpells(true);
                  SetFly(true);
+                 doBeacon(true);
                  StartMovement(1);
-                 for(uint8 i = 0; i < marked+1; ++i)
-                 {
-                    if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, false, 100.0f))
-                        doCast(SPELL_BEACON, pTarget);
-                 }
                  stage = 2;
                  break;
 
@@ -176,18 +204,22 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
             case 3: // Wait for cast finish
                  if (!m_creature->IsNonMeleeSpellCasted(false))
                  {
-                     for(uint8 i = 0; i < marked+1; ++i)
-                     {
-                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
-                            doCast(SPELL_CONFLAGATION_2, pTarget);
-                     }
-                     doCast(SPELL_CONFLAGATION_1);
+                     doBeacon(false);
                      stage = 4;
-                 }
+                 };
                  break;
 
             case 4: // Air phase
                  timedCast(SPELL_FLAME_BREATH, diff);
+                 if (timedQuery(SPELL_BEACON, diff))
+                     {
+                         doBeacon(true);
+                         doCast(SPELL_CONFLAGATION);
+                     };
+                 if (conflagated && timedQuery(SPELL_CONFLAGATION_1, diff))
+                     {
+                         doBeacon(false);
+                     };
                  if ( m_creature->GetHealthPercent() <= 60.0f) stage = 5;
                  break;
 
@@ -215,12 +247,8 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetCombatMovement(false);
                  m_creature->InterruptNonMeleeSpells(true);
                  SetFly(true);
+                 doBeacon(true);
                  StartMovement(1);
-                 for(uint8 i = 0; i < marked+1; ++i)
-                 {
-                    if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, false, 100.0f))
-                        doCast(SPELL_BEACON, pTarget);
-                 }
                  stage = 9;
                  break;
 
@@ -234,18 +262,22 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
             case 10: // Wait for cast finish
                  if (!m_creature->IsNonMeleeSpellCasted(false))
                  {
-                     for(uint8 i = 0; i < marked+1; ++i)
-                     {
-                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BEACON, true, 150.0f))
-                            doCast(SPELL_CONFLAGATION_2, pTarget);
-                     }
-                     doCast(SPELL_CONFLAGATION_1);
+                     doBeacon(false);
                      stage = 11;
-                 }
+                 };
                  break;
 
             case 11: // Air phase
                  timedCast(SPELL_FLAME_BREATH, diff);
+                 if (timedQuery(SPELL_BEACON, diff))
+                     {
+                         doBeacon(true);
+                         doCast(SPELL_CONFLAGATION);
+                     };
+                 if (conflagated && timedQuery(SPELL_CONFLAGATION_1, diff))
+                     {
+                         doBeacon(false);
+                     };
                  if ( m_creature->GetHealthPercent() <= 20.0f) stage = 12;
                  break;
 

@@ -129,6 +129,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             m_auiEncounter[TYPE_BALTHARUS] == DONE && 
             m_auiEncounter[TYPE_XERESTRASZA] == DONE)
                  OpenDoor(m_uiFlameWallsGUID);
+        else CloseDoor(m_uiFlameWallsGUID);
     }
 
     void OnCreatureCreate(Creature* pCreature)
@@ -199,11 +200,14 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
                                        OpenAllDoors();
                                     }
                                     else if (uiData == DONE)
-                                       if (m_auiEncounter[TYPE_ZARITHIAN] = DONE)
+                                    {
+                                       OpenAllDoors();
+                                       if (m_auiEncounter[TYPE_ZARITHIAN] == DONE)
                                        {
                                            m_auiEncounter[TYPE_EVENT] = 200;
                                            m_auiEventTimer = 30000;
                                        };
+                                    }
                                     break;
             case TYPE_ZARITHIAN:    m_auiEncounter[uiType] = uiData;
                                     if (uiData == DONE)

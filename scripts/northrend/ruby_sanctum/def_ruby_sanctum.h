@@ -33,6 +33,7 @@ enum
     NPC_XERESTRASZA                = 40429,
 
     NPC_BALTHARUS_TARGET           = 39900,
+    NPC_ZARITHIAN_SPAWN_STALKER    = 39794,
 
     NPC_ORB0                       = 40144,
     NPC_ORB1                       = 40145,
