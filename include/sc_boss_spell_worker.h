@@ -229,6 +229,10 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         bool doCastAll(uint32 diff);
 
+        uint8 getStage() { return _stage; };
+
+        void  setStage(uint8 stage) { _stage = stage; };
+
     protected:
 
         Map*          pMap;
@@ -279,6 +283,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
 // Constants
         uint8         _bossSpellCount;
+        uint8         _stage;
         uint32        m_uiSpell_Timer[MAX_BOSS_SPELLS];
         SpellTable    m_BossSpell[MAX_BOSS_SPELLS];
 };

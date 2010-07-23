@@ -25,6 +25,7 @@ void BSWScriptedAI::doReset()
      memset(&m_uiSpell_Timer, 0, sizeof(m_uiSpell_Timer));
      memset(&m_BossSpell,0,sizeof(m_BossSpell));
      _bossSpellCount = 0;
+     _stage = 0;
      _loadSpellTable();
      resetTimers();
 };
@@ -799,7 +800,8 @@ bool BSWScriptedAI::doCastAll(uint32 diff)
                 if (_BSWSpellSelector(i) == CAST_OK)
                     ++succesfulCast;
 
-        debug_log("BSW: Casting all spells for creature %u done. Successful casted %u spells from %u.", m_creature->GetEntry(),succesfulCast,bossSpellCount());
+        if (succesfulCast)
+            debug_log("BSW: Casting all spells for creature %u done. Successful casted %u spells from %u.", m_creature->GetEntry(),succesfulCast,bossSpellCount());
     }
     else
     {
