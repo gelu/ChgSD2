@@ -76,17 +76,6 @@ struct MANGOS_DLL_DECL boss_koralonAI : public ScriptedAI
         }
         else BurningBreathTimer -= diff;
 
-        if(BB)
-        {
-            if(BBTickTimer < diff)
-            {
-                DoCastSpellIfCan(NULL, Regular ? SP_BB_EFFECT : H_SP_BB_EFFECT, true);
-                BBTickTimer = 1000;
-                ++BBTicks;
-                if(BBTicks > 2) BB = false;
-            }
-            else BBTickTimer -= diff;
-        }
 
         if(FlamesTimer < diff)
         {
