@@ -42,11 +42,12 @@ enum Equipment
 
 enum BossSpells
 {
-    SPELL_BLADE_TEMPEST              = 75125, //every 22 secs
-    SPELL_ENERVATING_BRAND           = 74502, //friendlys in 12yards = 74505
-    SPELL_REPELLING_WAVE             = 74509, //every 10-15 secs
-    SPELL_SUMMON_CLONE               = 74511, //summons npc 39899 (Clone)
-    SPELL_CHANNEL_SPELL              = 76221, //Channeling dummy spell
+    SPELL_BLADE_TEMPEST              = 75125, // every 22 secs
+    SPELL_ENERVATING_BRAND           = 74502, // friendlys in 12yards = 74505
+    SPELL_REPELLING_WAVE             = 74509, // once if call clone
+    SPELL_SABER_LASH                 = 40504, // every 10-15 secs
+    SPELL_SUMMON_CLONE               = 74511, // summons npc 39899 (Clone)
+    SPELL_CHANNEL_SPELL              = 76221, // Channeling dummy spell
 };
 
 /*######
@@ -62,7 +63,6 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
     Creature* Baltharus_Target;
     Creature* Clone;
     bool inCombat;
@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if (m_creature->isAlive()) pInstance->SetData(TYPE_BALTHARUS, NOT_STARTED);
         m_creature->SetRespawnDelay(7*DAY);
         resetTimers();
-        stage = 0;
+        setStage(0);
         Clone = NULL;
         inCombat = false;
         intro = false;
@@ -196,10 +196,10 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        switch (stage)
+        switch (getStage())
         {
             case 0:
-                 if ( m_creature->GetHealthPercent() <= 66.0f) stage = 1;
+                 if ( m_creature->GetHealthPercent() <= 66.0f) setStage(1);
                  break;
 
             case 1:
@@ -207,14 +207,14 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                  if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
                      || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                      {
-                        doCast(SPELL_SUMMON_CLONE);
                         doCast(SPELL_REPELLING_WAVE);
+                        doCast(SPELL_SUMMON_CLONE);
                      };
-                 stage = 2;
+                 setStage(2);
                  break;
 
             case 2:
-                 if ( m_creature->GetHealthPercent() <= 50.0f) stage = 3;
+                 if ( m_creature->GetHealthPercent() <= 50.0f) setStage(3);
                  break;
 
             case 3:
@@ -222,14 +222,14 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                  if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL
                      || currentDifficulty == RAID_DIFFICULTY_10MAN_HEROIC)
                      {
-                        doCast(SPELL_SUMMON_CLONE);
                         doCast(SPELL_REPELLING_WAVE);
+                        doCast(SPELL_SUMMON_CLONE);
                      };
-                 stage = 4;
+                 setStage(4);
                  break;
 
             case 4:
-                 if ( m_creature->GetHealthPercent() <= 33.0f) stage = 5;
+                 if ( m_creature->GetHealthPercent() <= 33.0f) setStage(5);
                  break;
 
             case 5:
@@ -240,7 +240,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                         doCast(SPELL_SUMMON_CLONE);
                         doCast(SPELL_REPELLING_WAVE);
                      };
-                 stage = 6;
+                 setStage(6);
                  break;
 
             case 6:
@@ -252,7 +252,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
 
 //        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
         timedCast(SPELL_ENERVATING_BRAND, uiDiff);
-        timedCast(SPELL_REPELLING_WAVE, uiDiff);
+        timedCast(SPELL_SABER_LASH, uiDiff);
 
         DoMeleeAttackIfReady();
     }

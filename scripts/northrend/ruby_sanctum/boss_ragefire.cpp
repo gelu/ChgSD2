@@ -51,7 +51,6 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
     uint8 nextPoint;
     Unit* marked[MAX_BEACON_TARGETS];
     bool MovementStarted;
@@ -64,7 +63,7 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
         m_creature->SetRespawnDelay(7*DAY);
         if (m_creature->isAlive()) pInstance->SetData(TYPE_RAGEFIRE, NOT_STARTED);
         resetTimers();
-        stage = 0;
+        setStage(0);
         nextPoint = 0;
         conflagated = false;
         for (uint8 i = 0; i < MAX_BEACON_TARGETS; ++i)
@@ -177,12 +176,12 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        switch (stage)
+        switch (getStage())
         {
             case 0: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);
                  timedCast(SPELL_ENRAGE, diff);
-                 if ( m_creature->GetHealthPercent() <= 80.0f) stage = 1;
+                 if ( m_creature->GetHealthPercent() <= 80.0f) setStage(1);
                  break;
 
             case 1: //Air phase start
@@ -191,21 +190,21 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetFly(true);
                  doBeacon(true);
                  StartMovement(1);
-                 stage = 2;
+                 setStage(2);
                  break;
 
             case 2: // Wait for movement
                  if (MovementStarted) return;
                  doCast(SPELL_CONFLAGATION);
                  DoScriptText(-1666404,m_creature);
-                 stage = 3;
+                 setStage(3);
                  break;
 
             case 3: // Wait for cast finish
                  if (!m_creature->IsNonMeleeSpellCasted(false))
                  {
                      doBeacon(false);
-                     stage = 4;
+                     setStage(4);
                  };
                  break;
 
@@ -220,12 +219,12 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                      {
                          doBeacon(false);
                      };
-                 if ( m_creature->GetHealthPercent() <= 60.0f) stage = 5;
+                 if ( m_creature->GetHealthPercent() <= 60.0f) setStage(5);
                  break;
 
             case 5: //Air phase end
                  StartMovement(0);
-                 stage = 6;
+                 setStage(6);
                  break;
 
             case 6: // Wait for movement
@@ -234,13 +233,13 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetCombatMovement(true);
                  m_creature->GetMotionMaster()->Clear();
                  m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                 stage = 7;
+                 setStage(7);
                  break;
 
             case 7: //GROUND
                  timedCast(SPELL_FLAME_BREATH, diff);
                  timedCast(SPELL_ENRAGE, diff);
-                 if ( m_creature->GetHealthPercent() <= 40.0f) stage = 8;
+                 if ( m_creature->GetHealthPercent() <= 40.0f) setStage(8);
                  break;
 
             case 8: //Air phase start
@@ -249,21 +248,21 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetFly(true);
                  doBeacon(true);
                  StartMovement(1);
-                 stage = 9;
+                 setStage(9);
                  break;
 
             case 9: // Wait for movement
                  if (MovementStarted) return;
                  doCast(SPELL_CONFLAGATION);
                  DoScriptText(-1666404,m_creature);
-                 stage = 10;
+                 setStage(10);
                  break;
 
             case 10: // Wait for cast finish
                  if (!m_creature->IsNonMeleeSpellCasted(false))
                  {
                      doBeacon(false);
-                     stage = 11;
+                     setStage(11);
                  };
                  break;
 
@@ -278,12 +277,12 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                      {
                          doBeacon(false);
                      };
-                 if ( m_creature->GetHealthPercent() <= 20.0f) stage = 12;
+                 if ( m_creature->GetHealthPercent() <= 20.0f) setStage(12);
                  break;
 
             case 12: //Air phase end
                  StartMovement(0);
-                 stage = 13;
+                 setStage(13);
                  break;
 
             case 13: // Wait for movement
@@ -292,7 +291,7 @@ struct MANGOS_DLL_DECL boss_ragefireAI : public BSWScriptedAI
                  SetCombatMovement(true);
                  m_creature->GetMotionMaster()->Clear();
                  m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                 stage = 14;
+                 setStage(14);
                  break;
 
             case 14: //GROUND

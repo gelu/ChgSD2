@@ -66,8 +66,28 @@ struct MANGOS_DLL_DECL boss_zarithianAI : public BSWScriptedAI
         if(!pInstance)
             return;
 
-        if (m_creature->isAlive()) pInstance->SetData(TYPE_ZARITHIAN, NOT_STARTED);
-        resetTimers();
+        if (m_creature->isAlive())
+        {
+            pInstance->SetData(TYPE_ZARITHIAN, NOT_STARTED);
+            resetTimers();
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            setStage(0);
+        }
+    }
+
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if (getStage())
+            ScriptedAI::MoveInLineOfSight(pWho);
+
+        if (!getStage() &&
+             pInstance->GetData(TYPE_XERESTRASZA) == DONE &&
+             pInstance->GetData(TYPE_BALTHARUS) == DONE &&
+             pInstance->GetData(TYPE_RAGEFIRE) == DONE)
+             {
+                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                 setStage(1);
+             };
     }
 
     void KilledUnit(Unit* pVictim)
