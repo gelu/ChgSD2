@@ -126,6 +126,7 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                           break;
 // Xerestrasza event
                     case 30:
+                          m_creature->SetActiveObjectState(true);
                           DoScriptText(-1666001,m_creature);
                           StartMovement(1,40);
                           break;
@@ -169,9 +170,11 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                           pInstance->SetData(TYPE_XERESTRASZA, DONE);
                           m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                           m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+                          m_creature->SetActiveObjectState(false);
                           break;
 // Halion spawn
                     case 200:
+                          m_creature->SetActiveObjectState(true);
                     {
                           Unit* Halion = Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_HALION_REAL));
                           if (pInstance->GetData(TYPE_BALTHARUS) == DONE &&
@@ -186,6 +189,7 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                           pInstance->SetData(TYPE_EVENT,210);
                           break;
                     case 210:
+                          m_creature->SetActiveObjectState(false);
                           UpdateTimer = 2000;
                           pInstance->SetData(TYPE_EVENT,0);
                           break;
