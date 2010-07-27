@@ -145,6 +145,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
+        doBloodMirror(false);
         pInstance->SetData(TYPE_LANATHEL, DONE);
         DoScriptText(-1631333,m_creature,killer);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);

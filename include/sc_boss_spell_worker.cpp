@@ -154,13 +154,11 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                    break;
 
             case CAST_ON_SELF:
-                   if (!pSpell->m_IsBugged) result = _DoCastSpellIfCan(m_creature, pSpell->m_uiSpellEntry[currentDifficulty]);
-                   else result = _BSWDoCast(m_uiSpellIdx, m_creature);
+                   result = _BSWCastOnTarget(m_creature, m_uiSpellIdx);
                    break;
 
             case CAST_ON_SUMMONS:
-                   if (!pTarget) result = CAST_FAIL_OTHER;
-                   else result = _DoCastSpellIfCan(pTarget, pSpell->m_uiSpellEntry[currentDifficulty]);
+                   result = _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case CAST_ON_VICTIM:
@@ -169,7 +167,7 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                    break;
 
             case CAST_ON_RANDOM:
-                   pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0);
+                   pTarget = _doSelect(0, false, 60.0f);
                    result = _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
@@ -283,10 +281,9 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                    break;
 
             case CAST_ON_RANDOM_PLAYER:
-                   if ( pSpell->LocData.x < 1 ) pTarget = doSelectRandomPlayer();
-                       else pTarget = doSelectRandomPlayerAtRange((float)pSpell->LocData.x);
-                   if (pTarget && pTarget->IsInMap(m_creature)) result = _BSWCastOnTarget(pTarget, m_uiSpellIdx);
-                       else result = CAST_FAIL_OTHER;
+                   if ( pSpell->LocData.x < 1 ) pTarget = _doSelect(0, false, 60.0f);
+                       else pTarget = _doSelect(0, false, (float)pSpell->LocData.x);
+                   result = _BSWCastOnTarget(pTarget, m_uiSpellIdx);
                    break;
 
             case APPLY_AURA_ALLPLAYERS:
@@ -510,27 +507,16 @@ bool BSWScriptedAI::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
                 case CAST_ON_RANDOM_PLAYER:
                 case APPLY_AURA_ALLPLAYERS:
                 case CAST_ON_ALLPLAYERS:
-                     {
-                         Map::PlayerList const& pPlayers = pMap->GetPlayers();
-                         for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-                         {
-                             pTarget = itr->getSource();
-                             if (_hasAura(m_uiSpellIdx,pTarget))
-                                 pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
-                          }
-                      return true;
-                      }
+                      _doRemoveFromAll(m_uiSpellIdx);
+                                 return true;
                       break;
+
                   default: 
                       debug_log("BSW: FAILED Removing effects of spell %u type %u - unsupported type",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
                       return false;
         }
 
-    if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
-        {
-           error_log("BSW: FAILED removing effects of spell number %u - no target or target not in map or target is dead",pSpell->m_uiSpellEntry[currentDifficulty]);
-           return false;
-        }
+    if (!_hasAura(m_uiSpellIdx, pTarget)) return false;
 
         if (index == EFFECT_INDEX_ALL)
         {

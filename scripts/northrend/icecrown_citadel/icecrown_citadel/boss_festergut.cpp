@@ -27,6 +27,7 @@ EndScriptData */
 enum BossSpells
 {
     SPELL_GASEOUS_BLIGHT     = 69162,
+    SPELL_GASEOUS_BLIGHT_2   = 69152,
     SPELL_INHALE_BLIGHT      = 69165,
     SPELL_INHALED_BLIGHT     = 69166,
     SPELL_PUNGENT_BLIGHT     = 69195,
@@ -89,13 +90,15 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,1)) {
+     switch (urand(0,1)) {
         case 0:
                DoScriptText(-1631204,m_creature,pVictim);
                break;
         case 1:
                DoScriptText(-1631205,m_creature,pVictim);
                break;
+        doRemove(SPELL_PUNGENT_BLIGHT_2, pVictim);
+        doRemove(SPELL_GASEOUS_BLIGHT_2, pVictim);
         }
     }
 
@@ -115,9 +118,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     {
         if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
         pInstance->SetData(TYPE_EVENT, 550);
-        doRemoveFromAll(SPELL_PUNGENT_BLIGHT);
-        doRemoveFromAll(SPELL_PUNGENT_BLIGHT_1);
         doRemoveFromAll(SPELL_PUNGENT_BLIGHT_2);
+        doRemoveFromAll(SPELL_GASEOUS_BLIGHT_2);
         DoScriptText(-1631206,m_creature);
     }
 
