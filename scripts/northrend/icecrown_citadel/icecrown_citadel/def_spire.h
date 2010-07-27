@@ -56,6 +56,8 @@ enum
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
 
+    NPC_TARGET_DUMMY            = 2673,
+
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
 
@@ -109,8 +111,8 @@ enum
     GO_GUNSHIP_ARMORY_H_25H     = 202180, //
 
     GO_DREAMWALKER_CACHE_10      = 201959, //
-    GO_DREAMWALKER_CACHE_25      = 202338, //
-    GO_DREAMWALKER_CACHE_10_H    = 202339, //
+    GO_DREAMWALKER_CACHE_25      = 202339, //
+    GO_DREAMWALKER_CACHE_10_H    = 202338, //
     GO_DREAMWALKER_CACHE_25_H    = 202340, //
 
     GO_PLAGUE_SIGIL             = 202182,
@@ -191,6 +193,8 @@ private:
     uint64 m_uiStinkyGUID;
     uint64 m_uiPreciousGUID;
 
+    uint64 m_uidummyTargetGUID;
+
     uint64 m_uiIcewall1GUID;
     uint64 m_uiIcewall2GUID;
     uint64 m_uiSaurfangDoorGUID;
@@ -225,6 +229,7 @@ private:
 
     uint64 m_uiFrostyWindGUID;
     uint64 m_uiFrostyEdgeGUID;
+    uint64 m_uiSnowEdgeGUID;
     uint64 m_uiArthasPlatformGUID;
     uint64 m_uiArthasPrecipiceGUID;
 

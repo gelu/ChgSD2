@@ -77,6 +77,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
     int8 portalscount;
     std::list<uint64> mobsGUIDList;
     uint32 speedK;
+    Creature* dummyTarget;
 
     void Reset()
     {
@@ -197,11 +198,25 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                      intro = true;
                      doCast(SPELL_IMMUNITY);
                      }
-        if (!battlestarted && pWho->isAlive() && pWho->IsWithinDistInMap(m_creature, 40.0f))  {
-                     DoScriptText(-1631401,m_creature,pWho);
-                     battlestarted = true;
-                     pInstance->SetData(TYPE_VALITHRIA, IN_PROGRESS);
-                     }
+        if (!battlestarted && pWho->isAlive() && pWho->IsWithinDistInMap(m_creature, 40.0f))
+           {
+               DoScriptText(-1631401,m_creature,pWho);
+               battlestarted = true;
+               pInstance->SetData(TYPE_VALITHRIA, IN_PROGRESS);
+               m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
+               if (dummyTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_TARGET_DUMMY))))
+                     {
+                         dummyTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                         dummyTarget->GetMotionMaster()->MoveIdle();
+                     } else
+                         if (dummyTarget = m_creature->SummonCreature(NPC_TARGET_DUMMY, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 1000))
+                         {
+                             dummyTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                             dummyTarget->GetMotionMaster()->MoveIdle();
+                         }
+               m_creature->SetInCombatWith(dummyTarget);
+               m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
+           }
     }
 
     void KilledUnit(Unit* pVictim)
@@ -306,6 +321,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
             case 5: 
                     DoScriptText(-1631408,m_creature);
                     if (hasAura(SPELL_CORRUPTION,m_creature)) doRemove(SPELL_CORRUPTION);
+                    if (dummyTarget) dummyTarget->ForcedDespawn();
                     stage = 6;
                     return;
                     break;
