@@ -40,6 +40,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
 
     uint32 m_auiEventTimer;
 
+    uint32 m_auiOrbDirection;
+    uint32 m_auiOrbNState;
+    uint32 m_auiOrbSState;
+
     uint64 m_uiHalion_pGUID;
     uint64 m_uiHalion_tGUID;
     uint64 m_uiRagefireGUID;
@@ -47,6 +51,11 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiBaltharusGUID;
     uint64 m_uiCloneGUID;
     uint64 m_uiXerestraszaGUID;
+
+    uint64 m_uiOrbNGUID;
+    uint64 m_uiOrbSGUID;
+    uint64 m_uiOrbFocusGUID;
+    uint64 m_uiOrbCarrierGUID;
 
     //object GUID
     uint64 m_uiHalionPortal0GUID;
@@ -134,30 +143,18 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_HALION_REAL:
-                m_uiHalion_pGUID = pCreature->GetGUID();
-                break;
-            case NPC_HALION_TWILIGHT:
-                m_uiHalion_tGUID = pCreature->GetGUID();
-                break;
-            case NPC_RAGEFIRE:
-                m_uiRagefireGUID = pCreature->GetGUID();
-                break;
-            case NPC_ZARITHIAN:
-                m_uiZarithianGUID = pCreature->GetGUID();
-                break;
-            case NPC_BALTHARUS:
-                m_uiBaltharusGUID = pCreature->GetGUID();
-                break;
-            case NPC_BALTHARUS_TARGET:
-                m_uiBaltharusTargetGUID = pCreature->GetGUID();
-                break;
-            case NPC_CLONE:
-                m_uiCloneGUID = pCreature->GetGUID();
-                break;
-            case NPC_XERESTRASZA:
-                m_uiXerestraszaGUID = pCreature->GetGUID();
-                break;
+            case NPC_HALION_REAL:  m_uiHalion_pGUID = pCreature->GetGUID(); break;
+            case NPC_HALION_TWILIGHT:   m_uiHalion_tGUID = pCreature->GetGUID();  break;
+            case NPC_RAGEFIRE:     m_uiRagefireGUID = pCreature->GetGUID();  break;
+            case NPC_ZARITHIAN:    m_uiZarithianGUID = pCreature->GetGUID(); break;
+            case NPC_BALTHARUS:    m_uiBaltharusGUID = pCreature->GetGUID(); break;
+            case NPC_BALTHARUS_TARGET:  m_uiBaltharusTargetGUID = pCreature->GetGUID(); break;
+            case NPC_CLONE:        m_uiCloneGUID = pCreature->GetGUID();     break;
+            case NPC_XERESTRASZA:  m_uiXerestraszaGUID = pCreature->GetGUID();          break;
+            case NPC_SHADOW_PULSAR_N:        m_uiOrbNGUID = pCreature->GetGUID();       break;
+            case NPC_SHADOW_PULSAR_S:        m_uiOrbSGUID = pCreature->GetGUID();       break;
+            case NPC_ORB_ROTATION_FOCUS:     m_uiOrbFocusGUID = pCreature->GetGUID();   break;
+            case NPC_ORB_CARRIER:            m_uiOrbCarrierGUID = pCreature->GetGUID(); break;
         }
     }
 
@@ -224,6 +221,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
                                           OpenDoor(m_uiFlameRingGUID);
                                     break;
             case TYPE_EVENT_TIMER:  m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+
+            case DATA_ORB_DIRECTION:        m_auiOrbDirection = uiData; uiData = NOT_STARTED; break;
+            case DATA_ORB_N:                m_auiOrbNState = uiData; uiData = NOT_STARTED; break;
+            case DATA_ORB_S:                m_auiOrbSState = uiData; uiData = NOT_STARTED; break;
         }
 
         if (uiData == DONE)
@@ -282,6 +283,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
                                      };
                                      return 0;
 
+            case DATA_ORB_DIRECTION:        return m_auiOrbDirection;
+            case DATA_ORB_N:                return m_auiOrbNState;
+            case DATA_ORB_S:                return m_auiOrbSState;
+
         }
         return 0;
     }
@@ -305,6 +310,11 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case GO_FLAME_WALLS: return m_uiFlameWallsGUID;
             case GO_FLAME_RING:  return m_uiFlameRingGUID;
             case GO_FIRE_FIELD:  return m_uiFireFieldGUID;
+
+            case NPC_SHADOW_PULSAR_N:    return m_uiOrbNGUID;
+            case NPC_SHADOW_PULSAR_S:    return m_uiOrbSGUID;
+            case NPC_ORB_ROTATION_FOCUS: return m_uiOrbFocusGUID;
+            case NPC_ORB_CARRIER:        return m_uiOrbCarrierGUID;
         }
         return 0;
     }

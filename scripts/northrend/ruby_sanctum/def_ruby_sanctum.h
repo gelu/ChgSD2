@@ -35,11 +35,13 @@ enum
     NPC_BALTHARUS_TARGET           = 39900,
     NPC_ZARITHIAN_SPAWN_STALKER    = 39794,
 
-    NPC_ORB0                       = 40144,
-    NPC_ORB1                       = 40145,
+    // Orb rotation
+    NPC_SHADOW_PULSAR_N            = 40083, //spinning orb N spawn
+    NPC_SHADOW_PULSAR_S            = 40100, //spinning orb S spawn
+    NPC_ORB_CARRIER                = 40081,
+    NPC_ORB_ROTATION_FOCUS         = 40091,
 
-//    GO_HALION_FIRE_RING            = 202800, //9482
-//    GO_HALION_PORTAL_0             = 193988, //1327 ENTRY
+
     GO_HALION_PORTAL_1             = 202794, //1327 ENTRY
     GO_HALION_PORTAL_2             = 202795, //1327 ENTRY
     GO_HALION_PORTAL_3             = 202796, //1327 EXIT
@@ -55,14 +57,12 @@ enum
     DATA_HEALTH_HALION_P           = 203,
     DATA_HEALTH_HALION_T           = 204,
 
-    //flame script
-    DATA_RND                       = 100,
-    DATA_X                         = 101,
-    DATA_Y                         = 102,
-    DATA_Z                         = 103,
-    DATA_EVENT_TIMER               = 104,
-    DATA_EVENT                     = 105,
-    DATA_ORB                       = 106,
+    DATA_EVENT_TIMER               = 101,
+    DATA_EVENT                     = 102,
+
+    DATA_ORB_DIRECTION             = 110,
+    DATA_ORB_S                     = 111,
+    DATA_ORB_N                     = 112,
 
     //for corporeality
     DATA_P_0                       = 203,

@@ -74,11 +74,8 @@ enum
     NPC_METEOR_STRIKE_3                         = 40043,
     NPC_METEOR_STRIKE_4                         = 40044,
     NPC_METEOR_STRIKE_5                         = 40055,
-    // Orb rotation
-    NPC_SHADOW_PULSAR_N                         = 40083, //spinning orb N spawn
-    NPC_SHADOW_PULSAR_S                         = 40100, //spinning orb S spawn
-    NPC_ORB_ROTATION_FOCUS                      = 40091,
-    NPC_ORB_CARRIER                             = 40081,
+
+    FR_RADIUS                                   = 40,
 
     //SAYS
     SAY_HALION_SPAWN                = -1666100, //17499 Meddlesome insects, you're too late! The Ruby Sanctum is lost.
@@ -352,7 +349,7 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
         doCast(SPELL_TWILIGHT_PRECISION);
 
         //turn on the orb cutting
-        pInstance->SetData(DATA_ORB, 1);
+//        pInstance->SetData(DATA_ORB, 1);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -523,119 +520,6 @@ struct MANGOS_DLL_DECL mob_halion_flameAI : public BSWScriptedAI
 CreatureAI* GetAI_mob_halion_flame(Creature* pCreature)
 {
     return new mob_halion_flameAI(pCreature);
-}
-
-struct MANGOS_DLL_DECL mob_halion_orb_0AI : public BSWScriptedAI
-{
-    mob_halion_orb_0AI(Creature *pCreature) : BSWScriptedAI(pCreature)
-    {
-        pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        Reset();
-    }
-
-    ScriptedInstance *pInstance;
- uint32 timer;
- uint32 tick;
- uint64 orb_targetGUID;
-
-    void Reset()
-    {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-
-  timer = 1000;
-  tick =0;
-  orb_targetGUID = 0;
-    }
-
-    void AttackStart(Unit *who)
-    {
-        //ignore all attackstart commands
-        return;
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        //TODO
-  //MOVEMENT 16 point circle
-  if (timer < uiDiff)
-        {
-   tick ++;
-   timer = 1000;
-        }else timer -= uiDiff;
-
-  if (tick == 25) //WARNING 5 sec pre warn on cutting
-  {
-   DoScriptText(EMOTE_WARNING, m_creature);
-  }
-
-  if (tick == 30) // cutting using other orb as target
-  {
-   if (pInstance->GetData(DATA_ORB) == 1)
-   {
-    Creature *temp = m_creature->SummonCreature(NPC_ORB1, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 1200000);
-
-    if (temp)
-    {
-     orb_targetGUID = temp->GetGUID();
-
-     if (Unit *orb_target = Unit::GetUnit(*m_creature, orb_targetGUID))
-     {
-      orb_target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-      orb_target->SetDisplayId(11686);
-      DoCastSpellIfCan(orb_target, SPELL_TWILIGHT_CUTTER);
-     }
-
-     if (Unit *orb_target = Unit::GetUnit(*m_creature, orb_targetGUID))
-     {
-      orb_target->CastSpell(m_creature, SPELL_TWILIGHT_CUTTER, true);
-     }
-   }
-  }
-   tick = 0;
-  }
-
-    }
-};
-CreatureAI* GetAI_mob_halion_orb_0(Creature* pCreature)
-{
-    return new mob_halion_orb_0AI(pCreature);
-}
-
-struct MANGOS_DLL_DECL mob_halion_orb_1AI : public BSWScriptedAI
-{
-    mob_halion_orb_1AI(Creature *pCreature) : BSWScriptedAI(pCreature)
-    {
-        pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
-        Reset();
-    }
-
-    ScriptedInstance *pInstance;
-
-    void Reset()
-    {
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-    }
-
-    void AttackStart(Unit *who)
-    {
-        //ignore all attackstart commands
-        return;
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        //TODO
-  //MOVEMENT 16 point circle
-  //WARNING 5 sec pre warn on cutting (EMOTE)
-  //CAST cutter on other orb  with 
-  //REPEAT every 30 sec
-    }
-};
-CreatureAI* GetAI_mob_halion_orb_1(Creature* pCreature)
-{
-    return new mob_halion_orb_1AI(pCreature);
 }
 
 struct MANGOS_DLL_DECL mob_halion_portal_inAI : public ScriptedAI
@@ -844,27 +728,6 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public ScriptedAI
    timer2 = 5000;
         }else timer2 -= diff;
 
-  if (timer3 < diff)
-        {
-   //RND FLAME DIRECTION
-   switch (urand(0,3))
-   {
-    case 0:
-     pInstance->SetData(DATA_RND, 0);
-     break;
-    case 1:
-     pInstance->SetData(DATA_RND, 1);
-     break;
-    case 2:
-     pInstance->SetData(DATA_RND, 2);
-     break;
-    case 3:
-     pInstance->SetData(DATA_RND, 3);
-     break;
-   };
-
-   timer3 = 3000;
-        }else timer3 -= diff;
     }
 };
 
@@ -872,6 +735,159 @@ CreatureAI* GetAI_mob_halion_control(Creature* pCreature)
 {
     return new mob_halion_controlAI(pCreature);
 };
+
+struct MANGOS_DLL_DECL mob_orb_rotation_focusAI : public ScriptedAI
+{
+    mob_orb_rotation_focusAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* pInstance;
+    uint32 m_timer;
+    float m_direction, m_nextdirection;
+
+    void Reset()
+    {
+//        m_creature->SetDisplayId(11686);
+        m_creature->SetRespawnDelay(7*DAY);
+        SetCombatMovement(false); 
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_direction = 0.0f;
+        m_timer = 500;
+
+        float x,y;
+        m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
+        m_creature->SummonCreature(NPC_SHADOW_PULSAR_N, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction+M_PI_F);
+        m_creature->SummonCreature(NPC_SHADOW_PULSAR_S, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+
+    }
+
+    void AttackStart(Unit *who)
+    {
+        //ignore all attackstart commands
+        return;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+//        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
+//              m_creature->ForcedDespawn();
+
+        if (m_timer <= uiDiff)
+            if (pInstance->GetData(DATA_ORB_S) == DONE && pInstance->GetData(DATA_ORB_N) == DONE)
+            {
+                m_direction = m_nextdirection;
+                m_nextdirection = (m_direction + M_PI_F/32.0f);
+                if (m_nextdirection > 2.0f*M_PI_F) m_nextdirection = m_nextdirection - 2.0f*M_PI_F;
+                pInstance->SetData(DATA_ORB_DIRECTION, (uint32)(m_nextdirection*1000));
+                pInstance->SetData(DATA_ORB_N, SPECIAL);
+                pInstance->SetData(DATA_ORB_S, SPECIAL);
+                m_timer = 500;
+            }
+        else m_timer -= uiDiff;
+//      DoCastSpellIfCan(orb_target, SPELL_TWILIGHT_CUTTER);
+    }
+};
+
+CreatureAI* GetAI_mob_orb_rotation_focus(Creature* pCreature)
+{
+    return new mob_orb_rotation_focusAI(pCreature);
+};
+
+struct MANGOS_DLL_DECL mob_halion_orbAI : public ScriptedAI
+{
+    mob_halion_orbAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    float m_direction,m_delta;
+    uint32 m_flag;
+    bool MovementStarted;
+    Unit* focus;
+    uint32 nextPoint;
+
+    void Reset()
+    {
+        if (!pInstance) return;
+        m_creature->SetRespawnDelay(7*DAY);
+        SetCombatMovement(false);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        if (m_creature->GetEntry() == NPC_SHADOW_PULSAR_N)
+        {
+            m_flag = DATA_ORB_N;
+            m_delta = 0.0f;
+        }
+        else
+        {
+            m_flag = DATA_ORB_S;
+            m_delta = M_PI_F;
+        }
+        m_direction = 0.0f;
+        nextPoint = 0;
+        MovementStarted = false;
+        pInstance->SetData(m_flag, DONE);
+    }
+
+    void AttackStart(Unit *who)
+    {
+        //ignore all attackstart commands
+        return;
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+        if (!pInstance) return;
+
+        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+
+        if (id == nextPoint) {
+                m_creature->GetMotionMaster()->MovementExpired();
+                MovementStarted = false;
+                pInstance->SetData(m_flag, DONE);
+                }
+    }
+
+    void StartMovement(uint32 id)
+    {
+        pInstance->SetData(m_flag, IN_PROGRESS);
+        MovementStarted = true;
+        nextPoint = id;
+        float x,y;
+        if (focus = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ORB_ROTATION_FOCUS)))
+            focus->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
+        else m_creature->ForcedDespawn();
+        m_creature->GetMotionMaster()->Clear();
+        m_creature->GetMotionMaster()->MovePoint(id, x, y,  m_creature->GetPositionZ());
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || !focus)
+            m_creature->ForcedDespawn();
+
+        if (!MovementStarted && pInstance->GetData(m_flag) == SPECIAL)
+        {
+            m_direction = (float)(pInstance->GetData(DATA_ORB_DIRECTION)/1000 + m_delta);
+            if (m_direction > 2.0f*M_PI_F) m_direction = m_direction - 2.0f*M_PI_F;
+            StartMovement(1);
+        }
+
+    }
+};
+
+CreatureAI* GetAI_mob_halion_orb(Creature* pCreature)
+{
+    return new mob_halion_orbAI(pCreature);
+}
+
 
 void AddSC_boss_halion()
 {
@@ -898,13 +914,8 @@ void AddSC_boss_halion()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "mob_halion_orb_0";
-    newscript->GetAI = &GetAI_mob_halion_orb_0;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "mob_halion_orb_1";
-    newscript->GetAI = &GetAI_mob_halion_orb_1;
+    newscript->Name = "mob_halion_orb";
+    newscript->GetAI = &GetAI_mob_halion_orb;
     newscript->RegisterSelf();
 
     newscript = new Script;
@@ -920,5 +931,10 @@ void AddSC_boss_halion()
     newscript = new Script;
     newscript->Name = "mob_halion_control";
     newscript->GetAI = &GetAI_mob_halion_control;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_orb_rotation_focus";
+    newscript->GetAI = &GetAI_mob_orb_rotation_focus;
     newscript->RegisterSelf();
 }
