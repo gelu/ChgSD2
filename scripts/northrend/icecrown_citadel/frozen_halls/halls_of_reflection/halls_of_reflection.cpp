@@ -104,7 +104,6 @@ enum
   SAY_SYLVANA_ESCAPE_02              = -1594501,
   SAY_JAINA_TRAP                     = -1594502,
   SAY_SYLVANA_TRAP                   = -1594503,
-  SAY_MATHEAS_JAINA                  = -1594505,
   SAY_LICH_KING_END_01               = -1594506,
   SAY_LICH_KING_END_02               = -1594507,
   SAY_LICH_KING_END_03               = -1594508,
@@ -710,6 +709,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
     }
 
+    void JustDied(Unit* pKiller)
+    {
+        if(!m_pInstance) return;
+        m_pInstance->SetData(TYPE_LICH_KING, FAIL);
+    }
+
     void WaypointReached(uint32 i)
     {
         switch(i)
@@ -1162,7 +1167,7 @@ bool GossipSelect_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCrea
     {
         case GOSSIP_ACTION_INFO_DEF+1:
            pPlayer->CLOSE_GOSSIP_MENU();
-           ((npc_jaina_and_sylvana_HRextroAI*)pCreature->AI())->Start(false, true);
+           ((npc_jaina_and_sylvana_HRextroAI*)pCreature->AI())->Start(true);
            pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
            pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
            pCreature->SetUInt64Value(UNIT_FIELD_TARGET, 0);

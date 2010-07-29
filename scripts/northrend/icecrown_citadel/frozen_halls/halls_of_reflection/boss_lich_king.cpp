@@ -302,7 +302,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
          m_creature->SetSpeedRate(MOVE_WALK, 2.6f, true);
          if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
-             pEscortAI->Start(false, false);
+             pEscortAI->Start();
          Step = 0;
          StepTimer = 100;
       }
@@ -315,7 +315,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             npc_escortAI::EnterEvadeMode();
             DoScriptText(SAY_LICH_KING_WIN, m_creature);
             m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
-//            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
             m_pInstance->SetData(TYPE_LICH_KING, FAIL);
          };
