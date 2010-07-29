@@ -113,6 +113,10 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         m_uiHalionFireWallMGUID = 0;
         m_uiHalionFireWallLGUID = 0;
         m_uiBaltharusTargetGUID = 0;
+        m_auiOrbDirection = 0;
+        m_auiOrbNState = NOT_STARTED;
+        m_auiOrbSState = NOT_STARTED;
+
     }
 
     bool IsEncounterInProgress() const
