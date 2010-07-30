@@ -597,7 +597,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
              break;
           case 20:
              m_creature->SetUInt64Value(UNIT_FIELD_TARGET, 0);
-             ((npc_arthasAI*)m_creature->AI())->Start(true, false);
+             ((npc_arthasAI*)m_creature->AI())->Start(false);
              JumpNextStep(3000);
              break;
        }
@@ -1116,7 +1116,7 @@ struct MANGOS_DLL_DECL npc_utherAI : public npc_escortAI
            //m_pInstance->SetWeather(WEATHER_STATE_MEDIUM_RAIN, 0.9999f);
            StartEvent = true;
            m_creature->SetVisibility(VISIBILITY_ON);
-           ((npc_utherAI*)m_creature->AI())->Start(false, true);
+           ((npc_utherAI*)m_creature->AI())->Start(true);
 
            if(Creature* Knight01 = m_creature->SummonCreature(NPC_KNIGHT,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),m_creature->GetOrientation(),TEMPSUMMON_TIMED_DESPAWN,110000))
            {
