@@ -186,7 +186,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             return;
 
         pInstance->SetData(DATA_HEALTH_HALION_P, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
-        pInstance->SetData(DATA_P_1, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -321,7 +320,6 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
             return;
 
         pInstance->SetData(DATA_HEALTH_HALION_T, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
-        pInstance->SetData(DATA_T_1, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -512,10 +510,24 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
     }
 
     ScriptedInstance* pInstance;
+    Unit* pHalionReal;
+    Unit* pHalionTwilight;
+    uint32 m_lastBuffReal, m_lastBuffTwilight;
+    uint64 p_RealHP, p_TwilightHP;
 
     void Reset()
     {
+        if (!pInstance) return;
         resetTimers();
+//        m_creature->SetDisplayId(11686);
+        m_creature->SetDisplayId(10045);
+        m_creature->SetRespawnDelay(7*DAY);
+        SetCombatMovement(false);
+        pHalionReal = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL));
+        pHalionTwilight = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT));
+        if (!pHalionReal || !pHalionTwilight) m_creature->ForcedDespawn();
+        m_lastBuffReal = 0;
+        m_lastBuffTwilight = 0;
     }
 
     void AttackStart(Unit *who)
@@ -526,6 +538,38 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
+//        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
+//              m_creature->ForcedDespawn();
+        if (timedQuery(SPELL_CORPOREALITY_EVEN, diff))
+        {
+            if (pHalionReal && pHalionReal->isAlive())
+                p_RealHP = pHalionReal->GetHealth();
+                else p_RealHP = 0;
+
+            if (pHalionTwilight && pHalionTwilight->isAlive())
+                p_TwilightHP = pHalionTwilight->GetHealth();
+                else p_TwilightHP = 0;
+
+            float m_diff = (float)((p_RealHP - p_TwilightHP)*200/(p_RealHP + p_TwilightHP));
+
+            for (uint8 i = 0; i < 11; i++)
+                if (diff <= Buff[i].diff || diff >= Buff[11].diff )
+                {
+                    if ( diff >= Buff[11].diff ) i = 11;
+
+                    if (m_lastBuffReal)
+                        doRemove(m_lastBuffReal, pHalionReal);
+                    doCast(Buff[i].real, pHalionReal);
+                    m_lastBuffReal = Buff[i].real;
+
+                    if (m_lastBuffTwilight)
+                        doRemove(m_lastBuffTwilight, pHalionReal);
+                    doCast(Buff[i].twilight, pHalionTwilight);
+                    m_lastBuffTwilight = Buff[i].twilight;
+                }
+
+        }
+
     }
 
 };

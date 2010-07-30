@@ -307,9 +307,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_HALION_TWILIGHT:           return m_uiHalion_tGUID;
             case NPC_XERESTRASZA:               return m_uiXerestraszaGUID;
             case NPC_BALTHARUS_TARGET:          return m_uiBaltharusTargetGUID;
-            case GO_HALION_FIRE_WALL_S:         return m_uiHalionFireWallSGUID;
-            case GO_HALION_FIRE_WALL_M:         return m_uiHalionFireWallMGUID;
-            case GO_HALION_FIRE_WALL_L:         return m_uiHalionFireWallLGUID;
 
             case GO_FLAME_WALLS: return m_uiFlameWallsGUID;
             case GO_FLAME_RING:  return m_uiFlameRingGUID;
