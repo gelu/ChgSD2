@@ -71,9 +71,6 @@ enum
     NPC_METEOR_STRIKE                           = 40029, //casts "impact zone" then meteor
     NPC_METEOR_STRIKE_1                         = 40041,
     NPC_METEOR_STRIKE_2                         = 40042,
-    NPC_METEOR_STRIKE_3                         = 40043,
-    NPC_METEOR_STRIKE_4                         = 40044,
-    NPC_METEOR_STRIKE_5                         = 40055,
 
     FR_RADIUS                                   = 40,
 
@@ -89,6 +86,9 @@ enum
     SAY_HALION_PHASE_2              = -1666108, //17507 You will find only suffering within the realm of Twilight. Enter if you dare.
     SAY_HALION_PHASE_3              = -1666109, //17508 I am the light AND the darkness! Cower mortals before the Herald of Deathwing!
     EMOTE_WARNING                   = -1666110, //orbs charge warning
+    EMOTE_REAL                      = -1666111, // To real world message
+    EMOTE_TWILIGHT                  = -1666112, // To twilight world message
+    EMOTE_NEITRAL                   = -1666113, // Halion reveal HP message
 };
 
 /*######
@@ -189,46 +189,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
         pInstance->SetData(DATA_P_1, m_creature->GetHealth() >= uiDamage ? m_creature->GetHealth() - uiDamage : 0);
     }
 
-    void doTwilightBuff()
-    {
-    switch (pInstance->GetData(DATA_P_BUFF))
-    {
-     case 0:
-      doCast(SPELL_CORPOREALITY_EVEN);
-     break;
-     case 1:
-      doCast(SPELL_CORPOREALITY_20I);
-     break;
-     case 2:
-      doCast(SPELL_CORPOREALITY_40I);
-     break;
-     case 3:
-      doCast(SPELL_CORPOREALITY_60I);
-     break;
-     case 4:
-      doCast(SPELL_CORPOREALITY_80I);
-     break;
-     case 5:
-      doCast(SPELL_CORPOREALITY_100I);
-     break;
-     case 6:
-      doCast(SPELL_CORPOREALITY_20D);
-     break;
-     case 7:
-      doCast(SPELL_CORPOREALITY_40D);
-     break;
-     case 8:
-      doCast(SPELL_CORPOREALITY_60D);
-     break;
-     case 9:
-      doCast(SPELL_CORPOREALITY_80D);
-     break;
-     case 10:
-      doCast(SPELL_CORPOREALITY_100D);
-     break;
-    }
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (!pInstance)
@@ -270,7 +230,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                 timedCast(SPELL_FIERY_COMBUSTION, uiDiff);
                 timedCast(SPELL_METEOR, uiDiff);
                 // Needs Script
-                doTwilightBuff();
                 break;
 
             default:
@@ -520,26 +479,43 @@ struct MANGOS_DLL_DECL mob_halion_flameAI : public BSWScriptedAI
 CreatureAI* GetAI_mob_halion_flame(Creature* pCreature)
 {
     return new mob_halion_flameAI(pCreature);
-}
+};
 
-struct MANGOS_DLL_DECL mob_halion_controlAI : public ScriptedAI
+struct HalionBuffLine
 {
-    mob_halion_controlAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    float diff;                // Health diff in percent
+    uint32 real, twilight;     // Buff pair
+};
+
+static HalionBuffLine Buff[]=
+{
+    {-10.0f,SPELL_CORPOREALITY_100I, SPELL_CORPOREALITY_100D},
+    {-8.0f,SPELL_CORPOREALITY_80I, SPELL_CORPOREALITY_80D},
+    {-6.0f,SPELL_CORPOREALITY_60I, SPELL_CORPOREALITY_60D},
+    {-4.0f,SPELL_CORPOREALITY_40I, SPELL_CORPOREALITY_40D},
+    {-2.0f,SPELL_CORPOREALITY_20I, SPELL_CORPOREALITY_20D},
+    {-1.0f,SPELL_CORPOREALITY_EVEN, SPELL_CORPOREALITY_EVEN},
+    {1.0f,SPELL_CORPOREALITY_EVEN, SPELL_CORPOREALITY_EVEN},
+    {2.0f,SPELL_CORPOREALITY_20D, SPELL_CORPOREALITY_20I},
+    {4.0f,SPELL_CORPOREALITY_40D, SPELL_CORPOREALITY_40I},
+    {6.0f,SPELL_CORPOREALITY_60D, SPELL_CORPOREALITY_60I},
+    {8.0f,SPELL_CORPOREALITY_80D, SPELL_CORPOREALITY_80I},
+    {10.0f,SPELL_CORPOREALITY_100D, SPELL_CORPOREALITY_100I},
+};
+
+struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
+{
+    mob_halion_controlAI(Creature* pCreature) : BSWScriptedAI(pCreature) 
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
     ScriptedInstance* pInstance;
-    uint32 timer;
-    uint32 timer2;
-    uint32 timer3;
 
-    void Reset() 
+    void Reset()
     {
-       timer = 1000;
-       timer2 = 5000;
-       timer3 = 3000;
+        resetTimers();
     }
 
     void AttackStart(Unit *who)
@@ -550,103 +526,8 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        //corporeality get damage every second
-        if (timer < diff)
-        {
-        //CORPOREALITY
-            pInstance->SetData(DATA_P_0, (pInstance->GetData(DATA_P_0) + (pInstance->GetData(DATA_P_1))));
-            pInstance->SetData(DATA_T_0, (pInstance->GetData(DATA_T_0) + (pInstance->GetData(DATA_T_1))));
-            timer = 1000;
-        }else timer -= diff;
-
-  //average it out
-  if (timer2 < diff)
-        {
-   //CORPOREALITY
-   pInstance->SetData(DATA_P_2, (pInstance->GetData(DATA_P_0) / 5));
-   pInstance->SetData(DATA_T_2, (pInstance->GetData(DATA_T_0) / 5));
-   //clean up
-   pInstance->SetData(DATA_P_0, 0);
-   pInstance->SetData(DATA_T_0, 0);
-   pInstance->SetData(DATA_P_1, 0);
-   pInstance->SetData(DATA_T_1, 0);
-   //the buff Physical side
-   if(pInstance->GetData(DATA_P_2) > (pInstance->GetData(DATA_T_2) + 1500) && pInstance->GetData(DATA_P_2) < (pInstance->GetData(DATA_T_2) + 2999))
-   {
-    //BUFF LVL 1
-    pInstance->SetData(DATA_P_BUFF, 1);
-    pInstance->SetData(DATA_T_BUFF, 6);
-   }
-   if(pInstance->GetData(DATA_P_2) > (pInstance->GetData(DATA_T_2) + 3000) && pInstance->GetData(DATA_P_2) < (pInstance->GetData(DATA_T_2) + 4499))
-   {
-    //BUFF LVL 2
-    pInstance->SetData(DATA_P_BUFF, 2);
-    pInstance->SetData(DATA_T_BUFF, 7);
-   }
-   if(pInstance->GetData(DATA_P_2) > (pInstance->GetData(DATA_T_2) + 4500) && pInstance->GetData(DATA_P_2) < (pInstance->GetData(DATA_T_2) + 5999))
-   {
-    //BUFF LVL 3
-    pInstance->SetData(DATA_P_BUFF, 3);
-    pInstance->SetData(DATA_T_BUFF, 8);
-   }
-   if(pInstance->GetData(DATA_P_2) > (pInstance->GetData(DATA_T_2) + 6000) && pInstance->GetData(DATA_P_2) < (pInstance->GetData(DATA_T_2) + 7499))
-   {
-    //BUFF LVL 4PT_BUFF, 1);
-    pInstance->SetData(DATA_P_BUFF, 4);
-    pInstance->SetData(DATA_T_BUFF, 9);
-   }
-   if(pInstance->GetData(DATA_P_2) > (pInstance->GetData(DATA_T_2) + 7500))
-   {
-    //BUFF LVL 5
-    pInstance->SetData(DATA_P_BUFF, 5);
-    pInstance->SetData(DATA_T_BUFF, 10);
-   }
-   else
-    //NORMAL BUFF
-    pInstance->SetData(DATA_P_BUFF, 0);
-
-   //the buff twilight side
-   if(pInstance->GetData(DATA_T_2) > (pInstance->GetData(DATA_P_2) + 1500) && pInstance->GetData(DATA_T_2) < (pInstance->GetData(DATA_P_2) + 2999))
-   {
-    //BUFF LVL 1
-    pInstance->SetData(DATA_P_BUFF, 6);
-    pInstance->SetData(DATA_T_BUFF, 1);
-   }
-   if(pInstance->GetData(DATA_T_2) > (pInstance->GetData(DATA_P_2) + 3000) && pInstance->GetData(DATA_T_2) < (pInstance->GetData(DATA_P_2) + 4499))
-   {
-    //BUFF LVL 2
-    pInstance->SetData(DATA_P_BUFF, 7);
-    pInstance->SetData(DATA_T_BUFF, 2);
-   }
-   if(pInstance->GetData(DATA_T_2) > (pInstance->GetData(DATA_P_2) + 4500) && pInstance->GetData(DATA_T_2) < (pInstance->GetData(DATA_P_2) + 5999))
-   {
-    //BUFF LVL 3
-    pInstance->SetData(DATA_P_BUFF, 8);
-    pInstance->SetData(DATA_T_BUFF, 3);
-   }
-   if(pInstance->GetData(DATA_T_2) > (pInstance->GetData(DATA_P_2) + 6000) && pInstance->GetData(DATA_T_2) < (pInstance->GetData(DATA_P_2) + 7499))
-   {
-    //BUFF LVL 4
-    pInstance->SetData(DATA_P_BUFF, 9);
-    pInstance->SetData(DATA_T_BUFF, 4);
-   }
-   if(pInstance->GetData(DATA_T_2) > (pInstance->GetData(DATA_P_2) + 7500))
-   {
-    //BUFF LVL 5
-    pInstance->SetData(DATA_P_BUFF, 10);
-    pInstance->SetData(DATA_T_BUFF, 5);
-   }
-   else
-    //NORMAL BUFF
-    pInstance->SetData(DATA_T_BUFF, 0);
-
-
-
-
-   timer2 = 5000;
-        }else timer2 -= diff;
-
     }
+
 };
 
 CreatureAI* GetAI_mob_halion_control(Creature* pCreature)
