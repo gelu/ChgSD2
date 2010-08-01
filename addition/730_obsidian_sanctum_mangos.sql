@@ -2,7 +2,7 @@ UPDATE creature_template SET ScriptName='mob_fire_cyclone' WHERE entry = 30648;
 UPDATE creature_template SET ScriptName='mob_flame_tsunami' WHERE entry = 30616;
 
 -- CUSTOM hack to different hard mode loot
-REPLACE INTO creature_template (entry, difficulty_entry_1, modelid_A, modelid_H, faction_A, faction_H, NAME, subname, minhealth, maxhealth, rank, lootid) VALUES
+REPLACE INTO creature_template (entry, difficulty_entry_1, modelid_1, modelid_3, faction_A, faction_H, NAME, subname, minhealth, maxhealth, rank, lootid) VALUES
 (288601, 313111, 27035, 27035, 103, 103, 'Sartharion', 'The Onyx Guardian', 1, 1, 3, 288601),
 (288602, 313112, 27035, 27035, 103, 103,  'Sartharion', 'The Onyx Guardian', 1, 1, 3, 288602),
 (288603, 313113, 27035, 27035, 103, 103,  'Sartharion', 'The Onyx Guardian', 1, 1, 3, 288603),
