@@ -44,6 +44,7 @@ void LoadDatabase()
         pSystemMgr.LoadVersion();
         pSystemMgr.LoadScriptTexts();
         pSystemMgr.LoadScriptTextsCustom();
+        pSystemMgr.LoadScriptGossipTexts();
         pSystemMgr.LoadScriptWaypoints();
     }
     else
@@ -495,7 +496,7 @@ bool GOChooseReward(Player* pPlayer, GameObject* pGo, const Quest* pQuest, uint3
 }
 
 MANGOS_DLL_EXPORT
-bool AreaTrigger(Player* pPlayer, AreaTriggerEntry * atEntry)
+bool AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 {
     Script *tmpscript = m_scripts[GetAreaTriggerScriptId(atEntry->id)];
 
@@ -503,6 +504,17 @@ bool AreaTrigger(Player* pPlayer, AreaTriggerEntry * atEntry)
         return false;
 
     return tmpscript->pAreaTrigger(pPlayer, atEntry);
+}
+
+MANGOS_DLL_EXPORT
+bool ProcessEventId(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsStart)
+{
+    Script *tmpscript = m_scripts[GetEventIdScriptId(uiEventId)];
+    if (!tmpscript || !tmpscript->pProcessEventId)
+        return false;
+
+    // bIsStart may be false, when event is from taxi node events (arrival=false, departure=true)
+    return tmpscript->pProcessEventId(uiEventId, pSource, pTarget, bIsStart);
 }
 
 MANGOS_DLL_EXPORT
