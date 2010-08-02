@@ -8,7 +8,7 @@ REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_start_active`,
 REPLACE INTO `spell_area` (`spell`, `area`, `quest_start`, `quest_start_active`, `quest_end`, `aura_spell`, `racemask`, `gender`, `autocast`) values('35480','4100','0','0','0','0','0','0','1');
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('58825', '1', '27733');
 
-UPDATE `instance_template` SET `script` = 'instance_culling_of_stratholme' WHERE map=595;
+UPDATE `instance_template` SET `ScriptName` = 'instance_culling_of_stratholme' WHERE map=595;
 
 UPDATE `creature_template` SET `ScriptName`='npc_mike' WHERE entry=30571;
 UPDATE `creature_template` SET `ScriptName`='npc_chromi_start' WHERE entry=26527;

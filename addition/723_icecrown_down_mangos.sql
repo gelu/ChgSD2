@@ -1,5 +1,5 @@
 -- Forge of souls
-UPDATE `instance_template` SET `script`='instance_forge_of_souls' WHERE `map`=632;
+UPDATE `instance_template` SET `ScriptName`='instance_forge_of_souls' WHERE `map`=632;
 UPDATE `creature_template` SET `ScriptName`='boss_bronjahm', `AIName` ='' WHERE `entry`=36497;
 UPDATE `creature_template` SET `ScriptName`='mob_soul_fragment', `modelid_1`= 30233, `modelid_3`= 30233, `AIName` ='' WHERE `entry`=36535;
 -- UPDATE `creature_template` SET `ScriptName`='mob_soul_storm', `AIName` ='' WHERE `entry`=;
@@ -27,7 +27,7 @@ UPDATE `creature_template` SET `equipment_id`='1290' where `entry` IN (36990, 37
 -- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_npc_spectral_warden' where `entry` IN (36666);
 
 -- Pit of saron
--- UPDATE `instance_template` SET `script`='instance_pit_of_saron' WHERE `map`=658;
+-- UPDATE `instance_template` SET `ScriptName`='instance_pit_of_saron' WHERE `map`=658;
 -- UPDATE `creature_template` SET `ScriptName`='boss_ick', `AIName` ='' WHERE `entry`=36476;
 -- UPDATE `creature_template` SET `ScriptName`='boss_krick', `AIName` ='' WHERE `entry`=36477;
 -- UPDATE `creature_template` SET `ScriptName`='mob_exploding_orb', `AIName` ='' WHERE `entry`=36610;
@@ -38,7 +38,7 @@ UPDATE `creature_template` SET `equipment_id`='1290' where `entry` IN (36990, 37
 -- UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSoutro', `AIName` ='' WHERE `entry` IN (38189,38188);
 
 -- Halls of reflection
-UPDATE `instance_template` SET `script` = 'instance_halls_of_reflection' WHERE map=668;
+UPDATE `instance_template` SET `ScriptName` = 'instance_halls_of_reflection' WHERE map=668;
 UPDATE `gameobject_template` SET `ScriptName` = '' WHERE `entry` IN (202236,202302);
 DELETE FROM `creature` WHERE `map` = 668 AND `id` IN (38177,38176,38173,38172,38567,38175,36940,36941,37069);
 

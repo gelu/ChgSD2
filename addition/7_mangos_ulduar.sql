@@ -16,7 +16,7 @@ UPDATE `creature_template` SET `ScriptName`='boss_mimiron' WHERE `entry`=33350;
 UPDATE `creature_template` SET `ScriptName`='boss_vezax' WHERE `entry`=33271;
 UPDATE `creature_template` SET `ScriptName`='boss_yogg_saron' WHERE `entry`=33288;
 UPDATE `creature_template` SET `ScriptName`='boss_algalon' WHERE `entry`=32871;
-UPDATE `instance_template` SET `script`='instance_ulduar' WHERE `map`=603;
+UPDATE `instance_template` SET `ScriptName`='instance_ulduar' WHERE `map`=603;
 
 DELETE FROM `creature` WHERE `id` = 99005;
 DELETE FROM `creature_template` WHERE `entry` = 99005;

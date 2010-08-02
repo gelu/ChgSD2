@@ -1,5 +1,5 @@
 /* VIOLET HOLD */
-UPDATE `instance_template` SET `script`='instance_violet_hold' WHERE `map`=608;
+UPDATE `instance_template` SET `ScriptName`='instance_violet_hold' WHERE `map`=608;
 UPDATE `creature_template` SET `ScriptName`='npc_sinclari', `npcflag`=1,`minhealth`=50400, `maxhealth`=50400 WHERE `entry`='30658'; -- 64
 UPDATE `creature_template` SET `ScriptName`='npc_azure_saboteur' WHERE `entry`='31079';
 UPDATE `creature_template` SET `ScriptName`='boss_cyanigosa' WHERE `entry`='31134';

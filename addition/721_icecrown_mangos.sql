@@ -19,7 +19,7 @@ DELETE FROM `locales_npc_text` WHERE `entry` = 99323;
 DELETE FROM `npc_text` WHERE `ID` = 99323;
 DELETE FROM `gameobject` WHERE `guid` IN (913334);
 
-UPDATE `instance_template` SET `script`='instance_icecrown_spire' WHERE `map`=631;
+UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map`=631;
 
 -- Saurfang
 UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;

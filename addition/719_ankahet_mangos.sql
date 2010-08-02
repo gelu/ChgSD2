@@ -1,5 +1,5 @@
 -- Ahnkahet from Tassadar
-UPDATE `instance_template` SET `script` = 'instance_ahnkahet' WHERE `map`=619;
+UPDATE `instance_template` SET `ScriptName` = 'instance_ahnkahet' WHERE `map`=619;
 UPDATE `creature_template` SET `ScriptName` = 'boss_jedoga', `AIName`='' WHERE `entry`=29310;
 UPDATE `creature_template` SET `ScriptName` = 'boss_nadox', `AIName`='' WHERE `entry`=29309;
 UPDATE `creature_template` SET `ScriptName` = 'boss_taldaram', `AIName`='' WHERE `entry`=29308;
