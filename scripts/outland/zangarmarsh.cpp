@@ -28,7 +28,6 @@ npc_elder_kuruti
 npc_kayra_longmane
 npc_mortog_steamhead
 npc_timothy_daniels
-event_stormcrow
 EndContentData */
 
 #include "precompiled.h"
@@ -365,23 +364,8 @@ bool GossipSelect_npc_timothy_daniels(Player* pPlayer, Creature* pCreature, uint
 }
 
 /*######
-## event_stormcrow
+## AddSC
 ######*/
-
-enum
-{
-    EVENT_ID_STORMCROW  = 11225,
-};
-
-bool ProcessEventId_event_taxi_stormcrow(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsStart)
-{
-    if (uiEventId == EVENT_ID_STORMCROW && !bIsStart && pSource->GetTypeId() == TYPEID_PLAYER)
-    {
-        ((Player*)pSource)->SetDisplayId(((Player*)pSource)->GetNativeDisplayId());
-        return true;
-    }
-    return false;
-}
 
 void AddSC_zangarmarsh()
 {
@@ -422,10 +406,5 @@ void AddSC_zangarmarsh()
     newscript->Name = "npc_timothy_daniels";
     newscript->pGossipHello =  &GossipHello_npc_timothy_daniels;
     newscript->pGossipSelect = &GossipSelect_npc_timothy_daniels;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "event_taxi_stormcrow";
-    newscript->pProcessEventId = &ProcessEventId_event_taxi_stormcrow;
     newscript->RegisterSelf();
 }
