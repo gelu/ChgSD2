@@ -39,8 +39,6 @@ enum
     //NEED SCRIPT
     SPELL_TAIL_LASH                             = 74531, // A sweeping tail strike hits all enemies behind the caster, inflicting 3063 to 3937 damage and stunning them for 2 sec.
     SPELL_TWILIGHT_DIVISION                     = 75063, // Phases the caster, allowing him to exist and act simultaneously in both the material and Twilight realms.
-    SPELL_FIERY_COMBUSTION                      = 74562, // Inflicts 4,000 Fire damage every 2 seconds for 30 seconds to a random raider. Every time Fiery Combustion does damage, it applies a stackable Mark of Combustion.
-    SPELL_SOUL_CONSUMPTION                      = 74792, // Inflicts 4,000 Shadow damage every 2 seconds for 30 seconds to a random raider. Every time Soul Consumption does damage, it applies a stackable Mark of Consumption.
     SPELL_TWILIGHT_CUTTER                       = 77844, // Inflicts 13,875 to 16,125 Shadow damage every second to players touched by the shadow beam
     //CORPOREALITY
     SPELL_CORPOREALITY_EVEN                     = 74826, // Deals & receives normal damage
@@ -65,8 +63,18 @@ enum
     SPELL_DUSK_SHROUD                           = 75484, // Inflicts 3,000 Shadow damage every 2 seconds to everyone in the Twilight Realm
     //NPC
     NPC_HALION_CONTROL                          = 40146,
+    //Combustion
     NPC_COMBUSTION                              = 40001,
+    SPELL_MARK_OF_COMBUSTION                    = 74567, // Dummy effect only
+    SPELL_FIERY_COMBUSTION                      = 74562, // Inflicts 4,000 Fire damage every 2 seconds for 30 seconds to a random raider. Every time Fiery Combustion does damage, it applies a stackable Mark of Combustion.
+    SPELL_COMBUSTION_EXPLODE                    = 74607,
+    SPELL_COMBUSTION_AURA                       = 74629,
+    //Consumption
     NPC_CONSUMPTION                             = 40135,
+    SPELL_MARK_OF_CONSUMPTION                   = 74795, // Dummy effect only
+    SPELL_SOUL_CONSUMPTION                      = 74792, // Inflicts 4,000 Shadow damage every 2 seconds for 30 seconds to a random raider. Every time Soul Consumption does damage, it applies a stackable Mark of Consumption.
+    SPELL_CONSUMPTION_EXPLODE                   = 74799,
+    SPELL_CONSUMPTION_AURA                      = 74803,
     //Summons
     NPC_METEOR_STRIKE                           = 40029, //casts "impact zone" then meteor
     NPC_METEOR_STRIKE_1                         = 40041,
@@ -827,6 +835,123 @@ CreatureAI* GetAI_mob_orb_carrier(Creature* pCreature)
     return new mob_orb_carrierAI(pCreature);
 };
 
+struct MANGOS_DLL_DECL mob_soul_consumptionAI : public BSWScriptedAI
+{
+    mob_soul_consumptionAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    uint32 life_timer;
+    float m_Size0;
+    float m_Size;
+
+    void Reset()
+    {
+        SetCombatMovement(false);
+        life_timer = 60000;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->CastSpell(m_creature, SPELL_CONSUMPTION_AURA, true);
+        m_Size0 = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        m_Size = m_Size0;
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    bool doSearchPlayers()
+    {
+        if(doSelectRandomPlayerAtRange(m_Size * 3.0f)) return true;
+        else return false;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+//        if(m_pInstance && m_pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
+//            m_creature->ForcedDespawn();
+
+        if (life_timer <= uiDiff)
+            m_creature->ForcedDespawn();
+        else life_timer -= uiDiff;
+
+        if (doSearchPlayers() && m_Size <= m_Size0 * 3.0f) {
+                m_Size = m_Size*1.01;
+                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
+                }
+
+    }
+
+};
+
+CreatureAI* GetAI_mob_soul_consumption(Creature* pCreature)
+{
+    return new mob_soul_consumptionAI(pCreature);
+};
+
+struct MANGOS_DLL_DECL mob_fiery_combustionAI : public BSWScriptedAI
+{
+    mob_fiery_combustionAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    {
+        m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    uint32 life_timer;
+    float m_Size0;
+    float m_Size;
+
+    void Reset()
+    {
+        SetCombatMovement(false);
+        life_timer = 60000;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->CastSpell(m_creature, SPELL_COMBUSTION_AURA, true);
+        m_Size0 = m_creature->GetFloatValue(OBJECT_FIELD_SCALE_X);
+        m_Size = m_Size0;
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        return;
+    }
+
+    bool doSearchPlayers()
+    {
+        if(doSelectRandomPlayerAtRange(m_Size * 3.0f)) return true;
+        else return false;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+//        if(m_pInstance && m_pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
+//            m_creature->ForcedDespawn();
+
+        if (life_timer <= uiDiff)
+            m_creature->ForcedDespawn();
+        else life_timer -= uiDiff;
+
+        if (doSearchPlayers() && m_Size <= m_Size0 * 3.0f) {
+                m_Size = m_Size*1.01;
+                m_creature->SetFloatValue(OBJECT_FIELD_SCALE_X, m_Size);
+                }
+
+    }
+
+};
+
+CreatureAI* GetAI_mob_fiery_combustion(Creature* pCreature)
+{
+    return new mob_fiery_combustionAI(pCreature);
+};
+
+
 bool GOGossipHello_go_halion_portal_twilight(Player *player, GameObject* pGo)
 {
     ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData();
@@ -885,6 +1010,16 @@ void AddSC_boss_halion()
     newscript = new Script;
     newscript->Name = "mob_orb_carrier";
     newscript->GetAI = &GetAI_mob_orb_carrier;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_soul_consumption";
+    newscript->GetAI = &GetAI_mob_soul_consumption;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_fiery_combustion";
+    newscript->GetAI = &GetAI_mob_fiery_combustion;
     newscript->RegisterSelf();
 
     newscript = new Script;
