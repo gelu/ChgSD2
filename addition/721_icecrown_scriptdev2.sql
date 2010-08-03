@@ -185,14 +185,14 @@ INSERT INTO `script_texts` (`entry`,`content_loc8`, `content_default`, `sound`, 
 ('-1631594','Ну вот вы и прикончили Артаса. Теперь будем ждать Катаклизм.','<need translate>','0','6','0','0','custom message');
 
 -- Gossips
-DELETE FROM `script_texts` WHERE `entry` BETWEEN -1631610 AND -1631600;
-INSERT INTO `script_texts` VALUES
-('-1631600', "Light\'s Hammer", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молот света", 0, 0, 0, 0, "IceCrown citadel teleporter text 1"),
-('-1631601', "Oratory of the Damned", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молельня проклятых", 0, 0, 0, 0, "IceCrown citadel teleporter text 2"),
-('-1631602', "Rampart of Skulls", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Черепной вал", 0, 0, 0, 0, "IceCrown citadel teleporter text 3"),
-('-1631603', "Deathbringer\'s Rise", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Подъем Смертоносного", 0, 0, 0, 0, "IceCrown citadel teleporter text 4"),
-('-1631604', "Icecrown Citadel", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Цитадель Ледяной Короны", 0, 0, 0, 0, "IceCrown citadel teleporter text 5"),
-('-1631605', "The Sanctum of Blood", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Святилище крови", 0, 0, 0, 0, "IceCrown citadel teleporter text 6"),
-('-1631606', "Frost Queen\'s Lair", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Логово Королевы льда", 0, 0, 0, 0, "IceCrown citadel teleporter text 7"),
-('-1631607', "Frozen Throne", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Ледяной трон", 0, 0, 0, 0, "IceCrown citadel teleporter text 8"),
-('-1631608', "We are ready, Tirion!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Всегда готовы, дедуля!", 0, 0, 0, 0, "IceCrown citadel Tirion gossip");
+DELETE FROM `gossip_texts` WHERE `entry` BETWEEN -3631610 AND -3631600;
+INSERT INTO `gossip_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `comment`) VALUES
+('-3631600', "Light\'s Hammer", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молот света", "IceCrown citadel teleporter text 1"),
+('-3631601', "Oratory of the Damned", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Молельня проклятых", "IceCrown citadel teleporter text 2"),
+('-3631602', "Rampart of Skulls", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Черепной вал", "IceCrown citadel teleporter text 3"),
+('-3631603', "Deathbringer\'s Rise", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Подъем Смертоносного", "IceCrown citadel teleporter text 4"),
+('-3631604', "Icecrown Citadel", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Цитадель Ледяной Короны", "IceCrown citadel teleporter text 5"),
+('-3631605', "The Sanctum of Blood", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Святилище крови", "IceCrown citadel teleporter text 6"),
+('-3631606', "Frost Queen\'s Lair", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Логово Королевы льда", "IceCrown citadel teleporter text 7"),
+('-3631607', "Frozen Throne", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Ледяной трон", "IceCrown citadel teleporter text 8"),
+('-3631608', "We are ready, Tirion!", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Всегда готовы, дедуля!", "IceCrown citadel Tirion gossip");

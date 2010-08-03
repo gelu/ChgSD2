@@ -220,12 +220,16 @@ INSERT INTO `script_texts` (`entry`,`content_default`,`content_loc8`,`sound`,`ty
 #add
 (-1594531, '<need translate>', 'Ну теперь-то точно пора сваливать.', 0,0,0,0, '67234'),
 (-1594532, '<need translate>', 'Вот вам сундук за работу.', 0,0,0,0, '67234'),
-(-1594533, '<need translate>', 'И, поскольку корабля с оффа не будет, вот вам портал в Даларан.', 0,0,0,0, '67234'),
-(-1594536, 'Lady Jaina, we are ready for next mission!', 'Джайна, мы готовы!', 0,0,0,0, ''),
-(-1594537, 'Lady Jaina, Let\'s go!', 'Давай быстрее!', 0,0,0,0, ''),
-(-1594538, 'Lady Sylvanas, we are ready for next mission!', 'Сильвана, мы готовы!', 0,0,0,0, ''),
-(-1594539, 'Lady Sylvanas, Let\'s go!', 'Поехали!', 0,0,0,0, ''),
-(-1594540, 'Let\'s go!', 'Побежали!', 0,0,0,0, '');
+(-1594533, '<need translate>', 'И, поскольку корабля с оффа не будет, вот вам портал в Даларан.', 0,0,0,0, '67234');
+
+# Gossips
+DELETE FROM `gossip_texts` WHERE `entry` BETWEEN -3594540 AND -3594530;
+INSERT INTO `gossip_texts` (`entry`, `content_default`, `content_loc8`, `comment`) VALUES
+(-3594536, 'Lady Jaina, we are ready for next mission!', 'Джайна, мы готовы!',''),
+(-3594537, 'Lady Jaina, Let\'s go!', 'Давай быстрее!', ''),
+(-3594538, 'Lady Sylvanas, we are ready for next mission!', 'Сильвана, мы готовы!', ''),
+(-3594539, 'Lady Sylvanas, Let\'s go!', 'Поехали!', ''),
+(-3594540, 'Let\'s go!', 'Побежали!', '');
 
 -- Waipoints to escort event on Halls of reflection
 

@@ -878,7 +878,7 @@ bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
             return true;
         };
 
-    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GetScriptText(-1631608, pPlayer), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, -1631608, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
     pPlayer->PlayerTalkClass->SendGossipMenu(721001, pCreature->GetGUID());
     return true;
 };

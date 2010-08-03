@@ -44,15 +44,15 @@ struct t_Locations
 
 static t_Locations PortalLoc[]=
 {
-{-1050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // base camp
-{-1050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // formation ground
-{-1050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_FLAME_LEVIATHAN}, //
-{-1050004,603, 926.292f,  -11.4635f, 418.595f, 3.19f, 0,false,true,TYPE_XT002_TP},        //
-{-1050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002_TP},        //
-{-1050006,603, 1859.45f,  -24.1f,    448.9f,   0,     0,false,true,TYPE_KOLOGARN},        //
-{-1050007,603, 2086.27f,  -24.3134f, 421.239f, 0,     0,false,true,TYPE_AURIAYA},         //
-{-1050008,603, 2517.3979f, 2568.89f, 412.69f,  6.17f, 0,false,true,TYPE_THORIM},          //
-{-1050009,603, 1854.297f, -11.0173f, 334.4f,   0, 65042,false,true,TYPE_VEZAX},           //
+{-3050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // base camp
+{-3050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // formation ground
+{-3050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_FLAME_LEVIATHAN}, //
+{-3050004,603, 926.292f,  -11.4635f, 418.595f, 3.19f, 0,false,true,TYPE_XT002_TP},        //
+{-3050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002_TP},        //
+{-3050006,603, 1859.45f,  -24.1f,    448.9f,   0,     0,false,true,TYPE_KOLOGARN},        //
+{-3050007,603, 2086.27f,  -24.3134f, 421.239f, 0,     0,false,true,TYPE_AURIAYA},         //
+{-3050008,603, 2517.3979f, 2568.89f, 412.69f,  6.17f, 0,false,true,TYPE_THORIM},          //
+{-3050009,603, 1854.297f, -11.0173f, 334.4f,   0, 65042,false,true,TYPE_VEZAX},           //
 };
 
 
@@ -90,7 +90,7 @@ bool GOGossipHello_go_ulduar_teleporter(Player *pPlayer, GameObject* pGo)
         pInstance->GetData(PortalLoc[i].encounter) == DONE ||
         pInstance->GetData(PortalLoc[i].encounter) == IN_PROGRESS))
         || pPlayer->isGameMaster())
-             pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_TAXI, GetScriptText(PortalLoc[i].textNum, pPlayer), GOSSIP_SENDER_MAIN, i);
+             pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_TAXI, PortalLoc[i].textNum, GOSSIP_SENDER_MAIN, i);
     };
     pPlayer->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());
     return true;
