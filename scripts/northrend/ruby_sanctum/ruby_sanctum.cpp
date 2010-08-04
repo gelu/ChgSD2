@@ -28,7 +28,7 @@ static Locations SpawnLoc[]=
     {3155.540039f, 342.391998f, 84.596802f},   // 0 - start point
     {3152.329834f, 359.41757f, 85.301605f},    // 1 - second say
     {3152.078369f, 383.939178f, 86.337875f},   // 2 - other says and staying
-    {3155.190703f, 538.717708f, 72.889038f},   // 3 - Halion spawn point
+    {3154.99f, 535.637f, 72.8887f},            // 3 - Halion spawn point
 };
 
 struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
@@ -183,7 +183,8 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                               pInstance->GetData(TYPE_ZARITHIAN) == DONE &&
                               pInstance->GetData(TYPE_HALION) != DONE
                               && !Halion)
-                              m_creature->SummonCreature(NPC_HALION_REAL, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 6.23f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
+                              Halion = m_creature->SummonCreature(NPC_HALION_REAL, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 6.23f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
+                              Halion->SetCreatorGUID(0);
                     }
                           UpdateTimer = 4000;
                           pInstance->SetData(TYPE_EVENT,210);

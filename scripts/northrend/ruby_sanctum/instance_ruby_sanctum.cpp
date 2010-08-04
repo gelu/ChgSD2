@@ -46,6 +46,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
 
     uint64 m_uiHalion_pGUID;
     uint64 m_uiHalion_tGUID;
+    uint64 m_uiHalionControlGUID;
     uint64 m_uiRagefireGUID;
     uint64 m_uiZarithianGUID;
     uint64 m_uiBaltharusGUID;
@@ -58,7 +59,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     uint64 m_uiOrbCarrierGUID;
 
     //object GUID
-    uint64 m_uiHalionPortal0GUID;
     uint64 m_uiHalionPortal1GUID;
     uint64 m_uiHalionPortal2GUID;
     uint64 m_uiHalionPortal3GUID;
@@ -104,7 +104,6 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         m_uiZarithianGUID = 0;
         m_uiBaltharusGUID = 0;
         m_uiCloneGUID = 0;
-        m_uiHalionPortal0GUID = 0;
         m_uiHalionPortal1GUID = 0;
         m_uiHalionPortal2GUID = 0;
         m_uiHalionPortal3GUID = 0;
@@ -128,12 +127,12 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         return false;
     }
 
-    void OnPlayerEnter(Player *m_player)
+/*    void OnPlayerEnter(Player *m_player)
     {
         m_player->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
         m_player->SendUpdateWorldState(UPDATE_STATE_UI_COUNT,1);
     }
-
+*/
     void OpenAllDoors()
     {
         if (m_auiEncounter[TYPE_RAGEFIRE] == DONE && 
@@ -149,6 +148,7 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
         {
             case NPC_HALION_REAL:  m_uiHalion_pGUID = pCreature->GetGUID(); break;
             case NPC_HALION_TWILIGHT:   m_uiHalion_tGUID = pCreature->GetGUID();  break;
+            case NPC_HALION_CONTROL:    m_uiHalionControlGUID = pCreature->GetGUID();  break;
             case NPC_RAGEFIRE:     m_uiRagefireGUID = pCreature->GetGUID();  break;
             case NPC_ZARITHIAN:    m_uiZarithianGUID = pCreature->GetGUID(); break;
             case NPC_BALTHARUS:    m_uiBaltharusGUID = pCreature->GetGUID(); break;
@@ -166,12 +166,19 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     {
         switch(pGo->GetEntry())
         {
-            case GO_HALION_PORTAL_1:  m_uiHalionPortal1GUID = pGo->GetGUID();  break;
+            case GO_HALION_PORTAL_1:  m_uiHalionPortal1GUID = pGo->GetGUID();
+//                                      pGo->SetPhaseMask(31, true);
+                                      break;
             case GO_HALION_PORTAL_2:  m_uiHalionPortal2GUID = pGo->GetGUID();  break;
+                                      pGo->SetPhaseMask(31, true);
+                                      break;
             case GO_HALION_PORTAL_3:  m_uiHalionPortal3GUID = pGo->GetGUID();  break;
-
+                                      pGo->SetPhaseMask(32, true);
+                                      break;
             case GO_FLAME_WALLS:      m_uiFlameWallsGUID = pGo->GetGUID();     break;
             case GO_FLAME_RING:       m_uiFlameRingGUID = pGo->GetGUID();      break;
+                                      pGo->SetPhaseMask(65535, true);
+                                      break;
             case GO_FIRE_FIELD:       m_uiFireFieldGUID = pGo->GetGUID();      break;
         }
         OpenAllDoors();
@@ -305,12 +312,17 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case NPC_RAGEFIRE:   return m_uiRagefireGUID;
             case NPC_HALION_REAL:               return m_uiHalion_pGUID;
             case NPC_HALION_TWILIGHT:           return m_uiHalion_tGUID;
+            case NPC_HALION_CONTROL:   return m_uiHalionControlGUID;
             case NPC_XERESTRASZA:               return m_uiXerestraszaGUID;
             case NPC_BALTHARUS_TARGET:          return m_uiBaltharusTargetGUID;
 
             case GO_FLAME_WALLS: return m_uiFlameWallsGUID;
             case GO_FLAME_RING:  return m_uiFlameRingGUID;
             case GO_FIRE_FIELD:  return m_uiFireFieldGUID;
+
+            case GO_HALION_PORTAL_1: return m_uiHalionPortal1GUID;
+            case GO_HALION_PORTAL_2: return m_uiHalionPortal2GUID;
+            case GO_HALION_PORTAL_3: return m_uiHalionPortal3GUID;
 
             case NPC_SHADOW_PULSAR_N:    return m_uiOrbNGUID;
             case NPC_SHADOW_PULSAR_S:    return m_uiOrbSGUID;

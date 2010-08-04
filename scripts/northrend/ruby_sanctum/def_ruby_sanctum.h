@@ -24,6 +24,7 @@ enum
 
     NPC_HALION_REAL                = 39863, // Halion Physical Realm NPC
     NPC_HALION_TWILIGHT            = 40142, // Halion Twilight Realm NPC
+    NPC_HALION_CONTROL             = 40146,
 
     NPC_BALTHARUS                  = 39751,
     NPC_CLONE                      = 39899,
@@ -49,9 +50,6 @@ enum
     GO_FIRE_FIELD                  = 203005,
     GO_FLAME_WALLS                 = 203006,
     GO_FLAME_RING                  = 203007,
-
-    DATA_HEALTH_HALION_P           = 203,
-    DATA_HEALTH_HALION_T           = 204,
 
     DATA_EVENT_TIMER               = 101,
     DATA_EVENT                     = 102,
