@@ -1674,7 +1674,7 @@ struct MANGOS_DLL_DECL mob_flame_tsunamiAI : public ScriptedAI
     uint32 m_uiTickTimer;
     uint32 m_uiMovementStartTimer;
     Creature* m_pDummyDamager;
-    
+
     void Reset()
     {
         m_creature->SetDisplayId(11686);
@@ -1727,21 +1727,9 @@ struct MANGOS_DLL_DECL mob_flame_tsunamiAI : public ScriptedAI
             GetCreatureListWithEntryInGrid(lLavaBlazes, m_creature, NPC_LAVA_BLAZE, 6.0f);
             if (!lLavaBlazes.empty())
             {
-                SpellEntry* pTempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_FLAME_TSUNAMI_BUFF);
-                if (pTempSpell)
-                {
-                    pTempSpell->EffectImplicitTargetA[0] = TARGET_SELF;
-                    pTempSpell->EffectImplicitTargetB[0] = 0;
-                    pTempSpell->EffectImplicitTargetA[1] = TARGET_SELF;
-                    pTempSpell->EffectImplicitTargetB[1] = 0;
-                    pTempSpell->EffectImplicitTargetA[2] = TARGET_SELF;
-                    pTempSpell->EffectImplicitTargetB[2] = 0;
-                    for (std::list<Creature*>::iterator iter = lLavaBlazes.begin(); iter != lLavaBlazes.end(); ++iter)
-                    {
-                        (*iter)->CastSpell(*iter, pTempSpell, false);
-                        (*iter)->SetHealth((*iter)->GetHealth()*4);
-                    }
-                }
+                 for (std::list<Creature*>::iterator iter = lLavaBlazes.begin(); iter != lLavaBlazes.end(); ++iter)
+                     if ((*iter) && (*iter)->isAlive())
+                        (*iter)->CastSpell(*iter, SPELL_FLAME_TSUNAMI_BUFF, false);
             }
 
             Map* pMap = m_creature->GetMap();
