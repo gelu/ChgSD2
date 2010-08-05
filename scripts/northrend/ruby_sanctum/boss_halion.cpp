@@ -79,7 +79,7 @@ enum
     NPC_METEOR_STRIKE_1                         = 40041,
     NPC_METEOR_STRIKE_2                         = 40042,
 
-    FR_RADIUS                                   = 40,
+    FR_RADIUS                                   = 45,
 
     //SAYS
     SAY_HALION_SPAWN                = -1666100, //17499 Meddlesome insects, you're too late! The Ruby Sanctum is lost.
@@ -124,10 +124,18 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
         if(!pInstance)
             return;
         m_creature->SetRespawnDelay(7*DAY);
-        if (m_creature->isAlive()) pInstance->SetData(TYPE_HALION, NOT_STARTED);
+
+        if (m_creature->isAlive()) 
+        {
+            pInstance->SetData(TYPE_HALION, NOT_STARTED);
+            pInstance->SetData(TYPE_HALION_EVENT, FAIL);
+        }
+
         resetTimers();
         setStage(0);
         nextPoint = 0;
+        intro = false;
+        SetCombatMovement(true);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
         if (GameObject* pGoPortal = pInstance->instance->GetGameObject(pInstance->GetData64(GO_HALION_PORTAL_1)))
@@ -147,8 +155,11 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
         if (!intro && pWho->IsWithinDistInMap(m_creature, 60.0f))
             {
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
                 DoScriptText(-1666100,m_creature);
                 intro = true;
+                m_creature->SetActiveObjectState(true);
             }
 
         if (intro && !m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 20.0f))
@@ -159,33 +170,50 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
 
     void JustReachedHome()
     {
-        if (!pInstance)
-            return;
+        if (!pInstance) return;
 
-        if (getStage() == 4) return;
+        if (pInstance->GetData(TYPE_HALION_EVENT) != FAIL) return
 
-        pInstance->SetData(TYPE_HALION, FAIL);
+        ScriptedAI::JustReachedHome();
+
+//        pInstance->SetData(TYPE_HALION, FAIL);
+
+        m_creature->SetActiveObjectState(false);
     }
 
     void EnterEvadeMode()
     {
-        if (getStage() == 4) return;
+
+        if (!pInstance) return;
+
+        if (pInstance->GetData(TYPE_HALION_EVENT) != FAIL) return;
+
         ScriptedAI::EnterEvadeMode();
+
+        m_creature->SetActiveObjectState(false);
     }
 
     void JustDied(Unit* pKiller)
     {
         if (!pInstance)
             return;
+        m_creature->SetActiveObjectState(false);
 
         DoScriptText(-1666104,m_creature);
 
         if (Creature* pclone = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT)))
+        {
             if (!pclone->isAlive())
+            {
                 pInstance->SetData(TYPE_HALION, DONE);
-
-        else
-            pInstance->SetData(TYPE_HALION, SPECIAL);
+                m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            }
+            else
+            {
+                pInstance->SetData(TYPE_HALION, SPECIAL);
+                m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            }
+        }
     }
 
     void KilledUnit(Unit* pVictim)
@@ -223,6 +251,8 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                 m_creature->GetMotionMaster()->MovementExpired();
                 MovementStarted = false;
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
                 }
     }
 
@@ -266,12 +296,19 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                 m_creature->AttackStop();
                 m_creature->InterruptNonMeleeSpells(true);
                 DoScriptText(-1666108,m_creature);
+                pInstance->SetData(TYPE_HALION_EVENT, NOT_STARTED);
                 SetCombatMovement(false);
                 StartMovement(0);
-                if (Creature* pControl = m_creature->SummonCreature(NPC_HALION_CONTROL, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000))
                 {
+                    Creature* pControl = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_CONTROL));
+                    if (!pControl)
+                        pControl = m_creature->SummonCreature(NPC_HALION_CONTROL, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000);
+                    else if (!pControl->isAlive())
+                        pControl->Respawn();
+                    pControl->SetActiveObjectState(true);
                     pControl->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     m_creature->SetInCombatWith(pControl);
+                    pControl->SetInCombatWith(m_creature);
                 }
                 setStage(2);
                 break;
@@ -280,31 +317,51 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                 if (MovementStarted) return;
                 doCast(SPELL_SUMMON_TWILIGHT_PORTAL);
                 setStage(3);
+                if (GameObject* pGoPortal = pInstance->instance->GetGameObject(pInstance->GetData64(GO_HALION_PORTAL_1)))
+                      pGoPortal->SetPhaseMask(31,true);
+                if (GameObject* pGoRing = pInstance->instance->GetGameObject(pInstance->GetData64(GO_FLAME_RING)))
+                      pGoRing->SetPhaseMask(65535,true);
                 break;
 
             case 3:
                 if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                m_creature->SetActiveObjectState(true);
                 doCast(SPELL_START_PHASE2);
                 setStage(4);
                 break;
 
             case 4:
-                if (m_creature->IsNonMeleeSpellCasted(false)) return;
-                if (Creature* pTwilight = m_creature->SummonCreature(NPC_HALION_TWILIGHT, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000))
+                if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
-//                    pTwilight->SetPhaseMask(32,true);
                     if (Creature* pControl = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_CONTROL)))
-                        pTwilight->SetInCombatWith(pControl);
+                    {
+                        m_creature->SetInCombatWith(pControl);
+                        pControl->SetInCombatWith(m_creature);
+                    }
+                    Creature* pTwilight = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT));
+                    if (!pTwilight)
+                        pTwilight = m_creature->SummonCreature(NPC_HALION_TWILIGHT, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000);
+                    else if (!pTwilight->isAlive())
+                        pTwilight->Respawn();
+                    pTwilight->SetCreatorGUID(0);
+//                    pTwilight->SetPhaseMask(32,true);
+                    setStage(5);
                 }
-                setStage(5);
                 break;
 
             case 5: // HALION awaiting end battle in TWILIGHT REALM
-                if (Creature* pTwilight = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT)))
-                    if (pTwilight->GetHealthPercent() < 50.0f) 
+                if (pInstance->GetData(TYPE_HALION_EVENT) == IN_PROGRESS)
                     {
+//                        pInstance->SetData(TYPE_HALION_EVENT, SPECIAL);
                         doRemove(SPELL_START_PHASE2);
-                        m_creature->SetHealth(pTwilight->GetHealth());
+                        if (Creature* pControl = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_CONTROL)))
+                        {
+                            m_creature->SetInCombatWith(pControl);
+                            pControl->SetInCombatWith(m_creature);
+                        }
+                        if (Creature* pTwilight = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT)))
+                            m_creature->SetHealth(pTwilight->GetHealth());
+                        m_creature->SetInCombatWithZone();
                         setStage(6);
                     }
                 return;
@@ -312,12 +369,19 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             case 6: // Switch to phase 3
 //                doCast(SPELL_TWILIGHT_DIVISION);
                 DoScriptText(-1666109,m_creature);
-                SetCombatMovement(true);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                pInstance->SetData(TYPE_HALION_EVENT, SPECIAL);
                 setStage(7);
                 break;
 
-            case 7: //PHASE 3 BOTH REALMS
+            case 7:
+                if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                if (m_creature->getVictim()->GetTypeId() != TYPEID_PLAYER) return;
+                SetCombatMovement(true);
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                setStage(8);
+                break;
+
+            case 8: //PHASE 3 BOTH REALMS
                 timedCast(SPELL_FLAME_BREATH, uiDiff);
                 timedCast(SPELL_FIERY_COMBUSTION, uiDiff);
                 timedCast(SPELL_METEOR, uiDiff);
@@ -360,23 +424,48 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
         if(!pInstance)
             return;
         m_creature->SetRespawnDelay(7*DAY);
+//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         setStage(0);
         intro = false;
         resetTimers();
-//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetInCombatWithZone();
+        if (Creature* pControl = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_CONTROL)))
+        {
+            m_creature->SetInCombatWith(pControl);
+            pControl->SetInCombatWith(m_creature);
+        }
+        Creature* pFocus = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ORB_ROTATION_FOCUS));
+        if (!pFocus )
+             pFocus = m_creature->SummonCreature(NPC_ORB_ROTATION_FOCUS, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000);
+        else if (!pFocus->isAlive())
+             pFocus->Respawn();
+
         if (Creature* pReal = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL)))
             if (pReal->isAlive())
                 m_creature->SetHealth(pReal->GetHealth());
+        if (!hasAura(SPELL_TWILIGHT_ENTER))
+             doCast(SPELL_TWILIGHT_ENTER);
     }
 
     void JustReachedHome()
     {
-        if (!pInstance)
+        if (!pInstance) return;
+
+        if (pInstance->GetData(TYPE_HALION_EVENT) != FAIL || getStage() == 0)
             return;
 
-        if (getStage() == 0) return;
+        ScriptedAI::JustReachedHome();
+    }
 
-        pInstance->SetData(TYPE_HALION, FAIL);
+    void EnterEvadeMode()
+    {
+
+        if (!pInstance) return;
+
+        if (pInstance->GetData(TYPE_HALION_EVENT) != FAIL || getStage() == 0)
+            return;
+
+        ScriptedAI::EnterEvadeMode();
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -385,14 +474,21 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
 
         if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER) return;
 
-        if (!intro && pWho->IsWithinDistInMap(m_creature, 40.0f))
+        if (!intro && pWho->IsWithinDistInMap(m_creature, 20.0f))
             {
                 m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
                 intro = true;
-            }
+                AttackStart(pWho);
+                setStage(1);
+                doCast(SPELL_TWILIGHT_PRECISION);
+                if (Creature* pReal = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL)))
+                    if (pReal->isAlive())
+                       m_creature->SetHealth(pReal->GetHealth());
 
-        if (intro && !m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 20.0f))
-            AttackStart(pWho);
+
+            }
 
         ScriptedAI::MoveInLineOfSight(pWho);
     }
@@ -402,9 +498,14 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
         if (!pInstance)
             return;
         DoScriptText(-1666104,m_creature);
+        doRemoveFromAll(SPELL_TWILIGHT_ENTER);
         if (Creature* pReal = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL)))
             if (!pReal->isAlive())
+            {
                 pInstance->SetData(TYPE_HALION, DONE);
+                pReal->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+
+            }
     }
 
     void KilledUnit(Unit* pVictim)
@@ -424,30 +525,6 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
     {
         if (!pInstance)
             return;
-
-        setStage(1);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetInCombatWithZone();
-        doCast(SPELL_TWILIGHT_PRECISION);
-
-        if (Creature* pReal = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL)))
-            if (pReal->isAlive())
-                m_creature->SetHealth(pReal->GetHealth());
-
-        if (Creature* pFocus = m_creature->SummonCreature(NPC_ORB_ROTATION_FOCUS, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000))
-           {
-              pFocus->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-           }
-
-        if (Creature* pControl = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_CONTROL)))
-             m_creature->SetInCombatWith(pControl);
-
-    }
-
-    void EnterEvadeMode()
-    {
-        if (getStage() == 0) return;
-        ScriptedAI::EnterEvadeMode();
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -456,7 +533,7 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
         if (!hasAura(SPELL_TWILIGHT_ENTER))
              doCast(SPELL_TWILIGHT_ENTER);
 
-        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
+        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS || pInstance->GetData(TYPE_HALION_EVENT) == FAIL)
               m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -474,8 +551,11 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
                 break;
 
             case 2:           //To two realms
+                pInstance->SetData(TYPE_HALION_EVENT, IN_PROGRESS);
                 DoScriptText(-1666109,m_creature);
                 m_creature->SummonGameobject(GO_HALION_PORTAL_3, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, 0);
+                if (GameObject* pGoPortal = pInstance->instance->GetGameObject(pInstance->GetData64(GO_HALION_PORTAL_3)))
+                      pGoPortal->SetPhaseMask(32,true);
                 doCast(SPELL_TWILIGHT_DIVISION);
                 setStage(3);
                 break;
@@ -653,14 +733,15 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
         if (!pInstance) return;
         resetTimers();
         m_creature->SetDisplayId(11686);
+        m_creature->SetPhaseMask(65535, true);
 //        m_creature->SetDisplayId(10045);
         m_creature->SetRespawnDelay(7*DAY);
         SetCombatMovement(false);
-        pHalionReal = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL));
-        pHalionTwilight = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT));
-        if (!pHalionReal || !pHalionTwilight) m_creature->ForcedDespawn();
+//        if (!pHalionReal || !pHalionTwilight) m_creature->ForcedDespawn();
         m_lastBuffReal = 0;
         m_lastBuffTwilight = 0;
+        pInstance->SetData(TYPE_COUNTER, 0);
+        if (m_creature->isAlive()) pInstance->SetData(TYPE_HALION_EVENT, NOT_STARTED);
     }
 
     void AttackStart(Unit *who)
@@ -671,14 +752,21 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
-              m_creature->ForcedDespawn();
+//        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
+//              m_creature->ForcedDespawn();
 
         if (!doSelectRandomPlayerAtRange(80.0f))
+        {
+              pInstance->SetData(TYPE_HALION_EVENT, FAIL);
+              pInstance->SetData(TYPE_HALION, FAIL);
               m_creature->ForcedDespawn();
+        }
 
         if (timedQuery(SPELL_CORPOREALITY_EVEN, diff))
         {
+            pHalionReal = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL));
+            pHalionTwilight = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT));
+
             if (pHalionReal && pHalionReal->isAlive())
                 p_RealHP = pHalionReal->GetHealth();
                 else p_RealHP = 0;
@@ -703,6 +791,8 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
                         doRemove(m_lastBuffTwilight, pHalionReal);
                     doCast(Buff[i].twilight, pHalionTwilight);
                     m_lastBuffTwilight = Buff[i].twilight;
+
+                    pInstance->SetData(TYPE_COUNTER, 50 + (int32)Buff[i].diff);
                 }
 
         }
@@ -743,11 +833,23 @@ struct MANGOS_DLL_DECL mob_orb_rotation_focusAI : public ScriptedAI
         m_timer = 30000;
         m_warning = false;
 
-        float x,y;
-        m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
-        m_creature->SummonCreature(NPC_SHADOW_PULSAR_N, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
-        m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction + M_PI_F);
-        m_creature->SummonCreature(NPC_SHADOW_PULSAR_S, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        Creature* pPulsar1 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_SHADOW_PULSAR_N));
+        if (!pPulsar1 )
+        {
+            float x,y;
+            m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
+            pPulsar1 = m_creature->SummonCreature(NPC_SHADOW_PULSAR_N, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        } else if (!pPulsar1->isAlive())
+                    pPulsar1->Respawn();
+
+        Creature* pPulsar2 = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_SHADOW_PULSAR_S));
+        if (!pPulsar2)
+        {
+            float x,y;
+            m_creature->GetNearPoint2D(x, y, FR_RADIUS, m_direction + M_PI_F);
+            pPulsar2 = m_creature->SummonCreature(NPC_SHADOW_PULSAR_S, x, y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+        } else if (!pPulsar2->isAlive())
+                    pPulsar2->Respawn();
     }
 
     void AttackStart(Unit *who)

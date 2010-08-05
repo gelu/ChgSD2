@@ -17,7 +17,8 @@ enum
     TYPE_ZARITHIAN                 = 4,
     TYPE_HALION                    = 5,
 
-    TYPE_HALION_LOCK               = 6, //lock inside the fire ring
+    TYPE_COUNTER                   = 6, // for WorldUpdateState
+    TYPE_HALION_EVENT              = 7,
 
     TYPE_EVENT_TIMER               = 50,
     TYPE_EVENT_NPC                 = 51,
