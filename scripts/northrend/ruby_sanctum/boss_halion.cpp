@@ -16,12 +16,13 @@
 
 /* ScriptData
 SDName: boss_halion
-SD%Complete: 20%
+SD%Complete: 80%
 SDComment: by notagain, corrected by /dev/rsa
 SDCategory: ruby_sanctum
 EndScriptData */
 
-//TODO: Add meteor/portal mechanics, twilight cutter (2 orbs), sql spells, sql npcs, TEST
+// TODO: correct timers, Add twilight interorbs connection, sql spells, TESTING
+// Attention please! This script required some core modification.
 
 #include "precompiled.h"
 #include "def_ruby_sanctum.h"
@@ -210,7 +211,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             }
             else
             {
-                pInstance->SetData(TYPE_HALION, SPECIAL);
                 m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
             }
         }
@@ -263,16 +263,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
         m_creature->GetMotionMaster()->Clear();
         m_creature->GetMotionMaster()->MovePoint(id, SpawnLoc[id].x, SpawnLoc[id].y, SpawnLoc[id].z);
         MovementStarted = true;
-    }
-
-    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
-    {
-        if (!pInstance || !m_creature->isAlive())
-            return;
-
-        if (pDoneBy->GetGUID() == m_creature->GetGUID())
-            return;
-
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -344,7 +334,6 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                     else if (!pTwilight->isAlive())
                         pTwilight->Respawn();
                     pTwilight->SetCreatorGUID(0);
-//                    pTwilight->SetPhaseMask(32,true);
                     setStage(5);
                 }
                 break;
@@ -359,8 +348,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                             m_creature->SetInCombatWith(pControl);
                             pControl->SetInCombatWith(m_creature);
                         }
-                        if (Creature* pTwilight = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT)))
-                            m_creature->SetHealth(pTwilight->GetHealth());
+                        m_creature->SetHealth(m_creature->GetMaxHealth()/2);
                         m_creature->SetInCombatWithZone();
                         setStage(6);
                     }
@@ -424,7 +412,6 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
         if(!pInstance)
             return;
         m_creature->SetRespawnDelay(7*DAY);
-//        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         setStage(0);
         intro = false;
         resetTimers();
@@ -504,8 +491,8 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
             {
                 pInstance->SetData(TYPE_HALION, DONE);
                 pReal->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-
             }
+        m_creature->ForcedDespawn();
     }
 
     void KilledUnit(Unit* pVictim)
@@ -726,22 +713,23 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
     Unit* pHalionReal;
     Unit* pHalionTwilight;
     uint32 m_lastBuffReal, m_lastBuffTwilight;
-    uint64 p_RealHP, p_TwilightHP;
+    bool m_detectplayers;
 
     void Reset()
     {
         if (!pInstance) return;
         resetTimers();
+        m_detectplayers = true;
         m_creature->SetDisplayId(11686);
         m_creature->SetPhaseMask(65535, true);
 //        m_creature->SetDisplayId(10045);
         m_creature->SetRespawnDelay(7*DAY);
         SetCombatMovement(false);
-//        if (!pHalionReal || !pHalionTwilight) m_creature->ForcedDespawn();
         m_lastBuffReal = 0;
         m_lastBuffTwilight = 0;
+        m_creature->SetActiveObjectState(true);
         pInstance->SetData(TYPE_COUNTER, 0);
-        if (m_creature->isAlive()) pInstance->SetData(TYPE_HALION_EVENT, NOT_STARTED);
+        pInstance->SetData(TYPE_HALION_EVENT, NOT_STARTED);
     }
 
     void AttackStart(Unit *who)
@@ -752,48 +740,58 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-//        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
-//              m_creature->ForcedDespawn();
-
-        if (!doSelectRandomPlayerAtRange(80.0f))
-        {
-              pInstance->SetData(TYPE_HALION_EVENT, FAIL);
-              pInstance->SetData(TYPE_HALION, FAIL);
+        if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
-        }
+
+        if (!pInstance) return;
 
         if (timedQuery(SPELL_CORPOREALITY_EVEN, diff))
         {
+            if (!doSelectRandomPlayerAtRange(80.0f))
+            {
+                debug_log("ruby_sanctum: cannot detect players in range! ");
+                if (!m_detectplayers)
+                {
+                    pInstance->SetData(TYPE_HALION_EVENT, FAIL);
+                    pInstance->SetData(TYPE_HALION, FAIL);
+                    m_creature->ForcedDespawn();
+                } else m_detectplayers = false;
+            } else m_detectplayers = true;
+
+            if (pInstance->GetData(TYPE_HALION_EVENT) != SPECIAL) return;
+
             pHalionReal = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_REAL));
             pHalionTwilight = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_HALION_TWILIGHT));
 
-            if (pHalionReal && pHalionReal->isAlive())
-                p_RealHP = pHalionReal->GetHealth();
-                else p_RealHP = 0;
+            float p_RealHP = (pHalionReal && pHalionReal->isAlive()) ? pHalionReal->GetHealthPercent() : 0.0f;
+            float p_TwilightHP = (pHalionTwilight && pHalionTwilight->isAlive()) ? pHalionTwilight->GetHealthPercent() : 0.0f;
 
-            if (pHalionTwilight && pHalionTwilight->isAlive())
-                p_TwilightHP = pHalionTwilight->GetHealth();
-                else p_TwilightHP = 0;
+            float m_diff = (p_RealHP - p_TwilightHP);
 
-            float m_diff = (float)((p_RealHP - p_TwilightHP)*200/(p_RealHP + p_TwilightHP));
+            uint8 buffnum;
+            if (m_diff <= Buff[0].diff) buffnum = 0;
+            else for (uint8 i = 0; i < 11; i++)
+                     if (m_diff >= Buff[i].diff)
+                         buffnum = i+1;
+                     else break;
 
-            for (uint8 i = 0; i < 11; i++)
-                if (diff <= Buff[i].diff || diff >= Buff[11].diff )
-                {
-                    if ( diff >= Buff[11].diff ) i = 11;
+            if (!m_lastBuffReal || m_lastBuffReal != Buff[buffnum].real)
+            {
+                if (m_lastBuffReal) doRemove(m_lastBuffReal, pHalionReal);
+                doCast(Buff[buffnum].real, pHalionReal);
+                m_lastBuffReal = Buff[buffnum].real;
+            }
 
-                    if (m_lastBuffReal)
-                        doRemove(m_lastBuffReal, pHalionReal);
-                    doCast(Buff[i].real, pHalionReal);
-                    m_lastBuffReal = Buff[i].real;
+            if (!m_lastBuffTwilight || m_lastBuffTwilight != Buff[buffnum].twilight)
+            {
+                if (m_lastBuffTwilight) doRemove(m_lastBuffTwilight, pHalionReal);
+                doCast(Buff[buffnum].twilight, pHalionTwilight);
+                m_lastBuffTwilight = Buff[buffnum].twilight;
+            }
 
-                    if (m_lastBuffTwilight)
-                        doRemove(m_lastBuffTwilight, pHalionReal);
-                    doCast(Buff[i].twilight, pHalionTwilight);
-                    m_lastBuffTwilight = Buff[i].twilight;
+            debug_log("ruby_sanctum: Buff num = %u, m_diff = %d ", buffnum, m_diff);
 
-                    pInstance->SetData(TYPE_COUNTER, 50 + (int32)Buff[i].diff);
-                }
+            pInstance->SetData(TYPE_COUNTER, 50 + (int)Buff[buffnum].diff);
 
         }
 
@@ -888,9 +886,6 @@ struct MANGOS_DLL_DECL mob_orb_rotation_focusAI : public ScriptedAI
             m_timer = 30000;
             m_warning = false;
         }   else m_timer -= uiDiff;
-
-
-//      DoCastSpellIfCan(orb_target, SPELL_TWILIGHT_CUTTER);
     }
 };
 
@@ -899,9 +894,9 @@ CreatureAI* GetAI_mob_orb_rotation_focus(Creature* pCreature)
     return new mob_orb_rotation_focusAI(pCreature);
 };
 
-struct MANGOS_DLL_DECL mob_halion_orbAI : public ScriptedAI
+struct MANGOS_DLL_DECL mob_halion_orbAI : public BSWScriptedAI
 {
-    mob_halion_orbAI(Creature *pCreature) : ScriptedAI(pCreature)
+    mob_halion_orbAI(Creature *pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
         Reset();
@@ -970,7 +965,7 @@ struct MANGOS_DLL_DECL mob_halion_orbAI : public ScriptedAI
         if (focus = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ORB_ROTATION_FOCUS)))
             focus->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
             else m_creature->ForcedDespawn();
-        debug_log("EventMGR: creature %u go to move point %u ",m_creature->GetEntry(),id);
+//        debug_log("EventMGR: creature %u go to move point %u ",m_creature->GetEntry(),id);
         m_creature->GetMotionMaster()->Clear();
         m_creature->GetMotionMaster()->MovePoint(id, x, y,  m_creature->GetPositionZ());
     }
@@ -980,9 +975,12 @@ struct MANGOS_DLL_DECL mob_halion_orbAI : public ScriptedAI
         if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
 
+        if (Unit* pTarget = doSelectRandomPlayerAtRange(2.0f))
+            doCast(SPELL_TWILIGHT_CUTTER, pTarget);
+
         if (!MovementStarted && pInstance->GetData(m_flag) == SPECIAL)
         {
-            debug_log("EventMGR: creature %u get direction %u ",m_creature->GetEntry(),pInstance->GetData(DATA_ORB_DIRECTION));
+//            debug_log("EventMGR: creature %u get direction %u ",m_creature->GetEntry(),pInstance->GetData(DATA_ORB_DIRECTION));
             StartMovement(1);
         }
 
@@ -1007,7 +1005,7 @@ struct MANGOS_DLL_DECL mob_orb_carrierAI : public BSWScriptedAI
 
     void Reset()
     {
-        m_creature->SetDisplayId(10045);
+//        m_creature->SetDisplayId(10045);
         m_creature->SetRespawnDelay(7*DAY);
         SetCombatMovement(false); 
         m_creature->SetPhaseMask(32, true);
@@ -1015,7 +1013,7 @@ struct MANGOS_DLL_DECL mob_orb_carrierAI : public BSWScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         MovementStarted = false;
         m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-        m_creature->SetSpeedRate(MOVE_RUN, 9.0f);
+        m_creature->SetSpeedRate(MOVE_RUN, 6.0f);
     }
 
     void AttackStart(Unit *pWho)
@@ -1041,7 +1039,7 @@ struct MANGOS_DLL_DECL mob_orb_carrierAI : public BSWScriptedAI
         if (!pInstance || pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
               m_creature->ForcedDespawn();
 
-        if (Unit* pTarget = doSelectRandomPlayerAtRange(1.0f))
+        if (Unit* pTarget = doSelectRandomPlayerAtRange(2.0f))
             doCast(SPELL_TWILIGHT_CUTTER, pTarget);
 
         if (!MovementStarted)
@@ -1051,7 +1049,7 @@ struct MANGOS_DLL_DECL mob_orb_carrierAI : public BSWScriptedAI
             if (m_direction > 2.0f*M_PI_F) m_direction = m_direction - 2.0f*M_PI_F;
             if (Unit* focus = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_ORB_ROTATION_FOCUS)))
                 focus->GetNearPoint2D(x, y, FR_RADIUS, m_direction);
-                else m_creature->ForcedDespawn();
+            else m_creature->ForcedDespawn();
             m_creature->GetMotionMaster()->Clear();
             m_creature->GetMotionMaster()->MovePoint(1, x, y,  m_creature->GetPositionZ());
             MovementStarted = true;
@@ -1080,7 +1078,8 @@ struct MANGOS_DLL_DECL mob_soul_consumptionAI : public BSWScriptedAI
 
     void Reset()
     {
-        m_creature->SetPhaseMask(32,true);
+        if (!isHeroic()) m_creature->SetPhaseMask(32,true);
+            else m_creature->SetPhaseMask(65535,true);
         SetCombatMovement(false);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1094,12 +1093,6 @@ struct MANGOS_DLL_DECL mob_soul_consumptionAI : public BSWScriptedAI
         return;
     }
 
-    bool doSearchPlayers()
-    {
-        if(doSelectRandomPlayerAtRange(m_Size * 3.0f)) return true;
-        else return false;
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
@@ -1111,13 +1104,11 @@ struct MANGOS_DLL_DECL mob_soul_consumptionAI : public BSWScriptedAI
         if (timedQuery(SPELL_CONSUMPTION_AURA, uiDiff))
             m_creature->ForcedDespawn();
 
-        if (doSearchPlayers() && m_Size <= m_Size0 * 3.0f) {
+        if (doSelectRandomPlayerAtRange(m_Size * 3.0f) && m_Size <= m_Size0 * 3.0f) {
                 m_Size = m_Size*1.01;
                 m_creature->SetObjectScale(m_Size);
                 }
-
     }
-
 };
 
 CreatureAI* GetAI_mob_soul_consumption(Creature* pCreature)
@@ -1139,6 +1130,8 @@ struct MANGOS_DLL_DECL mob_fiery_combustionAI : public BSWScriptedAI
 
     void Reset()
     {
+        if (!isHeroic()) m_creature->SetPhaseMask(31,true);
+            else m_creature->SetPhaseMask(65535,true);
         SetCombatMovement(false);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -1152,12 +1145,6 @@ struct MANGOS_DLL_DECL mob_fiery_combustionAI : public BSWScriptedAI
         return;
     }
 
-    bool doSearchPlayers()
-    {
-        if(doSelectRandomPlayerAtRange(m_Size * 3.0f)) return true;
-        else return false;
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_HALION) != IN_PROGRESS)
@@ -1166,11 +1153,10 @@ struct MANGOS_DLL_DECL mob_fiery_combustionAI : public BSWScriptedAI
         if (timedQuery(SPELL_COMBUSTION_AURA, uiDiff))
             m_creature->ForcedDespawn();
 
-        if (doSearchPlayers() && m_Size <= m_Size0 * 3.0f) {
+        if (doSelectRandomPlayerAtRange(m_Size * 3.0f) && m_Size <= m_Size0 * 3.0f) {
                 m_Size = m_Size*1.01;
                 m_creature->SetObjectScale(m_Size);
                 }
-
     }
 
 };

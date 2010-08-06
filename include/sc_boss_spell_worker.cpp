@@ -122,6 +122,8 @@ bool BSWScriptedAI::_QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff)
 {
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
+    if (m_creature->IsNonMeleeSpellCasted(false)) return false;
+
     if (m_uiSpell_Timer[m_uiSpellIdx] < diff) 
     {
         if (pSpell->m_uiSpellTimerMax[currentDifficulty] >= HOUR*IN_MILLISECONDS) m_uiSpell_Timer[m_uiSpellIdx]=HOUR*IN_MILLISECONDS;
@@ -327,7 +329,7 @@ CanCastResult BSWScriptedAI::_BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx)
 
     if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
         {
-           error_log("BSW: FAILED casting (on target) spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
+           error_log("BSW: warning - failed casting (on target) spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
            return CAST_FAIL_OTHER;
         }
 
@@ -342,7 +344,7 @@ bool BSWScriptedAI::_hasAura(uint8 m_uiSpellIdx, Unit* pTarget)
 {
     SpellTable* pSpell = &m_BossSpell[m_uiSpellIdx];
 
-    if (!pTarget || !pTarget->IsInMap(m_creature)) 
+    if (!pTarget || !pTarget->IsInMap(m_creature))
         {
             error_log("BSW: FAILED Query aura for spell %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
             return false;
@@ -408,7 +410,7 @@ CanCastResult BSWScriptedAI::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
 
     if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
         {
-           error_log("BSW: FAILED casting bugged spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
+           error_log("BSW: warning - failed casting bugged spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
            return CAST_FAIL_OTHER;
         }
 
@@ -547,8 +549,8 @@ bool BSWScriptedAI::_doRemoveFromAll(uint8 m_uiSpellIdx)
     for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
     {
          Unit* pTarget = itr->getSource();
-         if (_hasAura(m_uiSpellIdx,pTarget))
-         pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
+         if (pTarget && pTarget->IsInWorld())
+             pTarget->RemoveAurasDueToSpell(pSpell->m_uiSpellEntry[currentDifficulty]);
     }
 
     return true;
@@ -745,9 +747,8 @@ Unit* BSWScriptedAI::_doSelect(uint32 SpellID, bool spellsearchtype, float range
 
     debug_log("BSW: search result for random player, count = %u ",_count);
 
-    if (_count == 0) return NULL;
-
-    else return _list[urand(0,_count)];
+    if (!_count) return NULL;
+        else return _list[urand(0,_count - 1)];
 };
 
 Creature* BSWScriptedAI::doSelectNearestCreature(uint32 guid, float range)
@@ -796,6 +797,11 @@ bool BSWScriptedAI::doCastAll(uint32 diff)
 
     return (succesfulCast >= 1) ? true : false;
 
+};
+
+bool BSWScriptedAI::_isDifficultyInMask(uint8 mask)
+{
+    return ((uint8)currentDifficulty & mask);
 };
 
 #endif

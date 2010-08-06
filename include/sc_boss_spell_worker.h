@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         uint32 getSpellData(uint32 SpellID)
              {
                   uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                  return queryIndex(m_uiSpellIdx) ?  _getSpellData(m_uiSpellIdx): 0;
+                  return queryIndex(m_uiSpellIdx) ?  _getSpellData(m_uiSpellIdx) : 0;
              };
 
         bool doCastAll(uint32 diff);
@@ -232,6 +232,12 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         uint8 getStage() { return _stage; };
 
         void  setStage(uint8 stage) { _stage = stage; };
+
+        bool isHeroic() { return pMap->IsRaid() ? _isDifficultyInMask(12) : _isDifficultyInMask(2); };
+
+        bool isNormal() { return pMap->IsRaid() ? _isDifficultyInMask(3) : _isDifficultyInMask(1); };
+
+        bool is25()     { return pMap->IsRaid() ? _isDifficultyInMask(10) : false; };
 
     protected:
 
@@ -280,6 +286,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         void          _fillEmptyDataField();
 
         uint32        _getSpellData(uint8 m_uiSpellIdx);
+
+        bool          _isDifficultyInMask(uint8 mask);
 
 // Constants
         uint8         _bossSpellCount;
