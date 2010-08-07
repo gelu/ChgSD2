@@ -23,7 +23,7 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "def_ulduar.h"
-#include "sc_boss_spell_worker.h"
+//#include "sc_boss_spell_worker.h"
 
 enum
 {
@@ -55,8 +55,8 @@ struct t_Locations
 
 static t_Locations PortalLoc[]=
 {
-{-3050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN},  // base camp
-{-3050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_FLAME_LEVIATHAN_TP},  // formation ground
+{-3050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_LEVIATHAN},  // base camp
+{-3050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_LEVIATHAN_TP},  // formation ground
 {-3050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_IGNIS}, //
 {-3050004,603, 926.292f,  -11.4635f, 418.595f, 3.19f, 0,false,true,TYPE_XT002_TP},        //
 {-3050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002_TP},        //

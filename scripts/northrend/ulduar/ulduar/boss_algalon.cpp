@@ -123,24 +123,24 @@ struct MANGOS_DLL_DECL mob_black_holeAI : public ScriptedAI
     mob_black_holeAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        
+
         SetCombatMovement(false);
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    
+
     bool m_bHasAura;
     uint32 m_uiRaidCheckTimer;
     bool m_bIsPhase2;
-	uint32 m_uiSummonTimer;
+    uint32 m_uiSummonTimer;
 
     void Reset()
     {
-        m_bHasAura			= false;
-        m_uiRaidCheckTimer	= 1000; 
-		m_bIsPhase2			= false;
-		m_uiSummonTimer		= 5000;
+        m_bHasAura = false;
+        m_uiRaidCheckTimer = 1000; 
+        m_bIsPhase2 = false;
+        m_uiSummonTimer = 5000;
         DoCast(m_creature, SPELL_BLACK_HOLE_SPAWN);
         m_creature->SetRespawnDelay(DAY);
     }
@@ -153,16 +153,16 @@ struct MANGOS_DLL_DECL mob_black_holeAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-		// summon unleashed dark matter in phase 2
-		if (m_uiSummonTimer < uiDiff && m_bIsPhase2)
-		{
-			if(Creature* pTemp = m_creature->SummonCreature(NPC_UNLEASHED_DARK_MATTER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
-				pTemp->SetInCombatWithZone();
-			m_uiSummonTimer = urand(10000, 15000);
-		}
-		else m_uiSummonTimer -= uiDiff;
+        // summon unleashed dark matter in phase 2
+        if (m_uiSummonTimer < uiDiff && m_bIsPhase2)
+        {
+        if(Creature* pTemp = m_creature->SummonCreature(NPC_UNLEASHED_DARK_MATTER, 0, 0, 0, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 30000))
+            pTemp->SetInCombatWithZone();
+            m_uiSummonTimer = urand(10000, 15000);
+        }
+        else m_uiSummonTimer -= uiDiff;
 
-		// phase players into the void
+        // phase players into the void
         if (m_uiRaidCheckTimer < uiDiff && !m_bIsPhase2)
         {
             if(!m_bHasAura)
@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL mob_black_holeAI : public ScriptedAI
             m_uiRaidCheckTimer = 500;
         }
         else m_uiRaidCheckTimer -= uiDiff;
-    }	
+    }
 };
 
 //Algalon
@@ -280,12 +280,12 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_ALGALON, DONE);
             m_pInstance->DoUpdateWorldState(UI_STATE_ALGALON_TIMER_ON, 0);
-			/* hacky way to complete achievements; use only if you have this function
+            /* hacky way to complete achievements; use only if you have this function
             m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_OBSERVED : ACHIEV_OBSERVED_H);
 
             if(m_bFeedOnTears)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_FEED_TEARS : ACHIEV_FEED_TEARS_H);
-				*/
+            */
         }
 
         m_creature->ForcedDespawn();
@@ -343,7 +343,7 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
         {
             pTemp->SetInCombatWithZone();
             if(pTemp->GetEntry() == NPC_DARK_MATTER)
-				pTemp->CastSpell(pTemp, SPELL_BLACK_HOLE_SHIFT, false);
+                pTemp->CastSpell(pTemp, SPELL_BLACK_HOLE_SHIFT, false);
         }
     }
 
@@ -383,7 +383,7 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
         }
         else m_uiDespawnTimer -= uiDiff;
 
-		// update world state
+        // update world state
         if(m_uiDespawnTimer < m_uiLastTimer - 60000 && !m_bIsDespawned)
         {
             m_uiLastTimer = m_uiDespawnTimer;
@@ -467,8 +467,8 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
                     m_uiPhasePunch_Timer = 15000;
                 }else m_uiPhasePunch_Timer -= uiDiff;
 
-				// hack, phase punch needs core support
-				// PLEASE REMOVE FOR REVISION!
+                // hack, phase punch needs core support
+                // PLEASE REMOVE FOR REVISION!
                 if(m_uiRaidCheckTimer < uiDiff)
                 {
                     Map *map = m_creature->GetMap();
@@ -549,7 +549,7 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
                     for (uint8 i = 0; i < 4; ++i)
                     {
                         if(Creature* pTemp = m_creature->SummonCreature(NPC_BLACK_HOLE, PositionLoc[i].x, PositionLoc[i].y, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 0))
-							((mob_black_holeAI*)pTemp->AI())->m_bIsPhase2 = true;
+                            ((mob_black_holeAI*)pTemp->AI())->m_bIsPhase2 = true;
                     }
                 }
 
@@ -664,8 +664,8 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
             ++m_uiOutroStep;
             m_uiOutroTimer = 330000;
         } m_uiOutroTimer -= uiDiff;
-    }	
-};	
+    }
+};
 
 //Collapsing Star
 struct MANGOS_DLL_DECL mob_collapsing_starAI : public ScriptedAI
@@ -724,8 +724,8 @@ struct MANGOS_DLL_DECL mob_collapsing_starAI : public ScriptedAI
         else
             m_uiDieTimer -= uiDiff;
 
-		// movement should be improved
-		// npc should ignore threat tables
+        // movement should be improved
+        // npc should ignore threat tables
         if(m_uiHealthTimer < uiDiff && m_creature->GetHealthPercent() > 1.0f)
         {
             m_creature->GetMotionMaster()->MoveConfused();
@@ -771,7 +771,7 @@ struct MANGOS_DLL_DECL mob_living_constellationAI : public ScriptedAI
             }
             m_uiArcaneBarrageTimer = 15000;
         }else m_uiArcaneBarrageTimer -= uiDiff;
-    }	
+    }
 };
 
 struct MANGOS_DLL_DECL mob_cosmic_smash_targetAI : public ScriptedAI
@@ -820,7 +820,7 @@ bool GOHello_go_celestial_acces(Player* pPlayer, GameObject* pGo)
     bool m_bIsRegularMode = pGo->GetMap()->IsRegularDifficulty();
     bool m_bHasItem = false;
 
-	// check if the player has the key
+    // check if the player has the key
     if (m_bIsRegularMode)
     {
         if(pPlayer->HasItemCount(ITEM_PLANETARIUM_KEY, 1) || pPlayer->HasItemCount(ITEM_PLANETARIUM_KEY_H, 1)) 
@@ -829,23 +829,23 @@ bool GOHello_go_celestial_acces(Player* pPlayer, GameObject* pGo)
     else
     {
         if(pPlayer->HasItemCount(ITEM_PLANETARIUM_KEY_H, 1))
-            m_bHasItem = true;        
+            m_bHasItem = true;
     }
 
-    if(!m_bHasItem)        
+    if(!m_bHasItem)
         return false;
 
     if (!m_pInstance)
         return false;
 
-	// disable if encounter is already done
+    // disable if encounter is already done
     if (m_pInstance->GetData(TYPE_ALGALON) == DONE)
     {
         pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
         return false;
     }
 
-	// start encounter
+    // start encounter
     if (Creature* pAlgalon = ((Creature*)Unit::GetUnit((*pGo), m_pInstance->GetData64(NPC_ALGALON))))
     {
         if(pAlgalon->isAlive())

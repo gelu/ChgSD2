@@ -35,7 +35,7 @@ enum
     SAY_MOLGEIM_SLAY1       = -1603045,
     SAY_MOLGEIM_SLAY2       = -1603046,
     SAY_MOLGEIM_BERSERK     = -1603047,
-    
+
     SAY_STEEL_AGGRO         = -1603050,
     SAY_STEEL_DEATH1        = -1603051,
     SAY_STEEL_DEATH2        = -1603052,
@@ -1185,27 +1185,27 @@ void AddSC_boss_iron_council()
     NewScript->GetAI = GetAI_boss_brundir;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "boss_molgeim";
     NewScript->GetAI = GetAI_boss_molgeim;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "boss_steelbreaker";
     NewScript->GetAI = GetAI_boss_steelbreaker;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_rune_of_power";
     NewScript->GetAI = &GetAI_mob_rune_of_power;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_rune_of_summoning";
     NewScript->GetAI = &GetAI_mob_rune_of_summoning;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_ulduar_lightning_elemental";
     NewScript->GetAI = &GetAI_mob_ulduar_lightning_elemental;
     NewScript->RegisterSelf();

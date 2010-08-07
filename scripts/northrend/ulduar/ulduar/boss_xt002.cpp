@@ -395,13 +395,13 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
         m_uiBoombotTimer        = 5000;
         m_uiPummellerTimer      = 5000;
         m_uiScrapbotCount       = 0;
-        m_uiBoombotCount        = 0;   
+        m_uiBoombotCount        = 0;
         m_uiPummellerCount      = 0;
         m_uiMaxScrapbot         = 0;
         m_uiMaxBoombot          = 0;
         // health timers
         m_uiHealthPercent       = 75;
-        
+
         m_bIsEnrage             = false;
         m_bPhase2               = false;
         m_bIsHardMode           = false;
@@ -626,7 +626,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
             m_bHasMoreHealth = true;
             m_bIsHardMode = true;
         }
-        
+
         if(m_bIsHardMode)
         {
             m_bPhase2 = false;

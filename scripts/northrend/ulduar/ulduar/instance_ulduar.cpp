@@ -72,7 +72,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     uint64 m_uiSaroniteAnimusGUID;
     uint64 m_uiRunicColossusGUID;
     uint64 m_uiRuneGiantGUID;
-	uint64 m_uiJormungarGUID;
+    uint64 m_uiJormungarGUID;
     uint64 m_uiLeviathanMkGUID;
     uint64 m_uiHodirImageGUID;
     uint64 m_uiFreyaImageGUID;
@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         m_uiSaroniteAnimusGUID  = 0;
         m_uiRunicColossusGUID   = 0;
         m_uiRuneGiantGUID       = 0;
-		m_uiJormungarGUID		= 0;
+        m_uiJormungarGUID		= 0;
         m_uiLeviathanMkGUID     = 0;
         m_uiHodirImageGUID      = 0;
         m_uiFreyaImageGUID      = 0;
@@ -321,9 +321,9 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         case NPC_RUNE_GIANT:
             m_uiRuneGiantGUID = pCreature->GetGUID();
             break;
-		case NPC_JORMUNGAR_BEHEMOTH:
-			m_uiJormungarGUID = pCreature->GetGUID();
-			break;
+        case NPC_JORMUNGAR_BEHEMOTH:
+            m_uiJormungarGUID = pCreature->GetGUID();
+            break;
         case NPC_FREYA:
             m_uiFreyaGUID = pCreature->GetGUID();
             break;
@@ -561,7 +561,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             if(!Regular)
                 m_uiKologarnLootGUID = pGo->GetGUID();
             break;
-            
+
             // Hodir
         case GO_CACHE_OF_WINTER:
             if(Regular)
@@ -773,7 +773,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                     pImage->SetVisibility(VISIBILITY_ON);
                 OpenMadnessDoor();
                 CheckKeepers();		// used for a hacky achiev, remove for revision!
-            }    
+            }
             break;
         case TYPE_THORIM:
             m_auiEncounter[9] = uiData;   
@@ -1192,24 +1192,24 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         OUT_LOAD_INST_DATA_COMPLETE;
     }
 
-	// Hacky way of completing some achievs
-	// PLEASE REMOVE FOR REVISION!
+    // Hacky way of completing some achievs
+    // PLEASE REMOVE FOR REVISION!
     void CheckIronCouncil()
     {
         // check if the other bosses in the antechamber are dead
-		/* hacky way to complete achievements; use only if you have this function
+        /* hacky way to complete achievements; use only if you have this function
         if(m_auiEncounter[4] == DONE && m_auiEncounter[5] == DONE && m_auiEncounter[6] == DONE)
             DoCompleteAchievement(instance->IsRegularDifficulty() ? ACHIEV_IRON_COUNCIL : ACHIEV_IRON_COUNCIL_H);
-			*/
+        */
     }
 
     void CheckKeepers()
     {
         // check if the other bosses in the antechamber are dead
-		/* hacky way to complete achievements; use only if you have this function
+        /* hacky way to complete achievements; use only if you have this function
         if(m_auiEncounter[7] == DONE && m_auiEncounter[8] == DONE && m_auiEncounter[9] == DONE && m_auiEncounter[10] == DONE)
             DoCompleteAchievement(instance->IsRegularDifficulty() ? ACHIEV_KEEPERS : ACHIEV_KEEPERS_H);
-			*/
+        */
     }
 };
 

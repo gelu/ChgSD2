@@ -492,7 +492,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
                 return;
 
             // reset if fighting only the npcs
-			// this gets bugged if some of the npcs get top aggro
+            // this gets bugged if some of the npcs get top aggro
             if(m_creature->getVictim()->GetTypeId() != TYPEID_PLAYER)
                 EnterEvadeMode();
 
@@ -510,7 +510,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
             }
             else m_uiFlashFreezeTimer -= uiDiff;
 
-			// hacky way for flash freeze
+            // hacky way for flash freeze
             if (m_uiFlashFreezeCastTimer < uiDiff)
             {
                 DoFlashFreeze();
@@ -520,7 +520,7 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
             else m_uiFlashFreezeCastTimer -= uiDiff;
 
             // icicles
-			// should be done be spell
+            // should be done be spell
             if(m_uiIcicleTimer < uiDiff)
             {
                 float angle = (float) rand()*360/RAND_MAX + 1;

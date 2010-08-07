@@ -108,10 +108,10 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-		// ### unit disabled, please remove if you want to test it!
+        // ### unit disabled, please remove if you want to test it!
         pCreature->setFaction(35);  // remove this when vehicules fixed!
         pCreature->SetVisibility(VISIBILITY_OFF);
-		// ###
+        // ###
         Reset();
     }
 
@@ -259,7 +259,7 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
         else m_uiBatteringRamTimer -= uiDiff;
 
         /* flyers
-		it should summon some flyers. needs more research!
+        it should summon some flyers. needs more research!
         if(m_uiSummonFlyerTimer < uiDiff)
         {
             m_creature->SummonCreature(MOB_MECHANOLIFT, m_creature->GetPositionX() + rand()%20, m_creature->GetPositionY() + rand()%20, m_creature->GetPositionZ() + 50, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 40000);
@@ -282,8 +282,8 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
         }
         else m_uiGatheringSpeedTimer -= uiDiff;
 
-		// Hard mode event. need more research and scripting
-		// this part should be done in other way
+        // Hard mode event. need more research and scripting
+        // this part should be done in other way
 
         // tower of freya
         if(isFreyasTower)
@@ -367,7 +367,7 @@ struct MANGOS_DLL_DECL mob_defense_turretAI : public ScriptedAI
         {
             DoCast(m_creature, SPELL_SEARING_FLAME);
             m_uiSpell_Timer = urand(10000, 15000);
-        }else m_uiSpell_Timer -= uiDiff;        
+        }else m_uiSpell_Timer -= uiDiff;
     }
 };
 

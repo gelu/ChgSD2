@@ -72,7 +72,7 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    
+
     uint32 m_uiEnrageTimer;
     uint32 m_uiCrashTimer;
     uint32 m_uiMarkTimer;

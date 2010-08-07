@@ -447,7 +447,7 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
     uint32 m_uiEmpoweringShadowsTimer;
     uint32 m_uiSummonTimer;
     uint32 m_uiDeafeningRoarTimer;
-	bool m_bIsShatter;
+    bool m_bIsShatter;
 
     uint32 m_uiAchievTimer;
 
@@ -465,7 +465,7 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
         m_uiSummonTimer             = 40000;
         m_uiDeafeningRoarTimer      = 30000;
         m_uiAchievTimer             = 0;
-		m_bIsShatter				= false;
+        m_bIsShatter				= false;
         m_uiBerserkTimer            = 900000;   // 15 min
 
         m_creature->SetVisibility(VISIBILITY_OFF);

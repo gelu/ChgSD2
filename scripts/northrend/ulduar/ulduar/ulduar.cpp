@@ -24,33 +24,6 @@ EndScriptData */
 #include "precompiled.h"
 #include "def_ulduar.h"
 
-/*
-The teleporter appears to be active and stable.
-
-- Expedition Base Camp
-- Formation Grounds
-- Colossal Forge
-- Scrapyard
-- Antechamber of Ulduar
-- Shattered Walkway
-- Conservatory of Life
-- Spark of Imagination
-- Prison of Yogg-Saron
-*/
-enum
-{
-    BASE_CAMP    = 200,
-    GROUNDS      = 201,
-    FORGE        = 202,
-    SCRAPYARD    = 203,
-    ANTECHAMBER  = 204,
-    WALKWAY      = 205,
-    CONSERVATORY = 206,
-    SPARK        = 207,
-    PRISON       = 208,
-
-};
-
 #define REQUEST_HELP    "Help me fight Yogg-Saron!"
 #define DENY_HELP       "I don't need your help."
 
@@ -199,6 +172,8 @@ bool GossipSelect_thorim_image(Player* pPlayer, Creature* pCreature, uint32 uiSe
 
 void AddSC_ulduar()
 {
+    Script *newscript;
+
     newscript = new Script;
     newscript->Name = "hodir_image";
     newscript->pGossipHello = &GossipHello_hodir_image;

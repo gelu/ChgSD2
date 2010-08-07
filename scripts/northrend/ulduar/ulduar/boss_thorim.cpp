@@ -133,9 +133,9 @@ enum
     MINIBOSS_RUNIC_COLOSSUS         = 32872,
     SPELL_SMASH						= 62339,
     //SPELL_SMASH_RIGHT               = 62414,
-	SPELL_RUNIC_SMASH				= 62058,
-	SPELL_RUNIC_SMASH2				= 62057,
-	SPELL_RUNIC_SMASH_DMG			= 62465,
+    SPELL_RUNIC_SMASH				= 62058,
+    SPELL_RUNIC_SMASH2				= 62057,
+    SPELL_RUNIC_SMASH_DMG			= 62465,
     SPELL_RUNIC_BARRIER             = 62338,
     SPELL_CHARGE                    = 62613,
     SPELL_CHARGE_H                  = 62614,
@@ -1364,7 +1364,7 @@ struct MANGOS_DLL_DECL boss_ancient_rune_giantAI : public ScriptedAI
         if(m_pInstance->GetData(TYPE_RUNIC_COLOSSUS) == DONE && !m_bIsSummoning && !m_bSummonStop)
             m_bIsSummoning = true;
 
-		// summon adds before aggro and after the runic colossus has died
+        // summon adds before aggro and after the runic colossus has died
         if(m_uiSummonTimer < uiDiff && m_bIsSummoning)
         {
             switch(urand(0, 1))
@@ -1622,7 +1622,7 @@ struct MANGOS_DLL_DECL npc_sifAI : public ScriptedAI
                 DoCast(m_creature, m_bIsRegularMode? SPELL_FROST_NOVA : SPELL_FROST_NOVA_H);
                 break;
             case 2:
-				// it should be casted around the room!
+               // it should be casted around the room!
                 if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     DoCast(pTarget, m_bIsRegularMode? SPELL_BLIZZARD : SPELL_BLIZZARD_H);
                 break;
@@ -1755,12 +1755,12 @@ void AddSC_boss_thorim()
     newscript->GetAI = &GetAI_mob_dark_rune_honor_guard;
     newscript->RegisterSelf();
 
-	newscript = new Script;
+    newscript = new Script;
     newscript->Name = "mob_thorim_preadds";
     newscript->GetAI = &GetAI_mob_thorim_preadds;
     newscript->RegisterSelf();
 
-	newscript = new Script;
+    newscript = new Script;
     newscript->Name = "mob_thorim_trap_bunny";
     newscript->GetAI = &GetAI_mob_thorim_trap_bunny;
     newscript->RegisterSelf();

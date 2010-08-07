@@ -48,8 +48,8 @@ enum
     SPELL_SCORCH				= 62546,
     SPELL_SCORCH_H				= 63474,
     BUFF_STRENGHT_OF_CREATOR	= 64473,
-	SPELL_STRENGHT_OF_CREATOR2	= 64474,
-	SPELL_STRENGHT_OF_CREATOR3	= 64475,
+    SPELL_STRENGHT_OF_CREATOR2	= 64474,
+    SPELL_STRENGHT_OF_CREATOR3	= 64475,
     SPELL_HASTE					= 66045,
     SPELL_ENRAGE                = 26662,
     //iron construct
@@ -157,24 +157,24 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-		// remove 1 stack of the buff from Ignis, hacky way, should be done by spell
+    // remove 1 stack of the buff from Ignis, hacky way, should be done by spell
         if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_IGNIS))))
         {
             if (pTemp->isAlive())
             {
-				if (pTemp->HasAura(BUFF_STRENGHT_OF_CREATOR))
-				{
-					if(SpellAuraHolder* strenght = pTemp->GetSpellAuraHolder(BUFF_STRENGHT_OF_CREATOR))
-					{
-						if(strenght->ModStackAmount(-1))
-							pTemp->RemoveAurasDueToSpell(BUFF_STRENGHT_OF_CREATOR);
-					}
+                if (pTemp->HasAura(BUFF_STRENGHT_OF_CREATOR))
+                {
+                     if(SpellAuraHolder* strenght = pTemp->GetSpellAuraHolder(BUFF_STRENGHT_OF_CREATOR))
+                     {
+                         if(strenght->ModStackAmount(-1))
+                              pTemp->RemoveAurasDueToSpell(BUFF_STRENGHT_OF_CREATOR);
+                     }
                 }
             }
         }
     }
 
-	// shatter if is brittle
+    // shatter if is brittle
     void DamageTaken(Unit *done_by, uint32 &uiDamage)
     {
         if (m_bIsBrittle)
@@ -203,7 +203,7 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
         }
     }
 
-	// set in combat
+    // set in combat
     void GetInCombat()
     { 
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -258,7 +258,7 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
         //Water checks
         if(m_bIsMolten)
         {
-			// should work with Vmaps3
+        // should work with Vmaps3
             if (m_uiWaterCheckTimer <= uiDiff)
             {
                 if(m_creature->IsInWater())
@@ -268,7 +268,7 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
                     m_bIsMolten = false;
                 }
                 // workaround
-				/* else use workaround
+                /* else use workaround
                 if( m_creature->GetDistance2d(524.15f, 277.0f) < 18 || m_creature->GetDistance2d(648.5f, 277.0f) < 18)
                 {
                     DoCast(m_creature, SPELL_BRITTLE);
@@ -345,10 +345,10 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
 
         if (m_uiEncounterTimer < 240000)
         {
-			/* hacky way to complete achievements; use only if you have this function
+        /* hacky way to complete achievements; use only if you have this function
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_STOKIN_THE_FURNACE : ACHIEV_STOKIN_THE_FURNACE_H);
-				*/
+        */
         }
     }
 
@@ -430,7 +430,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
             m_uiFlame_Jets_Timer = 35000;
         }else m_uiFlame_Jets_Timer -= uiDiff;   
 
-		// need vehicle support!!!
+        // need vehicle support!!!
         if (m_uiSlag_Pot_Timer < uiDiff)
         {
             DoScriptText(SAY_SLAGPOT, m_creature);
@@ -445,7 +445,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
             m_uiPotDmgCount         = 0;
         }else m_uiSlag_Pot_Timer -= uiDiff;  
 
-		// hacky way of doing damage
+        // hacky way of doing damage
         if (m_uiSlag_Pot_Dmg_Timer < uiDiff && m_bHasSlagPotCasted)
         {
             if (Unit* pPotTarget = Unit::GetUnit(*m_creature, m_uiPotTargetGUID))
@@ -463,7 +463,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
             m_uiSlag_Pot_Dmg_Timer = 1000;
         }else m_uiSlag_Pot_Dmg_Timer -= uiDiff;
 
-		// call the golems
+        // call the golems
         if (m_uiSummon_Timer < uiDiff)
         {
             DoScriptText(SAY_SUMMON, m_creature);
@@ -477,7 +477,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
 
             m_uiSummon_Timer = 40000;
 
-			m_creature->InterruptNonMeleeSpells(true);
+            m_creature->InterruptNonMeleeSpells(true);
             DoCast(m_creature, BUFF_STRENGHT_OF_CREATOR);
         }else m_uiSummon_Timer -= uiDiff;
 
