@@ -232,7 +232,7 @@ UPDATE gameobject_template SET flags = 6553632, data2 = 2000, ScriptName='go_red
 UPDATE creature_template SET ScriptName = 'mob_proximity_mine' WHERE entry = 34362;
 UPDATE creature_template SET ScriptName = 'mob_bomb_bot' WHERE entry IN (33836, 34192);
 UPDATE creature_template SET `faction_A` = 14, `faction_H` = 14, `minlevel` = 80, `maxlevel` = 80, ScriptName = 'mob_emergency_bot' WHERE entry = 34147;
-UPDATE creature_template SET ScriptName = 'mob_frost_bomb' WHERE entry = 34149;
+UPDATE creature_template SET ScriptName = 'mob_frost_bomb_ulduar' WHERE entry = 34149;
 UPDATE creature_template SET ScriptName = 'mob_mimiron_inferno' WHERE entry = 33370;
 UPDATE creature_template SET ScriptName = 'mob_assault_bot' WHERE entry = 34057;
 UPDATE creature_template SET ScriptName = 'mob_magnetic_core' WHERE entry = 34068;

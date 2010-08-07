@@ -249,7 +249,7 @@ struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
                 m_bIsOutro = true;
             }
         }
-		// hacky way for feign death
+        // hacky way for feign death
         if(m_pInstance->GetData(TYPE_MIMIRON_PHASE) == PHASE_ROBOT)
         {
             if(uiDamage > m_creature->GetHealth() && !m_bMustRepair)
@@ -294,7 +294,7 @@ struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
         }
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void SetPhase()
     {
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -306,7 +306,7 @@ struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
         SetCombatMovement(false);
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void Repair()
     {
         m_creature->SetStandState(UNIT_STAND_STATE_STAND);
@@ -486,7 +486,7 @@ struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
 
 // VX001 script
 struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
-{   
+{
     boss_vx001AI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -572,7 +572,7 @@ struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
         }
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void SetPhase()
     {
         //SetCombatMovement(true);
@@ -606,7 +606,7 @@ struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
         if(m_pInstance->GetData(TYPE_MIMIRON_PHASE) == PHASE_VX001)
             return;
 
-		// hacky way for feign death, needs fixing
+        // hacky way for feign death, needs fixing
         if(m_pInstance->GetData(TYPE_MIMIRON_PHASE) == PHASE_ROBOT)
         {
             if(uiDamage > m_creature->GetHealth())
@@ -628,7 +628,7 @@ struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
         }
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void Repair()
     {
         m_creature->SetStandState(UNIT_STAND_STATE_STAND);
@@ -746,7 +746,7 @@ struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
         }
         else m_uiLaserBarrageTimer -= uiDiff;
 
-		// this needs vehicles in order to make the rocket move to the target
+        // this needs vehicles in order to make the rocket move to the target
         if(m_uiRocketStrikeTimer < uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
@@ -813,7 +813,7 @@ struct MANGOS_DLL_DECL boss_vx001AI : public ScriptedAI
 
 // Aerial command unit script
 struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
-{   
+{
     boss_aerial_command_unitAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -826,7 +826,7 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
 
     bool m_bStartAttack;
     uint32 m_uiAttackStartTimer;
-    
+
     uint32 m_uiPlasmaBallTimer;
     uint32 m_uiSummonWavesTimer;
     uint32 m_uiGroundTimer;
@@ -894,7 +894,7 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
             return;
         }
 
-		// hacky way for feign death
+        // hacky way for feign death
         if(m_pInstance->GetData(TYPE_MIMIRON_PHASE) == PHASE_ROBOT)
         {
             if(uiDamage > m_creature->GetHealth())
@@ -917,7 +917,7 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
         }
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void Repair()
     {
         m_creature->SetStandState(UNIT_STAND_STATE_STAND);
@@ -966,7 +966,7 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
         }
     }
 
-	// hacky way for phase 4. needs rewriging when vehicles are fixed
+    // hacky way for phase 4. needs rewriging when vehicles are fixed
     void SetPhase()
     {
         m_uiPlasmaBallTimer = 3000;
@@ -1112,7 +1112,7 @@ struct MANGOS_DLL_DECL boss_aerial_command_unitAI : public ScriptedAI
 // Mimiron, event controller
 // boss should be placed inside the vehicles when they are supported by mangos
 struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
-{   
+{
     boss_mimironAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -1316,8 +1316,8 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
                             {
                                 if(m_pInstance)
                                     m_pInstance->SetData(TYPE_MIMIRON_PHASE, PHASE_LEVIATHAN);
-								((boss_leviathan_mkAI*)pTank->AI())->m_bStartAttack = true;
-								pTank->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                                        ((boss_leviathan_mkAI*)pTank->AI())->m_bStartAttack = true;
+                                pTank->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                                 pTank->SetInCombatWithZone();
                                 m_uiBerserkTimer        = 900000;   // 15 min
                                 m_bIsIntro = false;
@@ -1932,9 +1932,9 @@ struct MANGOS_DLL_DECL mob_emergency_botAI : public ScriptedAI
     }
 };
 
-struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
-{   
-    mob_frost_bombAI(Creature* pCreature) : ScriptedAI(pCreature)
+struct MANGOS_DLL_DECL mob_frost_bomb_ulduarAI : public ScriptedAI
+{
+    mob_frost_bomb_ulduarAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -2171,9 +2171,9 @@ CreatureAI* GetAI_mob_emergency_bot(Creature* pCreature)
     return new mob_emergency_botAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_frost_bomb(Creature* pCreature)
+CreatureAI* GetAI_mob_frost_bomb_ulduar(Creature* pCreature)
 {
-    return new mob_frost_bombAI(pCreature);
+    return new mob_frost_bomb_ulduarAI(pCreature);
 }
 
 CreatureAI* GetAI_mob_mimiron_flames(Creature* pCreature)
@@ -2240,8 +2240,8 @@ void AddSC_boss_mimiron()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "mob_frost_bomb";
-    newscript->GetAI = &GetAI_mob_frost_bomb;
+    newscript->Name = "mob_frost_bomb_ulduar";
+    newscript->GetAI = &GetAI_mob_frost_bomb_ulduar;
     newscript->RegisterSelf();
 
     newscript = new Script;
