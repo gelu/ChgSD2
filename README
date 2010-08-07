@@ -21,21 +21,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 In this repository you found this custom scripts:
 
 - many scripts from Insider42
-- Ulduar (base from Syntec, rewrite by Insider42 and me)
+- Ulduar (from Xfurry, partially rewrite by me)
 - Trial of the Champion (by Syntec, big rewrite by me)
 - Violet hold (by ckegg, big rewrite by me)
 - Naxxramas (by ckegg)
 - Ahn'kahet (renewed, by Tassadar with my corrects)
 - Draktaron (by Tassadar)
-- Culling of Stratholme (by MaxXx2021)
+- Culling of Stratholme (by MaxXx2021 AKA Mioka)
 - Obsidian Sanctum (by MaxXx2021)
 - Azjol-Nerub (by MaxXx2021)
 - Forge of souls (by Maxxx2021 and me)
 - Halls of reflection (by Maxxx2021 and me)
 - Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
-- Icecrown Citadel (alfatesting phase, by me)
-- Ruby Sanctum (by notagain, not finished, awaiting DB support)
+- Icecrown Citadel (by me)
+- Ruby Sanctum (by me, partially from notagain, alphatesting)
 - NPC special (partially by me, thanks for all)
 
 Attention please! In my project only correct Linux Makefile provided. 
@@ -46,14 +46,15 @@ Thanks to:
 - Insider42 - for your work;
 - MaxXx2021 aka Mioka - for your scripts;
 - Tassadar;
-- notagain;
+- notagain - base placeholders and spell research for Ruby sanctum;
 - griffonheart (original texts/sounds for TOC);
 - Cristy (re-translation to english);
 - Selector - Faction champions base script, testing, bugreports;
 - Boxa - changes for Windows compilers and bugreports;
 - Wowka321 - core support;
-- Dron01 - bugreports and valuable advice;
+- Dron01, Lordronn - bugreports and valuable advice;
 - gladden, ghostart - bugreports;
+- Xfurry - Ulduar instance,
 - all - testing.
 
 Ladies and gentlemen, and friends! If you want to compile my scripts with a compiler different from the GNU C, then the config files, projects or whatever else you need to create your own! I do only Makefile. 
