@@ -696,7 +696,7 @@
     <ClInclude Include="..\scripts\northrend\obsidian_sanctum\obsidian_sanctum.h" />
     <ClInclude Include="..\scripts\northrend\ulduar\halls_of_lightning\halls_of_lightning.h" />
     <ClInclude Include="..\scripts\northrend\ulduar\halls_of_stone\halls_of_stone.h" />
-    <ClInclude Include="..\scripts\northrend\ulduar\ulduar\ulduar.h" />
+    <ClInclude Include="..\scripts\northrend\ulduar\ulduar\def_ulduar.h" />
     <ClInclude Include="..\scripts\northrend\utgarde_keep\utgarde_keep\utgarde_keep.h" />
     <ClInclude Include="..\scripts\northrend\utgarde_keep\utgarde_pinnacle\utgarde_pinnacle.h" />
     <ClInclude Include="..\scripts\northrend\violet_hold\violet_hold.h" />
