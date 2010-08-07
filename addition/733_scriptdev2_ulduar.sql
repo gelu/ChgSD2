@@ -1,6 +1,6 @@
-/* ULDUAR */
+/* ULDUAR from Xfurry*/
 -- ids may need to be rewritten
-delete from `script_texts` where `entry` between -1603500 and -1603000;
+DELETE from `script_texts` where `entry` between -1603500 and -1603000;
 INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`) VALUES 
 -- Leviathan: needs intro & outro
 (-1603201,"Threat assessment routine modified. Current target threat level: zero. Acquiring new target.","","","","","","","","",15521,1,0,0,"Flame Leviathan Slay"),
@@ -281,6 +281,19 @@ INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc1`, `content
 (-1603271,"Stand back, mortals. I am not here to fight you.","","","","","","","","",15406,1,0,0,"Algalon intro2"),
 (-1603270,"Trans-location complete. Commencing planetary analysis of Azeroth.","","","","","","","","",15405,1,0,0,"Algalon intro1");
 
--- Archivum dialogue:	TODO:
+-- Archivum dialogue: TODO:
 -- Brann
 -- Archivum
+
+-- teleporter from /dev/rsa
+DELETE FROM `gossip_texts` WHERE `entry` BETWEEN -3050010 AND -3050000;
+INSERT INTO `gossip_texts` (`entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `comment`) VALUES
+(-3050001, "Expedition Base Camp", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Лагерь экспедиции",  "Ulduar teleporter text 1"),
+(-3050002, "Formation Grounds", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Железный двор", "Ulduar teleporter text 2"),
+(-3050003, "Colossal Forge", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Колоссальный горн", "Ulduar teleporter text 3"),
+(-3050004, "Scrapyard", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Мусорная свалка", "Ulduar teleporter text 4"),
+(-3050005, "Antechamber of Ulduar", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Вестибюль Ульдуара", "Ulduar teleporter text 5"),
+(-3050006, "Shattered Walkway", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Обвалившаяся галерея", "Ulduar teleporter text 6"),
+(-3050007, "Conservatory of Life", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Круг наблюдения", "Ulduar teleporter text 7"),
+(-3050008, "Spark of Imagination", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Искра воображения", "Ulduar teleporter text 8"),
+(-3050009, "Prison of Yogg-Saron", NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Провал безумия", "Ulduar teleporter text 9");

@@ -7,7 +7,7 @@
 
 enum
 {
-	// encounters
+    // encounters
     MAX_ENCOUNTER               = 14,
     HARD_ENCOUNTER              = 9,
     KEEPER_ENCOUNTER            = 4,
@@ -75,8 +75,8 @@ enum
     NPC_RIGHT_ARM               = 32934,
     NPC_LEFT_ARM                = 32933,
     NPC_AURIAYA                 = 33515,
-    NPC_SANCTUM_SENTRY			= 34014,
-    NPC_FERAL_DEFENDER			= 34035,
+    NPC_SANCTUM_SENTRY          = 34014,
+    NPC_FERAL_DEFENDER          = 34035,
     // keepers
     NPC_MIMIRON                 = 33350,
     NPC_LEVIATHAN_MK            = 33432,
@@ -86,7 +86,7 @@ enum
     NPC_THORIM                  = 32865,
     NPC_RUNIC_COLOSSUS          = 32872,
     NPC_RUNE_GIANT              = 32873,
-	NPC_JORMUNGAR_BEHEMOTH		= 32882,
+    NPC_JORMUNGAR_BEHEMOTH      = 32882,
     NPC_FREYA                   = 32906,
     NPC_BRIGHTLEAF              = 32915,
     NPC_IRONBRACH               = 32913,
@@ -151,7 +151,7 @@ enum
     GO_XT002_GATE               = 194631,
     GO_BROKEN_HARPOON           = 194565,
     // archivum
-    GO_KOLOGARN_BRIDGE			= 194232,
+    GO_KOLOGARN_BRIDGE          = 194232,
     GO_SHATTERED_DOOR           = 194553,
     GO_IRON_ENTRANCE_DOOR       = 194554,
     GO_ARCHIVUM_DOOR            = 194556,
