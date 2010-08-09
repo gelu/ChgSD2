@@ -115,7 +115,7 @@ enum
     GO_CACHE_OF_LIVING_STONE_H	= 195047,
     // Hodir
     GO_CACHE_OF_WINTER          = 194307,
-    GO_CACHE_OF_WINTER_H        = 194308, 
+    GO_CACHE_OF_WINTER_H        = 194308,
     GO_CACHE_OF_RARE_WINTER     = 194200,
     GO_CACHE_OF_RARE_WINTER_H   = 194201,
     // Thorim

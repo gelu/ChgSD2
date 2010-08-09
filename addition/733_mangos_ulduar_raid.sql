@@ -43,22 +43,6 @@ UPDATE creature_template SET lootid = 33329 WHERE entry = 33329;
 UPDATE creature_template SET lootid = 33995 WHERE entry = 33995;
 -- rewrite loot for XT to support hard mode: moved hard mode loot to XT heart
 -- 10 man:
--- first we DELETE the hard mode loot FROM xt: (bugged loot FROM 25 was on 10)
-DELETE FROM `creature_loot_template` WHERE (`entry`=33293);
-INSERT INTO `creature_loot_template` VALUES 
-(33293, 45091, 0.5, 0, 1, 1, 0, 0, 0),
-(33293, 45095, 0.5, 0, 1, 1, 0, 0, 0),
-(33293, 45675, 0, 1, 1, 1, 0, 0, 0),
-(33293, 45676, 0, 2, 1, 1, 0, 0, 0),
-(33293, 45677, 0, 2, 1, 1, 0, 0, 0),
-(33293, 45679, 0, 2, 1, 1, 0, 0, 0),
-(33293, 45680, 0, 2, 1, 1, 0, 0, 0),
-(33293, 45682, 0, 2, 1, 1, 0, 0, 0),
-(33293, 45685, 0, 1, 1, 1, 0, 0, 0),
-(33293, 45686, 0, 1, 1, 1, 0, 0, 0),
-(33293, 45687, 0, 1, 1, 1, 0, 0, 0),
-(33293, 45694, 0, 1, 1, 1, 0, 0, 0),
-(33293, 47241, 100, 0, 1, 1, 0, 0, 0);
 -- hard mode loot for the heart
 DELETE FROM `creature_loot_template` WHERE (`entry`=33329);
 INSERT INTO `creature_loot_template` VALUES 
@@ -85,6 +69,56 @@ UPDATE creature_template SET ScriptName = 'mob_rune_of_power' WHERE entry = 3370
 UPDATE creature_template SET ScriptName = 'mob_rune_of_summoning' WHERE entry = 33051;
 UPDATE creature_template SET ScriptName = 'mob_ulduar_lightning_elemental' WHERE entry = 32958;
 UPDATE `creature_template` SET `mechanic_immune_mask` = 619397115 WHERE `entry` IN (32857, 33694);
+
+-- LOOT FOR THESE THREE SHOUDL BE PROGRESSIVE, MAYBE THIS IS NOT THE RIGHT WAY TO DO IT
+-- update loot id:
+-- brundir
+UPDATE `creature_template` SET `lootid` = 32857 WHERE `entry` = 32857;
+UPDATE `creature_template` SET `lootid` = 33694 WHERE `entry` = 33694;
+-- molgeim = steelbreaker (I dont know exactly which items are missing from molgeim's loot so i'm leaving it the same for now);
+UPDATE `creature_template` SET `lootid` = 32867 WHERE `entry` = 32927;
+UPDATE `creature_template` SET `lootid` = 33693 WHERE `entry` = 33692;
+-- Rewrite loot for council: this will allow us to use hard mode loot because only the last killed boss will be lootable
+-- 10 man version
+-- Brundir:
+DELETE FROM `creature_loot_template` WHERE (`entry`=32857);
+INSERT INTO `creature_loot_template` VALUES 
+(32857, 45322, 0, 2, 1, 1, 0, 0, 0),
+(32857, 45324, 0, 1, 1, 1, 0, 0, 0),
+(32857, 45329, 0, 2, 1, 1, 0, 0, 0),
+(32857, 45330, 0, 1, 1, 1, 0, 0, 0),
+(32857, 45331, 0, 2, 1, 1, 0, 0, 0),
+(32857, 45332, 0, 1, 1, 1, 0, 0, 0),
+(32857, 45333, 0, 2, 1, 1, 0, 0, 0),
+(32857, 45378, 0, 2, 1, 1, 0, 0, 0),
+(32857, 45418, 0, 1, 1, 1, 0, 0, 0),
+(32857, 45423, 0, 1, 1, 1, 0, 0, 0),
+-- emblem 100% drop
+(32857, 47241, 100, 0, 1, 1, 0, 0, 0);
+-- 25 man version
+-- Brundir:
+DELETE FROM `creature_loot_template` WHERE (`entry`=33694);
+INSERT INTO `creature_loot_template` VALUES 
+(33694, 45224, 0, 3, 1, 1, 0, 0, 0),
+(33694, 45228, 0, 3, 1, 1, 0, 0, 0),
+(33694, 45233, 0, 3, 1, 1, 0, 0, 0),
+(33694, 45234, 0, 3, 1, 1, 0, 0, 0),
+(33694, 45236, 0, 3, 1, 1, 0, 0, 0),
+(33694, 45226, 0, 2, 1, 1, 0, 0, 0),
+(33694, 45235, 0, 2, 1, 1, 0, 0, 0),
+(33694, 45237, 0, 2, 1, 1, 0, 0, 0),
+(33694, 45238, 0, 2, 1, 1, 0, 0, 0),
+(33694, 45239, 0, 2, 1, 1, 0, 0, 0),
+(33694, 45193, 0, 1, 1, 1, 0, 0, 0),
+(33694, 45225, 0, 1, 1, 1, 0, 0, 0),
+(33694, 45227, 0, 1, 1, 1, 0, 0, 0),
+(33694, 45232, 0, 1, 1, 1, 0, 0, 0),
+(33694, 45240, 0, 1, 1, 1, 0, 0, 0),
+(33694, 45038, 10, 0, 1, 1, 0, 0, 0),
+(33694, 45087, 33, 0, 1, 2, 0, 0, 0),
+(33694, 45089, 5, 0, -45089, 1, 0, 0, 0),
+-- emblem 100% drop
+(33694, 47241, 100, 0, 1, 1, 0, 0, 0);
 
 -- Kologarn
 DELETE FROM creature WHERE id IN (32933, 32934);
@@ -115,7 +149,6 @@ INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equ
 (800011, 34014, 603, 2, 65535, 0, 0, 1936.11, 49.8233, 411.352, 3.85276, 7200, 0, 0, 334680, 0, 0, 0);
 DELETE FROM `creature_movement` WHERE `id`=94378;
 INSERT INTO `creature_movement` (`id`,`point`,`position_x`,`position_y`,`position_z`,`waittime`,`textid1`,`textid2`,`textid3`,`textid4`,`textid5`,`emote`,`spell`,`wpguid`,`orientation`,`model1`,`model2`) VALUES
-
 -- UPDATED CREATURE MOVEMENT FOR AURIAYA, SHOULD MOVE AROUND THE CENTER SPIRE
 #(94378, 4, 1916.56, -69.9669, 417.718, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2.2268, 0, 0),	-- after hodir up
 #(94378, 3, 1900.26, -24.0211, 417.722, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1.15909, 0, 0),	-- center kolgoran
@@ -164,6 +197,20 @@ REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('625
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('62385', '1', '32906');
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('62387', '1', '32906');
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('62386', '1', '32906');
+
+-- Added hack for Freya's gift
+DELETE FROM `gameobject` WHERE `id` IN (194324, 194325,194326,194327,194328,194329,194330,194331);
+INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `position_x`, `position_y`, `position_z`, `orientation`, `rotation0`, `rotation1`, `rotation2`, `rotation3`, `spawntimesecs`, `animprogress`, `state`) VALUES
+(733324, 194324, 603, 1, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733325, 194325, 603, 1, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733326, 194326, 603, 1, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733327, 194327, 603, 1, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733328, 194328, 603, 2, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733329, 194329, 603, 2, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733330, 194330, 603, 2, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1),
+(733331, 194331, 603, 2, 65535, 2374.876221, -78.512665, 425.073608, 3.260976, 0, 0, 0.706026, 0.708186, -604800, 100, 1);
+-- Delete bugged spell from mobs
+DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (33430,33732) AND `action1_param1` = 63007;
 
 -- Hodir
 UPDATE creature_template SET ScriptName = 'boss_hodir' WHERE entry = 32845;
@@ -251,32 +298,6 @@ INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`
 (110004, 194957, 603, 1, 65535, 2734.73, 2568.98, 364.314, 0.0139475, 0, 0, 0.00697369, 0.999976, -604800, 100, 1);
 INSERT INTO `gameobject` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`position_x`,`position_y`,`position_z`,`orientation`,`rotation0`,`rotation1`,`rotation2`,`rotation3`,`spawntimesecs`,`animprogress`,`state`) VALUES
 (110005, 194958, 603, 2, 65535, 2734.73, 2568.98, 364.314, 0.0139475, 0, 0, 0.00697369, 0.999976, -604800, 100, 1);
--- 10 man:
-DELETE FROM `gameobject_loot_template` WHERE (`entry`=194789);
-INSERT INTO `gameobject_loot_template` VALUES 
-(194789, 45089, 5, 0, -45089, 1, 0, 0, 0),
-(194789, 45095, 2.0408, 0, 1, 1, 0, 0, 0),
-(194789, 45649, 100, 0, -45649, 1, 0, 0, 0),
-(194789, 45663, 0.4028, 0, 1, 1, 0, 0, 0),
-(194789, 47241, 100, 0, 1, 1, 0, 0, 0),
-(194789, 45972, 0, 1, 1, 1, 0, 0, 0),
-(194789, 45973, 0, 1, 1, 1, 0, 0, 0),
-(194789, 45974, 0, 1, 1, 1, 0, 0, 0),
-(194789, 45975, 0, 1, 1, 1, 0, 0, 0),
-(194789, 45976, 0, 1, 1, 1, 0, 0, 0);
--- 25 man:
-DELETE FROM `gameobject_loot_template` WHERE (`entry`=194956);
-INSERT INTO `gameobject_loot_template` VALUES 
-(194956, 45038, 10, 0, 1, 1, 0, 0, 0),
-(194956, 45087, 33, 0, 1, 1, 0, 0, 0),
-(194956, 45089, 5, 0, -45089, 1, 0, 0, 0),
-(194956, 45643, 100, 0, -45643, 1, 0, 0, 0),
-(194956, 47241, 100, 0, 1, 1, 0, 0, 0),
-(194956, 45489, 0, 1, 1, 1, 0, 0, 0),
-(194956, 45490, 0, 1, 1, 1, 0, 0, 0),
-(194956, 45491, 0, 1, 1, 1, 0, 0, 0),
-(194956, 45492, 0, 1, 1, 1, 0, 0, 0),
-(194956, 45493, 0, 1, 1, 1, 0, 0, 0);
 -- 10 man hard:
 DELETE FROM `gameobject_loot_template` WHERE (`entry`=194957);
 INSERT INTO `gameobject_loot_template` VALUES 

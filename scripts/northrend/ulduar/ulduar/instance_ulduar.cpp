@@ -591,11 +591,11 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
                 m_uiFreyaLootGUID = pGo->GetGUID();
             break;
             // Freya rare
-        case GO_FREYA_GIFT_1:   
+        case GO_FREYA_GIFT_1:
             if(Regular)
                 m_uiFreyaLoot1GUID = pGo->GetGUID();
             break;
-        case GO_FREYA_GIFT_H_1: 
+        case GO_FREYA_GIFT_H_1:
             if(!Regular)
                 m_uiFreyaLoot1GUID = pGo->GetGUID();
             break;
@@ -704,8 +704,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             DoUseDoorOrButton(m_uiShieldWallGUID);
             if (uiData == DONE)
             {
-                DoUseDoorOrButton(m_uiXT002GateGUID);
-                DoUseDoorOrButton(m_uiLeviathanGateGUID);
+                OpenDoor(m_uiXT002GateGUID);
+                OpenDoor(m_uiLeviathanGateGUID);
             }
             break;
         case TYPE_IGNIS:
@@ -718,16 +718,20 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             break;
         case TYPE_XT002:
             m_auiEncounter[3] = uiData;
-            DoUseDoorOrButton(m_uiXT002GateGUID);
+            if (uiData == DONE)
+                OpenDoor(m_uiXT002GateGUID);
+            else if (uiData == IN_PROGRESS)
+                CloseDoor(m_uiXT002GateGUID);
             break;
         case TYPE_ASSEMBLY:
             m_auiEncounter[4] = uiData;
-            DoUseDoorOrButton(m_uiIronCouncilDoorGUID);
             if (uiData == DONE)
             {
-                DoUseDoorOrButton(m_uiArchivumDoorGUID);
+                OpenDoor(m_uiIronCouncilDoorGUID);
+                OpenDoor(m_uiArchivumDoorGUID);
                 CheckIronCouncil();		// used for a hacky achiev, remove for revision!
-            }
+            } else if (uiData == IN_PROGRESS)
+                CloseDoor(m_uiIronCouncilDoorGUID);
             break;
         case TYPE_KOLOGARN:
             m_auiEncounter[5] = uiData;
@@ -735,6 +739,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             {
                 DoRespawnGameObject(m_uiKologarnLootGUID, 30*MINUTE);
                 CheckIronCouncil();		// used for a hacky achiev, remove for revision!
+                if (GameObject* pBridge = instance->GetGameObject(m_uiKologarnBridgeGUID))
+                        pBridge->SetGoState(GO_STATE_ACTIVE);
             }
             break;
         case TYPE_AURIAYA:
@@ -1004,8 +1010,8 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             return m_uiRuneGiantGUID;
         case NPC_RUNIC_COLOSSUS:
             return m_uiRunicColossusGUID;
-		case NPC_JORMUNGAR_BEHEMOTH:
-			return m_uiJormungarGUID;
+        case NPC_JORMUNGAR_BEHEMOTH:
+            return m_uiJormungarGUID;
         case NPC_FREYA:
             return m_uiFreyaGUID;
         case NPC_BRIGHTLEAF:
@@ -1050,17 +1056,17 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         return false;
     }
 
-	// TODO: implement all hard mode loot here!
-	bool CheckConditionCriteriaMeet(Player const* source, uint32 map_id, uint32 instance_condition_id)
-	{
-		if (map_id != instance->GetId())
-			return false;
-		switch (instance_condition_id)
-		{
-			case TYPE_XT002_HARD: 
-				break;
-		}
-	}
+    // TODO: implement all hard mode loot here!
+    bool CheckConditionCriteriaMeet(Player const* source, uint32 map_id, uint32 instance_condition_id)
+    {
+        if (map_id != instance->GetId())
+            return false;
+        switch (instance_condition_id)
+        {
+           case TYPE_XT002_HARD:
+               break;
+        }
+    }
 
     uint32 GetData(uint32 uiType)
     {
