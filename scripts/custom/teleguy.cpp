@@ -2,7 +2,7 @@
 long long int money;
 int costo;
 
-bool GossipHello_teleguy(Player *player, Creature *_Creature)
+bool GossipHello_mob_teleguy(Player *player, Creature *_Creature)
 {
     if ( player->GetTeam() == ALLIANCE ) {
         player->ADD_GOSSIP_ITEM( 5, "Darnassus. 5 Silver"		, GOSSIP_SENDER_MAIN, 1203);
@@ -15,7 +15,7 @@ bool GossipHello_teleguy(Player *player, Creature *_Creature)
         player->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 5 Silver"        , GOSSIP_SENDER_MAIN, 1288);
         player->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			, GOSSIP_SENDER_MAIN, 5550);
         player->ADD_GOSSIP_ITEM( 7, "[Instances WotLK] ->"			, GOSSIP_SENDER_MAIN, 5554);
-	}  else {
+        }  else {
         player->ADD_GOSSIP_ITEM( 5, "Orgrimmar. 5 Silver"		, GOSSIP_SENDER_MAIN, 1215);
         player->ADD_GOSSIP_ITEM( 5, "Silvermoon. 5 Silver"		, GOSSIP_SENDER_MAIN, 1217);
         player->ADD_GOSSIP_ITEM( 5, "Undercity. 5 Silver"		, GOSSIP_SENDER_MAIN, 1213);
@@ -26,25 +26,24 @@ bool GossipHello_teleguy(Player *player, Creature *_Creature)
         player->ADD_GOSSIP_ITEM( 5, "Isle Of Quel'Danas. 5 Silver"        , GOSSIP_SENDER_MAIN, 1288);
         player->ADD_GOSSIP_ITEM( 7, "[Instances] ->"			, GOSSIP_SENDER_MAIN, 5550);
         player->ADD_GOSSIP_ITEM( 7, "[Instances WotLK] ->"			, GOSSIP_SENDER_MAIN, 5554);
-	}
-	
-	player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
+        }
+    player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE,_Creature->GetGUID());
     return true;
 }
 
 
-void SendDefaultMenu_teleguy(Player *player, Creature *_Creature, uint32 action )
+void SendDefaultMenu_mob_teleguy(Player *player, Creature *_Creature, uint32 action )
 {
     if(!player->getAttackers().empty())
-	{
-	    player->CLOSE_GOSSIP_MENU();
+    {
+        player->CLOSE_GOSSIP_MENU();
         _Creature->MonsterSay("You are in combat!", LANG_UNIVERSAL, NULL);
         return;
     }
 
     if( player->getLevel() < 8  ) 
     {
-	    player->CLOSE_GOSSIP_MENU();
+         player->CLOSE_GOSSIP_MENU();
         _Creature->MonsterSay("You must be lvl 8+", LANG_UNIVERSAL, NULL);
         return;
     }
@@ -53,11 +52,11 @@ void SendDefaultMenu_teleguy(Player *player, Creature *_Creature, uint32 action 
     costo = 500;
 
     if (money < costo ) 
-	{
-	    player->CLOSE_GOSSIP_MENU();
-	    _Creature->MonsterSay("You haven't enough money", LANG_UNIVERSAL, NULL);
+    {
+        player->CLOSE_GOSSIP_MENU();
+        _Creature->MonsterSay("You haven't enough money", LANG_UNIVERSAL, NULL);
         return;
-	}
+    }
 
     switch(action)
     {
@@ -237,7 +236,7 @@ player->ModifyMoney(-1*costo);
 break;
 
 case 1248://teleport player to Ragefire Chasm
-		
+
 if( player->getLevel() >= 8)
 	{
 		player->CLOSE_GOSSIP_MENU();
@@ -806,42 +805,38 @@ break;
 case 4027:// Ulduar
 
     if (player->getLevel() >= 80)
-        
     {
         player->CLOSE_GOSSIP_MENU();
         player->TeleportTo(571, 8976.240f, -1281.33f, 1059.01f, 0.58f);
         player->ModifyMoney(-400*costo);
-	} else {
+        } else {
         player->CLOSE_GOSSIP_MENU();
         _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, NULL);
     }
-    
 break;
 
 case 4028:// The Obsidian Sanctum
 
     if (player->getLevel() >= 80)
-        
     {
         player->CLOSE_GOSSIP_MENU();
         player->TeleportTo(571, 3625.780f, 280.40f, -120.14f, 3.25f);
         player->ModifyMoney(-400*costo);
-	} else {
+        } else {
         player->CLOSE_GOSSIP_MENU();
         _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, NULL);
     }
-    
 break;
 
 case 4029:// Naxxramas
 
     if (player->getLevel() >= 80)
-        
+
     {
         player->CLOSE_GOSSIP_MENU();
         player->TeleportTo(571, 3668.719f, -1262.460f, 243.63f, 5.03f);
         player->ModifyMoney(-400*costo);
-	} else {
+        } else {
         player->CLOSE_GOSSIP_MENU();
         _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, NULL);
     }
@@ -853,22 +848,25 @@ break;
 
 }
 
-bool GossipSelect_teleguy(Player *player, Creature *_Creature, uint32 sender, uint32 action )
+bool GossipSelect_mob_teleguy(Player *player, Creature *_Creature, uint32 sender, uint32 action )
 {
     // Main menu
     if (sender == GOSSIP_SENDER_MAIN)
-        SendDefaultMenu_teleguy(player, _Creature, action   );
+    {
+        player->PlayerTalkClass->ClearMenus();
+        SendDefaultMenu_mob_teleguy(player, _Creature, action   );
+    }
     return true;
 }
 
-void AddSC_teleguy()
+void AddSC_mob_teleguy()
 {
     Script *newscript;
- 
+
     newscript = new Script;
-    newscript->Name = "teleguy";
-    newscript->pGossipHello = &GossipHello_teleguy;
-    newscript->pGossipSelect = &GossipSelect_teleguy;
+    newscript->Name = "mob_teleguy";
+    newscript->pGossipHello = &GossipHello_mob_teleguy;
+    newscript->pGossipSelect = &GossipSelect_mob_teleguy;
     newscript->pItemHello = NULL;
     newscript->pGOHello = NULL;
     newscript->pAreaTrigger = NULL;
