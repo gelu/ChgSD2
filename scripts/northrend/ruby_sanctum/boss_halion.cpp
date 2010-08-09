@@ -208,6 +208,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             {
                 pInstance->SetData(TYPE_HALION, DONE);
                 m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                pInstance->SetData(TYPE_COUNTER, 0);
             }
             else
             {
@@ -491,6 +492,7 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
             {
                 pInstance->SetData(TYPE_HALION, DONE);
                 pReal->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                pInstance->SetData(TYPE_COUNTER, 0);
             }
         m_creature->ForcedDespawn();
     }

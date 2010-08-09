@@ -63,8 +63,9 @@ enum
 
 enum uiWorldStates
 {
-    UPDATE_STATE_UI_SHOW            = 5049,
-    UPDATE_STATE_UI_COUNT           = 5050,
+    UPDATE_STATE_UI_COUNT_R          = 5049,
+    UPDATE_STATE_UI_COUNT_T          = 5050,
+    UPDATE_STATE_UI_SHOW             = 5051,
 };
 
 #endif

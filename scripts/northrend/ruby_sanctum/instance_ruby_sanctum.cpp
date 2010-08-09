@@ -141,8 +141,11 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
               if(Player* pPlayer = i->getSource())
                     if(pPlayer->isAlive())
                     {
+                        pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,0);
+                        if (pPlayer->HasAura(74807))
+                            pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT_T, 100 - value);
+                        else pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT_R, value);
                         pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
-                        pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT, value);
                     }
        }
        else
