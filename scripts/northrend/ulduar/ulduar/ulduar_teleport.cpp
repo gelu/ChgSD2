@@ -57,9 +57,9 @@ static t_Locations PortalLoc[]=
 {
 {-3050001,603, -706.122f, -92.6024f, 429.876f, 0,     0,true,true,TYPE_LEVIATHAN},  // base camp
 {-3050002,603, 131.248f,  -35.3802f, 409.804f, 0,     0,true,true,TYPE_LEVIATHAN_TP},  // formation ground
-{-3050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_IGNIS}, //
+{-3050003,603, 553.233f,  -12.3247f, 409.679f, 0,     0,false,true,TYPE_LEVIATHAN}, //
 {-3050004,603, 926.292f,  -11.4635f, 418.595f, 3.19f, 0,false,true,TYPE_XT002_TP},        //
-{-3050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002_TP},        //
+{-3050005,603, 1498.09f,  -24.246f,  420.967f, 0,     0,false,true,TYPE_XT002},        //
 {-3050006,603, 1859.45f,  -24.1f,    448.9f,   0,     0,false,true,TYPE_KOLOGARN},        //
 {-3050007,603, 2086.27f,  -24.3134f, 421.239f, 0,     0,false,true,TYPE_AURIAYA},         //
 {-3050008,603, 2517.3979f, 2568.89f, 412.69f,  6.17f, 0,false,true,TYPE_MIMIRON_TP},          //

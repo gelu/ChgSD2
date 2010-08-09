@@ -109,8 +109,8 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         // ### unit disabled, please remove if you want to test it!
-        pCreature->setFaction(35);  // remove this when vehicules fixed!
-        pCreature->SetVisibility(VISIBILITY_OFF);
+//        pCreature->setFaction(35);  // remove this when vehicules fixed!
+//        pCreature->SetVisibility(VISIBILITY_OFF);
         // ###
         Reset();
     }
@@ -213,6 +213,7 @@ struct MANGOS_DLL_DECL boss_flame_leviathan : public ScriptedAI
 
     void DamageTaken(Unit *pDoneBy, uint32 &uiDamage)
     {
+        uiDamage *= 4;
         if(m_creature->HasAura(SPELL_SYSTEMS_SHUTDOWN, EFFECT_INDEX_0))
             uiDamage += uiDamage/2;
     }

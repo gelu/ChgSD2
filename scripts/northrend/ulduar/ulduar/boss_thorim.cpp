@@ -85,11 +85,11 @@ enum
     MOB_DARK_RUNE_EVOKER            = 32878,
     MOB_DARK_RUNE_WARBRINGER        = 32877,
 
-	// traps
-	NPC_TRAP_BUNNY					= 33725,
-	NPC_TRAP_BUNNY2					= 33054,
-	SPELL_PARALYTIC_FIELD			= 63540,
-	SPELL_PARALYTIC_FIELD2			= 62241,
+    // traps
+    NPC_TRAP_BUNNY					= 33725,
+    NPC_TRAP_BUNNY2					= 33054,
+    SPELL_PARALYTIC_FIELD			= 63540,
+    SPELL_PARALYTIC_FIELD2			= 62241,
 
     // mobs spells
     // acolyte
@@ -206,18 +206,18 @@ static LocationsXY OrbLoc[]=
 struct MANGOS_DLL_DECL mob_thorim_trap_bunnyAI : public ScriptedAI
 {
     mob_thorim_trap_bunnyAI(Creature* pCreature) : ScriptedAI(pCreature)
-	{
-		SetCombatMovement(false);
-		pCreature->setFaction(14);
+    {
+        SetCombatMovement(false);
+        pCreature->setFaction(14);
         Reset();
-	}
+    }
 
-	bool m_bHasStunAura;
-	uint32 m_uiAuraExpireTimer;
+    bool m_bHasStunAura;
+    uint32 m_uiAuraExpireTimer;
 
     void Reset()
     {
-		m_bHasStunAura = false;
+       m_bHasStunAura = false;
     }
 
 	void MoveInLineOfSight(Unit* pWho)
@@ -253,10 +253,10 @@ CreatureAI* GetAI_mob_thorim_trap_bunny(Creature* pCreature)
 struct MANGOS_DLL_DECL mob_dark_rune_acolyteAI : public ScriptedAI
 {
     mob_dark_rune_acolyteAI(Creature* pCreature) : ScriptedAI(pCreature)
-	{
-		m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+    {
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
-	}
+    }
 
     bool m_bIsRegularMode;
 	uint32 m_uiSpell_Timer;

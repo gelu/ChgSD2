@@ -105,6 +105,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     uint64 m_uiHodirWallGUID;
     uint64 m_uiHodirExitDoorGUID;
     // Mimiron
+    uint64 m_uiMimironTramGUID;
     uint64 m_uiMimironButtonGUID;
     uint64 m_uiMimironDoor1GUID;
     uint64 m_uiMimironDoor2GUID;
@@ -226,6 +227,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         m_uiHodirWallGUID       = 0;
         m_uiHodirExitDoorGUID   = 0;
         // Mimiron
+        m_uiMimironTramGUID     = 0;
         m_uiMimironButtonGUID   = 0;
         m_uiMimironDoor1GUID    = 0;
         m_uiMimironDoor2GUID    = 0;
@@ -465,7 +467,15 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             m_uiHodirEnterDoorGUID = pGo->GetGUID();
             break;
             // Mimiron
-        case G0_MIMIRON_BUTTON:
+        case GO_MIMIRON_TRAM:
+            m_uiMimironTramGUID = pGo->GetGUID();
+            if (m_auiEncounter[6] == DONE)
+            {
+                pGo->SetUInt32Value(GAMEOBJECT_LEVEL, 0);
+                pGo->SetGoState(GO_STATE_READY);
+            }
+            break;
+        case GO_MIMIRON_BUTTON:
             m_uiMimironButtonGUID = pGo->GetGUID();
             if (m_auiEncounter[7] == NOT_STARTED)
                 pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
@@ -524,7 +534,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             break;
         case GO_DOOR_LEVER:
             m_uiThorimLeverGUID = pGo->GetGUID();
-			pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+            pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             break;
 
             // Prison
@@ -685,10 +695,11 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     {
         if(m_auiEncounter[7] == DONE && m_auiEncounter[8] == DONE && m_auiEncounter[9] == DONE && m_auiEncounter[10] == DONE)
             OpenDoor(m_uiAncientGateGUID);
+            OpenDoor(m_uiAncientGateGUID);
     }
 
     // used to open the door to XT (custom script because Leviathan is disabled)
-	// this will be removed when the Leviathan will be implemented
+    // this will be removed when the Leviathan will be implemented
     void OpenXtDoor()
     {
         if(m_auiEncounter[1] == DONE && m_auiEncounter[2] == DONE)
@@ -746,7 +757,14 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
         case TYPE_AURIAYA:
             m_auiEncounter[6] = uiData;
             if (uiData == DONE)
-                CheckIronCouncil();		// used for a hacky achiev, remove for revision!
+            {
+//                CheckIronCouncil();		// used for a hacky achiev, remove for revision!
+                if (GameObject* pGO = instance->GetGameObject(m_uiMimironTramGUID))
+                {
+                    pGO->SetUInt32Value(GAMEOBJECT_LEVEL, 0);
+                    pGO->SetGoState(GO_STATE_READY);
+                }
+            }
             break;
 
             // Keepers
@@ -1032,7 +1050,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             return m_uiAlgalonGUID;
 
             // mimiron hard  mode button
-        case G0_MIMIRON_BUTTON:
+        case GO_MIMIRON_BUTTON:
             return m_uiMimironButtonGUID;
             // thorim encounter starter lever
         case GO_DOOR_LEVER:

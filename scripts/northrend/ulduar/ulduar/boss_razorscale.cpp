@@ -182,7 +182,7 @@ struct MANGOS_DLL_DECL npc_expedition_commanderAI : public ScriptedAI
                 case 0:
                     if(Creature* pEngineer = GetClosestCreatureWithEntry(m_creature, NPC_EXP_ENGINEER, 50.0f))
                         DoScriptText(SAY_AGGRO1, pEngineer);
-					GetRazorDown();
+                            GetRazorDown();
                     ++m_uiIntro_Phase;
                     m_uiSpeech_Timer = 5000;
                     break;
@@ -220,7 +220,7 @@ bool GossipHello_npc_expedition_commander(Player* pPlayer, Creature* pCreature)
     ScriptedInstance* pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
 
     if(pInstance->GetData(TYPE_RAZORSCALE) != DONE)
-	    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_START, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
 
     pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
     return true;
@@ -242,35 +242,35 @@ bool GossipSelect_npc_expedition_commander(Player* pPlayer, Creature* pCreature,
 struct MANGOS_DLL_DECL mob_devouring_flame_targetAI : public ScriptedAI
 {
     mob_devouring_flame_targetAI(Creature* pCreature) : ScriptedAI(pCreature) 
-	{
-		m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         SetCombatMovement(false);
         Reset();
-	}
+    }
 
-	ScriptedInstance* m_pInstance;
+    ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
-	uint32 m_uiDeath_Timer;
+    uint32 m_uiDeath_Timer;
 
     void Reset()
     {
-		m_uiDeath_Timer = 25500;
-		m_creature->SetDisplayId(11686);
-		m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-		m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-		DoCast(m_creature,  m_bIsRegularMode ? AURA_DEVOURING_FLAME : AURA_DEVOURING_FLAME_H);
+        m_uiDeath_Timer = 25500;
+        m_creature->SetDisplayId(11686);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        DoCast(m_creature,  m_bIsRegularMode ? AURA_DEVOURING_FLAME : AURA_DEVOURING_FLAME_H);
     }
 
-	void UpdateAI(const uint32 uiDiff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-		if (m_uiDeath_Timer < uiDiff)
-			m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        if (m_uiDeath_Timer < uiDiff)
+            m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         else m_uiDeath_Timer -= uiDiff;
-	}
+    }
 };
 
 CreatureAI* GetAI_mob_devouring_flame_target(Creature* pCreature)
@@ -762,45 +762,45 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
             // achiev counter
             m_uiFlyNo += 1;
-		}else m_uiGrounded_Timer -= uiDiff;
+        }else m_uiGrounded_Timer -= uiDiff;
 
         // make boss land at 50% hp
         if (m_bAirphase && m_creature->GetHealthPercent() < 50)
-		{
-			if (m_creature->HasAura(SPELL_STUN))
-				m_creature->RemoveAurasDueToSpell(SPELL_STUN);
+        {
+            if (m_creature->HasAura(SPELL_STUN))
+                m_creature->RemoveAurasDueToSpell(SPELL_STUN);
 
             DoScriptText(EMOTE_GROUNDED, m_creature);
             m_uiGround_Knockback        = m_bIsGrounded ? 0 : 3000;
-			m_bAirphase = false;
-			m_bIsGrounded = false;
-			m_uiDevouring_Flame_Timer   = 12000;
-			m_uiFlame_Buffet_Timer      = 10000; //every 10 secs
-			m_uiFuse_Armor_Timer        = 13000; //every ~13
-			m_uiFlame_Breath_Timer      = 6000;  //every 14
-			SetCombatMovement(true);
+            m_bAirphase = false;
+            m_bIsGrounded = false;
+            m_uiDevouring_Flame_Timer   = 12000;
+            m_uiFlame_Buffet_Timer      = 10000; //every 10 secs
+            m_uiFuse_Armor_Timer        = 13000; //every ~13
+            m_uiFlame_Breath_Timer      = 6000;  //every 14
+            SetCombatMovement(true);
 
             // make boss land
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
             m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-			m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-		}
+            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+         }
 
         // LAND PHASE
         // knockback at the beginning at the land phase
         if (m_uiGround_Knockback < uiDiff && !m_bKnockback && !m_bAirphase)
-		{
+        {
             m_creature->CastStop();
             DoCast(m_creature, SPELL_WING_BUFFET);
             m_bKnockback = true;
         }else m_uiGround_Knockback -= uiDiff;
 
-		if (m_uiFuse_Armor_Timer < uiDiff && !m_bAirphase)
-		{
+        if (m_uiFuse_Armor_Timer < uiDiff && !m_bAirphase)
+        {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0))
-			    DoCast(pTarget, SPELL_FUSE_ARMOR);
-			m_uiFuse_Armor_Timer = 13000;
-		}else m_uiFuse_Armor_Timer -= uiDiff;
+               DoCast(pTarget, SPELL_FUSE_ARMOR);
+            m_uiFuse_Armor_Timer = 13000;
+        } else m_uiFuse_Armor_Timer -= uiDiff;
 
 		if (m_uiFlame_Buffet_Timer < uiDiff && !m_bAirphase)
 		{
@@ -851,22 +851,22 @@ void AddSC_boss_razorscale()
     NewScript->GetAI = GetAI_boss_razorscale;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_devouring_flame_target";
     NewScript->GetAI = &GetAI_mob_devouring_flame_target;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_dark_rune_watcher";
     NewScript->GetAI = &GetAI_mob_dark_rune_watcher;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_dark_rune_sentinel";
     NewScript->GetAI = &GetAI_mob_dark_rune_sentinel;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "mob_dark_rune_guardian";
     NewScript->GetAI = &GetAI_mob_dark_rune_guardian;
     NewScript->RegisterSelf();
@@ -876,7 +876,7 @@ void AddSC_boss_razorscale()
     NewScript->GetAI = &GetAI_mob_mole_machine;
     NewScript->RegisterSelf();
 
-	NewScript = new Script;
+    NewScript = new Script;
     NewScript->Name = "npc_expedition_commander";
     NewScript->GetAI = &GetAI_npc_expedition_commander;
     NewScript->pGossipHello = &GossipHello_npc_expedition_commander;

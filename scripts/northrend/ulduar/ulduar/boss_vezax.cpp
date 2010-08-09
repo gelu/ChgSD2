@@ -214,7 +214,7 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
                     (*iter)->ForcedDespawn();
             }
         }
-        
+
         m_bIsHardMode = true;
         m_bIsAnimusAlive = true;
     }
@@ -266,7 +266,7 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
 
         // saronite vapor
         if(m_uiSaroniteVaporTimer < uiDiff && !m_bIsHardMode)
-        {      
+        {
             m_creature->CastStop();
             DoCast(m_creature, SPELL_SUMMON_VAPORS);
             DoScriptText(EMOTE_VAPORS, m_creature);
@@ -379,8 +379,8 @@ struct MANGOS_DLL_DECL mob_saronite_animusAI : public ScriptedAI
             }
         }
         // used for hard mode loot
-		// REMOVE THIS FOR REVISION
-        m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+        // REMOVE THIS FOR REVISION
+        //m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
     }
 
     void UpdateAI(const uint32 uiDiff)

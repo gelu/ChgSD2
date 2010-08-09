@@ -169,7 +169,7 @@ static LocationsXY SummonLoc[]=
 
 // Leviathan Mk script
 struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
-{   
+{
     boss_leviathan_mkAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -219,7 +219,7 @@ struct MANGOS_DLL_DECL boss_leviathan_mkAI : public ScriptedAI
 
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        if(m_pInstance) 
+        if(m_pInstance)
             m_pInstance->SetData(TYPE_LEVIATHAN_MK, NOT_STARTED);
     }
 
@@ -1173,7 +1173,7 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
         m_uiHeadGUID            = 0;
 
 		// reset button
-        if(GameObject* pButton = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(G0_MIMIRON_BUTTON)))
+        if(GameObject* pButton = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_MIMIRON_BUTTON)))
             pButton->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
 
 		// reset elevator
@@ -1202,7 +1202,7 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
             m_pInstance->SetData(TYPE_MIMIRON_HARD, NOT_STARTED);
         }
 
-		m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void JustReachedHome()
@@ -1274,7 +1274,7 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
                         m_uiIntroTimer = 10000;
                         break;
                     case 3:
-                        if(GameObject* pButton = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(G0_MIMIRON_BUTTON)))
+                        if(GameObject* pButton = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_MIMIRON_BUTTON)))
                             pButton->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
                         if(m_bIsHardMode)
                         {
@@ -1329,13 +1329,13 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
                     case 9:
                         if(m_bIsHardMode)
                         {
-							if(m_pInstance)
+                            if(m_pInstance)
                                 m_pInstance->SetData(TYPE_MIMIRON_PHASE, PHASE_LEVIATHAN);
                             if(Creature* pTank = m_pInstance->instance->GetCreature(m_uiTankGUID))
                             {
                                 pTank->SetHealth(pTank->GetMaxHealth()+ (pTank->GetMaxHealth() * 0.3));
-								((boss_leviathan_mkAI*)pTank->AI())->m_bStartAttack = true;
-								pTank->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                                ((boss_leviathan_mkAI*)pTank->AI())->m_bStartAttack = true;
+                                pTank->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                                 pTank->SetInCombatWithZone();
                             }
                             m_uiSelfDestructTimer   = 460000;  // 8 min
@@ -1500,7 +1500,7 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
                     {
                         ((boss_aerial_command_unitAI*)pHead->AI())->SetPhase();
                         m_uiHeadGUID = pHead->GetGUID();
-                    }                
+                    }
 
                     if(m_bIsHardMode)
                     {
@@ -1678,7 +1678,7 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
 // Leviathan MK turret
 // used in phase 1; should be attached by a vehicle seat to the Leviathan MK
 struct MANGOS_DLL_DECL leviathan_turretAI : public ScriptedAI
-{   
+{
     leviathan_turretAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -1737,7 +1737,7 @@ struct MANGOS_DLL_DECL leviathan_turretAI : public ScriptedAI
 };
 
 struct MANGOS_DLL_DECL mob_proximity_mineAI : public ScriptedAI
-{   
+{
     mob_proximity_mineAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -1798,7 +1798,7 @@ struct MANGOS_DLL_DECL mob_proximity_mineAI : public ScriptedAI
 };
 
 struct MANGOS_DLL_DECL mob_bomb_botAI : public ScriptedAI
-{   
+{
     mob_bomb_botAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         Reset();
@@ -1852,7 +1852,7 @@ struct MANGOS_DLL_DECL mob_bomb_botAI : public ScriptedAI
 };
 
 struct MANGOS_DLL_DECL mob_assault_botAI : public ScriptedAI
-{   
+{
     mob_assault_botAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         Reset();
@@ -1883,7 +1883,7 @@ struct MANGOS_DLL_DECL mob_assault_botAI : public ScriptedAI
 };
 
 struct MANGOS_DLL_DECL mob_emergency_botAI : public ScriptedAI
-{   
+{
     mob_emergency_botAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
@@ -1992,7 +1992,7 @@ struct MANGOS_DLL_DECL mob_frost_bomb_ulduarAI : public ScriptedAI
 
 // Flames used in hard mode
 struct MANGOS_DLL_DECL mob_mimiron_flamesAI : public ScriptedAI
-{   
+{
     mob_mimiron_flamesAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -2029,7 +2029,7 @@ struct MANGOS_DLL_DECL mob_mimiron_flamesAI : public ScriptedAI
 };
 
 struct MANGOS_DLL_DECL mob_mimiron_infernoAI : public ScriptedAI
-{   
+{
     mob_mimiron_infernoAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
@@ -2067,7 +2067,7 @@ struct MANGOS_DLL_DECL mob_mimiron_infernoAI : public ScriptedAI
 
 // item script, used to bring the aerial unit down
 struct MANGOS_DLL_DECL mob_magnetic_coreAI : public ScriptedAI
-{   
+{
     mob_magnetic_coreAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();

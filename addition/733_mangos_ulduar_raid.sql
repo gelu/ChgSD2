@@ -267,6 +267,7 @@ INSERT INTO creature VALUES
 (800009, 32938, 603, 2, 1,0,0, 1997.88, -239.394, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0);
 
 -- Mimiron
+UPDATE `gameobject_template` SET `data0` = '60000' WHERE `entry` =194675;
 UPDATE creature_template SET ScriptName = 'boss_mimiron' WHERE entry = 33350;
 UPDATE creature_template SET `RegenHealth`= 0, ScriptName = 'boss_leviathan_mk' WHERE entry = 33432;
 UPDATE creature_template SET ScriptName = 'leviathan_turret' WHERE entry = 34071;

@@ -140,7 +140,7 @@ struct MANGOS_DLL_DECL boss_left_armAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    
+
     uint32 m_uiShockwave_Timer;
 
     void Reset()
@@ -203,7 +203,7 @@ CreatureAI* GetAI_boss_left_arm(Creature* pCreature)
 struct MANGOS_DLL_DECL boss_right_armAI : public ScriptedAI
 {
     boss_right_armAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {        
+    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         SetCombatMovement(false);
@@ -434,6 +434,8 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
         }
         //aggro yell
         DoScriptText(SAY_AGGRO, m_creature);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
     }
 
     void KilledUnit(Unit* pVictim)
