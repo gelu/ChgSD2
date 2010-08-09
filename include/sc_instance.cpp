@@ -57,3 +57,19 @@ void ScriptedInstance::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
     else
         debug_log("SD2: DoUpdateWorldState attempt send data but no players in map.");
 }
+
+void ScriptedInstance::DoCompleteAchievement(uint32 uiAchievmentId)
+{
+    Map::PlayerList const& lPlayers = instance->GetPlayers();
+
+    if (!lPlayers.isEmpty())
+    {
+        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            if (Player* pPlayer = itr->getSource())
+                pPlayer->CompletedAchievement(uiAchievmentId);
+        }
+    }
+    else
+        debug_log("SD2: DoCompleteAchievement attempt set data but no players in map.");
+}
