@@ -1235,9 +1235,8 @@ struct MANGOS_DLL_DECL boss_mimironAI : public ScriptedAI
             if(m_bIsHardMode)
             {
                 m_pInstance->SetData(TYPE_MIMIRON_HARD, DONE);
-				/* hacky way to complete achievements; use only if you have this function
+                // hacky way to complete achievements; use only if you have this function
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_FIREFIGHTER : ACHIEV_FIREFIGHTER_H);
-				*/
             }
             m_pInstance->SetData(TYPE_MIMIRON, DONE);
         }

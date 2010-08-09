@@ -345,10 +345,9 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
 
         if (m_uiEncounterTimer < 240000)
         {
-        /* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_STOKIN_THE_FURNACE : ACHIEV_STOKIN_THE_FURNACE_H);
-        */
         }
     }
 

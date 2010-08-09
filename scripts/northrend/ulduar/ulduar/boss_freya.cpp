@@ -728,7 +728,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_FREYA_HARD, 0);
 
-			/* hacky way to complete achievements; use only if you have this function
+            // hacky way to complete achievements; use only if you have this function
             if(m_uiAchievProgress == 1)
             {
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_KNOCK_WOOD : ACHIEV_KNOCK_WOOD_H);
@@ -747,7 +747,6 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
 
             if (m_bNature)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_BACK_TO_NATURE : ACHIEV_BACK_TO_NATURE_H);
-				*/
 
             m_pInstance->SetData(TYPE_FREYA, DONE);
         }

@@ -403,7 +403,7 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_AURIAYA, DONE);
 
-		/* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
         if (m_bCrazyCatLady)
         {
             if(m_pInstance)
@@ -415,7 +415,6 @@ struct MANGOS_DLL_DECL boss_auriayaAI : public ScriptedAI
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_NINE_LIVES : ACHIEV_NINE_LIVES_H);
         }
-		*/
     }
 
     void Aggro(Unit* pWho)

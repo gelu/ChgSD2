@@ -280,12 +280,11 @@ struct MANGOS_DLL_DECL boss_algalonAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_ALGALON, DONE);
             m_pInstance->DoUpdateWorldState(UI_STATE_ALGALON_TIMER_ON, 0);
-            /* hacky way to complete achievements; use only if you have this function
+            // hacky way to complete achievements; use only if you have this function
             m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_OBSERVED : ACHIEV_OBSERVED_H);
 
             if(m_bFeedOnTears)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_FEED_TEARS : ACHIEV_FEED_TEARS_H);
-            */
         }
 
         m_creature->ForcedDespawn();

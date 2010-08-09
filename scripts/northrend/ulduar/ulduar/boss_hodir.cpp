@@ -394,20 +394,18 @@ struct MANGOS_DLL_DECL boss_hodirAI : public ScriptedAI
             {
                 m_pInstance->SetData(TYPE_HODIR_HARD, DONE);
                 m_pInstance->SetData(TYPE_HODIR, DONE);
-				/* hacky way to complete achievements; use only if you have this function
+                // hacky way to complete achievements; use only if you have this function
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_RARE_CACHE : ACHIEV_RARE_CACHE_H);
-				*/
             }
             else
                 m_pInstance->SetData(TYPE_HODIR, DONE);
 
-			/* hacky way to complete achievements; use only if you have this function
+            // hacky way to complete achievements; use only if you have this function
             if (m_bCoolestFriend)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_COOLEST_FRIEND : ACHIEV_COOLEST_FRIEND_H);
 
             if (m_bIsCheese)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_CHEESE_FREEZE : ACHIEV_CHEESE_FREEZE_H);
-				*/
         }
         m_creature->ForcedDespawn();
     }

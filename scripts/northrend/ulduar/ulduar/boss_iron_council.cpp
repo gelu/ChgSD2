@@ -351,9 +351,8 @@ struct MANGOS_DLL_DECL boss_brundirAI : public ScriptedAI
                             OnYourSide();
 
                             // ChooseBrundir
-							/* hacky way to complete achievements; use only if you have this function
+                            // hacky way to complete achievements; use only if you have this function
                             m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_CHOOSE_BRUNDIR : ACHIEV_CHOOSE_BRUNDIR_H);
-							*/
                         }
                     }
                 }
@@ -687,10 +686,9 @@ struct MANGOS_DLL_DECL boss_molgeimAI : public ScriptedAI
                             OnYourSide();
 
                             // ChooseMolgeim
-							/* hacky way to complete achievements; use only if you have this function
+                            // hacky way to complete achievements; use only if you have this function
                             m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_CHOOSE_MOLGEIM : ACHIEV_CHOOSE_MOLGEIM_H);
-							*/
-						}
+                            }
                     }
                 }
             }
@@ -1011,10 +1009,9 @@ struct MANGOS_DLL_DECL boss_steelbreakerAI : public ScriptedAI
                             OnYourSide();
 
                             // ChooseSteelbreaker
-							/* hacky way to complete achievements; use only if you have this function
+                            // hacky way to complete achievements; use only if you have this function
                             m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_CHOOSE_STEELBREAKER : ACHIEV_CHOOSE_STEELBREAKER_H);
-							*/
-						}
+                            }
                     }
                 }
             }

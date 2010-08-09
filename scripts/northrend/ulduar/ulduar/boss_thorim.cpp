@@ -729,9 +729,8 @@ struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
             if(m_bIsHardMode)
             {
                 m_pInstance->SetData(TYPE_THORIM_HARD, DONE);
-				/* hacky way to complete achievements; use only if you have this function
+                // hacky way to complete achievements; use only if you have this function
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_LOSE_ILLUSION : ACHIEV_LOSE_ILLUSION_H);
-				*/
             }
             m_pInstance->SetData(TYPE_THORIM, DONE);
         }
@@ -902,9 +901,8 @@ struct MANGOS_DLL_DECL boss_thorimAI : public ScriptedAI
 							Sif->setFaction(14);
 							DoScriptText(SAY_SIF_EVENT, Sif);
 							Sif->SetInCombatWithZone();
-							/* hacky way to complete achievements; use only if you have this function
+                                                       // hacky way to complete achievements; use only if you have this function
 							m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_SIFFED : ACHIEV_SIFFED_H);
-							*/
 						}
 					}
 					m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());

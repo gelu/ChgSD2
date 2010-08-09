@@ -375,7 +375,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-		/* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
         // Rubble and roll
         if (m_uiRubbleNo >= 25)
         {
@@ -396,7 +396,6 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_DISARMED : ACHIEV_DISARMED_H);
         }
-		*/
 
         //death yell
         if (m_pInstance)

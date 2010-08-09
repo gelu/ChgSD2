@@ -457,7 +457,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
                     pTemp->ForcedDespawn();
         }
 
-		/* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
         // Deconstruct Fast
         if (uiEncounterTimer < 205000)
         {
@@ -478,7 +478,6 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_NERF_ENGINEERING : ACHIEV_NERF_ENGINEERING_H);
         }
-		*/
     }
 
     void Aggro(Unit* pWho)

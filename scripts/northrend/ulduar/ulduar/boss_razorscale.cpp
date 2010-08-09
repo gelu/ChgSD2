@@ -558,10 +558,9 @@ struct MANGOS_DLL_DECL boss_razorscaleAI : public ScriptedAI
 
         if (m_uiFlyNo < 2)
         {
-			/* hacky way to complete achievements; use only if you have this function
+            // hacky way to complete achievements; use only if you have this function
             if(m_pInstance)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_QUICK_SHAVE : ACHIEV_QUICK_SHAVE_H);
-				*/
         }
     }
 

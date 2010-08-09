@@ -147,9 +147,8 @@ struct MANGOS_DLL_DECL boss_vezaxAI : public ScriptedAI
             {
                 m_pInstance->SetData(TYPE_VEZAX_HARD, DONE);
 
-				/* hacky way to complete achievements; use only if you have this function
+                // hacky way to complete achievements; use only if you have this function
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_MORNING_SARONITE : ACHIEV_MORNING_SARONITE_H);
-				*/
 				// hack used when the hard mode loot is within the Animus corpse
 				// PLEASE REMOVE FOR REVISION
                 if(Creature* pAnimus = m_pInstance->instance->GetCreature(m_uiAnimusGUID))

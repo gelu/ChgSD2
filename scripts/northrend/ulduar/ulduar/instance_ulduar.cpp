@@ -1221,19 +1221,17 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
     void CheckIronCouncil()
     {
         // check if the other bosses in the antechamber are dead
-        /* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
         if(m_auiEncounter[4] == DONE && m_auiEncounter[5] == DONE && m_auiEncounter[6] == DONE)
             DoCompleteAchievement(instance->IsRegularDifficulty() ? ACHIEV_IRON_COUNCIL : ACHIEV_IRON_COUNCIL_H);
-        */
     }
 
     void CheckKeepers()
     {
         // check if the other bosses in the antechamber are dead
-        /* hacky way to complete achievements; use only if you have this function
+        // hacky way to complete achievements; use only if you have this function
         if(m_auiEncounter[7] == DONE && m_auiEncounter[8] == DONE && m_auiEncounter[9] == DONE && m_auiEncounter[10] == DONE)
             DoCompleteAchievement(instance->IsRegularDifficulty() ? ACHIEV_KEEPERS : ACHIEV_KEEPERS_H);
-        */
     }
 };
 

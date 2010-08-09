@@ -573,7 +573,7 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
             m_pInstance->SetData(TYPE_YOGGSARON, DONE);
             m_pInstance->SetData(TYPE_YOGGSARON_HARD, 0);
 
-			/* hacky way to complete achievements; use only if you have this function
+            // hacky way to complete achievements; use only if you have this function
             if(m_uiKeepersActive == 0)
             {
                 m_pInstance->SetData(TYPE_YOGGSARON_HARD, 4);
@@ -598,7 +598,7 @@ struct MANGOS_DLL_DECL boss_yogg_saronAI : public ScriptedAI
             // under 7 min
             if(m_uiAchievTimer < 420000)
                 m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? ACHIEV_NOT_GETTING_OLDER : ACHIEV_NOT_GETTING_OLDER_H);
-				*/
+
         }
 
         if(Creature* pSara = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_SARA)))
