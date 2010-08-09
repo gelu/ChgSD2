@@ -31,6 +31,7 @@ enum
     SPELL_GEYSER                = 37478,
     SPELL_SPOUT                 = 37433,                    // TODO, should sweep the room 360degrees, related spells 37429 37430 37431
     SPELL_WATERBOLT             = 37138,
+    ACHIEVEMENT_LURKER          = 144,
 };
 
 struct MANGOS_DLL_DECL boss_the_lurker_belowAI : public ScriptedAI
@@ -119,6 +120,7 @@ bool GOHello_go_strange_pool(Player* pPlayer, GameObject* pGo)
             if (pInstance->GetData(TYPE_THELURKER_EVENT) == NOT_STARTED)
             {
                 pPlayer->CastSpell(pPlayer, SPELL_LURKER_SPAWN_TRIGGER, true);
+                pPlayer->CompletedAchievement(ACHIEVEMENT_LURKER);
                 pInstance->SetData(TYPE_THELURKER_EVENT, IN_PROGRESS);
                 return true;
             }
