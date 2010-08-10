@@ -165,6 +165,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
     {
 
     if ( m_creature->GetHealthPercent() > 1.0f  ) {
+       Map* pMap = m_creature->GetMap();
        Map::PlayerList const &players = pMap->GetPlayers();
        for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
               {

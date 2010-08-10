@@ -162,7 +162,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
     void doBlisteringCold()
     {
         doCast(SPELL_ICY_GRIP);
-
+        Map* pMap = m_creature->GetMap();
         Map::PlayerList const &pList = pMap->GetPlayers();
                  if (pList.isEmpty()) return;
 
