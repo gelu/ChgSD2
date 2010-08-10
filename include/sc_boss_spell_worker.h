@@ -4,6 +4,7 @@
 
 #ifndef DEF_BOSS_SPELL_WORKER_H
 #define DEF_BOSS_SPELL_WORKER_H
+#define BSW_VERSION 0.6.12
 
 #include "precompiled.h"
 #include "Player.h"
@@ -17,10 +18,8 @@
 enum
 {
   DIFFICULTY_LEVELS    = 4,
-  MAX_BOSS_SPELLS      = 32,
-  SPELL_INDEX_ERROR    = 255,
-  INSTANCE_MAX_PLAYERS = 40,
   EFFECT_INDEX_ALL     = 255,
+  SPELL_INDEX_ERROR    = 255,
 };
 
 enum BossSpellFlag
@@ -56,7 +55,7 @@ enum BossSpellTableParameters
 
 struct Locations
 {
-    float x, y, z;
+    float x, y, z, o;
     int32 id;
 };
 
@@ -73,21 +72,26 @@ struct WayPoints
     float x, y, z;
 };
 
-struct SpellTable
+struct BSWRecord
 {
+
+    public:
+    // External (loaded from database) variables
     uint32 id;
     uint32 m_uiSpellEntry[DIFFICULTY_LEVELS];          // Stores spell entry for difficulty levels
     uint32 m_uiSpellTimerMin[DIFFICULTY_LEVELS];       // The timer (min) before the next spell casting, in milliseconds
     uint32 m_uiSpellTimerMax[DIFFICULTY_LEVELS];       // The timer (max) before the next spell casting
     uint32 m_uiSpellData[DIFFICULTY_LEVELS];           // Additional data for spell casting or summon
     Locations LocData;                                 // Float data structure for locations
-    int   varData;                                     // Additional data for spell
+    int    varData;                                    // Additional data for spell
     uint32 StageMaskN;                                 // Stage mask for this spell (normal)
     uint32 StageMaskH;                                 // Stage mask for this spell (heroic)
     BossSpellTableParameters  m_CastTarget;            // Target on casting spell
     bool   m_IsVisualEffect;                           // Spellcasting is visual effect or real effect
     bool   m_IsBugged;                                 // Need override for this spell
     int32  textEntry;                                  // Text entry from script_text for this spell
+    // Internal variables
+    uint32 m_SpellTimer;                               // Current timer for this spell
 };
 
 struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
@@ -101,9 +105,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         void resetTimer(uint32 SpellID)
              {
-             uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-             if (!queryIndex(m_uiSpellIdx)) return;
-             return _resetTimer(m_uiSpellIdx);
+                 if (queryIndex(_findSpellIDX(SpellID))) _resetTimer(_findSpellIDX(SpellID));
+                     else return;
              };
 
         void resetTimers()
@@ -112,78 +115,58 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
                   _resetTimer(i);
              };
 
-        bool timedQuery(uint32 SpellID, uint32 diff)
+        bool timedQuery(uint32 SpellID, uint32 diff, bool ignorecast = false)
              {
-             uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-             if (!queryIndex(m_uiSpellIdx)) return false;
-             return _QuerySpellPeriod(m_uiSpellIdx, diff);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _QuerySpellPeriod(_findSpellIDX(SpellID), diff, ignorecast) : false;
              };
 
         CanCastResult timedCast(uint32 SpellID, uint32 diff, Unit* pTarget = NULL)
              {
-             uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-             if (!queryIndex(m_uiSpellIdx)) return CAST_FAIL_OTHER;
-             if (!_QuerySpellPeriod(_findSpellIDX(SpellID), diff)) return CAST_FAIL_STATE;
-                  else return _BSWSpellSelector(m_uiSpellIdx, pTarget);
+                 if (!queryIndex(_findSpellIDX(SpellID))) return CAST_FAIL_OTHER;
+                 return _QuerySpellPeriod(_findSpellIDX(SpellID), diff) ? _BSWSpellSelector(_findSpellIDX(SpellID), pTarget) : CAST_FAIL_STATE;
              };
 
         CanCastResult doCast(uint32 SpellID, Unit* pTarget = NULL)
              {
-                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                  if (queryIndex(m_uiSpellIdx)) return _BSWSpellSelector(m_uiSpellIdx, pTarget);
-                      else return CAST_FAIL_OTHER;
+                  return queryIndex(_findSpellIDX(SpellID)) ? _BSWSpellSelector(_findSpellIDX(SpellID), pTarget) : CAST_FAIL_OTHER;
              };
 
         CanCastResult doCast(Unit* pTarget, uint32 SpellID)
              {
                   if (!pTarget) return CAST_FAIL_OTHER;
-                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                  if (queryIndex(m_uiSpellIdx)) return _BSWCastOnTarget(pTarget, m_uiSpellIdx);
-                      else return CAST_FAIL_OTHER;
+                  return queryIndex(_findSpellIDX(SpellID)) ? _BSWCastOnTarget(pTarget, _findSpellIDX(SpellID)) : CAST_FAIL_OTHER;
              };
 
         bool doRemove(uint32 SpellID, Unit* pTarget = NULL, uint8 index = EFFECT_INDEX_ALL)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return false;
-                     return _doRemove(m_uiSpellIdx,pTarget, index);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doRemove(_findSpellIDX(SpellID),pTarget,index) : _doRemove(SpellID,pTarget,index);
              };
 
         bool doRemoveFromAll(uint32 SpellID)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return false;
-                     return _doRemoveFromAll(m_uiSpellIdx);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doRemoveFromAll(_findSpellIDX(SpellID)) : _doRemoveFromAll(SpellID);
              };
 
         bool doAura(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return false;
-                     return _doAura(m_uiSpellIdx,pTarget, index);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID),pTarget, index) : _doAura(SpellID, pTarget, index);
              };
 
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return false;
                  if (!pTarget) pTarget = m_creature;
-                 return _hasAura(m_uiSpellIdx,pTarget);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _hasAura(_findSpellIDX(SpellID),pTarget) : false;
              };
 
         uint8 auraCount(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return 0;
                  if (!pTarget) pTarget = m_creature;
-                 return _auraCount(m_uiSpellIdx,pTarget,index);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _auraCount(_findSpellIDX(SpellID),pTarget,index) : _auraCount(SpellID,pTarget,index);
              };
 
         Unit* doSummon(uint32 SpellID, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return NULL;
-                     return _doSummon(m_uiSpellIdx, type, delay);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doSummon(_findSpellIDX(SpellID), type, delay) : NULL;
              };
 
         Unit* doSelectRandomPlayer(uint32 SpellID = 0, bool spellsearchtype = false, float range = 100.0f)
@@ -198,24 +181,18 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
-                 uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                 if (!queryIndex(m_uiSpellIdx)) return NULL;
-                 return _doSummonAtPosition(m_uiSpellIdx, type, delay, fPosX, fPosY, fPosZ);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doSummonAtPosition(_findSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ) : NULL;
              };
-
-        Unit* doSelectLowHPFriendly(float fRange = 40.0f, uint32 uiMinHPDiff = 0);
 
         uint8 bossSpellCount()
              {
-                 return _bossSpellCount;
+                 return m_BSWRecords.size();
              };
 
         bool queryIndex(uint8 m_uiSpellIdx)
              {
-                 if (    (m_uiSpellIdx >= 0)
-                      && (m_uiSpellIdx <= bossSpellCount())
-                      && (m_uiSpellIdx  != SPELL_INDEX_ERROR))
-                      return true;
+                 if  (m_uiSpellIdx == SPELL_INDEX_ERROR) return false;
+                 else if  (m_uiSpellIdx >= 0 && m_uiSpellIdx < bossSpellCount()) return true;
                  else return false;
              };
 
@@ -223,27 +200,26 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         uint32 getSpellData(uint32 SpellID)
              {
-                  uint8 m_uiSpellIdx = _findSpellIDX(SpellID);
-                  return queryIndex(m_uiSpellIdx) ?  _getSpellData(m_uiSpellIdx) : 0;
+                 return queryIndex(_findSpellIDX(SpellID)) ?  _getSpellData(_findSpellIDX(SpellID)) : 0;
              };
 
-        bool doCastAll(uint32 diff);
+        bool  doCastAll(uint32 diff);
 
         uint8 getStage() { return _stage; };
 
         void  setStage(uint8 stage) { _stage = stage; };
 
-        bool isHeroic() { return pMap->IsRaid() ? _isDifficultyInMask(12) : _isDifficultyInMask(2); };
+        bool  isHeroic() { Map* pMap = m_creature->GetMap(); return pMap->IsRaid() ? _isDifficultyInMask(12) : _isDifficultyInMask(2); };
 
-        bool isNormal() { return pMap->IsRaid() ? _isDifficultyInMask(3) : _isDifficultyInMask(1); };
+        bool  isNormal() { return !isHeroic(); };
 
-        bool is25()     { return pMap->IsRaid() ? _isDifficultyInMask(10) : false; };
+        bool  is25()     { Map* pMap = m_creature->GetMap(); return pMap->IsRaid() ? _isDifficultyInMask(10) : false; };
 
     protected:
 
-        Map*          pMap;
-
         Difficulty    currentDifficulty;
+
+        std::vector<BSWRecord> m_BSWRecords;
 
     private:
 
@@ -251,7 +227,9 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         uint8         _findSpellIDX(uint32 SpellID);
 
-        void          _loadSpellTable();
+        BSWRecord*    _getRecord(uint32 SpellID);
+
+        void          _loadFromDB();
 
         void          _resetTimer(uint8 m_uiSpellIdx);
 
@@ -267,21 +245,29 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         CanCastResult _BSWCastOnTarget(Unit* pTarget, uint8 m_uiSpellIdx);
 
-        bool          _QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff);
+        bool          _QuerySpellPeriod(uint8 m_uiSpellIdx, uint32 diff, bool ignorecast = false);
 
         CanCastResult _DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, uint32 uiCastFlags = 0, uint64 uiOriginalCasterGUID = 0);
 
-        CanCastResult _CanCastSpell(Unit* pTarget, const SpellEntry *pSpell, bool isTriggered = false);
-
         bool          _doRemove(uint8 m_uiSpellIdx, Unit* pTarget = NULL, uint8 index = EFFECT_INDEX_ALL);
+
+        bool          _doRemove(uint32 SpellID, Unit* pTarget, uint8 index = EFFECT_INDEX_ALL);
 
         bool          _doRemoveFromAll(uint8 m_uiSpellIdx);
 
+        bool          _doRemoveFromAll(uint32 SpellID);
+
         bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
+
+        bool          _doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index = EFFECT_INDEX_0);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 
+        bool          _hasAura(uint32 SpellID, Unit* pTarget);
+
         uint8         _auraCount(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
+
+        uint8         _auraCount(uint32 SpellID, Unit* pTarget, SpellEffectIndex index);
 
         void          _fillEmptyDataField();
 
@@ -289,11 +275,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         bool          _isDifficultyInMask(uint8 mask);
 
-// Constants
-        uint8         _bossSpellCount;
         uint8         _stage;
-        uint32        m_uiSpell_Timer[MAX_BOSS_SPELLS];
-        SpellTable    m_BossSpell[MAX_BOSS_SPELLS];
+
 };
 
 #endif
