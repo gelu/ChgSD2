@@ -2858,11 +2858,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\sc_boss_spell_worker.cpp"
+				RelativePath="..\base\BSW_ai.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\include\sc_boss_spell_worker.h"
+				RelativePath="..\base\BSW_ai.h"
+				>
+			</File>
+			<File
+				RelativePath="..\base\BSW_iinstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\base\BSW_instance.h"
 				>
 			</File>
 		</Filter>

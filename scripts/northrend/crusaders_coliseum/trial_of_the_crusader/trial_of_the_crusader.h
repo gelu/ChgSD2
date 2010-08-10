@@ -4,7 +4,7 @@
 
 #ifndef DEF_CRUSADER_H
 #define DEF_CRUSADER_H
-#include "sc_boss_spell_worker.h"
+#include "BSW_ai.h"
 
 enum
 {

@@ -2,7 +2,7 @@
  * This program is free software licensed under GPL version 2
  * Please see the included DOCS/LICENSE.TXT for more information */
 #include "precompiled.h"
-#include "sc_boss_spell_worker.h"
+#include "BSW_ai.h"
 #ifdef DEF_BOSS_SPELL_WORKER_H
 #include "ace/Process_Mutex.h"
 

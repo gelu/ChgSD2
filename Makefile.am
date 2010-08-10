@@ -38,6 +38,10 @@ base/guard_ai.cpp \
 base/guard_ai.h \
 base/simple_ai.cpp \
 base/simple_ai.h \
+base/BSW_instance.cpp \
+base/BSW_instance.h \
+base/BSW_ai.cpp \
+base/BSW_ai.h \
 include/precompiled.cpp \
 include/precompiled.h \
 include/sc_creature.cpp \
@@ -47,8 +51,6 @@ include/sc_grid_searchers.cpp \
 include/sc_grid_searchers.h \
 include/sc_instance.cpp \
 include/sc_instance.h \
-include/sc_boss_spell_worker.cpp \
-include/sc_boss_spell_worker.h \
 scripts/battlegrounds/battleground.cpp \
 scripts/custom/npc_arena_honor.cpp \
 scripts/custom/teleguy.cpp \
