@@ -63,8 +63,8 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    Creature* Baltharus_Target;
-    Creature* Clone;
+    Creature* pDummyTarget;
+    Creature* pClone;
     bool inCombat;
     bool intro;
 
@@ -77,18 +77,21 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         m_creature->SetRespawnDelay(7*DAY);
         resetTimers();
         setStage(0);
-        Clone = NULL;
+        pClone = NULL;
         inCombat = false;
         intro = false;
-        if (Baltharus_Target = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_BALTHARUS_TARGET))))
+        if (pDummyTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_BALTHARUS_TARGET))))
         {
-            Baltharus_Target->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            Baltharus_Target->GetMotionMaster()->MoveIdle();
-        } else
-               if (Baltharus_Target = m_creature->SummonCreature(NPC_BALTHARUS_TARGET, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 1000))
-               {
-                   Baltharus_Target->GetMotionMaster()->MoveIdle();
-               }
+            if (!pDummyTarget->isAlive()) pDummyTarget->Respawn();
+
+            pDummyTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            pDummyTarget->GetMotionMaster()->MoveIdle();
+        }
+        else if (pDummyTarget = m_creature->SummonCreature(NPC_BALTHARUS_TARGET, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 1000))
+        {
+            pDummyTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            pDummyTarget->GetMotionMaster()->MoveIdle();
+        }
 
         if(Creature* pTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_XERESTRASZA))))
             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
@@ -98,7 +101,6 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     {
         if (!pInstance) return;
 
-        if (Baltharus_Target) Baltharus_Target->ForcedDespawn();
         pInstance->SetData(TYPE_BALTHARUS, FAIL);
     }
 
@@ -118,7 +120,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     {
         if (!pInstance) return;
 
-        if (Baltharus_Target) Baltharus_Target->ForcedDespawn();
+        if (pDummyTarget) pDummyTarget->ForcedDespawn();
         DoScriptText(-1666303,m_creature);
         pInstance->SetData(TYPE_BALTHARUS, DONE);
     }
@@ -139,11 +141,11 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     {
         if(!pInstance || !summoned) return;
 
-        if ( summoned->GetEntry() != NPC_BALTHARUS_TARGET ) 
+        if ( summoned->GetEntry() != NPC_BALTHARUS_TARGET )
         {
-             if (!Clone) Clone = summoned;
-             else if (!Clone->isAlive()) Clone = summoned;
-             summoned->SetInCombatWithZone();
+             if (!pClone) pClone = summoned;
+             else if (!pClone->isAlive()) pClone = summoned;
+             pClone->SetInCombatWithZone();
         }
     }
 
@@ -151,7 +153,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
     {
          if (!pInstance || !summoned) return;
 
-         if (summoned == Clone) Clone = NULL;
+         if (summoned == pClone) pClone = NULL;
     }
 
     void Aggro(Unit* pWho)
@@ -159,11 +161,12 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if (!pInstance) return;
         if (pWho->GetTypeId() != TYPEID_PLAYER) return;
 
+        if (pDummyTarget) pDummyTarget->ForcedDespawn();
+
         SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
 
         inCombat = true;
         m_creature->InterruptNonMeleeSpells(true);
-        m_creature->SetInCombatWithZone();
         SetCombatMovement(true);
         pInstance->SetData(TYPE_BALTHARUS, IN_PROGRESS);
         DoScriptText(-1666300,m_creature);
@@ -179,9 +182,9 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if(pDoneBy->GetGUID() == m_creature->GetGUID()) 
           return;
 
-        if (Clone && Clone->isAlive())
+        if (pClone && pClone->isAlive())
         {
-            pDoneBy->DealDamage(Clone, uiDamage, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+            pDoneBy->DealDamage(pClone, uiDamage, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             uiDamage = 0;
         }
     }
@@ -191,7 +194,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         if (!pInstance) return;
 
         if (!inCombat && !m_creature->IsNonMeleeSpellCasted(false))
-            timedCast(SPELL_CHANNEL_SPELL, uiDiff, Baltharus_Target);
+            timedCast(SPELL_CHANNEL_SPELL, uiDiff, pDummyTarget);
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -204,51 +207,52 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
 
             case 1:
                  m_creature->InterruptNonMeleeSpells(true);
-                 if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                     || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
-                     {
-                        doCast(SPELL_REPELLING_WAVE);
-                        doCast(SPELL_SUMMON_CLONE);
-                     };
+                 if (is25())
+                     doCast(SPELL_SUMMON_CLONE);
                  setStage(2);
                  break;
 
             case 2:
-                 if ( m_creature->GetHealthPercent() <= 50.0f) setStage(3);
-                 break;
+                 if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                 doCast(SPELL_REPELLING_WAVE);
+                 setStage(3);
 
             case 3:
-                 m_creature->InterruptNonMeleeSpells(true);
-                 if (currentDifficulty == RAID_DIFFICULTY_10MAN_NORMAL
-                     || currentDifficulty == RAID_DIFFICULTY_10MAN_HEROIC)
-                     {
-                        doCast(SPELL_REPELLING_WAVE);
-                        doCast(SPELL_SUMMON_CLONE);
-                     };
-                 setStage(4);
+                 if ( m_creature->GetHealthPercent() <= 50.0f) setStage(4);
                  break;
 
             case 4:
-                 if ( m_creature->GetHealthPercent() <= 33.0f) setStage(5);
+                 m_creature->InterruptNonMeleeSpells(true);
+                 if (!is25())
+                        doCast(SPELL_SUMMON_CLONE);
+                 setStage(5);
                  break;
 
             case 5:
-                 m_creature->InterruptNonMeleeSpells(true);
-                 if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                     || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC)
-                     {
-                        doCast(SPELL_SUMMON_CLONE);
-                        doCast(SPELL_REPELLING_WAVE);
-                     };
+                 if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                 doCast(SPELL_REPELLING_WAVE);
                  setStage(6);
-                 break;
 
             case 6:
+                 if ( m_creature->GetHealthPercent() <= 33.0f) setStage(7);
+                 break;
+
+            case 7:
+                 m_creature->InterruptNonMeleeSpells(true);
+                 if (is25())
+                     doCast(SPELL_SUMMON_CLONE);
+                 setStage(8);
+                 break;
+
+            case 8:
+                 if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                 doCast(SPELL_REPELLING_WAVE);
+                 setStage(9);
+
+            case 9:
             default:
                  break;
         }
-
-        if (m_creature->IsNonMeleeSpellCasted(false)) return;
 
 //        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
         timedCast(SPELL_ENERVATING_BRAND, uiDiff);
@@ -312,15 +316,17 @@ struct MANGOS_DLL_DECL mob_baltharus_cloneAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
 
         if (!pInstance) return;
 
         if (pInstance->GetData(TYPE_BALTHARUS) != IN_PROGRESS)
             m_creature->ForcedDespawn();
 
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
         doCastAll(uiDiff);
+
         DoMeleeAttackIfReady();
 
     }
