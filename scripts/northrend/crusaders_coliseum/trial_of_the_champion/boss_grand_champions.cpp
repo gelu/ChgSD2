@@ -103,13 +103,13 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 			return;
 		else
 		{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
 //			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
@@ -126,11 +126,11 @@ struct MANGOS_DLL_DECL mob_toc5_warriorAI : public ScriptedAI
 
         if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
               m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
              }
         }
@@ -225,13 +225,13 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 			return;
 		else
 		{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
 //			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
@@ -248,11 +248,11 @@ struct MANGOS_DLL_DECL mob_toc5_mageAI : public ScriptedAI
 
         if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
               m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
              }
         }
@@ -345,13 +345,13 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 			return;
 		else
 		{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
 //			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
@@ -368,11 +368,11 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 
         if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
               m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
              }
         }
@@ -396,29 +396,29 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 
 		if (Healing_Wave_Timer < diff)
         {
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					mob1_health = pTemp->GetHealth()*100 / pTemp->GetMaxHealth();
 				else
 					mob1_health = 100;
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					mob2_health = pTemp->GetHealth()*100 / pTemp->GetMaxHealth();
 				else
 					mob2_health = 100;
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					mob3_health = pTemp->GetHealth()*100 / pTemp->GetMaxHealth();
 				else
 					mob3_health = 100;
 			if (mob1_health < mob2_health && mob1_health < mob3_health && mob1_health < 70)
-				if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+				if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 					DoCast(pTemp, m_bIsRegularMode ? SPELL_HEALING_WAVE : SPELL_HEALING_WAVE_H);
 			if (mob1_health > mob2_health && mob2_health < mob3_health && mob2_health < 70)
-				if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+				if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 					DoCast(pTemp, m_bIsRegularMode ? SPELL_HEALING_WAVE : SPELL_HEALING_WAVE_H);
 			if (mob3_health < mob2_health && mob1_health > mob3_health && mob3_health < 70)
-				if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+				if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 					DoCast(pTemp, m_bIsRegularMode ? SPELL_HEALING_WAVE : SPELL_HEALING_WAVE_H);
             Healing_Wave_Timer = m_bIsRegularMode ? 8000 : 6000;
         }else Healing_Wave_Timer -= diff;
@@ -428,21 +428,21 @@ struct MANGOS_DLL_DECL mob_toc5_shamanAI : public ScriptedAI
 			switch(urand(0, 2))
             {
                 case 0:
-					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+					if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, SPELL_EARTH_SHIELD);
 						else
 							DoCast(m_creature, SPELL_EARTH_SHIELD);
                 break;
 		case 1:
-					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+					if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, SPELL_EARTH_SHIELD);
 						else
 							DoCast(m_creature, SPELL_EARTH_SHIELD);
                 break;
 		case 2:
-					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+					if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, SPELL_EARTH_SHIELD);
 						else
@@ -510,13 +510,13 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 			return;
 		else
 		{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
 //			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
@@ -533,11 +533,11 @@ struct MANGOS_DLL_DECL mob_toc5_hunterAI : public ScriptedAI
 
         if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
               m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
              }
         }
@@ -645,13 +645,13 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 			return;
 		else
 		{
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
 				if (pTemp->isAlive())
 					pTemp->SetInCombatWithZone();
 //			m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, IN_PROGRESS);
@@ -668,11 +668,11 @@ struct MANGOS_DLL_DECL mob_toc5_rogueAI : public ScriptedAI
 
         if (m_pInstance->GetData(DATA_CHAMPIONS_COUNT) < 1) {
               m_pInstance->SetData(TYPE_GRAND_CHAMPIONS, DONE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_1))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_1))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_2))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_2))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                  if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_CHAMPION_3))))
+                  if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_CHAMPION_3))))
                           pTemp->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
              }
         }

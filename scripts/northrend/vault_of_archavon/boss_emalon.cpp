@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL npc_tempest_minionAI : public ScriptedAI
 
         if (m_uiEvadeCheckCooldown < uiDiff)
         {
-            Creature* pEmalon = (Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_EMALON));
+            Creature* pEmalon = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_EMALON));
             if ((pEmalon && pEmalon->IsInEvadeMode()) || (m_creature->GetDistance2d(-219.119f, -289.037f) > 80.0f))
             {
                 EnterEvadeMode();
@@ -239,7 +239,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
 
         for (uint8 i=0; i<4; ++i)
         {
-            Creature* pMinion = (Creature*)Unit::GetUnit((*m_creature), m_auiTempestMinionGUID[i]);
+            Creature* pMinion = m_creature->GetMap()->GetCreature( m_auiTempestMinionGUID[i]);
             if (pMinion && pMinion->isDead())
                 pMinion->Respawn();
         }
@@ -270,7 +270,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
             m_pInstance->SetData(TYPE_EMALON, DONE);
         for (uint8 i=0; i<4; ++i)
         {
-            Creature *pMinion = (Creature*)Unit::GetUnit((*m_creature), m_auiTempestMinionGUID[i]);
+            Creature *pMinion = m_creature->GetMap()->GetCreature( m_auiTempestMinionGUID[i]);
             if (pMinion)
                 pMinion->DealDamage(pMinion, pMinion->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
@@ -293,7 +293,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
 
         if (m_uiOverchargeTimer < uiDiff)
         {
-            Creature* pMinion = (Creature*)Unit::GetUnit((*m_creature), m_auiTempestMinionGUID[rand()%4]);
+            Creature* pMinion = m_creature->GetMap()->GetCreature( m_auiTempestMinionGUID[rand()%4]);
             if(pMinion && pMinion->isAlive())
             {
                 m_creature->MonsterTextEmote("%s overcharges Tempest Minion!", 0, true);

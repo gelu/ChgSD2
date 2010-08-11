@@ -82,7 +82,7 @@ struct MANGOS_DLL_DECL mob_toc5_risen_ghoulAI : public ScriptedAI
 
 		if (Attack < diff)
         {
-			if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_BLACK_KNIGHT))))
+			if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_BLACK_KNIGHT))))
 				if (pTemp->isAlive())
 					if ((pTemp->GetHealth()*100 / pTemp->GetMaxHealth()) < 25)
 						DoCast(m_creature, m_bIsRegularMode ? SPELL_EXPLODE : SPELL_EXPLODE_H);

@@ -225,7 +225,7 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public BSWScriptedAI
 
     void Reset()
     {
-         pOwner = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_DEATHBRINGER_SAURFANG));
+         pOwner = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_DEATHBRINGER_SAURFANG));
          resetTimers();
          doCast(SPELL_BLOOD_LINK_BEAST);
          scentcasted = false;

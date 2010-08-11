@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
     if(!pInstance) return;
 
     if (!pet) {
-              if (Creature* pGuard = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_PRECIOUS)))
+              if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_PRECIOUS)))
                                 if (!pGuard->isAlive())  {
                                                          pet = true;
                                                          DoScriptText(-1631228,m_creature);

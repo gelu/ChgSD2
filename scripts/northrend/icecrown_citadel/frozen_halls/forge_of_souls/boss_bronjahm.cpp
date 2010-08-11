@@ -193,7 +193,7 @@ struct MANGOS_DLL_DECL mob_soul_fragmentAI : public ScriptedAI
     {
         m_uiRangeCheck_Timer = 1000;
         if (!m_pInstance) return;
-        pBoss = (Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_BRONJAHM));
+        pBoss = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_BRONJAHM));
         m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
         m_creature->GetMotionMaster()->MoveChase(pBoss);
         m_creature->SetRespawnDelay(DAY);

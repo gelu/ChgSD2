@@ -104,7 +104,7 @@ struct MANGOS_DLL_DECL boss_fjolaAI : public BSWScriptedAI
     {
         if (!m_pInstance) return;
             DoScriptText(-1713547,m_creature);
-            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DARKBANE)))
+            if (Creature* pSister = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_DARKBANE)))
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_VALKIRIES, DONE);
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
@@ -263,7 +263,7 @@ struct MANGOS_DLL_DECL boss_eydisAI : public BSWScriptedAI
     {
         if (!m_pInstance) return;
             DoScriptText(-1713547,m_creature);
-            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_LIGHTBANE)))
+            if (Creature* pSister = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_LIGHTBANE)))
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_VALKIRIES, DONE);
                 else m_pInstance->SetData(TYPE_VALKIRIES, SPECIAL);
@@ -512,8 +512,8 @@ struct MANGOS_DLL_DECL mob_unleashed_darkAI : public ScriptedAI
         SetCombatMovement(false); 
         m_creature->GetMotionMaster()->MoveRandom();
         m_uiRangeCheck_Timer = 1000;
-        pboss1 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DARKBANE));
-        pboss2 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_LIGHTBANE));
+        pboss1 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_DARKBANE));
+        pboss2 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_LIGHTBANE));
     }
 
     void AttackStart(Unit *pWho)
@@ -582,8 +582,8 @@ struct MANGOS_DLL_DECL mob_unleashed_lightAI : public ScriptedAI
         SetCombatMovement(false); 
         m_creature->GetMotionMaster()->MoveRandom();
         m_uiRangeCheck_Timer = 1000;
-        pboss1 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DARKBANE));
-        pboss2 = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_LIGHTBANE));
+        pboss1 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_DARKBANE));
+        pboss2 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_LIGHTBANE));
     }
 
     void AttackStart(Unit *pWho)

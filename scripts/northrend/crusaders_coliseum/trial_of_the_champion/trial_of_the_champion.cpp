@@ -189,15 +189,15 @@ switch(uiAction) {
     if (m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == NOT_STARTED || m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == IN_PROGRESS)
                 {
                 m_pInstance->SetData(DATA_CHAMPIONS_COUNT, 3);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(DATA_CHAMPION_1)))
+                if (Creature* pTemp = pCreature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_CHAMPION_1)))
                         pTemp->Respawn();
                     else
                         pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_1), 738.665771, 661.031433, 412.394623, 4.698702, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(DATA_CHAMPION_2)))
+                if (Creature* pTemp = pCreature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_CHAMPION_2)))
                         pTemp->Respawn();
                     else
                         pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_2), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(DATA_CHAMPION_3)))
+                if (Creature* pTemp = pCreature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_CHAMPION_3)))
                         pTemp->Respawn();
                     else
                         pCreature->SummonCreature(m_pInstance->GetData(DATA_CHAMPIONID_3), 754.360779, 660.816162, 412.395996, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);
@@ -208,7 +208,7 @@ switch(uiAction) {
     case GOSSIP_ACTION_INFO_DEF+2: {
     if ((m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == NOT_STARTED || m_pInstance->GetData(TYPE_ARGENT_CHALLENGE) == IN_PROGRESS) && m_pInstance->GetData(TYPE_GRAND_CHAMPIONS) == DONE)
                 {
-                if (Creature* pTemp = (Creature*)Unit::GetUnit((*pCreature),m_pInstance->GetData64(DATA_ARGENT_CHALLENGER)))
+                if (Creature* pTemp = pCreature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ARGENT_CHALLENGER)))
                         pTemp->Respawn();
                     else
                         pCreature->SummonCreature(m_pInstance->GetData(DATA_ARGENT_CHALLENGER), 746.864441, 660.918762, 411.695465, 4.698700, TEMPSUMMON_CORPSE_TIMED_DESPAWN, DESPAWN_TIME);

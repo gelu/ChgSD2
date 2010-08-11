@@ -131,7 +131,7 @@ struct MANGOS_DLL_DECL boss_eadricAI : public ScriptedAI
 
 		if (Hammer_Dmg_Timer < diff)
 		{
-			if (Unit* pHammerTarget = Unit::GetUnit(*m_creature, HammerTarget))
+			if (Unit* pHammerTarget = m_creature->GetMap()->GetUnit(HammerTarget))
 				DoCast(pHammerTarget, SPELL_HAMMER);
 			Hammer_Dmg_Timer = m_bIsRegularMode ? 50000 : 15000;
 		}
@@ -240,7 +240,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 			switch(urand(0, 1))
                 {
                 case 0:
-					if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MEMORY))))
+					if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_MEMORY))))
 						if (pTemp->isAlive())
 							DoCast(pTemp, m_bIsRegularMode ? SPELL_RENEW : SPELL_RENEW_H);
 						else
@@ -325,7 +325,7 @@ struct MANGOS_DLL_DECL boss_paletressAI : public ScriptedAI
 
 		if (Shield_Check < diff && shielded)
         {
-		if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MEMORY))))
+		if (Creature* pTemp = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_MEMORY))))
 				if (!pTemp->isAlive())
 				{
 					m_creature->RemoveAurasDueToSpell(SPELL_SHIELD);

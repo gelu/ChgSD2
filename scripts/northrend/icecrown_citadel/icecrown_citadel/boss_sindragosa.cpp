@@ -126,9 +126,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
     {
         if (!pInstance) return;
         pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
-        if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_RIMEFANG)))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
             pTemp->Respawn();
-        if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_SPINESTALKER)))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))
             pTemp->Respawn();
         DoScriptText(-1631422,m_creature);
         m_creature->ForcedDespawn();
@@ -485,7 +485,7 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
     {
         if(!pInstance) return;
         if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
-        pBrother = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_SPINESTALKER));
+        pBrother = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER));
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
         if (pBrother) pBrother->SetInCombatWithZone();
         doCast(SPELL_FROST_AURA);
@@ -556,7 +556,7 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
     {
         if(!pInstance) return;
         if (pInstance->GetData(TYPE_SINDRAGOSA) != DONE) pInstance->SetData(TYPE_SINDRAGOSA, IN_PROGRESS);
-        pBrother = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_RIMEFANG));
+        pBrother = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG));
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
         if (pBrother) pBrother->SetInCombatWithZone();
     }

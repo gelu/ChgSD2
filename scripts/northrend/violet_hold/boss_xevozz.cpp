@@ -248,7 +248,7 @@ struct MANGOS_DLL_DECL mob_ethereal_sphereAI : public ScriptedAI
         {
             if (m_pInstance)
             {
-                if (Creature* pXevozz = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_XEVOZZ))))
+                if (Creature* pXevozz = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_XEVOZZ))))
                 {
                     float fDistance = m_creature->GetDistance2d(pXevozz);
                     if (fDistance <= 3)

@@ -507,13 +507,13 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
             case 33:
                 m_uiFalricGUID = m_pInstance->GetData64(NPC_FALRIC);
                 m_uiMarwynGUID = m_pInstance->GetData64(NPC_MARWYN);
-                if(Creature* Falric = ((Creature*)Unit::GetUnit((*m_creature), m_uiFalricGUID)))
+                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
                 { 
                    Falric->SetVisibility(VISIBILITY_ON);
                    Falric->CastSpell(Falric, SPELL_BOSS_SPAWN_AURA, false);
                    Falric->GetMotionMaster()->MovePoint(0, 5283.309f, 2031.173f, 709.319f);
                 }
-                if(Creature* Marwyn = ((Creature*)Unit::GetUnit((*m_creature), m_uiMarwynGUID)))
+                if(Creature* Marwyn = (m_creature->GetMap()->GetCreature( m_uiMarwynGUID)))
                 {
                    Marwyn->SetVisibility(VISIBILITY_ON);
                    Marwyn->CastSpell(Marwyn, SPELL_BOSS_SPAWN_AURA, false);
@@ -524,16 +524,16 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 JumpNextStep(600);
                 break;
             case 34:
-                if(Creature* Falric = ((Creature*)Unit::GetUnit((*m_creature), m_uiFalricGUID)))
+                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
                    DoScriptText(SAY_FALRIC_INTRO, Falric);
-                if(Creature* Marwyn = ((Creature*)Unit::GetUnit((*m_creature), m_uiMarwynGUID)))
+                if(Creature* Marwyn = (m_creature->GetMap()->GetCreature( m_uiMarwynGUID)))
                    DoScriptText(SAY_MARWYN_INTRO, Marwyn);
                 JumpNextStep(3000);
                 break;
             case 35:
                 if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
                    pGate->SetGoState(GO_STATE_ACTIVE);
-                if(Creature* Falric = ((Creature*)Unit::GetUnit((*m_creature), m_uiFalricGUID)))
+                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
                    DoScriptText(SAY_FALRIC_INTRO2, Falric);
                 m_pInstance->SetData(TYPE_FALRIC, SPECIAL);
                 JumpNextStep(4000);
@@ -906,7 +906,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
            case 0:
               m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
               m_uiLichKingGUID = m_pInstance->GetData64(BOSS_LICH_KING);
-              pLichKing = ((Creature*)Unit::GetUnit((*m_creature), m_uiLichKingGUID));
+              pLichKing = m_creature->GetMap()->GetCreature( m_uiLichKingGUID);
               JumpNextStep(100);
               break;
            case 1:

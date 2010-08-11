@@ -96,7 +96,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
         currentDoor = 0;
         currentDoor2 = 0;
         mobsGUIDList.clear();
-        if (Unit* pTemp = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_VALITHRIA_QUEST)))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_VALITHRIA_QUEST)))
                 if (pTemp->GetVisibility() == VISIBILITY_ON)
                             pTemp->SetVisibility(VISIBILITY_OFF);
     }
@@ -205,7 +205,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                battlestarted = true;
                pInstance->SetData(TYPE_VALITHRIA, IN_PROGRESS);
                m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
-               if (dummyTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_TARGET_DUMMY))))
+               if (dummyTarget = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_TARGET_DUMMY)))
                      {
                          dummyTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                          dummyTarget->GetMotionMaster()->MoveIdle();
@@ -255,7 +255,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
 
         for(std::list<uint64>::iterator itr = mobsGUIDList.begin(); itr != mobsGUIDList.end(); ++itr)
         {
-            if (Unit* pTemp = Unit::GetUnit(*m_creature, *itr))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                 if (pTemp->isAlive()) {
                     pTemp->DeleteThreatList();
                     pTemp->CombatStop(true);
@@ -340,7 +340,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                     return;
                     break;
             case 9: 
-                    if (Unit* pTemp = Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_VALITHRIA_QUEST)))
+                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_VALITHRIA_QUEST)))
                     {
                         if (pTemp->HasAura(SPELL_CORRUPTION))
                              pTemp->RemoveAurasDueToSpell(SPELL_CORRUPTION);

@@ -331,7 +331,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                           finalphase = true;
                           doCast(SPELL_FURY_OF_FROSTMOURNE);
                           pInstance->SetData(TYPE_EVENT,13020);
-                          if (pTirion = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_TIRION))) {
+                          if (pTirion = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_TIRION))) {
                                 m_creature->SetInCombatWith(pTirion);
                                 pTirion->AddThreat(m_creature, 1000.0f);
                                 }
@@ -393,9 +393,9 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                           pInstance->SetData(TYPE_EVENT,13290);
                           stage = 13;
                           if (pFrostmourne) pFrostmourne->ForcedDespawn();
-                          if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_FROSTMOURNE_TRIGGER)))
+                          if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_FROSTMOURNE_TRIGGER)))
                              pTemp->ForcedDespawn();
-                          if (Creature* pTemp = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_FROSTMOURNE_HOLDER)))
+                          if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_FROSTMOURNE_HOLDER)))
                              pTemp->ForcedDespawn();
                           SetCombatMovement(true);
                           battlestarted = true;
@@ -799,7 +799,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                 case 13270:
                           UpdateTimer = 6000;
                           pInstance->SetData(TYPE_EVENT,13280);
-                          if (Creature* pLichKing = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LICH_KING)))
+                          if (Creature* pLichKing = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_LICH_KING)))
                           {
                               m_creature->SetInCombatWith(pLichKing);
                               pLichKing->SetInCombatWith(m_creature);
@@ -836,7 +836,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           UpdateTimer =90000;
                           pInstance->SetData(TYPE_EVENT,14030);
                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_ONESHOT_NONE);
-                          if (Creature* pLichKing = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LICH_KING)))
+                          if (Creature* pLichKing = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_LICH_KING)))
                               pLichKing->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
                           doSendCinematic();
                           break;
@@ -846,7 +846,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           DoScriptText(-1631594, m_creature);
 //                          if (pMenethil && pMenethil->isAlive()) pMenethil->ForcedDespawn();
                           if (pMenethil && pMenethil->isAlive()) pMenethil->SetVisibility(VISIBILITY_OFF);
-                          if (Creature* pLichKing = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_LICH_KING)))
+                          if (Creature* pLichKing = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_LICH_KING)))
                               pLichKing->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
                           pInstance->SetData(TYPE_EVENT,0);
                           EnterEvadeMode();

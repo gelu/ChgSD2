@@ -77,7 +77,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public BSWScriptedAI
         bool empty = true;
         for(itr = tList.begin(); itr!=tList.end(); ++itr)
         {
-            Unit* pUnit = Unit::GetUnit((*m_creature), (*itr)->getUnitGuid());
+            Unit* pUnit = m_creature->GetMap()->GetUnit((*itr)->getUnitGuid());
             if (pUnit && m_creature->getThreatManager().getThreat(pUnit))
             {
                 if(pUnit->GetTypeId()==TYPEID_PLAYER)
@@ -146,7 +146,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public BSWScriptedAI
         for(iter = tList.begin(); iter!=tList.end(); ++iter)
         {
             Unit *target;
-            if(target = Unit::GetUnit((*m_creature),(*iter)->getUnitGuid()))
+            if(target = m_creature->GetMap()->GetUnit((*iter)->getUnitGuid()))
                 if(target->getPowerType() == POWER_MANA)
                     return target;
         }
@@ -161,7 +161,7 @@ struct MANGOS_DLL_DECL boss_faction_championsAI : public BSWScriptedAI
         for(iter = tList.begin(); iter!=tList.end(); ++iter)
         {
             Unit *target;
-            if(target = Unit::GetUnit((*m_creature),(*iter)->getUnitGuid()))
+            if(target = m_creature->GetMap()->GetUnit((*iter)->getUnitGuid()))
                 if(m_creature->GetDistance2d(target) < distance)
                     ++count;
         }

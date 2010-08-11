@@ -166,7 +166,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         if(!pInstance) return;
 
         if (!pet) {
-                  if (Creature* pGuard = (Creature*)Unit::GetUnit((*m_creature),pInstance->GetData64(NPC_STINKY)))
+                  if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_STINKY)))
                                 if (!pGuard->isAlive())  {
                                                          pet = true;
                                                          DoScriptText(-1631209,m_creature);

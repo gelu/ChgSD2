@@ -164,7 +164,7 @@ struct MANGOS_DLL_DECL mob_snobold_vassalAI : public BSWScriptedAI
         defaultTarget = NULL;
         m_creature->SetInCombatWithZone();
         m_creature->SetRespawnDelay(DAY);
-        pBoss = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_GORMOK));
+        pBoss = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_GORMOK));
         if (pBoss) doCast(SPELL_RISING_ANGER,pBoss);
     }
 
@@ -236,7 +236,7 @@ struct MANGOS_DLL_DECL boss_acidmawAI : public BSWScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_DREADSCALE)))
+            if (Creature* pSister = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_DREADSCALE)))
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
                 else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);
@@ -347,7 +347,7 @@ struct MANGOS_DLL_DECL boss_dreadscaleAI : public BSWScriptedAI
     void JustDied(Unit* pKiller)
     {
         if (!m_pInstance) return;
-            if (Creature* pSister = (Creature*)Unit::GetUnit((*m_creature),m_pInstance->GetData64(NPC_ACIDMAW)))
+            if (Creature* pSister = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_ACIDMAW)))
                if (!pSister->isAlive())
                          m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_DONE);
                 else m_pInstance->SetData(TYPE_NORTHREND_BEASTS, SNAKES_SPECIAL);

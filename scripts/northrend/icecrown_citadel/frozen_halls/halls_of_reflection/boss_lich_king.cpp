@@ -94,7 +94,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                 DoCast(m_creature, SPELL_LICH_KING_CAST);
                 m_pInstance->SetData(TYPE_LICH_KING, SPECIAL);
                 DoScriptText(SAY_LICH_KING_END_DUN, m_creature);
-                if(Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
+                if(Creature* pLider = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
                 {
                   pLider->CastSpell(pLider, SPELL_SILENCE, false);
                   pLider->AddSplineFlag(SPLINEFLAG_FLYING);
@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
          m_pInstance->SetData(DATA_SUMMONS, 1);
 
-         if (Unit* pLider = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+         if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
          {
                summoned->GetMotionMaster()->MoveChase(pLider);
                summoned->AddThreat(pLider, 100.0f);
@@ -307,7 +307,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          StepTimer = 100;
       }
 
-      if (Creature* pLider = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
+      if (Creature* pLider = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
          if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
          {
             m_creature->SetActiveObjectState(false);

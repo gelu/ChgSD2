@@ -397,7 +397,7 @@ struct MANGOS_DLL_DECL npc_unleashed_soulAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            if (Creature* pDevourer = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_DEVOURER))))
+            if (Creature* pDevourer = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_DEVOURER)))
                 if (pDevourer && pDevourer->isAlive())
                     AttackStart(pDevourer->getVictim());
         }

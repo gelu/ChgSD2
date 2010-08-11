@@ -176,15 +176,15 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                     case 200:
                           m_creature->SetActiveObjectState(true);
                     {
-                          Unit* Halion = Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_HALION_REAL));
+                          Creature* pHalion = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_HALION_REAL));
                           if (pInstance->GetData(TYPE_BALTHARUS) == DONE &&
                               pInstance->GetData(TYPE_RAGEFIRE) == DONE &&
                               pInstance->GetData(TYPE_XERESTRASZA) == DONE &&
                               pInstance->GetData(TYPE_ZARITHIAN) == DONE &&
                               pInstance->GetData(TYPE_HALION) != DONE
-                              && !Halion)
-                              Halion = m_creature->SummonCreature(NPC_HALION_REAL, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 6.23f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
-                              Halion->SetCreatorGUID(0);
+                              && !pHalion)
+                              pHalion = m_creature->SummonCreature(NPC_HALION_REAL, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 6.23f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*2*IN_MILLISECONDS);
+                              pHalion->SetCreatorGUID(0);
                     }
                           UpdateTimer = 4000;
                           pInstance->SetData(TYPE_EVENT,210);

@@ -80,7 +80,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
         pClone = NULL;
         inCombat = false;
         intro = false;
-        if (pDummyTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_BALTHARUS_TARGET))))
+        if (pDummyTarget = m_creature->GetMap()->GetCreature( pInstance->GetData64(NPC_BALTHARUS_TARGET)))
         {
             if (!pDummyTarget->isAlive()) pDummyTarget->Respawn();
 
@@ -93,7 +93,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
             pDummyTarget->GetMotionMaster()->MoveIdle();
         }
 
-        if(Creature* pTarget = ((Creature*)Unit::GetUnit((*m_creature), pInstance->GetData64(NPC_XERESTRASZA))))
+        if(Creature* pTarget = m_creature->GetMap()->GetCreature( pInstance->GetData64(NPC_XERESTRASZA)))
             m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
     }
 
