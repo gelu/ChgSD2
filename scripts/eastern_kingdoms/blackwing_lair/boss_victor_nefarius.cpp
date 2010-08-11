@@ -324,7 +324,7 @@ struct MANGOS_DLL_DECL boss_victor_nefariusAI : public ScriptedAI
         {
             if (NefCheckTime < diff)
             {
-                Creature* pNefarian = (Creature*)Unit::GetUnit((*m_creature),NefarianGUID);
+                Creature* pNefarian = m_creature->GetMap()->GetCreature(NefarianGUID);
 
                 //If nef is dead then we die to so the players get out of combat
                 //and cannot repeat the event
@@ -367,7 +367,8 @@ bool GossipSelect_boss_victor_nefarius(Player* pPlayer, Creature* pCreature, uin
         case GOSSIP_ACTION_INFO_DEF+3:
             pPlayer->CLOSE_GOSSIP_MENU();
             DoScriptText(SAY_GAMESBEGIN_1, pCreature);
-            ((boss_victor_nefariusAI*)pCreature->AI())->BeginEvent(pPlayer);
+            if (boss_victor_nefariusAI* pNefAI = dynamic_cast<boss_victor_nefariusAI*>(pCreature->AI()))
+                pNefAI->BeginEvent(pPlayer);
             break;
     }
     return true;

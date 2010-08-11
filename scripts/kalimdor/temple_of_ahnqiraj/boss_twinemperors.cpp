@@ -96,17 +96,17 @@ struct MANGOS_DLL_DECL boss_twinemperorsAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            return (Creature *)Unit::GetUnit((*m_creature), m_pInstance->GetData64(IAmVeklor() ? DATA_VEKNILASH : DATA_VEKLOR));
+            return m_creature->GetMap()->GetCreature(m_pInstance->GetData64(IAmVeklor() ? DATA_VEKNILASH : DATA_VEKLOR));
         }
         else
         {
-            return (Creature *)0;
+            return NULL;
         }
     }
 
     void DamageTaken(Unit *done_by, uint32 &damage)
     {
-        Unit *pOtherBoss = GetOtherBoss();
+        Creature *pOtherBoss = GetOtherBoss();
         if (pOtherBoss)
         {
             float dPercent = ((float)damage) / ((float)m_creature->GetMaxHealth());
@@ -123,14 +123,16 @@ struct MANGOS_DLL_DECL boss_twinemperorsAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        Creature *pOtherBoss = GetOtherBoss();
-        if (pOtherBoss)
+        if (Creature* pOtherBoss = GetOtherBoss())
         {
             pOtherBoss->SetHealth(0);
             pOtherBoss->setDeathState(JUST_DIED);
             pOtherBoss->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            ((boss_twinemperorsAI *)pOtherBoss->AI())->DontYellWhenDead = true;
+
+            if (boss_twinemperorsAI* pOtherAI = dynamic_cast<boss_twinemperorsAI*>(pOtherBoss->AI()))
+                pOtherAI->DontYellWhenDead = true;
         }
+
         if (!DontYellWhenDead)                              // I hope AI is not threaded
             DoPlaySoundToSet(m_creature, IAmVeklor() ? SOUND_VL_DEATH : SOUND_VN_DEATH);
     }
@@ -277,7 +279,9 @@ struct MANGOS_DLL_DECL boss_twinemperorsAI : public ScriptedAI
             thismap->CreatureRelocation(m_creature, other_x, other_y, other_z, other_o);
 
             SetAfterTeleport();
-            ((boss_twinemperorsAI*) pOtherBoss->AI())->SetAfterTeleport();
+
+            if (boss_twinemperorsAI* pOtherAI = dynamic_cast<boss_twinemperorsAI*>(pOtherBoss->AI()))
+                pOtherAI->SetAfterTeleport();
         }
     }
 

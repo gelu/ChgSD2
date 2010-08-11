@@ -767,7 +767,7 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
                         break;
                     case 4:
                     {
-                        Unit* pTemp = Unit::GetUnit(*m_creature, m_uiValrothGUID);
+                        Creature* pTemp = m_creature->GetMap()->GetCreature(m_uiValrothGUID);
 
                         if (!pTemp || !pTemp->isAlive())
                         {
@@ -898,7 +898,7 @@ struct MANGOS_DLL_DECL npc_unworthy_initiate_anchorAI : public ScriptedAI
 
     void NotifyMe(Unit* pSource)
     {
-        Creature* pInitiate = (Creature*)Unit::GetUnit(*m_creature, m_uiMyInitiate);
+        Creature* pInitiate = m_creature->GetMap()->GetCreature(m_uiMyInitiate);
 
         if (pInitiate && pSource)
         {
@@ -983,7 +983,8 @@ struct MANGOS_DLL_DECL npc_unworthy_initiateAI : public ScriptedAI
     {
         if (Creature* pAnchor = GetClosestCreatureWithEntry(m_creature, NPC_ANCHOR, INTERACTION_DISTANCE*2))
         {
-            ((npc_unworthy_initiate_anchorAI*)pAnchor->AI())->RegisterCloseInitiate(m_creature->GetGUID());
+            if (npc_unworthy_initiate_anchorAI* pAnchorAI = dynamic_cast<npc_unworthy_initiate_anchorAI*>(pAnchor->AI()))
+                pAnchorAI->RegisterCloseInitiate(m_creature->GetGUID());
 
             pAnchor->CastSpell(m_creature, SPELL_CHAINED_PESANT_CHEST, false);
 
@@ -1095,7 +1096,10 @@ CreatureAI* GetAI_npc_unworthy_initiate(Creature* pCreature)
 bool GOHello_go_acherus_soul_prison(Player* pPlayer, GameObject* pGo)
 {
     if (Creature* pAnchor = GetClosestCreatureWithEntry(pGo, NPC_ANCHOR, INTERACTION_DISTANCE))
-        ((npc_unworthy_initiate_anchorAI*)pAnchor->AI())->NotifyMe(pPlayer);
+    {
+        if (npc_unworthy_initiate_anchorAI* pAnchorAI = dynamic_cast<npc_unworthy_initiate_anchorAI*>(pAnchor->AI()))
+            pAnchorAI->NotifyMe(pPlayer);
+    }
 
     return false;
 }

@@ -129,9 +129,8 @@ struct MANGOS_DLL_DECL netherspite_infernalAI : public ScriptedAI
 
     void KilledUnit(Unit *who)
     {
-        Unit *pMalchezaar = Unit::GetUnit(*m_creature, malchezaar);
-        if (pMalchezaar)
-            ((Creature*)pMalchezaar)->AI()->KilledUnit(who);
+        if (Creature *pMalchezaar = m_creature->GetMap()->GetCreature(malchezaar))
+            pMalchezaar->AI()->KilledUnit(who);
     }
 
     void SpellHit(Unit *who, const SpellEntry *spell)
@@ -246,7 +245,7 @@ struct MANGOS_DLL_DECL boss_malchezaarAI : public ScriptedAI
         //Infernal Cleanup
         for(std::vector<uint64>::iterator itr = infernals.begin(); itr!= infernals.end(); ++itr)
         {
-            Unit *pInfernal = Unit::GetUnit(*m_creature, *itr);
+            Creature *pInfernal = m_creature->GetMap()->GetCreature(*itr);
             if (pInfernal && pInfernal->isAlive())
             {
                 pInfernal->SetVisibility(VISIBILITY_OFF);
@@ -260,7 +259,7 @@ struct MANGOS_DLL_DECL boss_malchezaarAI : public ScriptedAI
     {
         for(int i=0; i<2;++i)
         {
-            Unit *axe = Unit::GetUnit(*m_creature, axes[i]);
+            Creature *axe = m_creature->GetMap()->GetCreature(axes[i]);
             if (axe && axe->isAlive())
                 axe->DealDamage(axe, axe->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             axes[i] = 0;
@@ -358,9 +357,16 @@ struct MANGOS_DLL_DECL boss_malchezaarAI : public ScriptedAI
         {
             Infernal->SetDisplayId(INFERNAL_MODEL_INVISIBLE);
             Infernal->setFaction(m_creature->getFaction());
-            if (point)
-                ((netherspite_infernalAI*)Infernal->AI())->point=point;
-            ((netherspite_infernalAI*)Infernal->AI())->malchezaar=m_creature->GetGUID();
+
+            netherspite_infernalAI* pInfernalAI = dynamic_cast<netherspite_infernalAI*>(Infernal->AI());
+
+            if (pInfernalAI)
+            {
+                if (point)
+                    pInfernalAI->point = point;
+
+                pInfernalAI->malchezaar = m_creature->GetGUID();
+            }
 
             infernals.push_back(Infernal->GetGUID());
             DoCastSpellIfCan(Infernal, SPELL_INFERNAL_RELAY);
@@ -490,7 +496,7 @@ struct MANGOS_DLL_DECL boss_malchezaarAI : public ScriptedAI
                 {
                     for(int i = 0; i < 2; ++i)
                     {
-                        Unit *axe = Unit::GetUnit(*m_creature, axes[i]);
+                        Creature *axe = m_creature->GetMap()->GetCreature(axes[i]);
                         if (axe)
                         {
                             float threat = 1000000.0f;
@@ -598,10 +604,13 @@ struct MANGOS_DLL_DECL boss_malchezaarAI : public ScriptedAI
 
 void netherspite_infernalAI::Cleanup()
 {
-    Unit *pMalchezaar = Unit::GetUnit(*m_creature, malchezaar);
+    Creature* pMalchezaar = m_creature->GetMap()->GetCreature(malchezaar);
 
     if (pMalchezaar && pMalchezaar->isAlive())
-        ((boss_malchezaarAI*)((Creature*)pMalchezaar)->AI())->Cleanup(m_creature, point);
+    {
+        if (boss_malchezaarAI* pMalAI = dynamic_cast<boss_malchezaarAI*>(pMalchezaar->AI()))
+            pMalAI->Cleanup(m_creature, point);
+    }
 }
 
 CreatureAI* GetAI_netherspite_infernal(Creature* pCreature)
