@@ -177,7 +177,7 @@ struct MANGOS_DLL_DECL boss_lady_vashjAI : public ScriptedAI
     {
         for(uint8 i = 0; i < MAX_SHIELD_GEN; ++i)
         {
-            if (Unit* pTemp = Unit::GetUnit(*m_creature,m_auiShieldGeneratorChannel[i]))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature(m_auiShieldGeneratorChannel[i]))
             {
                 if (pTemp->isAlive())
                     pTemp->setDeathState(JUST_DIED);
@@ -376,7 +376,7 @@ struct MANGOS_DLL_DECL boss_lady_vashjAI : public ScriptedAI
                 ThreatList const& tList = m_creature->getThreatManager().getThreatList();
                 for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
                 {
-                    Unit* pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+                    Unit* pTarget = m_creature->GetMap()->GetUnit((*itr)->getUnitGuid());
 
                     //if in melee range
                     if (pTarget && pTarget->IsWithinDistInMap(m_creature, ATTACK_DISTANCE))
@@ -508,7 +508,7 @@ struct MANGOS_DLL_DECL mob_enchanted_elementalAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            if (Unit* pVashj = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LADYVASHJ)))
+            if (Creature* pVashj = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_LADYVASHJ)))
             {
                 if (pVashj->IsWithinDistInMap(m_creature, ATTACK_DISTANCE))
                 {
@@ -608,7 +608,7 @@ struct MANGOS_DLL_DECL mob_toxic_sporebatAI : public ScriptedAI
             if (m_pInstance)
             {
                 //check if vashj is death
-                Unit* pVashj = Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_LADYVASHJ));
+                Creature* pVashj = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_LADYVASHJ));
                 if (!pVashj || !pVashj->isAlive())
                 {
                     //remove
@@ -682,7 +682,7 @@ struct MANGOS_DLL_DECL mob_shield_generator_channelAI : public ScriptedAI
 //this is wrong, alternative script needed
 bool ItemUse_item_tainted_core(Player* pPlayer, Item* pItem, SpellCastTargets const& sctTargets)
 {
-    ScriptedInstance* pInstance = ((ScriptedInstance*)pPlayer->GetInstanceData());
+    ScriptedInstance* pInstance = (ScriptedInstance*)pPlayer->GetInstanceData();
 
     if (!pInstance)
     {
@@ -690,8 +690,14 @@ bool ItemUse_item_tainted_core(Player* pPlayer, Item* pItem, SpellCastTargets co
         return true;
     }
 
-    Creature* pVashj = (Creature*)(Unit::GetUnit((*pPlayer), pInstance->GetData64(DATA_LADYVASHJ)));
-    if (pVashj && ((boss_lady_vashjAI*)pVashj->AI())->m_uiPhase == 2)
+    Creature* pVashj = pPlayer->GetMap()->GetCreature(pInstance->GetData64(DATA_LADYVASHJ));
+
+    if (!pVashj)
+        return true;
+
+    boss_lady_vashjAI* pVashjAI = dynamic_cast<boss_lady_vashjAI*>(pVashj->AI());
+
+    if (pVashjAI && pVashjAI->m_uiPhase == 2)
     {
         if (sctTargets.getGOTarget() && sctTargets.getGOTarget()->GetTypeId()==TYPEID_GAMEOBJECT)
         {
@@ -724,7 +730,7 @@ bool ItemUse_item_tainted_core(Player* pPlayer, Item* pItem, SpellCastTargets co
                 return true;
 
             //get and remove channel
-            if (Unit* pChannel = Unit::GetUnit((*pVashj), ((boss_lady_vashjAI*)pVashj->AI())->m_auiShieldGeneratorChannel[uiChannelIdentifier]))
+            if (Creature* pChannel = pVashj->GetMap()->GetCreature(pVashjAI->m_auiShieldGeneratorChannel[uiChannelIdentifier]))
                 pChannel->setDeathState(JUST_DIED);         //calls Unsummon()
 
             pInstance->SetData(uiIdentifier, DONE);

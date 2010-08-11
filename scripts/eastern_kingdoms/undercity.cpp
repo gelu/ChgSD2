@@ -81,7 +81,7 @@ struct MANGOS_DLL_DECL npc_lady_sylvanas_windrunnerAI : public ScriptedAI
     {
         if (summoned->GetEntry() == ENTRY_HIGHBORNE_BUNNY)
         {
-            if (Creature* pBunny = (Creature*)Unit::GetUnit(*summoned,targetGUID))
+            if (Creature* pBunny = m_creature->GetMap()->GetCreature(targetGUID))
             {
                 pBunny->NearTeleportTo(pBunny->GetPositionX(), pBunny->GetPositionY(), myZ+15.0f, 0.0f);
                 summoned->CastSpell(pBunny,SPELL_RIBBON_OF_SOULS,false);
@@ -129,8 +129,12 @@ bool ChooseReward_npc_lady_sylvanas_windrunner(Player* pPlayer, Creature* pCreat
 {
     if (pQuest->GetQuestId() == 9180)
     {
-        ((npc_lady_sylvanas_windrunnerAI*)pCreature->AI())->LamentEvent = true;
-        ((npc_lady_sylvanas_windrunnerAI*)pCreature->AI())->DoPlaySoundToSet(pCreature,SOUND_CREDIT);
+        if (npc_lady_sylvanas_windrunnerAI* pSylvanAI = dynamic_cast<npc_lady_sylvanas_windrunnerAI*>(pCreature->AI()))
+        {
+            pSylvanAI->LamentEvent = true;
+            pSylvanAI->DoPlaySoundToSet(pCreature, SOUND_CREDIT);
+        }
+
         pCreature->CastSpell(pCreature,SPELL_SYLVANAS_CAST,false);
 
         for(uint8 i = 0; i < 4; ++i)

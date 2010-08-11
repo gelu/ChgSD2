@@ -110,7 +110,7 @@ struct MANGOS_DLL_DECL boss_high_king_maulgarAI : public ScriptedAI
     {
         for (uint8 i = 0; i < MAX_COUNCIL; ++i)
         {
-            if (Creature* pCreature = (Creature*)Unit::GetUnit((*m_creature), m_auiCouncil[i]))
+            if (Creature* pCreature = m_creature->GetMap()->GetCreature(m_auiCouncil[i]))
             {
                 if (!pCreature->isAlive())
                     pCreature->Respawn();
@@ -286,7 +286,7 @@ struct MANGOS_DLL_DECL Council_Base_AI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        Creature* pMaulgar = (Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(DATA_MAULGAR));
+        Creature* pMaulgar = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_MAULGAR));
 
         if (pMaulgar->isAlive())
         {
@@ -583,7 +583,8 @@ struct MANGOS_DLL_DECL boss_krosh_firehandAI : public Council_Base_AI
             ThreatList const& tList = m_creature->getThreatManager().getThreatList();
             for (ThreatList::const_iterator i = tList.begin(); i != tList.end(); ++i)
             {
-                Unit* pUnit = Unit::GetUnit((*m_creature), (*i)->getUnitGuid());
+                Unit* pUnit = m_creature->GetMap()->GetUnit((*i)->getUnitGuid());
+
                 if (pUnit && pUnit->IsWithinDistInMap(m_creature, 15.0f))
                 {
                     DoCastSpellIfCan(m_creature, SPELL_BLAST_WAVE, CAST_INTERRUPT_PREVIOUS);

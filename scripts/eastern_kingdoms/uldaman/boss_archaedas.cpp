@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Archaedas
 SD%Complete: 60
-SDComment: 
+SDComment: Need correct way to deal with awaken vault and guardian spells, waiting for additions in mangos for them (target combination 22/7)
 SDCategory: Uldaman
 EndScriptData */
 
@@ -82,11 +82,9 @@ struct MANGOS_DLL_DECL boss_archaedasAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance)
-            return;
-
         // open door to vault (handled by instance script)
-        m_pInstance->SetData(TYPE_ARCHAEDAS, DONE);
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_ARCHAEDAS, DONE);
     }
 
     void JustReachedHome()
@@ -134,8 +132,8 @@ struct MANGOS_DLL_DECL boss_archaedasAI : public ScriptedAI
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                         break;
                     case 2:
-                        if (Unit* pUnit = Unit::GetUnit(*m_creature, m_pInstance->GetData64(DATA_EVENT_STARTER)))
-                            AttackStart(pUnit);
+                        if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_pInstance->GetData64(DATA_EVENT_STARTER)))
+                            AttackStart(pPlayer);
                         else
                             EnterEvadeMode();
                         break;

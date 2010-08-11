@@ -75,8 +75,7 @@ bool GossipSelect_npc_astor_hadren(Player* pPlayer, Creature* pCreature, uint32 
         case GOSSIP_ACTION_INFO_DEF + 2:
             pPlayer->CLOSE_GOSSIP_MENU();
             pCreature->setFaction(21);
-            if (pPlayer)
-                ((npc_astor_hadrenAI*)pCreature->AI())->AttackStart(pPlayer);
+            pCreature->AI()->AttackStart(pPlayer);
             break;
     }
     return true;
@@ -155,7 +154,7 @@ struct MANGOS_DLL_DECL npc_deathstalker_erlandAI : public npc_escortAI
                 pPlayer->GroupEventHappens(QUEST_ERLAND, m_creature);
                 break;
             case 14:
-                if (Unit* pRane = Unit::GetUnit(*m_creature, uiRaneGUID))
+                if (Creature* pRane = m_creature->GetMap()->GetCreature(uiRaneGUID))
                     DoScriptText(SAY_RANE, pRane, m_creature);
                 break;
             case 15:
@@ -168,7 +167,7 @@ struct MANGOS_DLL_DECL npc_deathstalker_erlandAI : public npc_escortAI
                 DoScriptText(SAY_QUINN, m_creature);
                 break;
             case 25:
-                if (Unit* pQuinn = Unit::GetUnit(*m_creature, uiQuinnGUID))
+                if (Creature* pQuinn = m_creature->GetMap()->GetCreature(uiQuinnGUID))
                     DoScriptText(SAY_QUINN_REPLY, pQuinn, m_creature);
                 break;
             case 26:
@@ -294,7 +293,7 @@ struct MANGOS_DLL_DECL npc_deathstalker_faerleiaAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        if (Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID)))
+        if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID))
             pPlayer->SendQuestFailed(QUEST_PYREWOOD_AMBUSH);
 
         FinishEvent();
@@ -323,7 +322,7 @@ struct MANGOS_DLL_DECL npc_deathstalker_faerleiaAI : public ScriptedAI
             {
                 DoScriptText(SAY_COMPLETED, m_creature);
 
-                if (Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID)))
+                if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID))
                     pPlayer->GroupEventHappens(QUEST_PYREWOOD_AMBUSH, m_creature);
 
                 FinishEvent();

@@ -185,7 +185,8 @@ struct MANGOS_DLL_DECL boss_aranAI : public ScriptedAI
         //store the threat list in a different container
         for (ThreatList::const_iterator itr = tList.begin();itr != tList.end(); ++itr)
         {
-            Unit* pTarget = Unit::GetUnit(*m_creature, (*itr)->getUnitGuid());
+            Unit* pTarget = m_creature->GetMap()->GetUnit((*itr)->getUnitGuid());
+
             //only on alive players
             if (pTarget && pTarget->isAlive() && pTarget->GetTypeId() == TYPEID_PLAYER)
                 targets.push_back(pTarget);
@@ -416,10 +417,10 @@ struct MANGOS_DLL_DECL boss_aranAI : public ScriptedAI
 
             for (uint32 i = 0; i < 4; ++i)
             {
-                if (Creature* pUnit = m_creature->SummonCreature(NPC_WATER_ELEMENTAL, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 90000))
+                if (Creature* pElemental = m_creature->SummonCreature(NPC_WATER_ELEMENTAL, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN, 90000))
                 {
-                    pUnit->Attack(m_creature->getVictim(), true);
-                    pUnit->setFaction(m_creature->getFaction());
+                    pElemental->Attack(m_creature->getVictim(), true);
+                    pElemental->setFaction(m_creature->getFaction());
                 }
             }
 
@@ -430,10 +431,10 @@ struct MANGOS_DLL_DECL boss_aranAI : public ScriptedAI
         {
             for (uint32 i = 0; i < 5; ++i)
             {
-                if (Creature* pUnit = m_creature->SummonCreature(NPC_SHADOW_OF_ARAN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
+                if (Creature* pShadow = m_creature->SummonCreature(NPC_SHADOW_OF_ARAN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
                 {
-                    pUnit->Attack(m_creature->getVictim(), true);
-                    pUnit->setFaction(m_creature->getFaction());
+                    pShadow->Attack(m_creature->getVictim(), true);
+                    pShadow->setFaction(m_creature->getFaction());
                 }
             }
 
@@ -459,11 +460,12 @@ struct MANGOS_DLL_DECL boss_aranAI : public ScriptedAI
                     if (!m_uiFlameWreathTarget[i])
                         continue;
 
-                    Unit* pUnit = Unit::GetUnit(*m_creature, m_uiFlameWreathTarget[i]);
-                    if (pUnit && !pUnit->IsWithinDist2d(m_fFWTargPosX[i], m_fFWTargPosY[i], 3.0f))
+                    Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiFlameWreathTarget[i]);
+
+                    if (pPlayer && !pPlayer->IsWithinDist2d(m_fFWTargPosX[i], m_fFWTargPosY[i], 3.0f))
                     {
-                        pUnit->CastSpell(pUnit, SPELL_EXPLOSION, true, 0, 0, m_creature->GetGUID());
-                        pUnit->CastSpell(pUnit, SPELL_KNOCKBACK_500, true);
+                        pPlayer->CastSpell(pPlayer, SPELL_EXPLOSION, true, 0, 0, m_creature->GetGUID());
+                        pPlayer->CastSpell(pPlayer, SPELL_KNOCKBACK_500, true);
                         m_uiFlameWreathTarget[i] = 0;
                     }
                 }

@@ -158,11 +158,11 @@ struct MANGOS_DLL_DECL npc_kelerun_bloodmournAI : public ScriptedAI
 
             if (m_uiCheckAliveStateTimer < uiDiff)
             {
-                if (Unit* pChallenger = Unit::GetUnit(*m_creature, uiChallengerGUID[m_uiChallengerCount]))
+                if (Creature* pChallenger = m_creature->GetMap()->GetCreature(uiChallengerGUID[m_uiChallengerCount]))
                 {
                     if (!pChallenger->isAlive())
                     {
-                        Player* pPlayer = (Player*)Unit::GetUnit(*m_creature, m_uiPlayerGUID);
+                        Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID);
 
                         if (pPlayer && !pPlayer->isAlive())
                         {
@@ -192,11 +192,11 @@ struct MANGOS_DLL_DECL npc_kelerun_bloodmournAI : public ScriptedAI
 
             if (m_uiEngageTimer && m_uiEngageTimer < uiDiff)
             {
-                Unit* pPlayer = Unit::GetUnit(*m_creature, m_uiPlayerGUID);
+                Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID);
 
                 if (pPlayer && pPlayer->isAlive())
                 {
-                    if (Creature* pCreature = (Creature*)Unit::GetUnit(*m_creature, uiChallengerGUID[m_uiChallengerCount]))
+                    if (Creature* pCreature = m_creature->GetMap()->GetCreature(uiChallengerGUID[m_uiChallengerCount]))
                     {
                         DoScriptText(uiSayId[m_uiChallengerCount], m_creature, pPlayer);
                         pCreature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -365,7 +365,8 @@ struct MANGOS_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
 
     void JustDied(Unit* pKiller)
     {
-        Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID));
+        Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID);
+
         if (pPlayer && pPlayer->GetQuestStatus(QUEST_UNEXPECTED_RESULT) == QUEST_STATUS_INCOMPLETE)
             pPlayer->SendQuestFailed(QUEST_UNEXPECTED_RESULT);
     }
@@ -383,7 +384,8 @@ struct MANGOS_DLL_DECL npc_apprentice_mirvedaAI : public ScriptedAI
         if (m_uiMobCount)
             return;
 
-        Player* pPlayer = ((Player*)Unit::GetUnit((*m_creature), m_uiPlayerGUID));
+        Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID);
+
         if (pPlayer && pPlayer->GetQuestStatus(QUEST_UNEXPECTED_RESULT) == QUEST_STATUS_INCOMPLETE)
             pPlayer->GroupEventHappens(QUEST_UNEXPECTED_RESULT, m_creature);
 
