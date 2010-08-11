@@ -134,7 +134,7 @@ enum
     TYPE_EVENT                  = 100,
     TYPE_EVENT_NPC              = 101,
     MAP_NUM                     = 631,
-    TYPE_DIFFICULTY             = 1001,
+    DATA_DIRECTION              = 1001,
     DATA_BLOOD_COUNCIL_HEALTH   = 1002,
     DATA_BLOOD_INVOCATION       = 1003,
     DESPAWN_TIME                = 300000,
@@ -250,6 +250,7 @@ private:
 
     uint32 m_auiEvent;
     uint32 m_auiEventTimer;
+    uint32 m_uiDirection;
 
 
 };

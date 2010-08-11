@@ -103,6 +103,7 @@ static Locations SpawnLoc[]=
         m_auiEvent = 0;
         m_auiEventTimer = 1000;
         m_uiCouncilInvocation = 0;
+        m_uiDirection = 0;
 
         switch (Difficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
@@ -527,6 +528,9 @@ static Locations SpawnLoc[]=
              case DATA_BLOOD_INVOCATION:         m_uiCouncilInvocation = uiData;
                                                  uiData = NOT_STARTED;
                                                  break;
+             case DATA_DIRECTION:                m_uiDirection = uiData;
+                                                 uiData = NOT_STARTED;
+                                                 break;
              case TYPE_EVENT:            m_auiEvent = uiData; uiData = NOT_STARTED; break;
              case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
         }
@@ -551,7 +555,6 @@ static Locations SpawnLoc[]=
     {
         switch(uiType)
         {
-             case TYPE_DIFFICULTY:    return Difficulty;
              case TYPE_TELEPORT:      return m_auiEncounter[0];
              case TYPE_MARROWGAR:     return m_auiEncounter[1];
              case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
@@ -567,6 +570,7 @@ static Locations SpawnLoc[]=
              case TYPE_LICH_KING:     return m_auiEncounter[12];
              case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
              case TYPE_COUNT:         return m_auiEncounter[14];
+             case DATA_DIRECTION:     return m_uiDirection;
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
              case DATA_BLOOD_INVOCATION:         return m_uiCouncilInvocation; 
              case TYPE_EVENT:         return m_auiEvent;
