@@ -82,9 +82,11 @@ UPDATE `creature_template` SET `ScriptName`='boss_festergut', `AIName`=''  WHERE
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201371);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201371);
 UPDATE `creature_template` SET `ScriptName`='mob_vile_gas_stalker', `AIName`=''  WHERE `entry`= 38548;
-DELETE FROM `spell_script_target` WHERE `targetEntry` = 38548;
-INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69248', '1', '38548');
-INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69240', '1', '38548');
+-- original auras from YTDB
+-- INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
+-- (36659, 0, 0, 1, 0, 0, '69126 0 69152 0 69154 0');
+-- DELETE FROM `creature_template_addon` WHERE `entry` = 36659;
+UPDATE `creature_template` SET `faction_A`=35, `faction_H`=35, `AIName`='mob_orange_gas_stalker'  WHERE `entry`= 36659;
 
 -- Professor putricide
 UPDATE `creature_template` SET `ScriptName`='boss_proffesor_putricide', `AIName`='' WHERE `entry`= 36678;
