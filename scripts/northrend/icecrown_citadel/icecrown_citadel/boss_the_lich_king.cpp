@@ -693,10 +693,10 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                if (Player* pPlayer = i->getSource())
                {
                    if (pPlayer && !pPlayer->isAlive() && pPlayer->IsInMap(pMenethil))
-                      {
-                          pMenethil->CastSpell(pPlayer, SPELL_REVALL, true);
-                          pPlayer->ResurrectPlayer(100, false);
-                       }
+                   {
+                       pMenethil->CastSpell(pPlayer, SPELL_REVALL, true);
+                       pPlayer->ResurrectPlayer(100, false);
+                   }
                 }
              };
     }
@@ -873,12 +873,12 @@ bool GossipHello_boss_tirion_icc(Player* pPlayer, Creature* pCreature)
 
     if (pInstance->GetData(TYPE_LICH_KING) != NOT_STARTED &&
         pInstance->GetData(TYPE_LICH_KING) != FAIL )
-        {
-            pPlayer->PlayerTalkClass->SendGossipMenu(721002, pCreature->GetGUID());
-            return true;
-        };
+    {
+        pPlayer->PlayerTalkClass->SendGossipMenu(721002, pCreature->GetGUID());
+        return true;
+    };
 
-    pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, -1631608, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, -3631608, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
     pPlayer->PlayerTalkClass->SendGossipMenu(721001, pCreature->GetGUID());
     return true;
 };
