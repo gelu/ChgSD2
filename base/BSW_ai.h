@@ -181,7 +181,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         Unit* doSummon(uint32 SpellID, float fPosX, float fPosY, float fPosZ, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000)
              {
-                 return queryIndex(_findSpellIDX(SpellID)) ? _doSummonAtPosition(_findSpellIDX(SpellID), type, delay, fPosX, fPosY, fPosZ) : NULL;
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doSummonAtPosition(_findSpellIDX(SpellID)) : _doSummonAtPosition(SpellID, type, delay, fPosX, fPosY, fPosZ);
              };
 
         uint8 bossSpellCount()
@@ -237,7 +237,9 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         Unit*         _doSummon(uint8 m_uiSpellIdx, TempSummonType type = TEMPSUMMON_CORPSE_TIMED_DESPAWN, uint32 delay = 60000);
 
-        Unit*         _doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType type, uint32 delay, float fPosX, float fPosY, float fPosZ);
+        Unit*         _doSummonAtPosition(uint8 m_uiSpellIdx);
+
+        Unit*         _doSummonAtPosition(uint32 guid, TempSummonType type, uint32 delay, float fPosX, float fPosY, float fPosZ);
 
         CanCastResult _BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget);
 

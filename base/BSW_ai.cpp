@@ -501,13 +501,37 @@ Unit* BSWScriptedAI::_doSummon(uint8 m_uiSpellIdx, TempSummonType summontype, ui
     else return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z, 0, summontype, delay);
 };
 
-Unit* BSWScriptedAI::_doSummonAtPosition(uint8 m_uiSpellIdx, TempSummonType summontype, uint32 delay, float fPosX, float fPosY, float fPosZ)
+Unit* BSWScriptedAI::_doSummonAtPosition(uint8 m_uiSpellIdx)
 {
     BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
 
-    debug_log("BSW: Summoning creature number %u type %u despawn delay %u at position %f %f %f",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget, delay, fPosX, fPosY, fPosZ);
+    switch (pSpell->m_CastTarget) 
+    {
+        case SUMMON_NORMAL:
+             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 0, pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             break;
 
-    return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], fPosX, fPosY, fPosZ, 0, summontype, delay);
+        case SUMMON_TEMP:
+             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             break;
+
+        case SUMMON_INSTANT:
+             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_MANUAL_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             break;
+
+        default:
+             break;
+    }
+    error_log("BSW: FAILED creature number %u type %u ",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
+    return NULL;
+};
+
+Unit* BSWScriptedAI::_doSummonAtPosition(uint32 guid, TempSummonType summontype, uint32 delay, float fPosX, float fPosY, float fPosZ)
+{
+
+    debug_log("BSW: Summoning creature number %u  despawn delay %u at position %f %f %f", guid, delay, fPosX, fPosY, fPosZ);
+
+    return m_creature->SummonCreature(guid, fPosX, fPosY, fPosZ, 0, summontype, delay);
 };
 
 bool BSWScriptedAI::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
