@@ -60,6 +60,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         if (!pInstance) return;
         if (m_creature->isAlive()) pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
         resetTimers();
+        m_creature->SetSpeedRate(MOVE_RUN, 1);
+        m_creature->SetSpeedRate(MOVE_WALK, 1);
+//        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -112,7 +115,11 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         float fPosX, fPosY, fPosZ;
         pTarget->GetPosition(fPosX, fPosY, fPosZ);
         if (Unit* pSpike = doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ))
+        {
+            pSpike->SetOwnerGUID(m_creature->GetGUID());
+            pSpike->SetInCombatWith(pTarget);
             pSpike->AddThreat(pTarget, 1000.0f);
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -172,14 +179,20 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                     m_creature->SetSpeedRate(MOVE_WALK, 3);
                     break;
             case 2:
+                    if (!m_creature->IsNonMeleeSpellCasted(false)) setStage(3);
+                    break;
+            case 3:
                     if (isHeroic())
                         if (timedQuery(SPELL_BONE_STRIKE, diff, true))
                             if (Unit* pTarget = doSelectRandomPlayer(SPELL_BONE_STRIKE_IMPALE, false, 60.0f))
                                 doSummonSpike(pTarget);
 
-                    if (timedQuery(SPELL_CALL_COLD_FLAME, diff, true))
+                    if (timedQuery(SPELL_CALL_COLD_FLAME, diff, true)
+                        && m_creature->IsWithinDistInMap(m_creature->getVictim(),2.0f))
                     {
                         pInstance->SetData(DATA_DIRECTION, (uint32)(1000*2.0f*M_PI_F*((float)urand(1,16)/16.0f)));
+//                        if (urand(0,1)) doCast(SPELL_CALL_COLD_FLAME);
+//                            else  doCast(SPELL_CALL_COLD_FLAME_1);
                         float fPosX, fPosY, fPosZ;
                         m_creature->GetPosition(fPosX, fPosY, fPosZ);
                         doSummon(NPC_COLD_FLAME, fPosX, fPosY, fPosZ);
@@ -187,12 +200,13 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
                         if (Unit* pTarget = doSelectRandomPlayerAtRange(60.0f))
                             AttackStart(pTarget);
                     }
-                    if (!hasAura(SPELL_BONE_STORM_STRIKE, m_creature) && !m_creature->IsNonMeleeSpellCasted(false)) setStage(3);
+                    if (!hasAura(SPELL_BONE_STORM_STRIKE, m_creature) && !hasAura(SPELL_BONE_STORM, m_creature)) setStage(4);
                     break;
-            case 3:
+            case 4:
                     pInstance->SetData(DATA_DIRECTION, 0);
                     m_creature->SetSpeedRate(MOVE_RUN, 1);
-                    m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+                    m_creature->SetSpeedRate(MOVE_WALK, 1);
+//                    m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
                     setStage(0);
                     break;
             default:
@@ -228,6 +242,7 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public BSWScriptedAI
     {
         if(!m_pInstance) return;
 //        m_creature->SetDisplayId(10045);
+        m_creature->SetRespawnDelay(7*DAY);
 
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
@@ -279,28 +294,28 @@ struct MANGOS_DLL_DECL mob_coldflameAI : public BSWScriptedAI
             isCreator = true;
         }
 
-        if (timedQuery(SPELL_COLD_FLAME, uiDiff))
+        if (timedQuery(SPELL_COLD_FLAME_0, uiDiff) && !isFirst)
             m_creature->ForcedDespawn();
 
         if (isFirst && timedQuery(SPELL_COLD_FLAME_1, uiDiff, true))
         {
-            if (getStage() < getSpellData(SPELL_COLD_FLAME))
+            if (getStage() < getSpellData(SPELL_COLD_FLAME_0))
             {
                 setStage(getStage()+1);
                 radius = getStage()*5;
                 m_creature->GetNearPoint2D(x, y, radius, m_direction);
-                doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, 30000);
+                doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, getSpellData(SPELL_COLD_FLAME_1));
                 if (isXmode)
                 {
                     m_creature->GetNearPoint2D(x, y, radius, m_direction+M_PI_F/2);
-                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, getSpellData(SPELL_COLD_FLAME_1));
                     m_creature->GetNearPoint2D(x, y, radius, m_direction+M_PI_F);
-                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, getSpellData(SPELL_COLD_FLAME_1));
                     m_creature->GetNearPoint2D(x, y, radius, m_direction+M_PI_F*1.5f);
-                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    doSummon(NPC_COLD_FLAME, x, y, m_creature->GetPositionZ(), TEMPSUMMON_TIMED_DESPAWN, getSpellData(SPELL_COLD_FLAME_1));
                 }
-            }
-        } else timedCast(SPELL_COLD_FLAME_0, uiDiff);
+            } else m_creature->ForcedDespawn();
+        } else timedCast(SPELL_COLD_FLAME, uiDiff);
 
     }
 };
@@ -313,13 +328,14 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
         Reset();
     }
 
-    ScriptedInstance *m_pInstance;
+    ScriptedInstance* m_pInstance;
     Unit* pVictim;
 
     void Reset()
     {
         m_creature->SetRespawnDelay(7*DAY);
         pVictim = NULL;
+        m_creature->SetInCombatWithZone();
     }
 
     void Aggro(Unit* pWho)
@@ -364,10 +380,11 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
             m_creature->ForcedDespawn();
         }
 
-        if(pVictim && pVictim->IsInWorld())
-            if(m_creature->IsWithinDistInMap(pVictim, 1.0f)
-                 && pVictim->isAlive()
-                 && !hasAura(SPELL_BONE_STRIKE_IMPALE,pVictim))
+        if (pVictim 
+            && pVictim->IsInMap(m_creature)
+            && m_creature->IsWithinDistInMap(pVictim, 1.0f)
+            && pVictim->isAlive()
+            && !hasAura(SPELL_BONE_STRIKE_IMPALE, pVictim))
         {
             m_creature->GetMotionMaster()->Clear();
             SetCombatMovement(false);

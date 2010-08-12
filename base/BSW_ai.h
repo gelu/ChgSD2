@@ -155,7 +155,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
              {
                  if (!pTarget) pTarget = m_creature;
-                 return queryIndex(_findSpellIDX(SpellID)) ? _hasAura(_findSpellIDX(SpellID),pTarget) : false;
+                 return queryIndex(_findSpellIDX(SpellID)) ? _hasAura(_findSpellIDX(SpellID),pTarget) : _hasAura(SpellID,pTarget);
              };
 
         uint8 auraCount(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
