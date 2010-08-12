@@ -40,3 +40,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_metzen', `npcflag` = '1' WHER
 
 UPDATE `creature_template` SET `speed_walk`='2.7', `speed_run`='2.7', `ScriptName`='npc_scourge_gryphon' WHERE `entry`='28864';
 
+-- NPC Slag in instance Halls of Lightning
+
+UPDATE `creature_template` SET `ScriptName`='npc_slag' WHERE `entry`='28585';
+

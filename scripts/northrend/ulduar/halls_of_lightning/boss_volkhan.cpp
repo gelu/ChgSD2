@@ -63,7 +63,14 @@ enum
     NPC_BRITTLE_GOLEM                       = 28681,
 
     POINT_ID_ANVIL                          = 0,
-    MAX_GOLEM                               = 2
+    MAX_GOLEM                               = 2,
+
+    // Slag
+    SPELL_MELT_ARMOR_N                      = 61509,
+    SPELL_MELT_ARMOR_H                      = 61510,
+    SPELL_BLAST_WAVE_N                      = 23113,
+    SPELL_BLAST_WAVE_H                      = 22424,
+
 };
 
 /*######
@@ -454,6 +461,57 @@ CreatureAI* GetAI_mob_molten_golem(Creature* pCreature)
     return new mob_molten_golemAI(pCreature);
 }
 
+/*######
+## npc_slag
+######*/
+
+struct MANGOS_DLL_DECL npc_slagAI : public ScriptedAI
+{
+    npc_slagAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
+    bool m_bDeath;
+	
+    uint32 m_uiMelt_Timer;
+
+    void Reset()
+    {
+        m_uiMelt_Timer = 15000;
+        m_bDeath = false;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (m_uiMelt_Timer < diff)
+        {
+            DoCast (m_creature->getVictim(), m_bIsRegularMode ? SPELL_MELT_ARMOR_N : SPELL_MELT_ARMOR_H);
+            m_uiMelt_Timer = 30000;
+        }else m_uiMelt_Timer -= diff;
+
+        if (!m_bDeath && (m_creature->GetHealth()*100 / m_creature->GetMaxHealth() < 1))
+        {
+            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_BLAST_WAVE_N : SPELL_BLAST_WAVE_H);
+            m_bDeath = true;
+        }
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_slag(Creature* pCreature)
+{
+    return new npc_slagAI(pCreature);
+}
+
 void AddSC_boss_volkhan()
 {
     Script *newscript;
@@ -472,5 +530,10 @@ void AddSC_boss_volkhan()
     newscript = new Script;
     newscript->Name = "mob_molten_golem";
     newscript->GetAI = &GetAI_mob_molten_golem;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_slag";
+    newscript->GetAI = &GetAI_npc_slag;
     newscript->RegisterSelf();
 }
