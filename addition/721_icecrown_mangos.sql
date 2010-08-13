@@ -69,7 +69,7 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201370);
 UPDATE `creature_template` SET `ScriptName`='mob_small_ooze', `AIName`='' WHERE `entry`= 36897;
 UPDATE `creature_template` SET `ScriptName`='mob_big_ooze', `AIName`='' WHERE `entry`= 36899;
 UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_sticky_ooze', `AIName`='' WHERE `entry`= 37006;
-UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_ooze_stalker', `AIName`='' WHERE `entry` IN (37986,37013);
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='', `AIName`='' WHERE `entry` IN (37986, 37013);
 UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14, `ScriptName`='mob_ooze_explode_stalker', `AIName`='' WHERE `entry` = 38107;
 DELETE FROM `spell_script_target` WHERE `entry` = 69783;
 INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69783', '1', '37013');
@@ -86,7 +86,9 @@ UPDATE `creature_template` SET `ScriptName`='mob_vile_gas_stalker', `AIName`='' 
 -- INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
 -- (36659, 0, 0, 1, 0, 0, '69126 0 69152 0 69154 0');
 -- DELETE FROM `creature_template_addon` WHERE `entry` = 36659;
-UPDATE `creature_template` SET `faction_A`=35, `faction_H`=35, `AIName`='mob_orange_gas_stalker'  WHERE `entry`= 36659;
+UPDATE `creature_template` SET `faction_A`=35, `faction_H`=35, `AIName`=''  WHERE `entry`= 36659;
+-- Visual effect mobs from Timmit
+UPDATE `creature` SET `spawnMask` = 15, `modelid` = 11686, `spawntimesecs` = 300 WHERE `id`=37013;
 
 -- Professor putricide
 UPDATE `creature_template` SET `ScriptName`='boss_proffesor_putricide', `AIName`='' WHERE `entry`= 36678;

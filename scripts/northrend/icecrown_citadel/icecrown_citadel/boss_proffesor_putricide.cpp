@@ -87,9 +87,9 @@ enum BossSpells
 
 static Locations SpawnLoc[]=
 {
-    {4356.779785f, 3263.510010f, 389.398010f},  // 0 Putricide start point o=1.586
-    {4295.081055f, 3188.883545f, 389.330261f},  // 1 Puticide Festergut say, o=4.27
-    {4417.302246f, 3188.219971f, 389.332520f},  // 2 Putricide Rotface say o=5.102
+    {4356.779785f, 3263.510010f, 389.398010f, 1.586f},  // 0 Putricide start point o=1.586
+    {4295.081055f, 3188.883545f, 389.330261f, 4.270f},  // 1 Puticide Festergut say, o=4.27
+    {4417.302246f, 3188.219971f, 389.332520f, 5.102f},  // 2 Putricide Rotface say o=5.102
 };
 
 struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
@@ -155,11 +155,14 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
         }
     }
 
-    void Aggro(Unit *who) 
+    void Aggro(Unit *pWho) 
     {
         if (!pInstance) return;
+        if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER) 
+            return;
+
         pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
-        DoScriptText(-1631249,m_creature, who);
+        DoScriptText(-1631249,m_creature, pWho);
     }
 
     void JustDied(Unit *killer)
@@ -226,42 +229,44 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                 {
                 case 500:
                           m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 4.27f);
+                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, SpawnLoc[1].o);
                           DoScriptText(-1631201, m_creature);
-                          UpdateTimer = 10000;
+                          UpdateTimer = 60000;
                           pInstance->SetData(TYPE_EVENT,510);
                           break;
                 case 510:
-                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
-                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          UpdateTimer = 2000;
-                          pInstance->SetData(TYPE_EVENT,520);
+                          UpdateTimer = 5000;
+                          if (pInstance->GetData(TYPE_FESTERGUT) == DONE)
+                              pInstance->SetData(TYPE_EVENT,550);
+                          if (pInstance->GetData(TYPE_FESTERGUT) == FAIL)
+                              pInstance->SetData(TYPE_EVENT,620);
                           break;
                 case 550:
                           m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 4.27f);
+                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, SpawnLoc[1].o);
                           DoScriptText(-1631202, m_creature);
                           UpdateTimer = 10000;
-                          pInstance->SetData(TYPE_EVENT,560);
-                          break;
-                case 560:
-                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
-                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          UpdateTimer = 2000;
-                          pInstance->SetData(TYPE_EVENT,570);
+                          pInstance->SetData(TYPE_EVENT,620);
                           break;
                 case 600:
                           m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          m_creature->NearTeleportTo(SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 5.102f);
+                          m_creature->NearTeleportTo(SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, SpawnLoc[2].o);
                           DoScriptText(-1631220, m_creature);
-                          UpdateTimer = 10000;
+                          UpdateTimer = 60000;
                           pInstance->SetData(TYPE_EVENT,610);
                           break;
                 case 610:
-                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 1.586f);
+                          UpdateTimer = 5000;
+                          if (pInstance->GetData(TYPE_ROTFACE) == DONE)
+                              pInstance->SetData(TYPE_EVENT,550);
+                          if (pInstance->GetData(TYPE_ROTFACE) == FAIL)
+                              pInstance->SetData(TYPE_EVENT,620);
+                          break;
+                case 620:
+                          m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, SpawnLoc[0].o);
                           m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                           UpdateTimer = 2000;
-                          pInstance->SetData(TYPE_EVENT,620);
+                          pInstance->SetData(TYPE_EVENT,630);
                           break;
                 default:
                           break;

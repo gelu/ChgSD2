@@ -26,6 +26,9 @@ enum
     TYPE_COUNT                  = 14,
     MAX_ENCOUNTERS,
 
+    TYPE_STINKY,
+    TYPE_PRECIOUS,
+
     NPC_LORD_MARROWGAR          = 36612,
     NPC_LADY_DEATHWHISPER       = 36855,
     NPC_DEATHBRINGER_SAURFANG   = 37813,
@@ -68,6 +71,8 @@ enum
     GO_DEATHWHISPER_ELEVATOR    = 202220, //5653
 
     GO_SAURFANG_DOOR            = 201825,
+
+    GO_GAS_RELEASE_VALVE        = 201616, //72479
 
     GO_ORANGE_PLAGUE            = 201371, //72536
     GO_GREEN_PLAGUE             = 201370, //72537
@@ -186,6 +191,7 @@ private:
     uint64 m_uiValithriaGUID;
     uint64 m_uiSindragosaGUID;
     uint64 m_uiLichKingGUID;
+    uint64 m_uiGasReleaseValveGUID;
 
     uint64 m_uiRimefangGUID;
     uint64 m_uiSpinestalkerGUID;
@@ -251,6 +257,9 @@ private:
     uint32 m_auiEvent;
     uint32 m_auiEventTimer;
     uint32 m_uiDirection;
+
+    uint32 m_uiStinkystate;
+    uint32 m_uiPreciousstate;
 
 
 };

@@ -132,13 +132,19 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
 
     if(!pInstance) return;
 
-    if (!pet) {
-              if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_PRECIOUS)))
-                                if (!pGuard->isAlive())  {
-                                                         pet = true;
-                                                         DoScriptText(-1631228,m_creature);
-                                                         };
-                };
+    if (!pet)
+    {
+        if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_PRECIOUS)))
+            if (!pGuard->isAlive())
+            {
+                 pet = true;
+                 if (pInstance->GetData(TYPE_PRECIOUS) == NOT_STARTED)
+                 {
+                     DoScriptText(-1631228,m_creature);
+                     pInstance->SetData(TYPE_PRECIOUS,DONE);
+                 }
+            }
+    }
 
     if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -153,7 +159,7 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
         if (timedQuery(SPELL_OOZE_FLOOD_1, diff))
               {
                    uint8 i = urand(0,3);
-                   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z))
+                   if (Unit* pTemp = doSummon(NPC_OOZE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z, TEMPSUMMON_TIMED_DESPAWN, 15000))
                    {
                        doCast(SPELL_OOZE_FLOOD, pTemp);
                        nexttick = true;
@@ -344,41 +350,6 @@ CreatureAI* GetAI_mob_sticky_ooze(Creature* pCreature)
     return new mob_sticky_oozeAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL  mob_ooze_stalkerAI : public ScriptedAI
-{
-    mob_ooze_stalkerAI(Creature *pCreature) : ScriptedAI(pCreature) 
-    {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        Reset();
-    }
-
-    ScriptedInstance *pInstance;
-
-    void Reset()
-    {
-        m_creature->SetDisplayId(11686);
-        m_creature->SetRespawnDelay(7*DAY);
-        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        m_creature->SetInCombatWithZone();
-        SetCombatMovement(false);
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (!pInstance || pInstance->GetData(TYPE_ROTFACE) != IN_PROGRESS) 
-              m_creature->ForcedDespawn();
-
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-    }
-};
-
-CreatureAI* GetAI_mob_ooze_stalker(Creature* pCreature)
-{
-    return new mob_ooze_stalkerAI(pCreature);
-}
-
 struct MANGOS_DLL_DECL  mob_ooze_explode_stalkerAI : public BSWScriptedAI
 {
     mob_ooze_explode_stalkerAI(Creature *pCreature) : BSWScriptedAI(pCreature) 
@@ -441,11 +412,6 @@ void AddSC_boss_rotface()
     newscript = new Script;
     newscript->Name = "mob_sticky_ooze";
     newscript->GetAI = &GetAI_mob_sticky_ooze;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "mob_ooze_stalker";
-    newscript->GetAI = &GetAI_mob_ooze_stalker;
     newscript->RegisterSelf();
 
     newscript = new Script;
