@@ -193,7 +193,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         for(uint8 i = 0; i < 3; ++i)
              if (pPuddleStalkerGUID[i])
              {
-                 Creature pTemp = m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i])
+                 Creature* pTemp = m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i]);
                  if (pTemp) pTemp->ForcedDespawn();
                  pPuddleStalkerGUID[i] = NULL;
              }
