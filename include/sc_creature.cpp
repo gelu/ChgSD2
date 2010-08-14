@@ -529,7 +529,7 @@ bool ScriptedAI::EnterEvadeIfOutOfCombatArea(const uint32 uiDiff)
                 return false;
             break;
         case NPC_SARTHARION:                                // sartharion (calculate box)
-            if (fX > 3218.86f && fX < 3275.69f && fY < 572.40f && fY > 484.68f)
+            if (fX > 3203.97f && fX < 3289.40f && fY < 576.70f && fY > 484.68f)
                 return false;
             break;
         default:
