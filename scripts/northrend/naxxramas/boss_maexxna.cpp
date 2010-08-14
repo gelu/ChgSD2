@@ -70,7 +70,7 @@ struct MANGOS_DLL_DECL mob_webwrapAI : public ScriptedAI
         if (victim)
         {
             m_uiVictimGUID = victim;
-            if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+            if (Unit* pVictim = m_creature->GetMap()->GetUnit(m_uiVictimGUID))
                 pVictim->CastSpell(pVictim, SPELL_WEBWRAP, true);
         }
     }
@@ -87,7 +87,7 @@ struct MANGOS_DLL_DECL mob_webwrapAI : public ScriptedAI
     }
     void JustDied(Unit* Killer)
     {
-        if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiVictimGUID))
+        if (Unit* pVictim = m_creature->GetMap()->GetUnit(m_uiVictimGUID))
             pVictim->RemoveAurasDueToSpell(SPELL_WEBWRAP);
     }
 
