@@ -47,6 +47,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_spire_frostwyrm', `AIName`='' W
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` = 37230;
 UPDATE `creature_template` SET `ScriptName`='mob_frost_giant', `AIName`='' WHERE `entry` IN (38490, 38494) ;
 DELETE FROM `creature_ai_scripts` WHERE `creature_id` IN (38490, 38494);
+DELETE FROM `creature` WHERE `guid` = 94094 AND `id` = 38490;
 
 -- Gunship armory (override)
 DELETE FROM `gameobject` WHERE `id` IN (201872,201873,201874,201875,202177,202178,202179,202180);
