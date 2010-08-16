@@ -1761,6 +1761,34 @@ CreatureAI* GetAI_mob_flame_tsunami(Creature* pCreature)
     return new mob_flame_tsunamiAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL  mob_lava_blazeAI : public ScriptedAI
+{
+    mob_lava_blazeAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(DAY);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_SARTHARION_EVENT) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_mob_lava_blaze(Creature* pCreature)
+{
+    return new mob_lava_blazeAI(pCreature);
+};
+
 void AddSC_boss_sartharion()
 {
     Script *newscript;
@@ -1813,5 +1841,10 @@ void AddSC_boss_sartharion()
     newscript = new Script;
     newscript->Name = "mob_flame_tsunami";
     newscript->GetAI = &GetAI_mob_flame_tsunami;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_lava_blaze";
+    newscript->GetAI = &GetAI_mob_lava_blaze;
     newscript->RegisterSelf();
 }

@@ -1,5 +1,7 @@
+-- Obsidian sanctum (from PSZ and MaxXx2021)
 UPDATE creature_template SET ScriptName='mob_fire_cyclone' WHERE entry = 30648;
 UPDATE creature_template SET ScriptName='mob_flame_tsunami' WHERE entry = 30616;
+UPDATE creature_template SET ScriptName='mob_lava_blaze' WHERE entry = 30643;
 
 -- CUSTOM hack to different hard mode loot
 REPLACE INTO creature_template (entry, difficulty_entry_1, modelid_1, modelid_3, faction_A, faction_H, NAME, subname, minhealth, maxhealth, rank, lootid) VALUES
@@ -15,7 +17,7 @@ DELETE FROM creature_loot_template WHERE entry IN (30452, 30451, 30449, 28860, 2
 -- Tenebron, Shadron, Vesperon
 UPDATE creature_template SET lootid=30449 WHERE entry IN (30452, 30451, 30449, 31534, 31520, 31535);
 INSERT INTO creature_loot_template (entry, item, ChanceOrQuestChance, groupid, mincountOrRef, maxcount, lootcondition, condition_value1, condition_value2) VALUES
-(30449, 45624, 100, 0, 1, 1, 0, 0, 0);
+(30449, 47421, 100, 0, 1, 1, 0, 0, 0);
 -- Sartharion
 -- references
 DELETE FROM reference_loot_template WHERE entry IN (615000, 615001, 615002, 615010, 615011, 615012);
@@ -74,37 +76,37 @@ UPDATE creature_template SET lootid=entry WHERE entry IN (28860, 288601, 288602,
 INSERT INTO creature_loot_template (entry, item, ChanceOrQuestChance, groupid, mincountOrRef, maxcount, lootcondition, condition_value1, condition_value2) VALUES
 -- normal, no drakes
 (28860, 615000, 100, 0, -615000, 1, 0, 0, 0),
-(28860, 45624, 100, 0, 1, 1, 0, 0, 0),
+(28860, 47421, 100, 0, 1, 1, 0, 0, 0),
 -- normal, 1 drake
 (288601, 615000, 100, 0, -615000, 1, 0, 0, 0),
 (288601, 615001, 100, 0, -615001, 1, 0, 0, 0),
-(288601, 45624, 100, 0, 2, 2, 0, 0, 0),
+(288601, 47421, 100, 0, 2, 2, 0, 0, 0),
 -- normal, 2 drakes
 (288602, 615000, 100, 0, -615000, 1, 0, 0, 0),
 (288602, 615001, 100, 0, -615001, 1, 0, 0, 0),
 (288602, 615002, 100, 0, -615002, 1, 0, 0, 0),
-(288602, 45624, 100, 0, 3, 3, 0, 0, 0),
+(288602, 47421, 100, 0, 3, 3, 0, 0, 0),
 -- normal, 3 drakes
 (288603, 615000, 100, 0, -615000, 1, 0, 0, 0),
 (288603, 615001, 100, 0, -615001, 1, 0, 0, 0),
 (288603, 615002, 100, 0, -615002, 1, 0, 0, 0),
 (288603, 43986, 100, 0, 1, 1, 0, 0, 0),
-(288603, 45624, 100, 0, 4, 4, 0, 0, 0),
+(288603, 47421, 100, 0, 4, 4, 0, 0, 0),
 -- heroic, no drakes
 (31311, 615010, 100, 0, -615010, 1, 0, 0, 0),
-(31311, 45624, 100, 0, 1, 1, 0, 0, 0),
+(31311, 47421, 100, 0, 1, 1, 0, 0, 0),
 -- heroic, 1 drake
 (313111, 615010, 100, 0, -615010, 1, 0, 0, 0),
 (313111, 615011, 100, 0, -615011, 1, 0, 0, 0),
-(313111, 45624, 100, 0, 2, 2, 0, 0, 0),
+(313111, 47421, 100, 0, 2, 2, 0, 0, 0),
 -- heroic, 2 drakes
 (313112, 615010, 100, 0, -615010, 1, 0, 0, 0),
 (313112, 615011, 100, 0, -615011, 1, 0, 0, 0),
 (313112, 615012, 100, 0, -615012, 1, 0, 0, 0),
-(313112, 45624, 100, 0, 3, 3, 0, 0, 0),
+(313112, 47421, 100, 0, 3, 3, 0, 0, 0),
 -- heroic, 3 drakes
 (313113, 615010, 100, 0, -615010, 1, 0, 0, 0),
 (313113, 615011, 100, 0, -615011, 1, 0, 0, 0),
 (313113, 615012, 100, 0, -615012, 1, 0, 0, 0),
 (313113, 43954, 100, 0, 1, 1, 0, 0, 0),
-(313113, 45624, 100, 0, 4, 4, 0, 0, 0);
+(313113, 47421, 100, 0, 4, 4, 0, 0, 0);
