@@ -104,6 +104,8 @@ static Locations SpawnLoc[]=
         m_auiEventTimer = 1000;
         m_uiCouncilInvocation = 0;
         m_uiDirection = 0;
+        m_uiStinkystate = NOT_STARTED;
+        m_uiPreciousstate = NOT_STARTED;
 
         switch (Difficulty) {
                              case RAID_DIFFICULTY_10MAN_NORMAL:
@@ -400,6 +402,9 @@ static Locations SpawnLoc[]=
             case GO_ARTHAS_PRECIPICE: 
                                   m_uiArthasPrecipiceGUID = pGo->GetGUID();
                                   break;
+            case GO_GAS_RELEASE_VALVE: 
+                                  m_uiGasReleaseValveGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -533,6 +538,8 @@ static Locations SpawnLoc[]=
                                                  break;
              case TYPE_EVENT:            m_auiEvent = uiData; uiData = NOT_STARTED; break;
              case TYPE_EVENT_TIMER:      m_auiEventTimer = uiData; uiData = NOT_STARTED; break;
+             case TYPE_STINKY:           m_uiStinkystate = uiData; uiData = NOT_STARTED; break;
+             case TYPE_PRECIOUS:         m_uiPreciousstate = uiData; uiData = NOT_STARTED; break;
         }
 
         if (uiData == DONE)
@@ -573,6 +580,8 @@ static Locations SpawnLoc[]=
              case DATA_DIRECTION:     return m_uiDirection;
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
              case DATA_BLOOD_INVOCATION:         return m_uiCouncilInvocation; 
+             case TYPE_STINKY:        return m_uiStinkystate;
+             case TYPE_PRECIOUS:      return m_uiPreciousstate;
              case TYPE_EVENT:         return m_auiEvent;
              case TYPE_EVENT_TIMER:   return m_auiEventTimer;
              case TYPE_EVENT_NPC:     switch (m_auiEvent) 
@@ -706,6 +715,7 @@ static Locations SpawnLoc[]=
             case NPC_FROSTMOURNE_TRIGGER:     return m_uiFrostmourneTriggerGUID;
             case NPC_FROSTMOURNE_HOLDER:      return m_uiFrostmourneHolderGUID;
             case NPC_TARGET_DUMMY:            return m_uidummyTargetGUID;
+            case GO_GAS_RELEASE_VALVE:     return m_uiGasReleaseValveGUID;
         }
         return 0;
     }

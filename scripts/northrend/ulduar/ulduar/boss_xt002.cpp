@@ -308,7 +308,7 @@ struct MANGOS_DLL_DECL mob_xtheartAI : public ScriptedAI
         if(m_uiDeathTimer < diff)
         {
             // pass damage to boss
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_XT002))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_XT002)))
             {
                 if (pTemp->isAlive())
                     pTemp->DealDamage(pTemp, m_uiTotalDamage, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -441,19 +441,19 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
         if (!m_lScrapbotsGUIDList.empty())
         {
             for(std::list<uint64>::iterator itr = m_lScrapbotsGUIDList.begin(); itr != m_lScrapbotsGUIDList.end(); ++itr)
-                if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     pTemp->ForcedDespawn();
         }
         if (!m_lBoombotsGUIDList.empty())
         {
             for(std::list<uint64>::iterator itr = m_lBoombotsGUIDList.begin(); itr != m_lBoombotsGUIDList.end(); ++itr)
-                if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     pTemp->ForcedDespawn();
         }
         if (!m_lPummelerGUIDList.empty())
         {
             for(std::list<uint64>::iterator itr = m_lPummelerGUIDList.begin(); itr != m_lPummelerGUIDList.end(); ++itr)
-                if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     pTemp->ForcedDespawn();
         }
 
@@ -584,7 +584,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
             {
                 for(std::list<uint64>::iterator itr = m_lScrapbotsGUIDList.begin(); itr != m_lScrapbotsGUIDList.end(); ++itr)
                 {
-                    if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     {
                         if (pTemp->isAlive() && m_creature->IsWithinDistInMap(pTemp, ATTACK_DISTANCE))
                         {
@@ -600,7 +600,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
             {
                 for(std::list<uint64>::iterator itr = m_lBoombotsGUIDList.begin(); itr != m_lBoombotsGUIDList.end(); ++itr)
                 {
-                    if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     {
                         if (pTemp->isAlive() && m_creature->IsWithinDistInMap(pTemp, ATTACK_DISTANCE))
                             pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
@@ -639,7 +639,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
 
             if (m_uiLifeSparkTimer < uiDiff)
             {
-                if (Unit* pTarget = Unit::GetUnit(*m_creature, pLightBombTarGUID))
+                if (Unit* pTarget = m_creature->GetMap()->GetUnit( pLightBombTarGUID))
                 {
                     Creature * LifeSpark = m_creature->SummonCreature(NPC_LIFESPARK, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 30000);
                     if(m_bIsRegularMode)
@@ -650,7 +650,7 @@ struct MANGOS_DLL_DECL boss_xt002AI : public ScriptedAI
 
             if (m_uiVoidZoneTimer < uiDiff)
             {
-                if (Unit* pTarget = Unit::GetUnit(*m_creature, pGravityBombTarGUID))
+                if (Unit* pTarget = m_creature->GetMap()->GetUnit( pGravityBombTarGUID))
                     m_creature->SummonCreature(NPC_VOIDZONE, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 180000);         
                 m_uiVoidZoneTimer = 60000;
             }else m_uiVoidZoneTimer -= uiDiff;

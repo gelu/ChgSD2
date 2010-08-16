@@ -271,7 +271,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public Scripted_NoMovementAI
             {
                 for(std::list<uint64>::iterator itr = SummonsList.begin(); itr != SummonsList.end(); ++itr)
                 {
-                    if (Creature* pTemp = ((Creature*)Unit::GetUnit(*m_creature, *itr)))
+                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                     {
                         if (!pTemp->isAlive())
                         {

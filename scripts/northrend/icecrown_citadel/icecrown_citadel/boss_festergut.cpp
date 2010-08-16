@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_festergut
-SD%Complete: 80%
+SD%Complete: 90%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -26,55 +26,93 @@ EndScriptData */
 
 enum BossSpells
 {
-    SPELL_GASEOUS_BLIGHT     = 69162,
-    SPELL_GASEOUS_BLIGHT_2   = 69152,
+    SPELL_GASEOUS_BLIGHT_1   = 69157,
+    SPELL_GASEOUS_BLIGHT_2   = 69162,
+    SPELL_GASEOUS_BLIGHT_3   = 69164,
+    SPELL_BLIGHT_VISUAL_1    = 69126,
+    SPELL_BLIGHT_VISUAL_2    = 69152,
+    SPELL_BLIGHT_VISUAL_3    = 69154,
     SPELL_INHALE_BLIGHT      = 69165,
     SPELL_INHALED_BLIGHT     = 69166,
     SPELL_PUNGENT_BLIGHT     = 69195,
-    SPELL_PUNGENT_BLIGHT_1   = 69157,
-    SPELL_PUNGENT_BLIGHT_2   = 69126,
     SPELL_GAS_SPORE          = 69278,
     SPELL_SPORE_AURA_0       = 69279,
     SPELL_SPORE_AURA_1       = 69290,
     SPELL_INOCULATE          = 72103,
     SPELL_GASTRIC_BLOAT      = 72219,
-//    SPELL_GASTRIC_BLOAT      = 72214,
     SPELL_GASTRIC_EXPLOSION  = 72227,
     SPELL_VILE_GAS           = 72272,
     SPELL_VILE_GAS_AURA      = 69244,
     SPELL_VILE_GAS_AURA_0    = 69248,
     SPELL_BERSERK            = 47008,
+
+    SPELL_GASEOUS_SPIGOT     = 71379,
+
     SPELL_SUMMON_VILE_STALKER       = 72287,
 
     NPC_VILE_GAS_STALKER     = 38548,
+    NPC_BLIGHT_STALKER       = 36659,
+    NPC_PUDDLE_STALKER       = 37013,
     MAX_SPORE_TARGETS        = 6,
 };
 
+static Locations SpawnLoc[]=
+{
+    {4267.9399f, 3137.32f, 360.385986f, 0.0f},  // 0 (start point)
+    {4317.067383f, 3136.99f, 360.385590f, 3.21f},  // 1 right
+    {4220.801758f, 3136.99f, 360.385590f, 0.39f},  // 2 left
+    {4269.084473f, 3186.306641f, 360.385590f, 4.72f},  // 3 rear
+};
 struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 {
     boss_festergutAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        pBlightTarget = NULL;
+        pPuddleStalkerGUID[1] = NULL;
+        pPuddleStalkerGUID[2] = NULL;
+        pPuddleStalkerGUID[3] = NULL;
         Reset();
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
     bool intro;
     bool pet;
     bool sporeCasted;
     Unit* spored[MAX_SPORE_TARGETS];
+    Creature* pBlightTarget;
+    uint64 pPuddleStalkerGUID[3];
 
     void Reset()
     {
         if(!pInstance) return;
         resetTimers();
         if (m_creature->isAlive()) pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
-        stage = 0;
+        setStage(0);
         intro = false;
         pet = false;
         sporeCasted = false;
-        memset(&spored, 0, sizeof(spored));
+        memset(spored, 0, sizeof(spored));
+        for(uint8 i = 0; i < 3; ++i)
+             if (!pPuddleStalkerGUID[i])
+             {
+                 Unit* pTemp = doSummon(NPC_PUDDLE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z, TEMPSUMMON_MANUAL_DESPAWN);
+                 if (pTemp)
+                 {
+                     pPuddleStalkerGUID[i] = pTemp->GetGUID();
+                     pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                     pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                 }
+             }
+
+        if (!pBlightTarget)
+            pBlightTarget = doSelectNearestCreature(NPC_BLIGHT_STALKER,60.0f);
+            if (pBlightTarget)
+            {
+                 pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                 pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            }
+
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -97,30 +135,68 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         case 1:
                DoScriptText(-1631205,m_creature,pVictim);
                break;
-        doRemove(SPELL_PUNGENT_BLIGHT_2, pVictim);
-        doRemove(SPELL_GASEOUS_BLIGHT_2, pVictim);
         }
     }
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_FESTERGUT, FAIL);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_FESTERGUT, FAIL);
+        if (pBlightTarget && pBlightTarget->isAlive())
+        {
+            doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+            doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+            doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+        }
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_1);
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_2);
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_3);
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit *pWho)
     {
         if(!pInstance) return;
+        if (pWho->GetTypeId() != TYPEID_PLAYER) 
+            return;
+
         pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);
-        DoScriptText(-1631203,m_creature,who);
+        DoScriptText(-1631203,m_creature,pWho);
+        if (pBlightTarget && !pBlightTarget->isAlive())
+            pBlightTarget->Respawn();
+        if (pBlightTarget)
+        {
+            pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+            doCast(SPELL_GASEOUS_BLIGHT_1,m_creature);
+        }
+        for(uint8 i = 0; i < 3; ++i)
+             if (pPuddleStalkerGUID[i])
+                 doCast(SPELL_GASEOUS_SPIGOT, m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i]));
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_FESTERGUT, DONE);
+        if (!pInstance) return;
+        pInstance->SetData(TYPE_FESTERGUT, DONE);
         pInstance->SetData(TYPE_EVENT, 550);
-        doRemoveFromAll(SPELL_PUNGENT_BLIGHT_2);
-        doRemoveFromAll(SPELL_GASEOUS_BLIGHT_2);
         DoScriptText(-1631206,m_creature);
+        if (pBlightTarget)
+        {
+            doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+            doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+            doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+        }
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_1);
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_2);
+        doRemoveFromAll(SPELL_BLIGHT_VISUAL_3);
+        for(uint8 i = 0; i < 3; ++i)
+             if (pPuddleStalkerGUID[i])
+             {
+                 Creature* pTemp = m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i]);
+                 if (pTemp) pTemp->ForcedDespawn();
+                 pPuddleStalkerGUID[i] = NULL;
+             }
     }
 
     void doTriggerUnoculated()
@@ -165,87 +241,110 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 
         if(!pInstance) return;
 
-        if (!pet) {
-                  if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_STINKY)))
-                                if (!pGuard->isAlive())  {
-                                                         pet = true;
-                                                         DoScriptText(-1631209,m_creature);
-                                                         }
-                            }
+        if (!pet) 
+        {
+            if (Creature* pGuard = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_STINKY)))
+                if (!pGuard->isAlive())
+                {
+                     pet = true;
+                     if (pInstance->GetData(TYPE_STINKY) == NOT_STARTED)
+                     {
+                         DoScriptText(-1631209,m_creature);
+                         pInstance->SetData(TYPE_STINKY,DONE);
+                     }
+                }
+        }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        switch(stage)
+        doTriggerUnoculated();
+
+        switch(getStage())
         {
-            case 0: 
-                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
-                        {
-                            doCast(SPELL_GASEOUS_BLIGHT);
-                            stage = 1;
-                        }
+            case 0:
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT_2, diff))
+                        setStage(1);
                     break;
             case 1:
-                    switch (urand(0,2)) {
-                            case 0:  DoScriptText(-1631210,m_creature); break;
-                            case 1:  DoScriptText(-1631211,m_creature); break;
-                            case 2:  DoScriptText(-1631212,m_creature); break;
-                            }
-                        doCast(SPELL_INHALE_BLIGHT);
-                        stage = 2;
+                    switch (urand(0,2)) 
+                    {
+                        case 0:  DoScriptText(-1631210,m_creature); break;
+                        case 1:  DoScriptText(-1631211,m_creature); break;
+                        case 2:  DoScriptText(-1631212,m_creature); break;
+                    }
+                    doCast(SPELL_INHALE_BLIGHT);
+                    setStage(2);
                     break;
             case 2:
-                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
-                        {
-                            doCast(SPELL_GASEOUS_BLIGHT);
-                            stage = 3;
-                        }
+                    if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                    if (pBlightTarget)
+                        doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+                    doCast(SPELL_GASEOUS_BLIGHT_2,m_creature);
+                    setStage(3);
                     break;
             case 3:
-                    switch (urand(0,2)) {
-                            case 0:  DoScriptText(-1631210,m_creature); break;
-                            case 1:  DoScriptText(-1631211,m_creature); break;
-                            case 2:  DoScriptText(-1631212,m_creature); break;
-                            }
-                        doCast(SPELL_INHALE_BLIGHT);
-                        stage = 4;
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT_3, diff))
+                        setStage(4);
                     break;
             case 4:
-                    if (timedQuery(SPELL_GASEOUS_BLIGHT, diff))
-                        {
-                            doCast(SPELL_GASEOUS_BLIGHT);
-                            stage = 5;
-                        }
+                    switch (urand(0,2))
+                    {
+                        case 0:  DoScriptText(-1631210,m_creature); break;
+                        case 1:  DoScriptText(-1631211,m_creature); break;
+                        case 2:  DoScriptText(-1631212,m_creature); break;
+                    }
+                    doCast(SPELL_INHALE_BLIGHT);
+                    setStage(5);
                     break;
             case 5:
-                    switch (urand(0,2)) {
-                            case 0:  DoScriptText(-1631210,m_creature); break;
-                            case 1:  DoScriptText(-1631211,m_creature); break;
-                            case 2:  DoScriptText(-1631212,m_creature); break;
-                            }
-                        doCast(SPELL_INHALE_BLIGHT);
-                        stage = 6;
+                    if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                    if (pBlightTarget)
+                        doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+//                        doCast(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
+                    doCast(SPELL_GASEOUS_BLIGHT_3,m_creature);
+                    setStage(6);
                     break;
             case 6:
+                    if (timedQuery(SPELL_GASEOUS_BLIGHT_3, diff))
+                        setStage(7);
+                    break;
+            case 7:
+                    switch (urand(0,2)) 
+                    {
+                        case 0:  DoScriptText(-1631210,m_creature); break;
+                        case 1:  DoScriptText(-1631211,m_creature); break;
+                        case 2:  DoScriptText(-1631212,m_creature); break;
+                    }
+                    doCast(SPELL_INHALE_BLIGHT);
+                    setStage(8);
+                    break;
+            case 8:
+                    if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                    if (pBlightTarget)
+                    {
+                        doRemove(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+                        doRemove(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+                        doRemove(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+                    }
+                    setStage(9);
+                    break;
+            case 9:
                     if (timedQuery(SPELL_PUNGENT_BLIGHT, diff))
                         {
                             DoScriptText(-1631208,m_creature);
                             doCast(SPELL_PUNGENT_BLIGHT);
-                            stage = 7;
+                            setStage(10);
                         }
                     break;
-            case 7:
-                    switch (urand(0,2)) {
-                            case 0:  DoScriptText(-1631210,m_creature); break;
-                            case 1:  DoScriptText(-1631211,m_creature); break;
-                            case 2:  DoScriptText(-1631212,m_creature); break;
-                            }
-                        m_creature->RemoveAurasDueToSpell(SPELL_INHALED_BLIGHT);
-                        stage = 0;
+            case 10:
+                    if (m_creature->IsNonMeleeSpellCasted(false)) return;
+                    doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+                    m_creature->RemoveAurasDueToSpell(SPELL_INHALED_BLIGHT);
+                    setStage(0);
                     break;
         }
 
-        doTriggerUnoculated();
 
         timedCast(SPELL_GAS_SPORE, diff);
 
@@ -255,15 +354,19 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 
         if (auraCount(SPELL_GASTRIC_BLOAT,m_creature->getVictim(),EFFECT_INDEX_1) > 9)
         {
-            doCast(SPELL_GASTRIC_EXPLOSION,m_creature->getVictim());
             m_creature->getVictim()->RemoveAurasDueToSpell(SPELL_GASTRIC_BLOAT);
-        }
+            doCast(SPELL_GASTRIC_EXPLOSION,m_creature->getVictim());
+        };
 
-        if (timedQuery(SPELL_VILE_GAS, diff)) {
-//                        if (Unit* pTemp = doSummon(NPC_VILE_GAS_STALKER))
-                            doCast(SPELL_VILE_GAS);
-                        DoScriptText(-1631213,m_creature);
-                        };
+        if (timedQuery(SPELL_VILE_GAS, diff))
+        {
+                       float fPosX, fPosY, fPosZ;
+                       m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                       m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, 30.0f, fPosX, fPosY, fPosZ);
+                       if (Unit* pTemp = doSummon(NPC_VILE_GAS_STALKER,fPosX, fPosY, fPosZ))
+                            doCast(SPELL_VILE_GAS, pTemp);
+                       DoScriptText(-1631213,m_creature);
+        };
 
         if (timedQuery(SPELL_BERSERK, diff)){
                  doCast(SPELL_BERSERK);
@@ -301,6 +404,10 @@ struct MANGOS_DLL_DECL  mob_vile_gas_stalkerAI : public ScriptedAI
         m_lifetimer = 12000;
     }
 
+    void AttackStart(Unit *pWho)
+    {
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!pInstance || pInstance->GetData(TYPE_FESTERGUT) != IN_PROGRESS) 
@@ -321,6 +428,40 @@ CreatureAI* GetAI_mob_vile_gas_stalker(Creature* pCreature)
     return new mob_vile_gas_stalkerAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL  mob_orange_gas_stalkerAI : public ScriptedAI
+{
+    mob_orange_gas_stalkerAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(7*DAY);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        SetCombatMovement(false);
+        m_creature->SetDisplayId(11686);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_FESTERGUT) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+    }
+};
+
+CreatureAI* GetAI_mob_orange_gas_stalker(Creature* pCreature)
+{
+    return new mob_orange_gas_stalkerAI(pCreature);
+}
+
 void AddSC_boss_festergut()
 {
     Script *newscript;
@@ -332,5 +473,10 @@ void AddSC_boss_festergut()
     newscript = new Script;
     newscript->Name = "mob_vile_gas_stalker";
     newscript->GetAI = &GetAI_mob_vile_gas_stalker;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_orange_gas_stalker";
+    newscript->GetAI = &GetAI_mob_orange_gas_stalker;
     newscript->RegisterSelf();
 }

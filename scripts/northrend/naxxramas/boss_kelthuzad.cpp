@@ -259,7 +259,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 
         for(std::list<uint64>::iterator itr = m_lSummonsGUIDList.begin(); itr != m_lSummonsGUIDList.end(); ++itr)
         {
-            if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *itr))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
                 if (pTemp->isAlive())
                     pTemp->ForcedDespawn();
         }
@@ -299,7 +299,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 
                     if (m_uiSendSummon != m_lSummonsGUIDList.end())
                     {
-                        if (Creature* pTemp = (Creature*)Unit::GetUnit(*m_creature, *m_uiSendSummon))
+                        if (Creature* pTemp = m_creature->GetMap()->GetCreature(*m_uiSendSummon))
                             if (pTemp->isAlive() && !pTemp->getVictim())
                                 pTemp->GetMotionMaster()->MovePoint(0, Middle[0], Middle[1], Middle[2]);
                         ++m_uiSendSummon;

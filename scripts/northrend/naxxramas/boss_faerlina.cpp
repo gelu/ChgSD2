@@ -221,7 +221,7 @@ struct MANGOS_DLL_DECL mob_worshippersAI : public ScriptedAI
     }
     void JustDied(Unit* pWho)
     {
-        if (Unit* pFaerlina = Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_FAERLINA)))
+        if (Creature* pFaerlina = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_FAERLINA)))
         {
             pFaerlina->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_ENRAGE : H_SPELL_ENRAGE);
         }

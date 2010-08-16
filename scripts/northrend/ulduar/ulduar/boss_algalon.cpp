@@ -845,7 +845,7 @@ bool GOHello_go_celestial_acces(Player* pPlayer, GameObject* pGo)
     }
 
     // start encounter
-    if (Creature* pAlgalon = ((Creature*)Unit::GetUnit((*pGo), m_pInstance->GetData64(NPC_ALGALON))))
+    if (Creature* pAlgalon = pGo->GetMap()->GetCreature(m_pInstance->GetData64(NPC_ALGALON)))
     {
         if(pAlgalon->isAlive())
         {

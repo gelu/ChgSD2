@@ -158,7 +158,7 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
             return;
 
     // remove 1 stack of the buff from Ignis, hacky way, should be done by spell
-        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_IGNIS))))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_IGNIS)))
         {
             if (pTemp->isAlive())
             {
@@ -212,7 +212,7 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
             m_creature->RemoveAurasDueToSpell(SPELL_FREEZE_ANIM);
         m_bIsInCombat = true;
 
-        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_IGNIS))))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_IGNIS)))
         {
             if (pTemp->isAlive())
             {
@@ -447,7 +447,7 @@ struct MANGOS_DLL_DECL boss_ignisAI : public ScriptedAI
         // hacky way of doing damage
         if (m_uiSlag_Pot_Dmg_Timer < uiDiff && m_bHasSlagPotCasted)
         {
-            if (Unit* pPotTarget = Unit::GetUnit(*m_creature, m_uiPotTargetGUID))
+            if (Unit* pPotTarget = m_creature->GetMap()->GetUnit( m_uiPotTargetGUID))
             {
                 if (m_uiPotDmgCount < 10)
                     DoCast(pPotTarget, m_bIsRegularMode ? SPELL_SLAG_POT_DMG : SPELL_SLAG_POT_DMG_H);

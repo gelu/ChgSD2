@@ -154,10 +154,10 @@ struct MANGOS_DLL_DECL boss_left_armAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
         }
@@ -168,7 +168,7 @@ struct MANGOS_DLL_DECL boss_left_armAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
         {
             DoScriptText(SAY_LEFT_ARM_LOST, pTemp);
             if (pTemp->isAlive())
@@ -183,7 +183,7 @@ struct MANGOS_DLL_DECL boss_left_armAI : public ScriptedAI
 
         if (m_uiShockwave_Timer < diff)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
                 DoScriptText(SAY_SHOCKWEAVE, pTemp);
 
             DoCast(m_creature, m_bIsRegularMode ? SPELL_SHOCKWAVE : SPELL_SHOCKWAVE_H);
@@ -236,10 +236,10 @@ struct MANGOS_DLL_DECL boss_right_armAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
         }
@@ -267,7 +267,7 @@ struct MANGOS_DLL_DECL boss_right_armAI : public ScriptedAI
         if (!m_pInstance)
             return;
 
-        if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
         {
             DoScriptText(SAY_RIGHT_ARM_LOST, pTemp);
             if (pTemp->isAlive())
@@ -276,7 +276,7 @@ struct MANGOS_DLL_DECL boss_right_armAI : public ScriptedAI
 
         for(int i = 0; i < m_uiMaxTargets; i++)
         {
-            if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiGripTargetGUID[i]))
+            if (Unit* pVictim = m_creature->GetMap()->GetUnit( m_uiGripTargetGUID[i]))
                 pVictim->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_STONE_GRIP : SPELL_STONE_GRIP_H);
         }
     }
@@ -291,14 +291,14 @@ struct MANGOS_DLL_DECL boss_right_armAI : public ScriptedAI
             m_uiFreeDamage = 0;
             for(int i = 0; i < m_uiMaxTargets; i++)
             {
-                if (Unit* pVictim = Unit::GetUnit((*m_creature), m_uiGripTargetGUID[i]))
+                if (Unit* pVictim = m_creature->GetMap()->GetUnit( m_uiGripTargetGUID[i]))
                     pVictim->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_STONE_GRIP : SPELL_STONE_GRIP_H);
             }
         }
 
         if (m_uiStone_Grip_Timer < diff)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_KOLOGARN))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_KOLOGARN)))
                 DoScriptText(SAY_GRAB, pTemp);
 
             DoScriptText(EMOTE_STONE_GRIP, m_creature);
@@ -401,12 +401,12 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
         if (m_pInstance)
         {
             m_pInstance->SetData(TYPE_KOLOGARN, DONE);
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
             {
                 if (pTemp->isAlive())
                     pTemp->ForcedDespawn();
             }
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
             {
                 if (pTemp->isAlive())
                     pTemp->ForcedDespawn();
@@ -420,12 +420,12 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
         {
             m_pInstance->SetData(TYPE_KOLOGARN, IN_PROGRESS);
 
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
             {
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
             }
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
             {
                 if (pTemp->isAlive())
                     pTemp->SetInCombatWithZone();
@@ -450,12 +450,12 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
         if (m_pInstance)
         {
             m_pInstance->SetData(TYPE_KOLOGARN, FAIL);
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
             {
                 if (!pTemp->isAlive())
                     pTemp->Respawn();
             }
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
             {
                 if (!pTemp->isAlive())
                     pTemp->Respawn();
@@ -493,7 +493,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
 		// respawn arms
         if (m_uiRespawnLeftTimer < uiDiff && m_bIsLeftDead)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
             {
                 if (!pTemp->isAlive())
                 {
@@ -507,7 +507,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
 
         if (m_uiRespawnRightTimer < uiDiff && m_bIsRightDead)
         {
-            if (Creature* pTemp = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
             {
                 if (!pTemp->isAlive())
                 {
@@ -522,7 +522,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
 		// check if arms are dead and if there is no player in melee range
         if (m_uiCheck_Timer < uiDiff)
         {
-            if (Creature* lArm = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_LEFT_ARM))))
+            if (Creature* lArm = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_LEFT_ARM)))
             {
                 if (!lArm->isAlive() && !m_bIsLeftDead)
                 {
@@ -550,7 +550,7 @@ struct MANGOS_DLL_DECL boss_kologarnAI : public ScriptedAI
                     m_uiRespawnLeftTimer = 47000;
                 }
             }
-            if (Creature* rArm = ((Creature*)Unit::GetUnit((*m_creature), m_pInstance->GetData64(NPC_RIGHT_ARM))))
+            if (Creature* rArm = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_RIGHT_ARM)))
             {
                 if (!rArm->isAlive() && !m_bIsRightDead)
                 {
