@@ -335,6 +335,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                     else if (!pTwilight->isAlive())
                         pTwilight->Respawn();
                     pTwilight->SetCreatorGUID(0);
+                    m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     setStage(5);
                 }
                 break;
@@ -349,6 +350,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                             m_creature->SetInCombatWith(pControl);
                             pControl->SetInCombatWith(m_creature);
                         }
+                        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         m_creature->SetHealth(m_creature->GetMaxHealth()/2);
                         m_creature->SetInCombatWithZone();
                         setStage(6);
