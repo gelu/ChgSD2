@@ -501,22 +501,22 @@ Unit* BSWScriptedAI::_doSummon(uint8 m_uiSpellIdx, TempSummonType summontype, ui
     else return m_creature->SummonCreature(pSpell->m_uiSpellEntry[currentDifficulty], pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z, 0, summontype, delay);
 };
 
-Unit* BSWScriptedAI::_doSummonAtPosition(uint8 m_uiSpellIdx)
+Unit* BSWScriptedAI::_doSummonAtPosition(uint8 m_uiSpellIdx, float fPosX, float fPosY, float fPosZ)
 {
     BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
 
     switch (pSpell->m_CastTarget) 
     {
         case SUMMON_NORMAL:
-             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 0, pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 0, fPosX, fPosY, fPosZ);
              break;
 
         case SUMMON_TEMP:
-             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
              break;
 
         case SUMMON_INSTANT:
-             return _doSummonAtPosition(m_uiSpellIdx, TEMPSUMMON_MANUAL_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), pSpell->LocData.x, pSpell->LocData.y, pSpell->LocData.z);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_MANUAL_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
              break;
 
         default:
