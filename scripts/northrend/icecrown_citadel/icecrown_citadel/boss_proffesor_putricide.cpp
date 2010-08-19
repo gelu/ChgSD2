@@ -239,14 +239,12 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                           if (pInstance->GetData(TYPE_FESTERGUT) == DONE)
                               pInstance->SetData(TYPE_EVENT,550);
                           if (pInstance->GetData(TYPE_FESTERGUT) == FAIL)
-                              pInstance->SetData(TYPE_EVENT,620);
+                              pInstance->SetData(TYPE_EVENT,630);
                           break;
                 case 550:
-                          m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                          m_creature->NearTeleportTo(SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, SpawnLoc[1].o);
                           DoScriptText(-1631202, m_creature);
                           UpdateTimer = 10000;
-                          pInstance->SetData(TYPE_EVENT,620);
+                          pInstance->SetData(TYPE_EVENT,630);
                           break;
                 case 600:
                           m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
@@ -258,15 +256,20 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
                 case 610:
                           UpdateTimer = 5000;
                           if (pInstance->GetData(TYPE_ROTFACE) == DONE)
-                              pInstance->SetData(TYPE_EVENT,550);
-                          if (pInstance->GetData(TYPE_ROTFACE) == FAIL)
                               pInstance->SetData(TYPE_EVENT,620);
+                          if (pInstance->GetData(TYPE_ROTFACE) == FAIL)
+                              pInstance->SetData(TYPE_EVENT,630);
                           break;
                 case 620:
+                          DoScriptText(-1631202, m_creature);
+                          UpdateTimer = 10000;
+                          pInstance->SetData(TYPE_EVENT,630);
+                          break;
+                case 630:
                           m_creature->NearTeleportTo(SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, SpawnLoc[0].o);
                           m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                           UpdateTimer = 2000;
-                          pInstance->SetData(TYPE_EVENT,630);
+                          pInstance->SetData(TYPE_EVENT,690);
                           break;
                 default:
                           break;

@@ -305,7 +305,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
 
                     timedCast(NPC_VENGEFUL_SHADE, diff);
 
-                    timedCast(SPELL_DOMINATE_MIND, diff);
+                    if (is25()) timedCast(SPELL_DOMINATE_MIND, diff);
 
                     if (timedQuery(NPC_FANATIC, diff))
                         {
@@ -389,16 +389,16 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public BSWScriptedAI
 
         if (timedQuery(SPELL_VENGEFUL_BLAST_0, uiDiff))
         {
-            if (m_creature->IsWithinDist(m_creature->getVictim(), 3.0f, false))
-                    {
-//                        doCast(SPELL_VENGEFUL_BLAST_0);
-                        m_creature->ForcedDespawn();
-                    }
-                    else
-                    {
-                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
-                    }
+            if (m_creature->IsWithinDist(m_creature->getVictim(), 1.0f, false))
+            {
+                doCast(SPELL_VENGEFUL_BLAST_0);
+                m_creature->ForcedDespawn();
+            }
+            else
+            {
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+            }
         }
     }
 

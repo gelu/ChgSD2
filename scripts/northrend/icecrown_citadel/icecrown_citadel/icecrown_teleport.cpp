@@ -80,7 +80,7 @@ bool GOGossipHello_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo)
     if (pPlayer->isInCombat()) return true;
 
     for(uint8 i = 0; i < PORTALS_COUNT; i++) {
-    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(TYPE_TELEPORT) >= PortalLoc[i].encounter) || pPlayer->isGameMaster())
+    if (PortalLoc[i].active == true && (PortalLoc[i].state == true || pInstance->GetData(PortalLoc[i].encounter) == DONE || pPlayer->isGameMaster()))
              pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_TAXI, PortalLoc[i].textNum, GOSSIP_SENDER_MAIN, i);
     };
     pPlayer->SEND_GOSSIP_MENU(TELEPORT_GOSSIP_MESSAGE, pGo->GetGUID());

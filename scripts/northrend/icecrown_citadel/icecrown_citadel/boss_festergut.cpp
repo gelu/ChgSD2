@@ -69,9 +69,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         pBlightTarget = NULL;
-        pPuddleStalkerGUID[1] = NULL;
-        pPuddleStalkerGUID[2] = NULL;
-        pPuddleStalkerGUID[3] = NULL;
         Reset();
     }
 
@@ -81,7 +78,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     bool sporeCasted;
     Unit* spored[MAX_SPORE_TARGETS];
     Creature* pBlightTarget;
-    uint64 pPuddleStalkerGUID[3];
+//    uint64 pPuddleStalkerGUID[3];
 
     void Reset()
     {
@@ -93,7 +90,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         pet = false;
         sporeCasted = false;
         memset(spored, 0, sizeof(spored));
-        for(uint8 i = 0; i < 3; ++i)
+/*        for(uint8 i = 0; i < 3; ++i)
              if (!pPuddleStalkerGUID[i])
              {
                  Unit* pTemp = doSummon(NPC_PUDDLE_STALKER,SpawnLoc[i].x, SpawnLoc[i].y, SpawnLoc[i].z, TEMPSUMMON_MANUAL_DESPAWN);
@@ -104,7 +101,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
                      pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                  }
              }
-
+*/
         if (!pBlightTarget)
             pBlightTarget = doSelectNearestCreature(NPC_BLIGHT_STALKER,60.0f);
             if (pBlightTarget)
@@ -170,9 +167,10 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
             doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
             doCast(SPELL_GASEOUS_BLIGHT_1,m_creature);
         }
-        for(uint8 i = 0; i < 3; ++i)
+/*        for(uint8 i = 0; i < 3; ++i)
              if (pPuddleStalkerGUID[i])
                  doCast(SPELL_GASEOUS_SPIGOT, m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i]));
+*/
     }
 
     void JustDied(Unit *killer)
@@ -190,13 +188,14 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_1);
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_2);
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_3);
-        for(uint8 i = 0; i < 3; ++i)
+/*        for(uint8 i = 0; i < 3; ++i)
              if (pPuddleStalkerGUID[i])
              {
                  Creature* pTemp = m_creature->GetMap()->GetCreature(pPuddleStalkerGUID[i]);
                  if (pTemp) pTemp->ForcedDespawn();
                  pPuddleStalkerGUID[i] = NULL;
              }
+*/
     }
 
     void doTriggerUnoculated()
@@ -452,8 +451,8 @@ struct MANGOS_DLL_DECL  mob_orange_gas_stalkerAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!pInstance || pInstance->GetData(TYPE_FESTERGUT) != IN_PROGRESS) 
-              m_creature->ForcedDespawn();
+//        if (!pInstance || pInstance->GetData(TYPE_FESTERGUT) != IN_PROGRESS) 
+//              m_creature->ForcedDespawn();
     }
 };
 

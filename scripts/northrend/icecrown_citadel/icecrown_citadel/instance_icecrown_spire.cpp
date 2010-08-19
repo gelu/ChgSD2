@@ -56,6 +56,7 @@ static Locations SpawnLoc[]=
         if (m_auiEncounter[1] == DONE) {
                                         OpenDoor(m_uiIcewall1GUID);
                                         OpenDoor(m_uiIcewall2GUID);
+                                        OpenDoor( m_uiOratoryDoorGUID);
                                         };
         if (m_auiEncounter[2] == DONE) {
                         if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
@@ -411,17 +412,18 @@ static Locations SpawnLoc[]=
 
     void instance_icecrown_spire::SetData(uint32 uiType, uint32 uiData)
     {
-        if (uiType > m_auiEncounter[0] && uiData == DONE) m_auiEncounter[0] = uiType;
         switch(uiType)
         {
             case TYPE_TELEPORT:
                 break;
             case TYPE_MARROWGAR:
-                m_auiEncounter[1] = uiData; 
-                if (uiData == DONE) {
-                                     OpenDoor(m_uiIcewall1GUID);
-                                     OpenDoor(m_uiIcewall2GUID);
-                                    }
+                m_auiEncounter[1] = uiData;
+                if (uiData == DONE) 
+                    {
+                        OpenDoor(m_uiIcewall1GUID);
+                        OpenDoor(m_uiIcewall2GUID);
+                        OpenDoor( m_uiOratoryDoorGUID);
+                    }
                 break;
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[2] = uiData; 
@@ -505,9 +507,10 @@ static Locations SpawnLoc[]=
                 if (uiData == DONE) {
                 OpenDoor(m_uiGreenDragonDoor2GUID);
                                  if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
-                                     if (pChest && !pChest->isSpawned()) {
-                                          pChest->SetRespawnTime(7*DAY);
-                                      };
+                                     if (pChest && !pChest->isSpawned()) 
+                                     {
+                                         pChest->SetRespawnTime(7*DAY);
+                                     };
                                 };
                 break;
              case TYPE_SINDRAGOSA:
@@ -654,8 +657,14 @@ static Locations SpawnLoc[]=
                                           case 510:
                                           case 550:
                                           case 560:
+                                          case 570:
+                                          case 580:
+                                          case 590:
                                           case 600:
                                           case 610:
+                                          case 620:
+                                          case 630:
+                                          case 640:
                                           case 650:
                                           case 660:
                                                  return NPC_PROFESSOR_PUTRICIDE;

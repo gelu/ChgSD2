@@ -22,9 +22,8 @@ DELETE FROM `gameobject` WHERE `guid` IN (913334);
 UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map`=631;
 
 -- Saurfang
-UPDATE `creature_template` SET `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
-DELETE FROM `gameobject` WHERE `guid` IN (913383, 913385, 913395, 913397);
-DELETE FROM `gameobject_template` WHERE `entry` IN (902241,902242);
+UPDATE `creature_template` SET `faction_A` = '14', `faction_H` = '14', `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+UPDATE `creature` SET `position_x` = -476.621,`position_y` = 2211.11,`position_z` = 541.197, `spawntimesecs` = 604800 WHERE `id` = 37813;
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
 DELETE FROM `spell_script_target` WHERE `entry` = 72260;
 INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72260', '1', '37813');

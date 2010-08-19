@@ -646,6 +646,13 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
     bool movementstarted;
     Creature* pMenethil;
 
+    void EnterEvadeMode()
+    {
+        if (!pInstance) return;
+        if (pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS) return;
+        ScriptedAI::EnterEvadeMode();
+    }
+
     void Reset()
     {
         if(!pInstance) return;

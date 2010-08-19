@@ -51,6 +51,14 @@ enum
 
 };
 
+enum Equipment
+{
+    EQUIP_MAIN           = 50798,
+    EQUIP_OFFHAND        = 50798,
+    EQUIP_RANGED         = EQUIP_NO_CHANGE,
+    EQUIP_DONE           = EQUIP_NO_CHANGE,
+};
+
 struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 {
     boss_deathbringer_saurfangAI(Creature* pCreature) : BSWScriptedAI(pCreature)
@@ -60,23 +68,44 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
     uint8 beasts;
 
     void Reset()
     {
         if(!pInstance) return;
+        m_creature->SetRespawnDelay(7*DAY);
         if (m_creature->isAlive()) pInstance->SetData(TYPE_SAURFANG, NOT_STARTED);
-        stage = 0;
+        setStage(0);
         beasts = 0;
         resetTimers();
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (!pInstance) return;
+
+        if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER) return;
+
+        if (!m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 20.0f))
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+            AttackStart(pWho);
+        }
+
+        ScriptedAI::MoveInLineOfSight(pWho);
     }
 
     void Aggro(Unit *who) 
     {
         if(pInstance) pInstance->SetData(TYPE_SAURFANG, IN_PROGRESS);
+        SetEquipmentSlots(false, EQUIP_MAIN, EQUIP_OFFHAND, EQUIP_RANGED);
         DoScriptText(-1631100,m_creature);
         doCast(SPELL_BLOOD_LINK);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void JustReachedHome()
@@ -137,15 +166,15 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
         if (!m_creature->HasAura(SPELL_BLOOD_POWER))
             doCast(SPELL_BLOOD_POWER);
 
-        switch(stage)
+        switch(getStage())
         {
             case 0:
-                    if (m_creature->GetHealthPercent() <= 30.0f) stage = 1;
+                    if (m_creature->GetHealthPercent() <= 30.0f) setStage(1);
                     break;
 
             case 1: 
                         doCast(SPELL_FRENZY);
-                        stage = 2;
+                        setStage(2);
                         DoScriptText(-1631101,m_creature);
                     break;
 
@@ -171,9 +200,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 
             if (timedQuery(SPELL_CALL_BLOOD_BEAST_1, diff))
                 {
-                    if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL
-                        || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) beasts = 5;
-                        else beasts = 2;
+                    beasts = getSpellData(SPELL_CALL_BLOOD_BEAST_1);
                     DoScriptText(-1631102,m_creature);
                 };
 
