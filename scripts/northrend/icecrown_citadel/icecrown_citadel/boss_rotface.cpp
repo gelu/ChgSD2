@@ -50,8 +50,6 @@ enum BossSpells
     NPC_OOZE_SPRAY_STALKER   = 37986,
     NPC_OOZE_STALKER         = 37013,
     NPC_OOZE_EXPLODE_STALKER = 38107,
-
-    MAX_INFECTION_TARGETS     = 5,
 };
 
 static Locations SpawnLoc[]=
@@ -73,7 +71,6 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
 
     ScriptedInstance *pInstance;
     uint8 stage;
-    Unit* InfectionTarget[MAX_INFECTION_TARGETS];
     bool intro;
     bool pet;
     bool nexttick;
@@ -86,7 +83,6 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
         intro = false;
         pet = false;
         nexttick = false;
-        memset(&InfectionTarget, 0, sizeof(InfectionTarget));
         resetTimers();
     }
 
@@ -170,36 +166,19 @@ struct MANGOS_DLL_DECL boss_rotfaceAI : public BSWScriptedAI
             if (doSummon(NPC_OOZE_SPRAY_STALKER))
                 doCast(SPELL_SLIME_SPRAY);
 
-        if (timedQuery(SPELL_MUTATED_INFECTION_AURA, diff))
-            for(uint8 i = 0; i < MAX_INFECTION_TARGETS; ++i)
-               if (InfectionTarget[i] && InfectionTarget[i]->isAlive() && InfectionTarget[i]->IsInMap(m_creature))
-                  if (!hasAura(SPELL_MUTATED_INFECTION_AURA,InfectionTarget[i]))
-                  {
-                       float fPosX, fPosY, fPosZ;
-                       InfectionTarget[i]->GetPosition(fPosX, fPosY, fPosZ);
-                       if (Unit* pTemp = doSummon(NPC_SMALL_OOZE,fPosX, fPosY, fPosZ))
-                           pTemp->AddThreat(InfectionTarget[i], 1000.0f);
-                       InfectionTarget[i] = NULL;
-                   };
-
         if (timedQuery(SPELL_MUTATED_INFECTION, diff))
-            if (Unit* pTarget = doSelectRandomPlayer(SPELL_MUTATED_INFECTION_AURA, false, 60.0f))
-                {
-                    for(uint8 i = 0; i < MAX_INFECTION_TARGETS; ++i)
-                       if (!InfectionTarget[i])
-                           {
-                              InfectionTarget[i] = pTarget;
-                              doCast(SPELL_MUTATED_INFECTION, InfectionTarget[i]);
-                              DoScriptText(-1631226,m_creature);
-                              break;
-                           }
-                       else continue;
-                };
+        {
+            for(uint8 i = 0; i < getSpellData(SPELL_MUTATED_INFECTION); ++i)
+                if (Unit* pTarget = doSelectRandomPlayer(SPELL_MUTATED_INFECTION_AURA, false, 60.0f))
+                     doCast(SPELL_MUTATED_INFECTION, pTarget);
+            DoScriptText(-1631226,m_creature);
+        }
 
-        if (timedQuery(SPELL_BERSERK, diff)){
-                 doCast(SPELL_BERSERK);
-                 DoScriptText(-1631225,m_creature);
-                 };
+        if (timedQuery(SPELL_BERSERK, diff))
+        {
+            doCast(SPELL_BERSERK);
+            DoScriptText(-1631225,m_creature);
+        };
 
         DoMeleeAttackIfReady();
     }
@@ -391,6 +370,41 @@ CreatureAI* GetAI_mob_ooze_explode_stalker(Creature* pCreature)
     return new mob_ooze_explode_stalkerAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL  mob_ooze_spray_stalkerAI : public ScriptedAI
+{
+    mob_ooze_spray_stalkerAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+
+    void Reset()
+    {
+        m_creature->SetRespawnDelay(7*DAY);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        SetCombatMovement(false);
+        m_creature->SetDisplayId(11686);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!pInstance || pInstance->GetData(TYPE_ROTFACE) != IN_PROGRESS) 
+              m_creature->ForcedDespawn();
+    }
+};
+
+CreatureAI* GetAI_mob_ooze_spray_stalker(Creature* pCreature)
+{
+    return new mob_ooze_spray_stalkerAI(pCreature);
+}
+
 void AddSC_boss_rotface()
 {
     Script *newscript;
@@ -417,5 +431,10 @@ void AddSC_boss_rotface()
     newscript = new Script;
     newscript->Name = "mob_ooze_explode_stalker";
     newscript->GetAI = &GetAI_mob_ooze_explode_stalker;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_ooze_spray_stalker";
+    newscript->GetAI = &GetAI_mob_ooze_spray_stalker;
     newscript->RegisterSelf();
 }

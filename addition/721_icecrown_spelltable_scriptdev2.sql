@@ -153,14 +153,14 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMa
 
 -- Rotface
 DELETE FROM `boss_spell_table` WHERE `entry` = 36627;
-INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
-(36627, 69508, 0, 0, 0, 15000, 0, 0, 0, 20000, 0, 0, 0, 1, 0, 0),
-(36627, 69674, 0, 0, 0, 1000, 0, 0, 0,  1000, 0, 0, 0, 6, 0, 0),
-(36627, 70003, 0, 0, 0, 15000, 0, 0, 0, 15000, 0, 0, 0, 6, 0, 0),
-(36627, 69788, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 1, 0, 0),
-(36627, 69783, 0, 0, 0, 30000, 0, 0, 0, 45000, 0, 0, 0, 3, 0, 0),
-(36627, 47008, 0, 0, 0, 600000, 0, 0, 0, 600000, 0, 0, 0, 1, 0, 0),
-(36627, 69789, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 6, 0, 1);
+INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_H10`, `spellID_H25`, `timerMin_N10`, `timerMin_N25`, `timerMin_H10`, `timerMin_H25`, `timerMax_N10`, `timerMax_N25`, `timerMax_H10`, `timerMax_H25`,`data1`, `data2`, `data3`, `data4`, `CastType`, `isVisualEffect`, `isBugged`) VALUES
+(36627, 69508, 0, 0, 0, 15000, 0, 0, 0, 20000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36627, 69674, 0, 0, 0, 1000, 0, 0, 0,  1000, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0),
+(36627, 70003, 0, 0, 0, 15000, 0, 0, 0, 15000, 0, 0, 0, 2, 4, 2, 5, 6, 0, 0),
+(36627, 69788, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36627, 69783, 0, 0, 0, 30000, 0, 0, 0, 45000, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0),
+(36627, 47008, 0, 0, 0, 600000, 0, 0, 0, 600000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(36627, 69789, 0, 0, 0, 20000, 0, 0, 0, 40000, 0, 0, 0, 0, 0, 0, 0, 6, 0, 1);
 -- summons
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMax_N10`,  `data1`, `data2`, `data3`, `data4`, `locData_x`, `locData_y`, `locData_z`, `CastType` ) VALUES
 (36627, 36897, 12000, 12000, 1, 1, 1, 1, 1, 5, 0, 9),
