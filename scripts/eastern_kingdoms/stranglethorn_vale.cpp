@@ -191,8 +191,7 @@ bool ChooseReward_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature, cons
         DoScriptText(SAY_WINNER, pCreature,pPlayer);
         pCreature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
         ((npc_riggle_bassbaitAI*)(pCreature->AI()))->bEventWinnerFound = true;
-        // right way to load another creature, you need first argument because he uses it to get map.
-        Creature* creature2 = pCreature->GetMap()->GetCreature(MAKE_NEW_GUID(54687,15078,HIGHGUID_UNIT));
+        Creature* creature2 = GetClosestCreatureWithEntry(pCreature,15087,60.0f);
         if (creature2)
         {
             creature2->SetFlag(UNIT_NPC_FLAGS,UNIT_NPC_FLAG_QUESTGIVER);
