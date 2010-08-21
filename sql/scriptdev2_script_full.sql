@@ -740,7 +740,14 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1230000,'Ah, hits the spot!',0,0,0,0,'rocknot SAY_GOT_BEER'),
 (-1230001,'Come to aid the Throne!',0,1,0,0,'dagran SAY_AGGRO'),
 (-1230002,'Hail to the king, baby!',0,1,0,0,'dagran SAY_SLAY'),
-(-1230003,'You have challenged the Seven, and now you will die!',0,0,0,0,'doomrel SAY_DOOMREL_START_EVENT');
+(-1230003,'You have challenged the Seven, and now you will die!',0,0,0,0,'doomrel SAY_DOOMREL_START_EVENT'),
+
+(-1230004,'The Sons of Thaurissan shall watch you perish in the Ring of the Law!',0,1,0,0,'grimstone SAY_START_1'),
+(-1230005,'You have been sentenced to death for crimes against the Dark Iron Nation!',0,1,0,0,'grimstone SAY_START_2'),
+(-1230006,'Unleash the fury and let it be done!',0,1,0,0,'grimstone SAY_OPEN_EAST_GATE'),
+(-1230007,'But your real punishment lies ahead.',0,1,0,0,'grimstone SAY_SUMMON_BOSS_1'),
+(-1230008,'Haha! I bet you thought you were done!',0,1,0,0,'grimstone SAY_SUMMON_BOSS_2'),
+(-1230009,'Good Riddance!',0,1,0,0,'grimstone SAY_OPEN_NORTH_GATE');
 
 -- -1 249 000 ONYXIA'S LAIR
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
@@ -829,7 +836,12 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1329000,'Thanks to Egan',0,0,0,0,'freed_soul SAY_ZAPPED0'),
 (-1329001,'Rivendare must die',0,0,0,0,'freed_soul SAY_ZAPPED1'),
 (-1329002,'Who you gonna call?',0,0,0,0,'freed_soul SAY_ZAPPED2'),
-(-1329003,'Don\'t cross those beams!',0,0,0,0,'freed_soul SAY_ZAPPED3');
+(-1329003,'Don\'t cross those beams!',0,0,0,0,'freed_soul SAY_ZAPPED3'),
+
+(-1329004,'An Ash\'ari Crystal has fallen! Stay true to the Lich King, my brethren, and attempt to resummon it.',0,6,0,0,'thuzadin acolyte SAY_ANNOUNCE_ZIGGURAT_1'),
+(-1329005,'One of the Ash\'ari Crystals has been destroyed! Slay the intruders!',0,6,0,0,'thuzadin acolyte SAY_ANNOUNCE_ZIGGURAT_2'),
+(-1329006,'An Ash\'ari Crystal has been toppled! Restore the ziggurat before the Necropolis is vulnerable!',0,6,0,0,'thuzadin acolyte SAY_ANNOUNCE_ZIGGURAT_3'),
+(-1329007,'The Ash\'ari Crystals have been destroyed! The Slaughterhouse is vulnerable!',0,6,0,0,'baron rivendare SAY_ANNOUNCE_RIVENDARE');
 
 -- -1 349 000 MARAUDON
 
