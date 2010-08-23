@@ -62,6 +62,9 @@ enum BossSpells
         SPELL_SHADOW_RESONANCE_AURA             = 71822,
         NPC_DARK_NUCLEUS                        = 38369,
 
+        // Blood orb
+        SPELL_BLOOD_ORB_STATE_VISUAL            = 72100,
+
 };
 
 struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI

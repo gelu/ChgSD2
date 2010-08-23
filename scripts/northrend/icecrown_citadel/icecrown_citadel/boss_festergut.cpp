@@ -38,7 +38,8 @@ enum BossSpells
     SPELL_GAS_SPORE          = 69278,
     SPELL_SPORE_AURA_0       = 69279,
     SPELL_SPORE_AURA_1       = 69290,
-    SPELL_INOCULATE          = 72103,
+    SPELL_INOCULATE          = 69291,
+    SPELL_REMOVE_UNOCULATE   = 69298,
     SPELL_GASTRIC_BLOAT      = 72219,
     SPELL_GASTRIC_EXPLOSION  = 72227,
     SPELL_VILE_GAS           = 72272,
@@ -75,8 +76,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     ScriptedInstance *pInstance;
     bool intro;
     bool pet;
-    bool sporeCasted;
-    Unit* spored[MAX_SPORE_TARGETS];
     Creature* pBlightTarget;
 //    uint64 pPuddleStalkerGUID[3];
 
@@ -88,8 +87,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         setStage(0);
         intro = false;
         pet = false;
-        sporeCasted = false;
-        memset(spored, 0, sizeof(spored));
 /*        for(uint8 i = 0; i < 3; ++i)
              if (!pPuddleStalkerGUID[i])
              {
@@ -104,11 +101,16 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 */
         if (!pBlightTarget)
             pBlightTarget = doSelectNearestCreature(NPC_BLIGHT_STALKER,60.0f);
-            if (pBlightTarget)
-            {
-                 pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                 pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            }
+        if (pBlightTarget && !pBlightTarget->isAlive())
+            pBlightTarget->Respawn();
+        if (pBlightTarget)
+        {
+             pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+             pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+             doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+             doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+             doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+        }
 
     }
 
@@ -139,12 +141,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     {
         if (!pInstance) return;
         pInstance->SetData(TYPE_FESTERGUT, FAIL);
-        if (pBlightTarget && pBlightTarget->isAlive())
-        {
-            doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
-            doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
-            doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
-        }
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_1);
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_2);
         doRemoveFromAll(SPELL_BLIGHT_VISUAL_3);
@@ -198,43 +194,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 */
     }
 
-    void doTriggerUnoculated()
-    {
-         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
-             if (spored[i])
-                if (!hasAura(SPELL_SPORE_AURA_1,spored[i]))
-                {
-                   doCast(SPELL_INOCULATE,spored[i]);
-                   spored[i] = NULL;
-                }
-    }
-
-    void doSearchSpored()
-    {
-         Unit* searched = doSelectRandomPlayer(SPELL_SPORE_AURA_1, true, 80.0f);
-
-         if (!searched) return;
-
-         bool exist = false;
-
-         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
-             if (spored[i])
-                if (spored[i] = searched)
-                {
-                    exist = true;
-                    break;
-                }
-
-         if (exist) return;
-
-         for(uint8 i = 0; i < MAX_SPORE_TARGETS; ++i)
-             if (!spored[i])
-             {
-                 spored[i] = searched;
-                 break;
-             }
-    }
-
     void UpdateAI(const uint32 diff)
     {
 
@@ -256,8 +215,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        doTriggerUnoculated();
 
         switch(getStage())
         {
@@ -346,8 +303,6 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
 
 
         timedCast(SPELL_GAS_SPORE, diff);
-
-        doSearchSpored();
 
         timedCast(SPELL_GASTRIC_BLOAT, diff);
 
