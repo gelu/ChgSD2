@@ -41,7 +41,7 @@ struct t_Locations
 
 static t_Locations PortalLoc[]=
 {
-{-3631600,MAP_NUM,-17.1928f, 2211.44f, 30.1158f,3.14f,0,true,true,TYPE_TELEPORT}, //
+{-3631600,MAP_NUM,-17.1928f, 2211.44f, 30.1158f,3.14f,70856,true,true,TYPE_TELEPORT}, //
 {-3631601,MAP_NUM,-503.62f, 2211.47f, 62.8235f,3.14f,70856,false,true,TYPE_MARROWGAR},  //
 {-3631602,MAP_NUM,-615.145f, 2211.47f, 199.972f,0,70857,false,true,TYPE_DEATHWHISPER}, //
 {-3631603,MAP_NUM,-549.131f, 2211.29f, 539.291f,0,70858,false,true,TYPE_FLIGHT_WAR}, //
@@ -58,15 +58,10 @@ bool GOGossipSelect_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo, uin
 
     if(!pPlayer->getAttackers().empty()) return false;
 
-    if(action >= 0 && action <= PORTALS_COUNT)
+    if(action >= 0 && action < PORTALS_COUNT)
     pPlayer->TeleportTo(PortalLoc[action].map_num, PortalLoc[action].x, PortalLoc[action].y, PortalLoc[action].z, PortalLoc[action].o);
-    if (PortalLoc[action].spellID !=0 ) 
-           if (SpellEntry const* spell = (SpellEntry *)GetSpellStore()->LookupEntry(PortalLoc[action].spellID))
-           {
-               SpellAuraHolder *holder = CreateSpellAuraHolder(spell, pPlayer, pPlayer);
-               Aura *aura = CreateAura(spell, EFFECT_INDEX_2, NULL, holder, pPlayer);
-               holder->AddAura(aura, EFFECT_INDEX_2);
-           }
+    if (PortalLoc[action].spellID != 0 )
+        pPlayer->_AddAura(PortalLoc[action].spellID, 2000);
 
     pPlayer->CLOSE_GOSSIP_MENU();
     return true;
