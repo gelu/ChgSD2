@@ -73,6 +73,16 @@ void instance_old_hillsbrad::OnCreatureCreate(Creature* pCreature)
     }
 }
 
+void instance_old_hillsbrad::OnCreatureDeath(Creature* pCreature)
+{
+    if (pCreature->GetEntry() == NPC_EPOCH)
+    {
+        // notify thrall so he can continue
+        if (Creature* pThrall = instance->GetCreature(m_uiThrallGUID))
+            pThrall->AI()->KilledUnit(pCreature);
+    }
+}
+
 void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
 {
     switch(uiType)
@@ -107,6 +117,10 @@ void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
         }
         case TYPE_THRALL_EVENT:
         {
+            // nothing to do if already done and thrall respawn
+            if (m_auiEncounter[1] == DONE)
+                return;
+
             if (uiData == FAIL)
             {
                 if (m_uiThrallEventCount <= 20)
