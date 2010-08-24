@@ -274,6 +274,8 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         if (!m_pInstance) return;
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->GetMotionMaster()->MovementExpired();
         SetCombatMovement(true);
     }
@@ -296,6 +298,8 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
             m_creature->SetInCombatWith(pWho);
             pWho->SetInCombatWith(m_creature);
             DoStartMovement(pWho);
+            m_creature->GetMotionMaster()->MovementExpired();
+            SetCombatMovement(true);
         }
     }
 
@@ -314,7 +318,6 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
         if (type != POINT_MOTION_TYPE || !MovementStarted) return;
         if (id == 0)
         {
-            MovementStarted = false;
             m_creature->GetMotionMaster()->MovementExpired();
             SetCombatMovement(true);
             m_creature->SetInCombatWithZone();
@@ -323,7 +326,9 @@ struct MANGOS_DLL_DECL mob_erekem_guardAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_pInstance->GetData(TYPE_EREKEM) == SPECIAL && !MovementStarted)
+        if (!m_pInstance) return;
+
+        if (m_pInstance->GetData(TYPE_EREKEM) == IN_PROGRESS && !MovementStarted && !m_creature->getVictim())
             StartMovement(0);
 
         //Return since we have no target
