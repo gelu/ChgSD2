@@ -286,7 +286,6 @@ extern void AddSC_boss_anubarak();                          //azjol-nerub
 extern void AddSC_boss_hadronox();
 extern void AddSC_boss_krikthir();
 extern void AddSC_instance_azjol_nerub();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 
 extern void AddSC_northrend_beasts();                       //Crusaders' Coliseum, trial_of_the_crusader
 extern void AddSC_boss_jaraxxus();
@@ -296,14 +295,6 @@ extern void AddSC_twin_valkyr();
 extern void AddSC_instance_trial_of_the_crusader();
 extern void AddSC_trial_of_the_crusader();
 
-=======
-extern void AddSC_boss_anubarak_trial();                    //trial_of_the_crusader
-extern void AddSC_boss_jaraxxus();
-extern void AddSC_instance_trial_of_the_crusader();
-extern void AddSC_northrend_beasts();
-extern void AddSC_trial_of_the_crusader();
-extern void AddSC_twin_valkyr();
->>>>>>> scriptdev2:system/ScriptLoader.cpp
 extern void AddSC_boss_novos();                             //draktharon_keep
 extern void AddSC_boss_dred();
 extern void AddSC_boss_tharonja();
@@ -790,7 +781,6 @@ void AddScripts()
     AddSC_boss_hadronox();
     AddSC_boss_krikthir();
     AddSC_instance_azjol_nerub();
-<<<<<<< HEAD:system/ScriptLoader.cpp
 
     AddSC_northrend_beasts();                               //Crusaders' Coliseum, trial_of_the_crusader
     AddSC_boss_jaraxxus();
@@ -800,14 +790,6 @@ void AddScripts()
     AddSC_instance_trial_of_the_crusader();
     AddSC_trial_of_the_crusader();
 
-=======
-    AddSC_boss_anubarak_trial();                            //trial_of_the_crusader
-    AddSC_boss_jaraxxus();
-    AddSC_instance_trial_of_the_crusader();
-    AddSC_northrend_beasts();
-    AddSC_trial_of_the_crusader();
-    AddSC_twin_valkyr();
->>>>>>> scriptdev2:system/ScriptLoader.cpp
     AddSC_boss_novos();                                     //draktharon_keep
     AddSC_boss_dred();
     AddSC_boss_tharonja();
