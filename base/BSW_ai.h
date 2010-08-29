@@ -147,9 +147,14 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
                  return queryIndex(_findSpellIDX(SpellID)) ? _doRemoveFromAll(_findSpellIDX(SpellID)) : _doRemoveFromAll(SpellID);
              };
 
-        bool doAura(uint32 SpellID, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0)
+        bool doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0)
              {
-                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID),pTarget, index) : _doAura(SpellID, pTarget, index);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID), pTarget, index) : _doAura(SpellID, pTarget, index, basepoint);
+             };
+
+        bool doAura(uint32 SpellID, Unit* pTarget = NULL)
+             {
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID), pTarget) : _doAura(SpellID, pTarget);
              };
 
         bool hasAura(uint32 SpellID, Unit* pTarget = NULL)
@@ -259,9 +264,13 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         bool          _doRemoveFromAll(uint32 SpellID);
 
-        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget = NULL, SpellEffectIndex index = EFFECT_INDEX_0);
+        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index);
 
-        bool          _doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index = EFFECT_INDEX_0);
+        bool          _doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0);
+
+        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget);
+
+        bool          _doAura(uint32 SpellID, Unit* pTarget);
 
         bool          _hasAura(uint8 m_uiSpellIdx, Unit* pTarget);
 

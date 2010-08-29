@@ -638,74 +638,104 @@ bool BSWScriptedAI::_doRemoveFromAll(uint32 SpellID)
     }
 };
 
+bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget)
+{
+    BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
+
+    if (!pTarget)
+        pTarget = m_creature;
+
+    bool result = true;
+
+    for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
+        result = result && _doAura(m_uiSpellIdx, pTarget, SpellEffectIndex(i));
+
+    return result;
+
+};
+
+bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget)
+{
+    if (!pTarget)
+        pTarget = m_creature;
+
+    bool result = true;
+
+    for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
+        result = result && _doAura(SpellID, pTarget, SpellEffectIndex(i), 0);
+
+    return result;
+
+};
+
+
 bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
 {
     BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
 
-    if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
-        {
-           error_log("BSW: FAILED adding aura of spell number %u - no target or target not in map or target is dead",pSpell->m_uiSpellEntry[currentDifficulty]);
-           return false;
-        }
+    if (!pTarget)
+        pTarget = m_creature;
 
-    if (_hasAura(m_uiSpellIdx,pTarget))
-         debug_log("BSW: adding aura stack from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
-    else debug_log("BSW: adding new aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
+    return _doAura(pSpell->m_uiSpellEntry[currentDifficulty], pTarget, index, pSpell->varData);
 
-    SpellEntry const *spell = (SpellEntry *)GetSpellStore()->LookupEntry(pSpell->m_uiSpellEntry[currentDifficulty]);
-    if (spell && spell->Effect[index] < TOTAL_SPELL_EFFECTS)
-    {
-        if (IsSpellAppliesAura(spell, (1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) || IsSpellHaveEffect(spell, SPELL_EFFECT_PERSISTENT_AREA_AURA))
-        {
-            SpellAuraHolder *holder = CreateSpellAuraHolder(spell, pTarget,  pSpell->m_IsBugged ? pTarget : m_creature);
-
-            int32 basepoint = pSpell->varData ?  pSpell->varData - 1 : spell->EffectBasePoints[index] + 1;
-
-            if( IsAreaAuraEffect(spell->Effect[index]) ||
-                spell->Effect[index] == SPELL_EFFECT_APPLY_AURA  ||
-                spell->Effect[index] == SPELL_EFFECT_PERSISTENT_AREA_AURA )
-                {
-                    Aura *aura = CreateAura(spell, SpellEffectIndex(index), &basepoint, holder, pTarget);
-                    holder->AddAura(aura, SpellEffectIndex(index));
-                    return true;
-                }
-        }
-    }
-
-    error_log("BSW: FAILED adding aura from spell %u index %u",pSpell->m_uiSpellEntry[currentDifficulty], index);
-
-    return false;
 };
 
-bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index)
+
+bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint)
 {
     if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
-        {
-           error_log("BSW: FAILED adding aura of spell number %u - no target or target not in map or target is dead",SpellID);
-           return false;
-        }
+    {
+        error_log("BSW: FAILED adding aura of spell number %u - no target or target not in map or target is dead",SpellID);
+        return false;
+    }
 
     if (_hasAura(SpellID,pTarget))
          debug_log("BSW: adding aura stack from spell %u index %u",SpellID, index);
     else debug_log("BSW: adding new aura from spell %u index %u",SpellID, index);
 
     SpellEntry const *spell = (SpellEntry *)GetSpellStore()->LookupEntry(SpellID);
-    if (spell && spell->Effect[index] < TOTAL_SPELL_EFFECTS)
+
+    if (spell)
     {
         if (IsSpellAppliesAura(spell, (1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) || IsSpellHaveEffect(spell, SPELL_EFFECT_PERSISTENT_AREA_AURA))
         {
-            SpellAuraHolder* holder = CreateSpellAuraHolder(spell, pTarget, m_creature);
+            int32 _basepoint = basepoint ?  basepoint - 1 : spell->EffectBasePoints[index] + 1;
 
-            int32 basepoint = spell->EffectBasePoints[index] + 1;
+            bool addedToExisting = true;
 
-            if( IsAreaAuraEffect(spell->Effect[index]) ||
-                spell->Effect[index] == SPELL_EFFECT_APPLY_AURA  ||
-                spell->Effect[index] == SPELL_EFFECT_PERSISTENT_AREA_AURA )
-                {
-                    Aura *aura = CreateAura(spell, SpellEffectIndex(index), &basepoint, holder, pTarget);
-                    holder->AddAura(aura, SpellEffectIndex(index));
-                    return true;
-                }
+            SpellAuraHolder* holder = pTarget->GetSpellAuraHolder(SpellID, pTarget->GetGUID());
+
+            Aura* aura = NULL;
+
+            if (!holder)
+            {
+                holder = CreateSpellAuraHolder(spell, pTarget, pTarget);
+                addedToExisting = false;
+            }
+
+
+            if (aura = holder->GetAuraByEffectIndex(index))
+            {
+                holder->ModStackAmount(1);
+            }
+            else 
+            {
+                aura = CreateAura(spell, index, &_basepoint, holder, pTarget);
+                aura->SetAuraDuration(aura->GetAuraMaxDuration());
+                holder->AddAura(aura, index);
+            }
+
+            if (addedToExisting)
+            {
+                pTarget->AddAuraToModList(aura);
+                holder->SetInUse(true);
+                aura->ApplyModifier(true,true);
+                holder->SetInUse(false);
+            }
+            else
+                pTarget->AddSpellAuraHolder(holder);
+
+            return true;
         }
     }
 
