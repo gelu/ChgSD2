@@ -1145,6 +1145,7 @@ struct MANGOS_DLL_DECL npc_stratholme_cratesAI : public ScriptedAI
 
     void Reset()
     {
+        Active = false;
     }
 
     void UpdateAI(const uint32 uiDiff)

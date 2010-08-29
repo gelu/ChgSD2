@@ -283,9 +283,11 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
                 {
                     DoRespawnGameObject(m_uiMalChestGUID, 30*MINUTE);
                     if (GameObject* pGo = instance->GetGameObject(m_uiMalChestGUID))
-                        pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
+                        pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                     if (Creature* pChromi2 = instance->GetCreature(m_uiChromi02GUID))
                         pChromi2->SetVisibility(VISIBILITY_OFF);
+                    if (GameObject* pGo = instance->GetGameObject(m_uiExitGUID))
+                        pGo->SetGoState(GO_STATE_ACTIVE);
                 }
                 break;
         }
