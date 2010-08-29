@@ -453,9 +453,7 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
 
         if (pTarget)
         {
-            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_0);
-            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_1);
-            doAura(SPELL_GASEOUS_BLOAT, pTarget, EFFECT_INDEX_2);
+            doAura(SPELL_GASEOUS_BLOAT, pTarget);
         }
         DoStartMovement(who);
     }
@@ -545,11 +543,8 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
 
         if (pTarget)
         {
-            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_0);
-            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_1);
-            doAura(SPELL_OOZE_ADHESIVE, pTarget, EFFECT_INDEX_2);
+            doAura(SPELL_OOZE_ADHESIVE, pTarget);
         }
-
         DoStartMovement(pTarget);
     }
 

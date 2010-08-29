@@ -147,9 +147,9 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
                  return queryIndex(_findSpellIDX(SpellID)) ? _doRemoveFromAll(_findSpellIDX(SpellID)) : _doRemoveFromAll(SpellID);
              };
 
-        bool doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0)
+        bool doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0, bool isStack = true)
              {
-                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID), pTarget, index) : _doAura(SpellID, pTarget, index, basepoint);
+                 return queryIndex(_findSpellIDX(SpellID)) ? _doAura(_findSpellIDX(SpellID), pTarget, index, isStack) : _doAura(SpellID, pTarget, index, basepoint, isStack);
              };
 
         bool doAura(uint32 SpellID, Unit* pTarget = NULL)
@@ -264,9 +264,9 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         bool          _doRemoveFromAll(uint32 SpellID);
 
-        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index);
+        bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index, bool isStack = true);
 
-        bool          _doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0);
+        bool          _doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint = 0, bool isStack = true);
 
         bool          _doAura(uint8 m_uiSpellIdx, Unit* pTarget);
 

@@ -648,7 +648,7 @@ bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget)
     bool result = true;
 
     for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
-        result = result && _doAura(m_uiSpellIdx, pTarget, SpellEffectIndex(i));
+        result = result && _doAura(m_uiSpellIdx, pTarget, SpellEffectIndex(i), !i);
 
     return result;
 
@@ -662,26 +662,26 @@ bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget)
     bool result = true;
 
     for(int i = 0; i < MAX_EFFECT_INDEX; ++i)
-        result = result && _doAura(SpellID, pTarget, SpellEffectIndex(i), 0);
+        result = result && _doAura(SpellID, pTarget, SpellEffectIndex(i), 0, !i);
 
     return result;
 
 };
 
 
-bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index)
+bool BSWScriptedAI::_doAura(uint8 m_uiSpellIdx, Unit* pTarget, SpellEffectIndex index, bool isStack)
 {
     BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
 
     if (!pTarget)
         pTarget = m_creature;
 
-    return _doAura(pSpell->m_uiSpellEntry[currentDifficulty], pTarget, index, pSpell->varData);
+    return _doAura(pSpell->m_uiSpellEntry[currentDifficulty], pTarget, index, pSpell->varData, isStack);
 
 };
 
 
-bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint)
+bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex index, int32 basepoint, bool isStack)
 {
     if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
     {
@@ -716,7 +716,8 @@ bool BSWScriptedAI::_doAura(uint32 SpellID, Unit* pTarget, SpellEffectIndex inde
 
             if (aura = holder->GetAuraByEffectIndex(index))
             {
-                holder->ModStackAmount(1);
+                if (isStack)
+                    holder->ModStackAmount(1);
             }
             else 
             {
