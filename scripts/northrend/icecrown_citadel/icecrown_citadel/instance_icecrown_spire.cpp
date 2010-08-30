@@ -208,6 +208,9 @@ static Locations SpawnLoc[]=
             case NPC_VALITHRIA:
                           m_uiValithriaGUID = pCreature->GetGUID();
                           break;
+            case NPC_VALITHRIA_QUEST:
+                          m_uiValithriaQuestGUID = pCreature->GetGUID();
+                          break;
             case NPC_SINDRAGOSA:
                           m_uiSindragosaGUID = pCreature->GetGUID();
                           break;
@@ -226,7 +229,7 @@ static Locations SpawnLoc[]=
             case NPC_PRECIOUS:
                           m_uiPreciousGUID = pCreature->GetGUID();
                           break;
-            case NPC_TARGET_DUMMY:
+            case NPC_COMBAT_TRIGGER:
                           m_uidummyTargetGUID = pCreature->GetGUID();
                           break;
             case NPC_FROSTMOURNE_TRIGGER:
@@ -697,6 +700,7 @@ static Locations SpawnLoc[]=
             case NPC_KELESETH:                return m_uiKelesethGUID;
             case NPC_LANATHEL:                return m_uiLanathelGUID;
             case NPC_VALITHRIA:               return m_uiValithriaGUID;
+            case NPC_VALITHRIA_QUEST:         return m_uiValithriaQuestGUID;
             case NPC_SINDRAGOSA:              return m_uiSindragosaGUID;
             case NPC_LICH_KING:               return m_uiLichKingGUID;
             case NPC_RIMEFANG:                return m_uiRimefangGUID;
@@ -723,8 +727,8 @@ static Locations SpawnLoc[]=
             case GO_ARTHAS_PRECIPICE:         return m_uiArthasPrecipiceGUID;
             case NPC_FROSTMOURNE_TRIGGER:     return m_uiFrostmourneTriggerGUID;
             case NPC_FROSTMOURNE_HOLDER:      return m_uiFrostmourneHolderGUID;
-            case NPC_TARGET_DUMMY:            return m_uidummyTargetGUID;
-            case GO_GAS_RELEASE_VALVE:     return m_uiGasReleaseValveGUID;
+            case NPC_COMBAT_TRIGGER:          return m_uidummyTargetGUID;
+            case GO_GAS_RELEASE_VALVE:        return m_uiGasReleaseValveGUID;
         }
         return 0;
     }

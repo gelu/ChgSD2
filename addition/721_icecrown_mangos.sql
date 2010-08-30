@@ -140,13 +140,14 @@ UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`=
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10069;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
 UPDATE `creature_template` SET `ScriptName`='mob_mana_void', `AIName`='' WHERE `entry`= 38068;
-
+DELETE FROM `creature` WHERE `guid` = 47738 AND `id` = 38589;
 
 UPDATE `gameobject_template` SET `faction` = '0',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201375,201373);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201374);
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201374);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201380,201381,201382,201383);
-UPDATE `gameobject` SET `faction` = '0', `state` = '1' WHERE `id` IN (201380,201381,201382,201383);
+UPDATE `gameobject_template` SET `faction` = '0' WHERE `entry` IN (201380,201381,201382,201383);
+UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (201380,201381,201382,201383);
 
 -- Sindragosa
 UPDATE `creature_template` SET `ScriptName`='boss_sindragosa' WHERE `entry`= 36853;

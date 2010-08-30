@@ -59,7 +59,7 @@ enum
     NPC_RIMEFANG                = 37533,
     NPC_SPINESTALKER            = 37534,
 
-    NPC_TARGET_DUMMY            = 2673,
+    NPC_COMBAT_TRIGGER          = 38752,
 
     GO_TELEPORT_GOSSIP_MESSAGE  = 99323,
     TELEPORT_GOSSIP_MESSAGE     = 99322,
@@ -189,6 +189,7 @@ private:
     uint64 m_uiKelesethGUID;
     uint64 m_uiLanathelGUID;
     uint64 m_uiValithriaGUID;
+    uint64 m_uiValithriaQuestGUID;
     uint64 m_uiSindragosaGUID;
     uint64 m_uiLichKingGUID;
     uint64 m_uiGasReleaseValveGUID;
