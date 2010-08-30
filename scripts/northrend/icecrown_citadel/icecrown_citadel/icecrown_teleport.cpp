@@ -25,7 +25,7 @@ EndScriptData */
 
 enum 
 {
-PORTALS_COUNT = 8
+PORTALS_COUNT = 7
 };
 
 struct t_Locations
@@ -46,7 +46,6 @@ static t_Locations PortalLoc[]=
 {-3631602,MAP_NUM,-615.145f, 2211.47f, 199.972f,0,70857,false,true,TYPE_DEATHWHISPER}, //
 {-3631603,MAP_NUM,-549.131f, 2211.29f, 539.291f,0,70858,false,true,TYPE_FLIGHT_WAR}, //
 {-3631604,MAP_NUM,4198.42f, 2769.22f, 351.065f,0,70859,false,true,TYPE_SAURFANG}, //
-{-3631605,MAP_NUM,4490.205566f, 2769.275635f, 403.983765f,0,0,false,true,TYPE_BLOOD_COUNCIL}, //
 {-3631606,MAP_NUM,4356.580078f, 2565.75f, 220.401993f,4.90f,70861,false,true,TYPE_VALITHRIA}, //
 {-3631607,MAP_NUM,528.767273f, -2124.845947f, 1043.1f,3.14f, 70860,false,true,TYPE_SINDRAGOSA}, //
 };
@@ -82,7 +81,7 @@ bool GOGossipHello_go_icecrown_teleporter(Player *pPlayer, GameObject* pGo)
     return true;
 }
 
-bool GOGossipHello_go_plague_sigil(Player *player, GameObject* pGo)
+bool GOHello_go_plague_sigil(Player *player, GameObject* pGo)
 {
     instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
@@ -97,7 +96,7 @@ bool GOGossipHello_go_plague_sigil(Player *player, GameObject* pGo)
     return true;
 }
 
-bool GOGossipHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
+bool GOHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
 {
     instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
@@ -108,7 +107,7 @@ bool GOGossipHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
     return true;
 }
 
-bool GOGossipHello_go_frostwing_sigil(Player *player, GameObject* pGo)
+bool GOHello_go_frostwing_sigil(Player *player, GameObject* pGo)
 {
     instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
@@ -132,16 +131,16 @@ void AddSC_icecrown_teleporter()
 
     newscript = new Script;
     newscript->Name = "go_plague_sigil";
-    newscript->pGOGossipHello  = &GOGossipHello_go_plague_sigil;
+    newscript->pGOHello  = &GOHello_go_plague_sigil;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_bloodwing_sigil";
-    newscript->pGOGossipHello  = &GOGossipHello_go_bloodwing_sigil;
+    newscript->pGOHello  = &GOHello_go_bloodwing_sigil;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_frostwing_sigil";
-    newscript->pGOGossipHello  = &GOGossipHello_go_frostwing_sigil;
+    newscript->pGOHello  = &GOHello_go_frostwing_sigil;
     newscript->RegisterSelf();
 }

@@ -474,6 +474,24 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
         m_creature->SetRespawnDelay(30*MINUTE);
     }
 
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if (!pInstance || !pWho) return;
+
+        if (pWho->GetTypeId() != TYPEID_PLAYER) 
+            return;
+
+        if (!m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 60.0f))
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+            m_creature->GetMotionMaster()->MovementExpired();
+            AttackStart(pWho);
+            SetCombatMovement(true);
+        }
+        ScriptedAI::MoveInLineOfSight(pWho);
+    }
+
     void JustReachedHome()
     {
         if (pInstance)
@@ -488,7 +506,6 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
         pBrother = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER));
         if (pBrother && !pBrother->isAlive()) pBrother->Respawn();
         if (pBrother) pBrother->SetInCombatWithZone();
-        doCast(SPELL_FROST_AURA);
     }
 
     void JustDied(Unit *killer)
@@ -511,10 +528,7 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
             return;
         }
 
-        timedCast(SPELL_FROST_BREATH, diff);
-
-        timedCast(SPELL_ICY_BLAST, diff);
-
+        doCastAll(diff);
         DoMeleeAttackIfReady();
     }
 };
@@ -545,6 +559,24 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
         m_creature->SetRespawnDelay(30*MINUTE);
     }
 
+    void MoveInLineOfSight(Unit* pWho) 
+    {
+        if (!pInstance || !pWho) return;
+
+        if (pWho->GetTypeId() != TYPEID_PLAYER) 
+            return;
+
+        if (!m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 60.0f))
+        {
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+            m_creature->GetMotionMaster()->MovementExpired();
+            AttackStart(pWho);
+            SetCombatMovement(true);
+        }
+        ScriptedAI::MoveInLineOfSight(pWho);
+    }
+
     void JustReachedHome()
     {
         if (pInstance)
@@ -572,7 +604,6 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
-
         if (!pInstance || !m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
@@ -583,12 +614,7 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
             return;
         }
 
-        timedCast(SPELL_BELLOWING_ROAR, diff);
-
-        timedCast(SPELL_CLEAVE, diff);
-
-        timedCast(SPELL_TAIL_SWEEP, diff);
-
+        doCastAll(diff);
         DoMeleeAttackIfReady();
     }
 };
