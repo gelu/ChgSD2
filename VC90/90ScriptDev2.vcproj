@@ -1369,6 +1369,10 @@
 							RelativePath="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\boss_infinite_corruptor.cpp"
 							>
 						</File>
+						<File
+							RelativePath="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\trash_culling_of_stratholme.cpp"
+							>
+						</File>
 					</Filter>
 					<Filter
 						Name="dark_portal"
