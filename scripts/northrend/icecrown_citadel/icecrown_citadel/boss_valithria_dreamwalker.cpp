@@ -20,7 +20,7 @@ SD%Complete: 70%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-// Need move emerald dream to phase 16, correct timers and other
+// Need move emerald dream to phase 32, correct timers and other
 #include "precompiled.h"
 #include "def_spire.h"
 
@@ -69,7 +69,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
     }
 
     instance_icecrown_spire* pInstance;
-    uint8 stage;
     bool battlestarted;
     bool intro;
     uint8 currentDoor;
@@ -82,13 +81,14 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
     void Reset()
     {
         if(!pInstance) return;
-        m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
-        pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
-        resetTimers();
         m_creature->SetRespawnDelay(7*DAY);
-        doCast(SPELL_CORRUPTION);
+        m_creature->SetHealth(m_creature->GetMaxHealth()/2.0f);
+        if (pInstance->GetData(TYPE_VALITHRIA) != DONE)
+            pInstance->SetData(TYPE_VALITHRIA, NOT_STARTED);
+        else m_creature->ForcedDespawn();
+        resetTimers();
         SetCombatMovement(false);
-        stage = 0;
+        setStage(0);
         speedK = 0;
         portalscount = 0;
         battlestarted = false;
@@ -99,6 +99,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
         if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_VALITHRIA_QUEST)))
                 if (pTemp->GetVisibility() == VISIBILITY_ON)
                             pTemp->SetVisibility(VISIBILITY_OFF);
+        doCast(SPELL_CORRUPTION);
     }
 
     uint64 GetDoor(uint8 doornum)
@@ -296,52 +297,52 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
     void UpdateAI(const uint32 diff)
     {
 
-        if (!hasAura(SPELL_CORRUPTION,m_creature) && stage == 0)
+        if (!hasAura(SPELL_CORRUPTION,m_creature) && getStage() == 0)
              doCast(SPELL_CORRUPTION);
 
         if (!battlestarted) return;
 
         QueryEvadeMode();
 
-        switch(stage)
+        switch(getStage())
         {
             case 0: 
-                    if ( m_creature->GetHealthPercent() > 90.0f ) stage = 2;
-                    if ( m_creature->GetHealthPercent() < 10.0f ) stage = 3;
+                    if ( m_creature->GetHealthPercent() > 90.0f ) setStage(2);
+                    if ( m_creature->GetHealthPercent() < 10.0f ) setStage(3);
                     break;
             case 1: 
-                    if ( m_creature->GetHealthPercent() < 90.0f && m_creature->GetHealthPercent() > 10.0f ) stage = 0;
-                    if ( m_creature->GetHealthPercent() > 99.9f ) stage = 5;
+                    if ( m_creature->GetHealthPercent() < 90.0f && m_creature->GetHealthPercent() > 10.0f ) setStage(0);
+                    if ( m_creature->GetHealthPercent() > 99.9f ) setStage(5);
                     break;
             case 2: 
                     DoScriptText(-1631407,m_creature);
-                    stage = 1;
+                    setStage(1);
                     break;
             case 3: 
                     DoScriptText(-1631406,m_creature);
-                    stage = 1;
+                    setStage(1);
                     break;
             case 4: 
                     break;
             case 5: 
                     DoScriptText(-1631408,m_creature);
                     if (hasAura(SPELL_CORRUPTION,m_creature)) doRemove(SPELL_CORRUPTION);
-                    stage = 6;
+                    setStage(6);
                     return;
                     break;
             case 6: 
-                    if (timedQuery(SPELL_CORRUPTION, diff)) stage = 7;
+                    if (timedQuery(SPELL_CORRUPTION, diff)) setStage(7);
                     return;
                     break;
             case 7: 
                     doCast(SPELL_DREAMWALKER_RAGE);
-                    stage = 8;
+                    setStage(8);
                     return;
                     break;
             case 8:
                     if (timedQuery(SPELL_CORRUPTION, diff))
                     {
-                        stage = 9;
+                        setStage(9);
                         DespawnMobs();
                     }
                     return;
@@ -356,7 +357,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                             pTemp->SetVisibility(VISIBILITY_ON);
                     }
                     pInstance->SetData(TYPE_VALITHRIA, DONE);
-                    stage = 10;
+                    setStage(10);
                     m_creature->ForcedDespawn();
                     break;
             default:
