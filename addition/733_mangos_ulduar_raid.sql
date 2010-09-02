@@ -430,18 +430,6 @@ UPDATE gameobject_template SET flags= 6553632, ScriptName='go_celestial_acces' W
 -- Teleporter
 UPDATE `gameobject_template` SET `flags` = 0, `ScriptName` = 'go_ulduar_teleporter' WHERE `entry`  IN (194569);
 
--- Destination Locations for Ulduar Teleporter spells
-REPLACE INTO spell_target_position VALUES
-(64014, 603, -706.122, -92.6024, 429.876, 0),      /* Expedition Base Camp */
-(64032, 603, 131.248, -35.3802, 409.804, 0),       /* Formation Grounds */
-(64028, 603, 553.233, -12.3247, 409.679, 0),       /* Colossal Forge */
-(64031, 603, 926.292, -11.4635, 418.595, 3.14159), /* Scrapyard */
-(64030, 603, 1498.09, -24.246, 420.967, 0),        /* Antechamber of Ulduar */
-(64029, 603, 1859.45, -24.1, 448.9, 0),            /* Shattered Walkway */
-(64024, 603, 2086.27, -24.3134, 421.239, 0),       /* Conservatory of Life */
-(65061, 603, 2517.31, 2568.87, 412.299, 0),        /* Spark of Imagination */
-(65042, 603, 1854.73, -11.637, 334.575, 0);        /* Prison of Yogg-Saron */
-
 -- Keepers
 -- Keepers images
 UPDATE creature_template SET `npcflag` = 1, `unit_flags` = 2, ScriptName = 'hodir_image' WHERE entry = 33411;
