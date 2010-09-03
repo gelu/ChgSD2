@@ -1886,7 +1886,7 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
             {
                 DoCastSpellIfCan(m_creature->getVictim(),SPELL_ICERING);
                 m_uiFrostringTimer = urand(4000,8000);
-            } else m_uiFrostboltTimer -= diff;
+            } else m_uiFrostringTimer -= diff;
 
             if (!blocked && m_creature->GetHealthPercent() < 10.0f)
             {
