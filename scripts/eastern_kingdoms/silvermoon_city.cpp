@@ -36,6 +36,7 @@ EndContentData */
 #define QUEST_REDEEMING_THE_DEAD        9685
 #define SPELL_SHIMMERING_VESSEL         31225
 #define SPELL_REVIVE_SELF               32343
+#define NPC_BLOOD_KNIGHT_STILLBLADE     17768
 
 struct MANGOS_DLL_DECL npc_blood_knight_stillbladeAI : public ScriptedAI
 {
@@ -70,7 +71,8 @@ struct MANGOS_DLL_DECL npc_blood_knight_stillbladeAI : public ScriptedAI
         if ((Spellkind->Id == SPELL_SHIMMERING_VESSEL) && !spellHit &&
             (Hitter->GetTypeId() == TYPEID_PLAYER) && (((Player*)Hitter)->IsActiveQuest(QUEST_REDEEMING_THE_DEAD)))
         {
-            ((Player*)Hitter)->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
+            //((Player*)Hitter)->AreaExploredOrEventHappens(QUEST_REDEEMING_THE_DEAD);
+            ((Player*)Hitter)->KilledMonsterCredit(NPC_BLOOD_KNIGHT_STILLBLADE);
             DoCastSpellIfCan(m_creature,SPELL_REVIVE_SELF);
             m_creature->SetStandState(UNIT_STAND_STATE_STAND);
             m_creature->SetUInt32Value(UNIT_DYNAMIC_FLAGS, 0);
