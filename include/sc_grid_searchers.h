@@ -43,28 +43,10 @@ Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 uiEntry, floa
 void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList , WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 
-//Used in:
-//hyjalAI.cpp
-class AllFriendlyCreaturesInGrid
+class AllGameObjectsWithEntryInRangeCheck
 {
     public:
-        AllFriendlyCreaturesInGrid(Unit const* obj) : pUnit(obj) {}
-        bool operator() (Unit* u)
-        {
-            if (u->isAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
-                return true;
-
-            return false;
-        }
-
-    private:
-        Unit const* pUnit;
-};
-
-class AllGameObjectsWithEntryInRange
-{
-    public:
-        AllGameObjectsWithEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
+        AllGameObjectsWithEntryInRangeCheck(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         WorldObject const& GetFocusObject() const { return *m_pObject; }
         bool operator() (GameObject* pGo)
         {
@@ -80,10 +62,10 @@ class AllGameObjectsWithEntryInRange
         float m_fRange;
 };
 
-class AllCreaturesOfEntryInRange
+class AllCreaturesOfEntryInRangeCheck
 {
     public:
-        AllCreaturesOfEntryInRange(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
+        AllCreaturesOfEntryInRangeCheck(const WorldObject* pObject, uint32 uiEntry, float fMaxRange) : m_pObject(pObject), m_uiEntry(uiEntry), m_fRange(fMaxRange) {}
         WorldObject const& GetFocusObject() const { return *m_pObject; }
         bool operator() (Unit* pUnit)
         {
@@ -98,5 +80,24 @@ class AllCreaturesOfEntryInRange
         uint32 m_uiEntry;
         float m_fRange;
 };
+
+//Used in: hyjalAI.cpp
+/*
+class AllFriendlyCreaturesInGrid
+{
+    public:
+        AllFriendlyCreaturesInGrid(Unit const* obj) : pUnit(obj) {}
+        bool operator() (Unit* u)
+        {
+            if (u->isAlive() && u->GetVisibility() == VISIBILITY_ON && u->IsFriendlyTo(pUnit))
+                return true;
+
+            return false;
+        }
+
+    private:
+        Unit const* pUnit;
+};
+*/
 
 #endif

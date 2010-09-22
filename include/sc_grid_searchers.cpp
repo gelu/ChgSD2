@@ -32,16 +32,16 @@ Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 uiEntry, floa
 
 void GetGameObjectListWithEntryInGrid(std::list<GameObject*>& lList , WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange)
 {
-    AllGameObjectsWithEntryInRange check(pSource, uiEntry, fMaxSearchRange);
-    MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRange> searcher(lList, check);
+    AllGameObjectsWithEntryInRangeCheck check(pSource, uiEntry, fMaxSearchRange);
+    MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRangeCheck> searcher(lList, check);
 
     Cell::VisitGridObjects(pSource, searcher, fMaxSearchRange);
 }
 
 void GetCreatureListWithEntryInGrid(std::list<Creature*>& lList, WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange)
 {
-    AllCreaturesOfEntryInRange check(pSource, uiEntry, fMaxSearchRange);
-    MaNGOS::CreatureListSearcher<AllCreaturesOfEntryInRange> searcher(lList, check);
+    AllCreaturesOfEntryInRangeCheck check(pSource, uiEntry, fMaxSearchRange);
+    MaNGOS::CreatureListSearcher<AllCreaturesOfEntryInRangeCheck> searcher(lList, check);
 
     Cell::VisitGridObjects(pSource, searcher, fMaxSearchRange);
 }
