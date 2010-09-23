@@ -208,7 +208,7 @@ void FollowerAI::UpdateAI(const uint32 uiDiff)
                     debug_log("SD2: FollowerAI is returning to leader.");
 
                     RemoveFollowState(STATE_FOLLOW_RETURNING);
-                    m_creature->GetMotionMaster()->MoveFollow(pPlayer, PET_FOLLOW_DIST, PET_DEFAULT_FOLLOW_ANGLE);
+                    m_creature->GetMotionMaster()->MoveFollow(pPlayer, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
                     return;
                 }
 
@@ -306,7 +306,7 @@ void FollowerAI::StartFollow(Player* pLeader, uint32 uiFactionForFollower, const
 
     AddFollowState(STATE_FOLLOW_INPROGRESS);
 
-    m_creature->GetMotionMaster()->MoveFollow(pLeader, PET_FOLLOW_DIST, PET_DEFAULT_FOLLOW_ANGLE);
+    m_creature->GetMotionMaster()->MoveFollow(pLeader, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
 
     debug_log("SD2: FollowerAI start follow %s (GUID " UI64FMTD ")", pLeader->GetName(), m_uiLeaderGUID);
 }
@@ -382,6 +382,6 @@ void FollowerAI::SetFollowPaused(bool bPaused)
         RemoveFollowState(STATE_FOLLOW_PAUSED);
 
         if (Player* pLeader = GetLeaderForFollower())
-            m_creature->GetMotionMaster()->MoveFollow(pLeader, PET_FOLLOW_DIST, PET_DEFAULT_FOLLOW_ANGLE);
+            m_creature->GetMotionMaster()->MoveFollow(pLeader, PET_FOLLOW_DIST, PET_FOLLOW_ANGLE);
     }
 }
