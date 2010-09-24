@@ -1144,6 +1144,89 @@ bool GOHello_go_acherus_soul_prison(Player* pPlayer, GameObject* pGo)
     return false;
 }
 
+/*######
+## npc_eye_of_acherus
+######*/
+
+struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
+{
+    npc_eye_of_acherusAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_creature->SetActiveObjectState(true);
+        m_creature->SetLevel(55); //else one hack
+        StartTimer = 2000;
+        Active = false;
+    }
+
+    uint32 StartTimer;
+    bool Active;
+
+    void Reset(){}
+    void AttackStart(Unit *) {}
+    void MoveInLineOfSight(Unit*) {}
+
+    void JustDied(Unit*u)
+    {
+        if(!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
+            return;
+
+        Unit *target = m_creature->GetCharmer();
+
+        if(!target || target->GetTypeId() != TYPEID_PLAYER)
+            return;
+
+        m_creature->SetCharmerGUID(0);
+        target->RemoveAurasDueToSpell(51852);
+        target->SetCharm(NULL);
+
+        ((Player*)target)->GetCamera().ResetView();
+        ((Player*)target)->SetClientControl(m_creature,0);
+        ((Player*)target)->SetMover(NULL);
+
+        m_creature->CleanupsBeforeDelete();
+        m_creature->AddObjectToRemoveList();
+        //m_creature->ForcedDespawn();
+            return;
+    }
+
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if (uiType != POINT_MOTION_TYPE && uiPointId == 0)
+            return;
+
+            DoScriptText(-1666452, m_creature);
+            m_creature->CastSpell(m_creature, 51890, true);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if(m_creature->isCharmed())
+        {
+            if (StartTimer < uiDiff && !Active)
+            {
+                m_creature->CastSpell(m_creature, 70889, true);
+                m_creature->CastSpell(m_creature, 51892, true);
+                DoScriptText(-1666451, m_creature);
+                m_creature->SetSpeedRate(MOVE_FLIGHT, 6.4f,true);
+                m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
+                Active = true;
+            }
+            else StartTimer -= uiDiff;
+        }
+        else
+        {
+            m_creature->CleanupsBeforeDelete();
+            m_creature->AddObjectToRemoveList();
+        }
+    }
+};
+
+CreatureAI* GetAI_npc_eye_of_acherus(Creature* pCreature)
+{
+    return new npc_eye_of_acherusAI(pCreature);
+}
+
+
 void AddSC_ebon_hold()
 {
     Script* pNewScript;
@@ -1179,5 +1262,10 @@ void AddSC_ebon_hold()
     pNewScript = new Script;
     pNewScript->Name = "go_acherus_soul_prison";
     pNewScript->pGOHello = &GOHello_go_acherus_soul_prison;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_eye_of_acherus";
+    pNewScript->GetAI = &GetAI_npc_eye_of_acherus;
     pNewScript->RegisterSelf();
 }
