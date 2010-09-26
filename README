@@ -38,6 +38,7 @@ In this repository you found this custom scripts:
 - Ruby Sanctum (by me, partially from notagain, alphatesting)
 - npc_arena_honor by tempura
 - NPC special (partially by me, thanks for all)
+- Eye of Acherus quest (need core support, from traponinet)
 
 Attention please! In my project only correct Linux Makefile provided. 
 If you want compile this branch on Windows, please convert Makefile to your c++ compiler.
