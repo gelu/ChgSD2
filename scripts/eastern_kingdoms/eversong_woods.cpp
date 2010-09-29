@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Eversong_Woods
 SD%Complete: 100
-SDComment: Quest support: 8483, 8488, 9686
+SDComment: Quest support: 8483, 8488, 8490, 9686
 SDCategory: Eversong Woods
 EndScriptData */
 
@@ -26,6 +26,7 @@ npc_kelerun_bloodmourn
 go_harbinger_second_trial
 npc_prospector_anvilward
 npc_apprentice_mirveda
+npc_infused_crystal
 EndContentData */
 
 #include "precompiled.h"
@@ -434,6 +435,106 @@ CreatureAI* GetAI_npc_apprentice_mirvedaAI(Creature* pCreature)
     return new npc_apprentice_mirvedaAI (pCreature);
 }
 
+/*######
+## npc_infused_crystal
+######*/
+
+enum
+{
+    NPC_ENRAGED_WRATH           = 17086,
+    QUEST_POWERING_OUR_DEFENSES = 8490,
+    INFUSED_CRYSTAL_EMOTE       = -1999811
+};
+
+float fEnragedWrathPosition[3][4] =
+{
+    {8259.375977f, -7202.288574f, 139.287430f, 5.0f},
+    {8255.425781f, -7222.026367f, 139.607162f, 5.0f},
+    {8267.902344f, -7193.510742f, 139.430374f, 5.0f}
+};
+
+struct MANGOS_DLL_DECL npc_infused_crystalAI : public ScriptedAI
+{
+    npc_infused_crystalAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        SetCombatMovement(false);
+        Reset();
+    }
+    
+    uint32 m_uiQuestTimer;
+    uint32 m_uiSpawnTimer;
+    uint64 m_uiPlayerGUID;
+
+    bool bCompleted;
+            
+    void Reset()
+    {
+        m_uiQuestTimer = 60000;
+        m_uiSpawnTimer  = 1000;
+        m_uiPlayerGUID = 0;
+        bCompleted = false;
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (pWho->GetTypeId() != TYPEID_PLAYER)
+            return;
+        Player* pPlayer = (Player*)pWho;
+            
+        if (pPlayer->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) != QUEST_STATUS_INCOMPLETE)
+            return;
+            
+        m_uiPlayerGUID = pPlayer->GetGUID();
+    }
+
+    void Aggro(Unit* pWho){}
+
+    void JustDied(Unit* pWho) 
+    {
+        if (Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID))
+            if (pPlayer->GetQuestStatus(QUEST_POWERING_OUR_DEFENSES) == QUEST_STATUS_INCOMPLETE)
+                pPlayer->FailQuest(QUEST_POWERING_OUR_DEFENSES);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {    
+        if (bCompleted) 
+            return;
+
+        if (m_uiSpawnTimer < uiDiff)
+        {
+            for (uint8 i = 0; i < 3; ++i)
+            {
+                if (Creature* pEnragedWrath = m_creature->SummonCreature(NPC_ENRAGED_WRATH, fEnragedWrathPosition[i][0], fEnragedWrathPosition[i][1], fEnragedWrathPosition[i][2], fEnragedWrathPosition[i][3], TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 5000))
+                {
+                    pEnragedWrath->AI()->AttackStart(m_creature);
+                }
+            }
+            m_uiSpawnTimer = 40000;
+        }
+        else
+            m_uiSpawnTimer -= uiDiff;
+
+        if (m_uiQuestTimer < uiDiff)
+        {
+            if(Player* pPlayer = m_creature->GetMap()->GetPlayer(m_uiPlayerGUID))
+            {
+                pPlayer->KilledMonsterCredit(m_creature->GetEntry());
+                DoScriptText(INFUSED_CRYSTAL_EMOTE , m_creature);
+                m_creature->ForcedDespawn(5000);
+            }
+            bCompleted = true;          
+        }
+        else
+            m_uiQuestTimer -= uiDiff;
+    }
+};
+
+CreatureAI* GetAI_npc_infused_crystal(Creature* pCreature)
+{
+    return new npc_infused_crystalAI (pCreature);
+}
+
 void AddSC_eversong_woods()
 {
     Script* pNewScript;
@@ -460,5 +561,10 @@ void AddSC_eversong_woods()
     pNewScript->Name = "npc_apprentice_mirveda";
     pNewScript->GetAI = GetAI_npc_apprentice_mirvedaAI;
     pNewScript->pQuestAccept = &QuestAccept_unexpected_results;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name= "npc_infused_crystal";
+    pNewScript->GetAI = &GetAI_npc_infused_crystal;
     pNewScript->RegisterSelf();
 }
