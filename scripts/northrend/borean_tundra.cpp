@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Borean_Tundra
 SD%Complete: 100
-SDComment: Quest support: 11570, 11692, 11708, 11919, 11940, 11961. Taxi vendors. 
+SDComment: Quest support: 11570, 11692, 11676, 11708, 11919, 11940, 11961. Taxi vendors. 
 SDCategory: Borean Tundra
 EndScriptData */
 
@@ -29,6 +29,7 @@ npc_surristrasz
 npc_tiare
 npc_lurgglbr
 npc_nexus_drake
+go_scourge_cage
 EndContentData */
 
 #include "precompiled.h"
@@ -495,12 +496,34 @@ struct MANGOS_DLL_DECL npc_nexus_drakeAI : public FollowerAI
         }
 };
 
-
-
 CreatureAI* GetAI_npc_nexus_drake(Creature* pCreature)
 {
     return new npc_nexus_drakeAI(pCreature);
 }
+
+/*#####
+## go_scourge_cage
+#####*/
+
+enum
+{
+    QUEST_MERCIFUL_FREEDOM      =  11676,
+    NPC_SCOURGE_PRISONER        =  25610,
+};
+
+bool GOHello_go_scourge_cage(Player* pPlayer, GameObject* pGo)
+{
+    if (pPlayer->GetQuestStatus(QUEST_MERCIFUL_FREEDOM) == QUEST_STATUS_INCOMPLETE)
+    {
+        Creature *pCreature = GetClosestCreatureWithEntry(pGo, NPC_SCOURGE_PRISONER, INTERACTION_DISTANCE);
+        if(pCreature)
+        {
+            pPlayer->KilledMonsterCredit(NPC_SCOURGE_PRISONER, pCreature->GetGUID());
+            pCreature->CastSpell(pCreature, SPELL_DESPAWN_SELF, false);
+        }
+    }
+    return false;
+};
 
 void AddSC_borean_tundra()
 {
@@ -545,5 +568,10 @@ void AddSC_borean_tundra()
     newscript = new Script;
     newscript->Name = "npc_nexus_drake";
     newscript->GetAI = &GetAI_npc_nexus_drake;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_scourge_cage";
+    newscript->pGOHello = &GOHello_go_scourge_cage;
     newscript->RegisterSelf();
 }
