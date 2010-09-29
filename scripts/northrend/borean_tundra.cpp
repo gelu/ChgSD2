@@ -522,7 +522,7 @@ bool GOHello_go_scourge_cage(Player* pPlayer, GameObject* pGo)
         if(pCreature)
         {
             pPlayer->KilledMonsterCredit(NPC_SCOURGE_PRISONER, pCreature->GetGUID());
-            pCreature->CastSpell(pCreature, SPELL_DESPAWN_SELF, false);
+            pCreature->CastSpell(pCreature, 43014, false);
         }
     }
     return false;
