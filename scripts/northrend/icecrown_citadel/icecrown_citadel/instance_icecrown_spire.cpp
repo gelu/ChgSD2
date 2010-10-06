@@ -65,20 +65,24 @@ static Locations SpawnLoc[]=
                               pGO->SetGoState(GO_STATE_READY);
                             }
                                        };
+        if (m_auiEncounter[4] == DONE) {
+                                        OpenDoor(m_uiSaurfangDoorGUID);
+                                        OpenDoor(m_uiBloodwingDoorGUID);
+                                        OpenDoor(m_uiFrostwingDoorGUID);
+                                        };
         if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
         if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorGreenGUID);
         if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
-        if (m_auiEncounter[7] == DONE) OpenDoor(m_uiBloodwingDoorGUID);
         if (m_auiEncounter[8] == DONE) {
                                         OpenDoor(m_uiCounsilDoor1GUID);
                                         OpenDoor(m_uiCounsilDoor2GUID);
                                         };
-        if (m_auiEncounter[9] == DONE) OpenDoor(m_uiFrostwingDoorGUID);
-        if (m_auiEncounter[10] == DONE) OpenDoor(m_uiValithriaDoor2GUID);
-        if (m_auiEncounter[11] == DONE) {
-                                        OpenDoor(m_uiSindragosaDoor2GUID);
-                                        OpenDoor(m_uiSindragosaDoor1GUID);
-                                        };
+        if (m_auiEncounter[10] == DONE) 
+        {
+            OpenDoor(m_uiValithriaDoor2GUID);
+            OpenDoor(m_uiSindragosaDoor2GUID);
+            OpenDoor(m_uiSindragosaDoor1GUID);
+        };
 
     }
 
@@ -454,13 +458,18 @@ static Locations SpawnLoc[]=
                 break;
              case TYPE_SAURFANG:
                 m_auiEncounter[4] = uiData; 
-                if (uiData == DONE) {
-                OpenDoor(m_uiSaurfangDoorGUID);
-                                 if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
-                                     if (pChest && !pChest->isSpawned()) {
-                                          pChest->SetRespawnTime(7*DAY);
-                                      };
-                                };
+                if (uiData == DONE) 
+                {
+                    OpenDoor(m_uiSaurfangDoorGUID);
+                    OpenDoor(m_uiBloodwingDoorGUID);
+                    OpenDoor(m_uiFrostwingDoorGUID);
+
+                    if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
+                        if (pChest && !pChest->isSpawned()) 
+                        {
+                            pChest->SetRespawnTime(7*DAY);
+                        };
+                };
                 break;
              case TYPE_FESTERGUT:
                 m_auiEncounter[5] = uiData;
@@ -477,51 +486,54 @@ static Locations SpawnLoc[]=
                 break;
              case TYPE_ROTFACE:
                 m_auiEncounter[6] = uiData;
-                if (uiData == IN_PROGRESS) CloseDoor(m_uiGreenPlagueGUID);
-                                      else OpenDoor(m_uiGreenPlagueGUID);
-                if (uiData == DONE) {
-                                     OpenDoor(m_uiSDoorGreenGUID);
-                                     if (m_auiEncounter[5] == DONE) 
-                                         {
-                                             OpenDoor(m_uiSDoorOrangeGUID);
-                                             OpenDoor(m_uiSDoorCollisionGUID);
-                                         }
-                                     }
+                if (uiData == IN_PROGRESS)
+                    CloseDoor(m_uiGreenPlagueGUID);
+                else
+                    OpenDoor(m_uiGreenPlagueGUID);
+                if (uiData == DONE)
+                {
+                    OpenDoor(m_uiSDoorGreenGUID);
+                    if (m_auiEncounter[5] == DONE) 
+                    {
+                        OpenDoor(m_uiSDoorOrangeGUID);
+                        OpenDoor(m_uiSDoorCollisionGUID);
+                    }
+                }
                 break;
              case TYPE_PUTRICIDE:
                 m_auiEncounter[7] = uiData;
-                if (uiData == IN_PROGRESS) CloseDoor(m_uiScientistDoorGUID);
-                                      else OpenDoor(m_uiScientistDoorGUID);
-                if (uiData == DONE) OpenDoor(m_uiBloodwingDoorGUID);
+                if (uiData == IN_PROGRESS) 
+                    CloseDoor(m_uiScientistDoorGUID);
+                else
+                    OpenDoor(m_uiScientistDoorGUID);
                 break;
              case TYPE_BLOOD_COUNCIL:
                 m_auiEncounter[8] = uiData;
-                if (uiData == DONE) {
-                                     OpenDoor(m_uiCounsilDoor1GUID);
-                                     OpenDoor(m_uiCounsilDoor2GUID);
-                                    }
+                if (uiData == DONE) 
+                {
+                    OpenDoor(m_uiCounsilDoor1GUID);
+                    OpenDoor(m_uiCounsilDoor2GUID);
+                }
                 break;
              case TYPE_LANATHEL:
                 m_auiEncounter[9] = uiData;
-                if (uiData == DONE)  OpenDoor(m_uiFrostwingDoorGUID);
                 break;
              case TYPE_VALITHRIA:
                 m_auiEncounter[10] = uiData;
-                if (uiData == DONE) {
-                OpenDoor(m_uiGreenDragonDoor2GUID);
-                                 if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
-                                     if (pChest && !pChest->isSpawned()) 
-                                     {
-                                         pChest->SetRespawnTime(7*DAY);
-                                     };
-                                };
+                if (uiData == DONE)
+                {
+                    OpenDoor(m_uiGreenDragonDoor2GUID);
+                    OpenDoor(m_uiSindragosaDoor1GUID);
+                    OpenDoor(m_uiSindragosaDoor2GUID);
+                    if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
+                        if (pChest && !pChest->isSpawned()) 
+                        {
+                            pChest->SetRespawnTime(7*DAY);
+                        };
+                };
                 break;
              case TYPE_SINDRAGOSA:
                 m_auiEncounter[11] = uiData;
-                if (uiData == DONE) {
-                                     OpenDoor(m_uiSindragosaDoor1GUID);
-                                     OpenDoor(m_uiSindragosaDoor2GUID);
-                                    }
                 break;
              case TYPE_LICH_KING:
                 m_auiEncounter[12] = uiData;

@@ -101,7 +101,7 @@ bool GOHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
     instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
 
-    if (pInstance->GetData(TYPE_PUTRICIDE) == DONE)
+    if (pInstance->GetData(TYPE_SAURFANG) == DONE)
             pInstance->OpenDoor(pInstance->GetData64(GO_BLOODWING_DOOR));
 
     return true;
@@ -112,7 +112,7 @@ bool GOHello_go_frostwing_sigil(Player *player, GameObject* pGo)
     instance_icecrown_spire* pInstance = (instance_icecrown_spire*)pGo->GetInstanceData();
     if(!pInstance) return false;
 
-    if (pInstance->GetData(TYPE_LANATHEL) == DONE)
+    if (pInstance->GetData(TYPE_SAURFANG) == DONE)
         pInstance->OpenDoor(pInstance->GetData64(GO_FROSTWING_DOOR));
 
     return true;

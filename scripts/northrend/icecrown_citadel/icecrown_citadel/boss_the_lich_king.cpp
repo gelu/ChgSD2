@@ -644,7 +644,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
     uint32 nextEvent;
     uint32 nextPoint;
     bool movementstarted;
-    Creature* pMenethil;
+    uint64 MenethilGUID;
 
     void EnterEvadeMode()
     {
@@ -693,6 +693,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
 
     void doRevivePlayers()
     {
+        Creature* pMenethil = m_creature->GetMap()->GetCreature(MenethilGUID);
         Map::PlayerList const &pList = pMenethil->GetMap()->GetPlayers();
         if (pList.isEmpty()) return;
         for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
@@ -792,15 +793,21 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           break;
                 case 13230:
                           UpdateTimer = 12000;
-                          pMenethil = m_creature->SummonCreature(NPC_MENETHIL, m_creature->GetPositionX()+5, m_creature->GetPositionY()+5, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+                          {
+                              Creature* pMenethil = m_creature->SummonCreature(NPC_MENETHIL, m_creature->GetPositionX()+5, m_creature->GetPositionY()+5, m_creature->GetPositionZ(), 0, TEMPSUMMON_MANUAL_DESPAWN, 5000);
+                              MenethilGUID = pMenethil->GetGUID();
+                          }
                           pInstance->SetData(TYPE_EVENT,13250);
-                          DoScriptText(-1631560, pMenethil);
+                          DoScriptText(-1631560, m_creature->GetMap()->GetCreature(MenethilGUID));
                           break;
                 case 13250:
                           UpdateTimer = 6000;
                           pInstance->SetData(TYPE_EVENT,13270);
-                          DoScriptText(-1631561, pMenethil);
-                          pMenethil->CastSpell(pMenethil, SPELL_REVIVE_VISUAL, false);
+                          {
+                              Creature* pMenethil = m_creature->GetMap()->GetCreature(MenethilGUID);
+                              DoScriptText(-1631561, pMenethil);
+                              pMenethil->CastSpell(pMenethil, SPELL_REVIVE_VISUAL, false);
+                          }
                           doRevivePlayers();
                           break;
                 case 13270:
@@ -812,6 +819,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                               pLichKing->SetInCombatWith(m_creature);
                               pLichKing->AddThreat(m_creature, 1000.0f);
                               m_creature->AI()->AttackStart(pLichKing);
+                              Creature* pMenethil = m_creature->GetMap()->GetCreature(MenethilGUID);
                               pMenethil->AI()->AttackStart(pLichKing);
                               SetCombatMovement(true);
                               m_creature->GetMotionMaster()->MoveChase(pLichKing);
@@ -820,7 +828,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                 case 13290:
                           UpdateTimer = 5000;
                           pInstance->SetData(TYPE_EVENT,13310);
-                          DoScriptText(-1631590, pMenethil);
+                          DoScriptText(-1631590,m_creature->GetMap()->GetCreature(MenethilGUID));
                           break;
                 case 13310:
                           UpdateTimer = 5000;
@@ -830,7 +838,7 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                 case 13330:
                           UpdateTimer = 5000;
                           pInstance->SetData(TYPE_EVENT,13350);
-                          DoScriptText(-1631592, pMenethil);
+                          DoScriptText(-1631592, m_creature->GetMap()->GetCreature(MenethilGUID));
                           break;
                 case 13350:
                           UpdateTimer = 2000;
@@ -851,10 +859,13 @@ struct MANGOS_DLL_DECL boss_tirion_iccAI : public ScriptedAI
                           UpdateTimer = 20000;
                           pInstance->SetData(TYPE_EVENT,14030);
                           DoScriptText(-1631594, m_creature);
-//                          if (pMenethil && pMenethil->isAlive()) pMenethil->ForcedDespawn();
-                          if (pMenethil && pMenethil->isAlive()) pMenethil->SetVisibility(VISIBILITY_OFF);
-                          if (Creature* pLichKing = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_LICH_KING)))
-                              pLichKing->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                          {
+                              if (Creature* pMenethil = m_creature->GetMap()->GetCreature(MenethilGUID))
+                                  if (pMenethil->isAlive())
+                                      pMenethil->ForcedDespawn();
+                              if (Creature* pLichKing = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_LICH_KING)))
+                                  pLichKing->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                          }
                           pInstance->SetData(TYPE_EVENT,0);
                           EnterEvadeMode();
                           break;
