@@ -138,7 +138,7 @@ UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`=
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10067;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10068;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10069;
-UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
+UPDATE `creature_template` SET `faction_A` = 14, `faction_H` = 14, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
 UPDATE `creature_template` SET `ScriptName`='mob_mana_void', `AIName`='' WHERE `entry`= 38068;
 DELETE FROM `creature` WHERE `guid` = 47738 AND `id` = 38589;
 

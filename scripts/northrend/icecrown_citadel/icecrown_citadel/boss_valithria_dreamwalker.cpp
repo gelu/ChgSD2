@@ -422,7 +422,7 @@ struct MANGOS_DLL_DECL mob_nightmare_portalAI : public BSWScriptedAI
     void Reset()
     {
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-        SetCombatMovement(false); 
+        SetCombatMovement(false);
         m_creature->GetMotionMaster()->MoveRandom();
         m_creature->SetDisplayId(29352);
         portalcasted = false;
@@ -434,8 +434,7 @@ struct MANGOS_DLL_DECL mob_nightmare_portalAI : public BSWScriptedAI
 
         if (pWho->isAlive() && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 2.0f))
         {
-            doCast(SPELL_EMERALD_VIGOR, pWho);
-            doAura(SPELL_EMERALD_VIGOR, pWho);
+            doCast(SPELL_EMERALD_VIGOR);
             portalcasted = true;
         }
     }
@@ -448,8 +447,9 @@ struct MANGOS_DLL_DECL mob_nightmare_portalAI : public BSWScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_pInstance || m_pInstance->GetData(TYPE_VALITHRIA) != IN_PROGRESS || portalcasted)
-              m_creature->ForcedDespawn();
- 
+            if (timedQuery(SPELL_EMERALD_VIGOR, uiDiff))
+                m_creature->ForcedDespawn();
+
     }
 
 };
