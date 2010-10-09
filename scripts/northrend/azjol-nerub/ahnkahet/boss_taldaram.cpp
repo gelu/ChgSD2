@@ -295,7 +295,7 @@ struct MANGOS_DLL_DECL mob_flame_orbAI : public ScriptedAI
                 return;
 
             DoCast(m_creature, m_bIsRegularMode ? SPELL_FLAME_ORB : SPELL_FLAME_ORB_H);
-            direction = rand()%3;
+            direction = rand()%4;
             switch(direction)
             {
                 case 0: // Up
