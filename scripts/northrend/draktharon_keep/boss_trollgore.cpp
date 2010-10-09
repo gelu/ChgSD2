@@ -48,9 +48,9 @@ enum
     NPC_TROLLGORE                    = 26630
 };
 
-const float PosSummon1[3] = {-259.59, -652.49, 26.52};
-const float PosSummon2[3] = {-261.60, -658.71, 26.51};
-const float PosSummon3[3] = {-262.05, -665.71, 26.49};
+const float PosSummon1[3] = {-259.59f, -652.49f, 26.52f};
+const float PosSummon2[3] = {-261.60f, -658.71f, 26.51f};
+const float PosSummon3[3] = {-262.05f, -665.71f, 26.49f};
 
 
 /*######

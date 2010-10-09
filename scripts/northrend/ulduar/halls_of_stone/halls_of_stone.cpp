@@ -129,8 +129,8 @@ struct Locations
 
 static Locations SpawnLoc[]=
 {
-    {946.992, 397.016, 208.374},
-    {960.748, 382.944, 208.374},
+    {946.992f, 397.016f, 208.374f},
+    {960.748f, 382.944f, 208.374f},
 };
 
 
@@ -190,13 +190,13 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
                 {
                     if (uiPositionCounter == 0)
                     {
-                        (*itr)->GetMap()->CreatureRelocation((*itr), 927.265, 333.200, 218.780, (*itr)->GetOrientation());
-                        (*itr)->MonsterMove(927.265, 333.200, 218.780, 1);
+                        (*itr)->GetMap()->CreatureRelocation((*itr), 927.265f, 333.200f, 218.780f, (*itr)->GetOrientation());
+                        (*itr)->MonsterMove(927.265f, 333.200f, 218.780f, 1);
                     }
                     else
                     {
-                        (*itr)->GetMap()->CreatureRelocation((*itr), 921.745, 328.076, 218.780, (*itr)->GetOrientation());
-                        (*itr)->MonsterMove(921.745, 328.076, 218.780, 1);
+                        (*itr)->GetMap()->CreatureRelocation((*itr), 921.745f, 328.076f, 218.780f, (*itr)->GetOrientation());
+                        (*itr)->MonsterMove(921.745f, 328.076f, 218.780f, 1);
                     }
                 }
                 ++uiPositionCounter;

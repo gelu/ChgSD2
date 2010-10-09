@@ -98,21 +98,21 @@ enum
 };
 
 /*walk coords*/
-#define WALKX_BLAU                2462.112
-#define WALKY_BLAU                -2956.598
-#define WALKZ_BLAU                241.276
+#define WALKX_BLAU                2462.112f
+#define WALKY_BLAU                -2956.598f
+#define WALKZ_BLAU                241.276f
 
-#define WALKX_RIVE                2579.571
-#define WALKY_RIVE                -2960.945
-#define WALKZ_RIVE                241.32
+#define WALKX_RIVE                2579.571f
+#define WALKY_RIVE                -2960.945f
+#define WALKZ_RIVE                241.32f
 
-#define WALKX_KORT                2529.108
-#define WALKY_KORT                -3015.303
-#define WALKZ_KORT                241.32
+#define WALKX_KORT                2529.108f
+#define WALKY_KORT                -3015.303f
+#define WALKZ_KORT                241.32f
     
-#define WALKX_ZELI                2521.039
-#define WALKY_ZELI                -2891.633
-#define WALKZ_ZELI                241.276
+#define WALKX_ZELI                2521.039f
+#define WALKY_ZELI                -2891.633f
+#define WALKZ_ZELI                241.276f
 
 #define HIGH_THREAT               50.0f
 

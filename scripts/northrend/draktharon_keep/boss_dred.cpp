@@ -41,7 +41,7 @@ enum
     NPC_DRAKKARI_SCYTHECLAW            = 26628
 };
 
-const float PosSummon1[3] = {-528.8, -690.58, 30.25};
+const float PosSummon1[3] = {-528.8f, -690.58f, 30.25f};
 /*######
 ## boss_dred
 ######*/

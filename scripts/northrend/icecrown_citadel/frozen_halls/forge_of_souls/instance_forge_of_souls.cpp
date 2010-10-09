@@ -83,6 +83,7 @@ struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
             case TYPE_INTRO:    m_auiEncounter[0] = uiData; break;
             case TYPE_BRONJAHM: m_auiEncounter[1] = uiData; break;
             case TYPE_DEVOURER: m_auiEncounter[2] = uiData; break;
+            default: break;
         }
 
         if (uiData == DONE)

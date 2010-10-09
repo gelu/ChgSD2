@@ -57,7 +57,7 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
         m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
         pInstance->SetData(TYPE_XERESTRASZA, NOT_STARTED);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-        m_creature->SetSpeedRate(MOVE_WALK, 0.8);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.8f);
         m_creature->SetRespawnDelay(7*DAY);
    }
 

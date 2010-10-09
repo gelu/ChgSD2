@@ -623,8 +623,8 @@ struct MANGOS_DLL_DECL mob_kinetic_bombAI : public ScriptedAI
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
         m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.2);
-        m_creature->SetSpeedRate(MOVE_WALK, 0.2);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.2f);
         SetCombatMovement(false);
 
         m_lifetimer = 60000;

@@ -428,8 +428,8 @@ struct MANGOS_DLL_DECL mob_icc_gas_cloudAI : public BSWScriptedAI
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-        m_creature->SetSpeedRate(MOVE_WALK, 0.5);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.2);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.5f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
         pTarget = NULL;
         expunded = false;
         delay = 10000;
@@ -518,8 +518,8 @@ struct MANGOS_DLL_DECL mob_icc_volatile_oozeAI : public BSWScriptedAI
     {
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-        m_creature->SetSpeedRate(MOVE_WALK, 0.5);
-        m_creature->SetSpeedRate(MOVE_RUN, 0.2);
+        m_creature->SetSpeedRate(MOVE_WALK, 0.5f);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.2f);
         pTarget = NULL;
         finita = false;
         delay = 10000;

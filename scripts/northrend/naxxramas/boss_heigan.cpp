@@ -47,14 +47,14 @@ EndScriptData */
 //Spell by eye stalks
 #define SPELL_MIND_FLAY     26143
 
-#define POS_X 2793.86
-#define POS_Y -3707.38
-#define POS_Z 276.627
-#define POS_O 0.593
+#define POS_X 2793.86f
+#define POS_Y -3707.38f
+#define POS_Z 276.627f
+#define POS_O 0.593f
 
 #define TRIGGER_X 2769
 #define TRIGGER_Y -3671
-#define TRIGGER_Z 273.667
+#define TRIGGER_Z 273.667f
 #define TRIGGER_O 0
 
 struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI

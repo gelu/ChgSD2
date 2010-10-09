@@ -523,7 +523,7 @@ struct MANGOS_DLL_DECL npc_sinclariAI : public ScriptedAI
     {
         m_creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
         m_uiNextPortal_Timer = 5000;
-        m_creature->GetMotionMaster()->MovePoint(0, 1815.571, 800.112, 44.364);
+        m_creature->GetMotionMaster()->MovePoint(0, 1815.571f, 800.112f, 44.364f);
         if (m_pInstance){
             m_pInstance->SetData(TYPE_EVENT, IN_PROGRESS);
             m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_SEAL_DOOR));
@@ -804,7 +804,7 @@ struct MANGOS_DLL_DECL npc_azure_saboteurAI : public ScriptedAI
             }
             m_pInstance->SetData(TYPE_LASTBOSS_ID, m_uiBossType);
             if (m_uiBossType != 0)  m_creature->GetMotionMaster()->MovePoint(0, BossLoc[m_uiBossID].x,  BossLoc[m_uiBossID].y,  BossLoc[m_uiBossID].z);
-            else  m_creature->GetMotionMaster()->MovePoint(0, 1827.960, 804.208, 44.364);
+            else  m_creature->GetMotionMaster()->MovePoint(0, 1827.960f, 804.208f, 44.364f);
         }
     }
 

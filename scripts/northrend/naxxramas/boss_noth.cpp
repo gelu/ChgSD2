@@ -65,10 +65,10 @@ uint32 m_auiSpellSummonPlaguedGuardian[]=
 };
 
 // Teleport position of Noth on his balcony
-#define TELE_X 2631.370
-#define TELE_Y -3529.680
-#define TELE_Z 274.040
-#define TELE_O 6.277
+#define TELE_X 2631.370f
+#define TELE_Y -3529.680f
+#define TELE_Z 274.040f
+#define TELE_O 6.277f
 
 // IMPORTANT: BALCONY TELEPORT NOT ADDED YET! WILL BE ADDED SOON!
 // Dev note 26.12.2008: When is soon? :)
@@ -202,14 +202,14 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
                 {
                     case 0:
                         for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
                         break;
                     case 1:
                     case 2:
                         for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4) - (m_bIsRegularMode ? 2 : 1); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
                         for(uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_GUARDIANS,2684.804,-3502.517,261.313,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
+                            m_creature->SummonCreature(NPC_PLAGUED_GUARDIANS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
                         break;
                 }
                 SecondPhaseCounter ++;
@@ -226,7 +226,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
         {
             DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_CRIPPLE : SPELL_CRIPPLE_H);
             //DoCast(m_creature, SPELL_BLINK);
-            m_creature->GetMap()->CreatureRelocation(m_creature, 2670.804 + rand()%30, -3517.517 + rand()%30, 261.313, m_creature->GetOrientation());
+            m_creature->GetMap()->CreatureRelocation(m_creature, 2670.804f + rand()%30, -3517.517f + rand()%30, 261.313f, m_creature->GetOrientation());
             DoResetThreat();
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 AttackStart(pTarget);
@@ -246,7 +246,7 @@ struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
             DoScriptText(SAY_SUMMON, m_creature);
 
             for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 3); ++i)
-                m_creature->SummonCreature(NPC_PLAGUED_WARRIOR, 2672.804 + rand()%15,-3509.517 + rand()%15, 261.313, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000);
+                m_creature->SummonCreature(NPC_PLAGUED_WARRIOR, 2672.804f + rand()%15,-3509.517f + rand()%15, 261.313f, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000);
 
             Summon_Timer = 30000;
         } else Summon_Timer -= diff;

@@ -37,17 +37,17 @@ enum
     SPELL_FUNGAL_CREEP      = 29232
 };
 
-#define ADD_1X 2957.040
-#define ADD_1Y -3997.590
-#define ADD_1Z 274.280
+#define ADD_1X 2957.040f
+#define ADD_1Y -3997.590f
+#define ADD_1Z 274.280f
 
-#define ADD_2X 2909.130
-#define ADD_2Y -4042.970
-#define ADD_2Z 274.280
+#define ADD_2X 2909.130f
+#define ADD_2Y -4042.970f
+#define ADD_2Z 274.280f
 
-#define ADD_3X 2861.102
-#define ADD_3Y -3997.901
-#define ADD_3Z 274.280
+#define ADD_3X 2861.102f
+#define ADD_3Y -3997.901f
+#define ADD_3Z 274.280f
 
 struct MANGOS_DLL_DECL boss_loathebAI : public ScriptedAI
 {

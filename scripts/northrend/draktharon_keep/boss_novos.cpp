@@ -57,9 +57,9 @@ enum
 
 const float PosSummonHandler[POS][3] =
 {
-    {-337.78, -720.39, 28.58},
-    {-379.31, -818.36, 59.70},
-    {-412.45, -726.96, 28.58},
+    {-337.78f, -720.39f, 28.58f},
+    {-379.31f, -818.36f, 59.70f},
+    {-412.45f, -726.96f, 28.58f},
 };
 /*######
 ## boss_novos
@@ -100,7 +100,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
-        m_creature->SummonCreature(NPC_CRYSTAL_CHANNEL_TARGET, -379.269, -737.728, 39.313, 0 , TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
+        m_creature->SummonCreature(NPC_CRYSTAL_CHANNEL_TARGET, -379.269f, -737.728f, 39.313f, 0 , TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
         m_creature->CallForHelp(50.0f);
     }
 

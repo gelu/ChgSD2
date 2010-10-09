@@ -106,23 +106,23 @@ waves[] =
 
 const float PosSummonLive[POS_LIVE][3] =
 {
-    {2669.7, -3430.9, 268.56},
-    {2692.0, -3430.9, 268.56},
-    {2714.1, -3430.9, 268.56},
+    {2669.7f, -3430.9f, 268.56f},
+    {2692.0f, -3430.9f, 268.56f},
+    {2714.1f, -3430.9f, 268.56f},
 };
 
 const float PosSummonDead[POS_DEAD][3] =
 {
-    {2725.1, -3310.0, 268.85},
-    {2699.3, -3322.8, 268.60},
-    {2733.1, -3348.5, 268.84},
-    {2682.8, -3304.2, 268.85},
-    {2664.8, -3340.7, 268.23},
+    {2725.1f, -3310.0f, 268.85f},
+    {2699.3f, -3322.8f, 268.60f},
+    {2733.1f, -3348.5f, 268.84f},
+    {2682.8f, -3304.2f, 268.85f},
+    {2664.8f, -3340.7f, 268.23f},
 };
 
-const float PosPlatform[4] = {2640.5, -3360.6, 285.26, 0};
-const float PosGroundLive[4] = {2692.174, -3400.963, 267.680, 1.7};
-const float PosGroundDeath[4] = {2690.378, -3328.279, 267.681, 1.7};
+const float PosPlatform[4] = {2640.5f, -3360.6f, 285.26f, 0};
+const float PosGroundLive[4] = {2692.174f, -3400.963f, 267.680f, 1.7f};
+const float PosGroundDeath[4] = {2690.378f, -3328.279f, 267.681f, 1.7f};
 
 struct MANGOS_DLL_DECL boss_gothikAI : public Scripted_NoMovementAI
 {

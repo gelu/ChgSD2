@@ -127,14 +127,14 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
     
     void SummonAdds()
     {
-        m_creature->SummonCreature(NPC_WORSHIPPER, 3362.66, -3620.97, 261.08, 4.57276, TEMPSUMMON_CORPSE_DESPAWN, 0);
-        m_creature->SummonCreature(NPC_WORSHIPPER, 3344.3, -3618.31, 261.08, 4.69494, TEMPSUMMON_CORPSE_DESPAWN, 0);
-        m_creature->SummonCreature(NPC_WORSHIPPER, 3356.71, -3620.05, 261.08, 4.57276, TEMPSUMMON_CORPSE_DESPAWN, 0);
-        m_creature->SummonCreature(NPC_WORSHIPPER, 3350.26, -3619.11, 261.08, 4.67748, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3362.66f, -3620.97f, 261.08f, 4.57276f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3344.3f, -3618.31f, 261.08f, 4.69494f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3356.71f, -3620.05f, 261.08f, 4.57276f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+        m_creature->SummonCreature(NPC_WORSHIPPER, 3350.26f, -3619.11f, 261.08f, 4.67748f, TEMPSUMMON_CORPSE_DESPAWN, 0);
         if(!m_bIsRegularMode)
         {
-            m_creature->SummonCreature(NPC_FOLLOWER, 3359.8, -3620.47, 260.996, 4.59711, TEMPSUMMON_CORPSE_DESPAWN, 0);
-            m_creature->SummonCreature(NPC_FOLLOWER, 3347.17, -3618.95, 260.997, 4.6678, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            m_creature->SummonCreature(NPC_FOLLOWER, 3359.8f, -3620.47f, 260.996f, 4.59711f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+            m_creature->SummonCreature(NPC_FOLLOWER, 3347.17f, -3618.95f, 260.997f, 4.6678f, TEMPSUMMON_CORPSE_DESPAWN, 0);
         }
     }
 

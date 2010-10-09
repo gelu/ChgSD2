@@ -59,8 +59,8 @@ struct Locations
 
 static Locations PipeLoc[]=
 {
-    {1295.44, 734.07, 200.3}, // left
-    {1297.7,  595.6,  199.9}, // right
+    {1295.44f, 734.07f, 200.3f}, // left
+    {1297.7f,  595.6f,  199.9f}, // right
 };
 
 /*######
