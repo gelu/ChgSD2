@@ -170,7 +170,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
         m_creature->RemoveAllAuras();
         m_creature->DeleteThreatList();
         m_creature->CombatStop(true);
-        m_creature->LoadCreaturesAddon();
+        m_creature->LoadCreatureAddon();
         if (m_creature->isAlive())
             m_creature->GetMotionMaster()->MoveTargetedHome();
 

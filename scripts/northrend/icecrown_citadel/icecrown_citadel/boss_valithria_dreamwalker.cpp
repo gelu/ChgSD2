@@ -180,7 +180,7 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
               DespawnMobs();
               m_creature->DeleteThreatList();
               m_creature->CombatStop(true);
-              m_creature->LoadCreaturesAddon();
+              m_creature->LoadCreatureAddon();
               if (m_creature->isAlive())
                   m_creature->GetMotionMaster()->MoveTargetedHome();
               m_creature->SetLootRecipient(NULL);

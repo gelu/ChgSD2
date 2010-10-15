@@ -80,7 +80,7 @@ struct MANGOS_DLL_DECL boss_infinite_corruptorAI : public ScriptedAI
        m_creature->RemoveAllAuras();
        m_creature->DeleteThreatList();
        m_creature->CombatStop(true);
-       m_creature->LoadCreaturesAddon();
+       m_creature->LoadCreatureAddon();
        if(m_pInstance)
          m_pInstance->SetData(TYPE_BONUS, IN_PROGRESS);
 

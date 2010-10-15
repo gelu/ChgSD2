@@ -260,7 +260,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
        m_creature->RemoveAllAuras();
        m_creature->DeleteThreatList();
        m_creature->CombatStop(true);
-       m_creature->LoadCreaturesAddon();
+       m_creature->LoadCreatureAddon();
        m_uiExorcismTimer = 7400;
        m_uiHealTimer = 100;
 
@@ -295,7 +295,7 @@ struct MANGOS_DLL_DECL npc_arthasAI : public npc_escortAI
         if (!m_creature->hasUnitState(UNIT_STAT_STUNNED) && pWho->isTargetableForAttack() &&
             m_creature->IsHostileTo(pWho) && pWho->isInAccessablePlaceFor(m_creature))
         {
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
+            if (!m_creature->CanFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             float attackRadius = m_creature->GetAttackDistance(pWho);
@@ -1411,7 +1411,7 @@ struct MANGOS_DLL_DECL npc_arthas_priestAI : public ScriptedAI
       m_creature->RemoveAllAuras();
       m_creature->DeleteThreatList();
       m_creature->CombatStop(true);
-      m_creature->LoadCreaturesAddon();
+      m_creature->LoadCreatureAddon();
 
       m_creature->SetLootRecipient(NULL);
 
@@ -1426,7 +1426,7 @@ struct MANGOS_DLL_DECL npc_arthas_priestAI : public ScriptedAI
         if (!m_creature->hasUnitState(UNIT_STAT_STUNNED) && pWho->isTargetableForAttack() &&
             m_creature->IsHostileTo(pWho) && pWho->isInAccessablePlaceFor(m_creature))
         {
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
+            if (!m_creature->CanFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             float attackRadius = m_creature->GetAttackDistance(pWho);
@@ -1526,7 +1526,7 @@ struct MANGOS_DLL_DECL npc_arthas_marineAI : public ScriptedAI
       m_creature->RemoveAllAuras();
       m_creature->DeleteThreatList();
       m_creature->CombatStop(true);
-      m_creature->LoadCreaturesAddon();
+      m_creature->LoadCreatureAddon();
 
       m_creature->SetLootRecipient(NULL);
       m_creature->GetMotionMaster()->MovePoint(POINT_LAST_POINT, LastX, LastY, LastZ);
@@ -1542,7 +1542,7 @@ struct MANGOS_DLL_DECL npc_arthas_marineAI : public ScriptedAI
         if (!m_creature->hasUnitState(UNIT_STAT_STUNNED) && pWho->isTargetableForAttack() &&
             m_creature->IsHostileTo(pWho) && pWho->isInAccessablePlaceFor(m_creature))
         {
-            if (!m_creature->canFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
+            if (!m_creature->CanFly() && m_creature->GetDistanceZ(pWho) > CREATURE_Z_ATTACK_RANGE)
                 return;
 
             float attackRadius = m_creature->GetAttackDistance(pWho);
