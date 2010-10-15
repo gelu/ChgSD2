@@ -617,7 +617,7 @@ struct MANGOS_DLL_DECL npc_injured_patientAI : public ScriptedAI
         {
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IN_COMBAT);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->setDeathState(JUST_DIED);
+            m_creature->SetDeathState(JUST_DIED);
             m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_DEAD);
 
             if (Doctorguid)
@@ -708,7 +708,7 @@ void npc_doctorAI::PatientSaved(Creature* soldier, Player* pPlayer, Location* Po
                     for(itr = Patients.begin(); itr != Patients.end(); ++itr)
                     {
                         if (Creature* Patient = m_creature->GetMap()->GetCreature(*itr))
-                            Patient->setDeathState(JUST_DIED);
+                            Patient->SetDeathState(JUST_DIED);
                     }
                 }
 
