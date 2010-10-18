@@ -5,7 +5,7 @@ maxhealth=7185,
 minlevel=64,
 maxlevel=70,
 minmana=7031,
-maxmana=7196,
+maxmana=7196
 WHERE entry=25474;
 
 UPDATE creature_template SET
