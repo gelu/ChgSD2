@@ -290,8 +290,6 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
 
     void AttackStart(Unit *who)
     {
-        //ignore all attackstart commands
-        return;
     }
 
     void UpdateAI(const uint32 diff)

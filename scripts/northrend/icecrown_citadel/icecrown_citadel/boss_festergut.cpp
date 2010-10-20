@@ -69,21 +69,21 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
     boss_festergutAI(Creature* pCreature) : BSWScriptedAI(pCreature)
     {
         pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
-        pBlightTarget = NULL;
         Reset();
     }
 
     ScriptedInstance *pInstance;
     bool intro;
     bool pet;
-    Creature* pBlightTarget;
+    uint64 blightTargetGUID;
 //    uint64 pPuddleStalkerGUID[3];
 
     void Reset()
     {
         if(!pInstance) return;
         resetTimers();
-        if (m_creature->isAlive()) pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
+        if (m_creature->isAlive()) 
+            pInstance->SetData(TYPE_FESTERGUT, NOT_STARTED);
         setStage(0);
         intro = false;
         pet = false;
@@ -99,17 +99,17 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
                  }
              }
 */
-        if (!pBlightTarget)
-            pBlightTarget = doSelectNearestCreature(NPC_BLIGHT_STALKER,60.0f);
+        Creature* pBlightTarget = doSelectNearestCreature(NPC_BLIGHT_STALKER,60.0f);
         if (pBlightTarget && !pBlightTarget->isAlive())
             pBlightTarget->Respawn();
         if (pBlightTarget)
         {
+             blightTargetGUID = pBlightTarget->GetGUID();
              pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
              pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-             doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
-             doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
-             doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+             doCast(SPELL_GASEOUS_BLIGHT_1,pBlightTarget);
+             doCast(SPELL_GASEOUS_BLIGHT_2,pBlightTarget);
+             doCast(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
         }
 
     }
@@ -152,6 +152,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         if (pWho->GetTypeId() != TYPEID_PLAYER) 
             return;
 
+        Creature* pBlightTarget = m_creature->GetMap()->GetCreature(blightTargetGUID);
+
         pInstance->SetData(TYPE_FESTERGUT, IN_PROGRESS);
         DoScriptText(-1631203,m_creature,pWho);
         if (pBlightTarget && !pBlightTarget->isAlive())
@@ -160,8 +162,9 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         {
             pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pBlightTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
-            doCast(SPELL_GASEOUS_BLIGHT_1,m_creature);
+            doCast(SPELL_GASEOUS_BLIGHT_1,pBlightTarget);
+            doCast(SPELL_GASEOUS_BLIGHT_2,pBlightTarget);
+            doCast(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
         }
 /*        for(uint8 i = 0; i < 3; ++i)
              if (pPuddleStalkerGUID[i])
@@ -175,6 +178,7 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         pInstance->SetData(TYPE_FESTERGUT, DONE);
         pInstance->SetData(TYPE_EVENT, 550);
         DoScriptText(-1631206,m_creature);
+        Creature* pBlightTarget = m_creature->GetMap()->GetCreature(blightTargetGUID);
         if (pBlightTarget)
         {
             doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
@@ -216,6 +220,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        Creature* pBlightTarget = m_creature->GetMap()->GetCreature(blightTargetGUID);
+
         switch(getStage())
         {
             case 0:
@@ -235,8 +241,10 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
             case 2:
                     if (m_creature->IsNonMeleeSpellCasted(false)) return;
                     if (pBlightTarget)
-                        doCast(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
-                    doCast(SPELL_GASEOUS_BLIGHT_2,m_creature);
+                    {
+                        doRemove(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
+                        doRemove(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
+                    }
                     setStage(3);
                     break;
             case 3:
@@ -256,9 +264,10 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
             case 5:
                     if (m_creature->IsNonMeleeSpellCasted(false)) return;
                     if (pBlightTarget)
-                        doCast(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
-//                        doCast(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
-                    doCast(SPELL_GASEOUS_BLIGHT_3,m_creature);
+                    {
+                        doRemove(SPELL_GASEOUS_BLIGHT_2,pBlightTarget);
+                        doRemove(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
+                    }
                     setStage(6);
                     break;
             case 6:
@@ -279,9 +288,8 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
                     if (m_creature->IsNonMeleeSpellCasted(false)) return;
                     if (pBlightTarget)
                     {
+                        doRemove(SPELL_GASEOUS_BLIGHT_1,pBlightTarget);
                         doRemove(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
-                        doRemove(SPELL_BLIGHT_VISUAL_2,pBlightTarget);
-                        doRemove(SPELL_BLIGHT_VISUAL_3,pBlightTarget);
                     }
                     setStage(9);
                     break;
@@ -295,7 +303,12 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
                     break;
             case 10:
                     if (m_creature->IsNonMeleeSpellCasted(false)) return;
-                    doCast(SPELL_BLIGHT_VISUAL_1,pBlightTarget);
+                    if (pBlightTarget)
+                    {
+                        doCast(SPELL_GASEOUS_BLIGHT_1,pBlightTarget);
+                        doCast(SPELL_GASEOUS_BLIGHT_2,pBlightTarget);
+                        doCast(SPELL_GASEOUS_BLIGHT_3,pBlightTarget);
+                    }
                     m_creature->RemoveAurasDueToSpell(SPELL_INHALED_BLIGHT);
                     setStage(0);
                     break;
@@ -322,10 +335,11 @@ struct MANGOS_DLL_DECL boss_festergutAI : public BSWScriptedAI
                        DoScriptText(-1631213,m_creature);
         };
 
-        if (timedQuery(SPELL_BERSERK, diff)){
-                 doCast(SPELL_BERSERK);
-                 DoScriptText(-1631207,m_creature);
-                 };
+        if (timedQuery(SPELL_BERSERK, diff))
+        {
+            doCast(SPELL_BERSERK);
+            DoScriptText(-1631207,m_creature);
+        };
 
         DoMeleeAttackIfReady();
     }

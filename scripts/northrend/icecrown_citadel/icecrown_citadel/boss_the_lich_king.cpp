@@ -133,11 +133,13 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
     bool finalphase;
     Creature* pTirion;
     Creature* pFrostmourne;
+    std::list<uint64> mobsGUIDList;
 
     void Reset()
     {
         if(!pInstance) return;
         resetTimers();
+        mobsGUIDList.clear();
         stage = 0;
         nextEvent = 0;
         nextPoint = 0;
@@ -167,6 +169,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
         if (!pInstance) return;
         if (finalphase && pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS) return;
 
+        DespawnMobs();
         m_creature->RemoveAllAuras();
         m_creature->DeleteThreatList();
         m_creature->CombatStop(true);
@@ -212,6 +215,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
         stage = 0;
         battlestarted = false;
         finalphase = false;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
 
@@ -234,7 +238,27 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
               summoned->SetInCombatWith(pTarget);
               summoned->AddThreat(pTarget,100.0f);
            }
+        mobsGUIDList.push_back(summoned->GetGUID());
     }
+
+    void DespawnMobs()
+    {
+        if (mobsGUIDList.empty())
+            return;
+
+        for(std::list<uint64>::iterator itr = mobsGUIDList.begin(); itr != mobsGUIDList.end(); ++itr)
+        {
+            if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
+                if (pTemp->isAlive()) 
+                {
+                    pTemp->DeleteThreatList();
+                    pTemp->CombatStop(true);
+                    pTemp->DealDamage(pTemp, pTemp->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+                }
+        }
+        mobsGUIDList.clear();
+    }
+
 
     void Aggro(Unit *who) 
     {
@@ -249,6 +273,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
         DoScriptText(-1631528,m_creature,killer);
 
         pInstance->SetData(TYPE_EVENT,14010);
+        DespawnMobs();
 
     }
 
@@ -314,6 +339,9 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                           pInstance->SetData(TYPE_EVENT,12120);
                           break;
                 case 12120:
+                          m_creature->GetMotionMaster()->Clear();
+                          m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                          SetCombatMovement(true);
                           m_creature->SetInCombatWithZone();
                           battlestarted = true;
                           pInstance->SetData(TYPE_EVENT,12200);
@@ -933,9 +961,9 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public BSWScriptedAI
 
     void Reset()
     {
-       resetTimers();
-       doCast(SPELL_ICE_SPHERE_VISUAL);
-       m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
+        resetTimers();
+        doCast(SPELL_ICE_SPHERE_VISUAL);
+        m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
     }
 
 
@@ -943,6 +971,9 @@ struct MANGOS_DLL_DECL  mob_ice_sphere_iccAI : public BSWScriptedAI
     {
         if (!pInstance || pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
+
+        if (!hasAura(SPELL_ICE_SPHERE_VISUAL))
+            doCast(SPELL_ICE_SPHERE_VISUAL);
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             {

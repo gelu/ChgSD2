@@ -44,6 +44,7 @@ enum BossSpells
 
         NPC_SWARMING_SHADOWS                    = 38163,
         SPELL_SWARMING_SHADOWS_VISUAL           = 71267,
+        QUEST_24756                             = 72934,
 };
 
 static Locations SpawnLoc[]=
@@ -150,6 +151,14 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
         DoScriptText(-1631333,m_creature,killer);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+        for (uint8 i = 0; i < 5; ++i)
+        {
+             if (Unit* pPlayer = doSelectRandomPlayer(SPELL_ESSENCE_OF_BLOOD_QWEEN, true, 100.0f))
+             {
+                 doCast(QUEST_24756, pPlayer);
+                 doRemove(SPELL_ESSENCE_OF_BLOOD_QWEEN, pPlayer);
+             }
+        }
     }
 
     void doPactOfDarkfallen(bool command)

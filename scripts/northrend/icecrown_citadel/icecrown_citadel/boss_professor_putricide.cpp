@@ -79,6 +79,7 @@ enum BossSpells
     SPELL_SLIME_PUDDLE_AURA       = 70346,
 
     SPELL_BERSERK                 = 47008,
+    QUEST_24749                   = 71518,
 //
     VIEW_1                        = 30881,
     VIEW_2                        = 30881,
@@ -170,6 +171,14 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
         if (!pInstance) return;
         pInstance->SetData(TYPE_PUTRICIDE, DONE);
         DoScriptText(-1631243,m_creature, killer);
+        for (uint8 i = 0; i < 5; i++)
+        {
+             if (Unit* pPlayer = doSelectRandomPlayer(SPELL_MUTATED_PLAGUE, true, 100.0f))
+             {
+                 doCast(QUEST_24749, pPlayer);
+                 doRemove(SPELL_MUTATED_PLAGUE, pPlayer);
+             }
+        }
     }
 
     void JustSummoned(Creature* summoned)

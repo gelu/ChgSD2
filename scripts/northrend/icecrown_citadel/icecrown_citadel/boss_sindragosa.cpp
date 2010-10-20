@@ -50,6 +50,7 @@ enum BossSpells
     NPC_ICE_TOMB             = 36980,
     NPC_FROST_BOMB           = 37186,
 
+    QUEST_24757              = 72289,
     SPELL_BERSERK            = 47008,
 
 // Rimefang
@@ -146,6 +147,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
         if(!pInstance) return;
         pInstance->SetData(TYPE_SINDRAGOSA, DONE);
         DoScriptText(-1631423,m_creature,killer);
+        doCast(QUEST_24757);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -341,48 +343,57 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
         Reset();
     }
 
-    ScriptedInstance *m_pInstance;
-    Unit* pVictim;
+    ScriptedInstance* m_pInstance;
+    uint64 victimGUID;
 
     void Reset()
     {
         SetCombatMovement(false);
-        pVictim = NULL;
+        victimGUID = 0;
         m_creature->SetRespawnDelay(7*DAY);
     }
 
     void Aggro(Unit* pWho)
     {
-        if (!pVictim && pWho)  {
-                        pVictim = pWho;
-                        m_creature->SetInCombatWith(pVictim);
-                        }
+        if (!victimGUID && pWho && pWho->GetTypeId() == TYPEID_PLAYER)
+        {
+             victimGUID = pWho->GetGUID();
+             m_creature->SetInCombatWith(pWho);
+        }
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-            if (pVictim) doRemove(SPELL_ICY_TOMB,pVictim);
+            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+                doRemove(SPELL_ICY_TOMB,pVictim);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
     }
 
     void KilledUnit(Unit* _Victim)
     {
-        if (pVictim) doRemove(SPELL_ICY_TOMB,pVictim);
+        if (_Victim && _Victim->GetGUID() == victimGUID)
+            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+                doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void JustDied(Unit* Killer)
     {
-        if (pVictim) doRemove(SPELL_ICY_TOMB,pVictim);
+        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID)) 
+            doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_SINDRAGOSA) != IN_PROGRESS)
         {
-        if (pVictim) doRemove(SPELL_ICY_TOMB,pVictim);
+            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+                doRemove(SPELL_ICY_TOMB,pVictim);
             m_creature->ForcedDespawn();
         }
-
     }
 
 };

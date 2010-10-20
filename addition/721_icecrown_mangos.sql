@@ -83,11 +83,11 @@ UPDATE `creature_template` SET `ScriptName`='boss_festergut', `AIName`=''  WHERE
 UPDATE `gameobject_template` SET `faction` = '114' WHERE `gameobject_template`.`entry` IN (201371);
 UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201371);
 UPDATE `creature_template` SET `ScriptName`='mob_vile_gas_stalker', `AIName`=''  WHERE `entry`= 38548;
+UPDATE `creature_template` SET `faction_A` = 14, `faction_H` = 14,  `ScriptName`='', `AIName`='' WHERE `entry`= 36659;
 -- original auras from YTDB
 -- INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
 -- (36659, 0, 0, 1, 0, 0, '69126 0 69152 0 69154 0');
 -- DELETE FROM `creature_template_addon` WHERE `entry` = 36659;
-UPDATE `creature_template` SET `faction_A`=35, `faction_H`=35, `AIName`=''  WHERE `entry`= 36659;
 -- Visual effect mobs from Timmit
 UPDATE `creature` SET `spawnMask` = 15, `modelid` = 11686, `spawntimesecs` = 300 WHERE `id`=37013;
 
@@ -135,9 +135,7 @@ UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_frostwing_s
 
 -- Valithria dreamwalker
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;
-UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10067;
-UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10068;
-UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 10069;
+UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35 WHERE `entry`= 38174;
 UPDATE `creature_template` SET `faction_A` = 14, `faction_H` = 14, `ScriptName`='mob_nightmare_portal', `AIName`='' WHERE `entry`= 38429;
 UPDATE `creature_template` SET `ScriptName`='mob_mana_void', `AIName`='' WHERE `entry`= 38068;
 DELETE FROM `creature` WHERE `guid` = 47738 AND `id` = 38589;
