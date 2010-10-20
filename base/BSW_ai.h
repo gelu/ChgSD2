@@ -50,6 +50,7 @@ enum BossSpellTableParameters
   CAST_ON_RANDOM_POINT      = 15,
   CAST_ON_RANDOM_PLAYER     = 16,
   APPLY_AURA_ALLPLAYERS     = 17,
+  FORCE_CAST                = 18,
   SPELLTABLEPARM_NUMBER
 };
 
@@ -247,6 +248,8 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
         Unit*         _doSummonAtPosition(uint32 guid, TempSummonType type, uint32 delay, float fPosX, float fPosY, float fPosZ);
 
         CanCastResult _BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget);
+
+        CanCastResult _BSWDoForceCast(uint8 m_uiSpellIdx, Unit* pTarget);
 
         CanCastResult _BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget = NULL);
 

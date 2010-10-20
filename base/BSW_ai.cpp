@@ -313,6 +313,10 @@ CanCastResult BSWScriptedAI::_BSWSpellSelector(uint8 m_uiSpellIdx, Unit* pTarget
                    }
                    break;
 
+            case FORCE_CAST:
+                   result = _BSWDoForceCast(m_uiSpellIdx, pTarget);
+                   break;
+
             case SPELLTABLEPARM_NUMBER:
             default:
                    error_log("BSW: FAILED casting spell number %u type %u - type not exists",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
@@ -432,7 +436,8 @@ BossSpellTableParameters BSWScriptedAI::_getBSWCastType(uint32 pTemp)
                 case 15: return CAST_ON_RANDOM_POINT;
                 case 16: return CAST_ON_RANDOM_PLAYER;
                 case 17: return APPLY_AURA_ALLPLAYERS;
-                case 18: return SPELLTABLEPARM_NUMBER;
+                case 18: return FORCE_CAST;
+                case 19: return SPELLTABLEPARM_NUMBER;
      default: return DO_NOTHING;
      };
 };
@@ -442,16 +447,35 @@ CanCastResult BSWScriptedAI::_BSWDoCast(uint8 m_uiSpellIdx, Unit* pTarget)
     BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
 
     if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
-        {
-           error_log("BSW: warning - failed casting bugged spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
-           return CAST_FAIL_OTHER;
-        }
+    {
+       error_log("BSW: warning - failed casting bugged spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
+       return CAST_FAIL_OTHER;
+    }
 
     debug_log("BSW: Casting bugged spell number %u type %u",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
 
     pTarget->InterruptNonMeleeSpells(false);
 
     pTarget->CastSpell(pTarget, pSpell->m_uiSpellEntry[currentDifficulty], false);
+
+    return CAST_OK;
+};
+
+CanCastResult BSWScriptedAI::_BSWDoForceCast(uint8 m_uiSpellIdx, Unit* pTarget)
+{
+    BSWRecord* pSpell = &m_BSWRecords[m_uiSpellIdx];
+
+    if (!pTarget || !pTarget->IsInMap(m_creature) || !pTarget->isAlive())
+    {
+       error_log("BSW: warning - failed forced casting spell number %u - no target or target not in map",pSpell->m_uiSpellEntry[currentDifficulty]);
+       return CAST_FAIL_OTHER;
+    }
+
+    debug_log("BSW: Forced casting spell number %u ",pSpell->m_uiSpellEntry[currentDifficulty], pSpell->m_CastTarget);
+
+    pTarget->InterruptNonMeleeSpells(false);
+
+    pTarget->CastSpell(m_creature, pSpell->m_uiSpellEntry[currentDifficulty], true);
 
     return CAST_OK;
 };
@@ -561,8 +585,10 @@ bool BSWScriptedAI::_doRemove(uint8 m_uiSpellIdx, Unit* pTarget, uint8 index)
                 case CAST_ON_VICTIM:
                 case CAST_ON_BOTTOMAGGRO:
                 case CAST_ON_TARGET:
+                case FORCE_CAST:
                 case APPLY_AURA_TARGET:
-                         if (!pTarget) return false;
+                         if (!pTarget)
+                             return false;
                      break;
 
                 case CAST_ON_RANDOM:
