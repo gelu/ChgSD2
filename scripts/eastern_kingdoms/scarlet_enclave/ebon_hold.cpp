@@ -1153,6 +1153,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 {
     npc_eye_of_acherusAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
+        Reset();
     }
 
     int32 StartTimer;
@@ -1160,7 +1161,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 
     void Reset()
     {
-        m_creature->SetLevel(55);
+        m_creature->SetDisplayId(26320);
         StartTimer = 2000;
         Active = false;
     }
@@ -1173,7 +1174,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         if(!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
             return;
 
-        Unit* owner = m_creature->GetCharmer();
+        Unit* owner = m_creature->GetCharmerOrOwner();
 
         if(!owner || owner->GetTypeId() != TYPEID_PLAYER)
             return;
@@ -1188,8 +1189,10 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
             return;
 
             DoScriptText(-1666452, m_creature);
+            m_creature->SetDisplayId(25499);
+//            m_creature->SetDisplayId(26320);
+            m_creature->RemoveAurasDueToSpell(51923);
             m_creature->CastSpell(m_creature, 51890, true);
-//            m_creature->RemoveAurasDueToSpell(51923);
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -1200,7 +1203,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
             {
                 m_creature->CastSpell(m_creature, 70889, true);
                 m_creature->CastSpell(m_creature, 51892, true);
-//                m_creature->CastSpell(m_creature, 51923, true);
+                m_creature->CastSpell(m_creature, 51923, true);
                 m_creature->SetSpeedRate(MOVE_FLIGHT, 4.0f,true);
                 DoScriptText(-1666451, m_creature);
                 m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
