@@ -950,7 +950,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                        }
                pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                UpdateTimer = 3000;
-               pInstance->SetData(TYPE_EVENT,3095);
+               pInstance->SetData(TYPE_EVENT,0);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                pInstance->SetData(TYPE_CRUSADERS,IN_PROGRESS);
                break;
@@ -1099,7 +1099,7 @@ struct MANGOS_DLL_DECL npc_tirion_tocAI : public ScriptedAI
                        }
                pInstance->SetData(TYPE_CRUSADERS_COUNT,crusaderscount);
                UpdateTimer = 3000;
-               pInstance->SetData(TYPE_EVENT,3095);
+               pInstance->SetData(TYPE_EVENT,0);
                pInstance->DoUseDoorOrButton(pInstance->GetData64(GO_MAIN_GATE_DOOR));
                pInstance->SetData(TYPE_CRUSADERS,IN_PROGRESS);
                break;
