@@ -25,7 +25,7 @@ EndScriptData */
 #include "oculus.h"
 enum Spells
 {
-        SPELL_GREEN_SEAT                        = 49436,
+        SPELL_GREEN_SEAT                        = 49346,
         SPELL_YELLOW_SEAT                       = 49460,
         SPELL_RED_SEAT                          = 49464,
 };
@@ -69,6 +69,10 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
                 seatSpell = 0;
                 break;
         }
+        ownerGUID = m_creature->GetCreatorGUID();
+
+        if (Unit* owner = m_creature->GetMap()->GetUnit(ownerGUID))
+            owner->RemoveAurasDueToSpell(53797);
     }
 
     void AttackStart(Unit *) {}
@@ -83,12 +87,17 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
         if (!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
             return;
 
+        if (!ownerGUID)
+            ownerGUID = m_creature->GetCreatorGUID();
+
         Unit* owner = m_creature->GetMap()->GetUnit(ownerGUID);
 
         if (!owner || owner->GetTypeId() != TYPEID_PLAYER)
             return;
 
         owner->RemoveAurasDueToSpell(seatSpell);
+        owner->RemoveAurasDueToSpell(53797);
+        m_creature->SetCreatorGUID(0);
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
@@ -96,13 +105,19 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
         if (uiType != POINT_MOTION_TYPE && uiPointId == 0)
             return;
 
-        Unit* owner = m_creature->GetCreator();
-        owner->CastSpell(m_creature, seatSpell, true);
+        if (Unit* owner = m_creature->GetMap()->GetUnit(ownerGUID))
+        {
+             m_creature->setFaction(owner->getFaction());
+             owner->CastSpell(m_creature, seatSpell, true);
+             owner->CastSpell(owner, 53797, true);
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        ownerGUID = m_creature->GetCreatorGUID();
+
+        if (!ownerGUID)
+            ownerGUID = m_creature->GetCreatorGUID();
 
         if (ownerGUID)
         {

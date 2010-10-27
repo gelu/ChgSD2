@@ -28,10 +28,35 @@ REPLACE INTO `creature_ai_scripts` VALUES (2744751,27447,6,0,100,30,0,0,0,0,12,2
 REPLACE INTO `creature_ai_scripts` VALUES (2765551,27655,6,0,100,30,0,0,0,0,12,28012,0,180000,0,0,0,0,0,0,0,0,'q13127');
 UPDATE `creature_template` SET `AIName` = 'EventAI', `ScriptName` = '' WHERE `entry` IN (27447,27655);
 
-UPDATE `creature_template` SET `spell6` = 57403, `InhabitType` = 3 WHERE `entry` IN (27692,27755,27756,28670,32535);
+UPDATE `creature_template` SET `spell6` = 57403, `InhabitType` = 3 WHERE `entry` IN (27692,27755,27756);
+
+-- from lanc
+UPDATE `creature_template` SET
+    spell1 = 50232,
+    spell2 = 50248,
+    spell3 = 50240,
+    spell4 = 50253,
+    spell5 = 0
+WHERE `entry` IN (27756);
+
+UPDATE `creature_template` SET
+    spell1 = 49840,
+    spell2 = 49838,
+    spell3 = 49592,
+    spell4 = 0,
+    spell5 = 0
+WHERE `entry` IN (27755);
+ 
+UPDATE `creature_template` SET
+    spell1 = 50328,
+    spell2 = 50341,
+    spell3 = 50344,
+    spell4 = 0,
+    spell5 = 0
+WHERE `entry` IN (27692);
 
 -- from me
-UPDATE `creature_template` SET `AIName` = '', `ScriptName` = 'mob_oculus_dragon' WHERE `entry` IN (27692,27756,27755);
+UPDATE `creature_template` SET `AIName` = '', `VehicleId` = 70, `ScriptName` = 'mob_oculus_dragon' WHERE `entry` IN (27692,27756,27755);
 DELETE FROM `spell_script_target` WHERE `entry` IN (49460, 49346, 49464);
 INSERT INTO `spell_script_target` VALUES (49460, 1, 27755);
 INSERT INTO `spell_script_target` VALUES (49346, 1, 27692);
