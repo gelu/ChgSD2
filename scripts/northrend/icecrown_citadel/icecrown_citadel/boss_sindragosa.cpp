@@ -199,7 +199,7 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
                     float fPosX, fPosY, fPosZ;
                 marked[i]->GetPosition(fPosX, fPosY, fPosZ);
                 if (Unit* pTemp1 = doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
-                    pTemp1->AddThreat(marked[i], 100.0f);
+                    pTemp1->AddThreat(marked[i], 1000.0f);
             };
 
 /*        Map::PlayerList const &pList = pMap->GetPlayers();
@@ -357,8 +357,17 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
     {
         if (!victimGUID && pWho && pWho->GetTypeId() == TYPEID_PLAYER)
         {
-             victimGUID = pWho->GetGUID();
-             m_creature->SetInCombatWith(pWho);
+             if (pWho->HasAura(SPELL_ICY_TOMB))
+             {
+                 victimGUID = pWho->GetGUID();
+                 m_creature->SetInCombatWith(pWho);
+             }
+             else if (Unit* pTarget = doSelectRandomPlayer(SPELL_ICY_TOMB,true,3.0f))
+             {
+                 victimGUID = pTarget->GetGUID();
+                 m_creature->SetInCombatWith(pTarget);
+             }
+
         }
     }
 
@@ -375,9 +384,8 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
 
     void KilledUnit(Unit* _Victim)
     {
-        if (_Victim && _Victim->GetGUID() == victimGUID)
-            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
-                doRemove(SPELL_ICY_TOMB,pVictim);
+        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+            doRemove(SPELL_ICY_TOMB,pVictim);
     }
 
     void JustDied(Unit* Killer)
@@ -388,7 +396,8 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if(m_pInstance && m_pInstance->GetData(TYPE_SINDRAGOSA) != IN_PROGRESS)
+        if ((m_pInstance && m_pInstance->GetData(TYPE_SINDRAGOSA) != IN_PROGRESS)
+           || (victimGUID && !m_creature->GetMap()->GetPlayer(victimGUID)->HasAura(SPELL_ICY_TOMB)))
         {
             if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
                 doRemove(SPELL_ICY_TOMB,pVictim);
