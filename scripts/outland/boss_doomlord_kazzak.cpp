@@ -140,11 +140,12 @@ struct MANGOS_DLL_DECL boss_doomlordkazzakAI : public ScriptedAI
         if (MarkOfKazzak_Timer < diff)
         {
             Unit* victim = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
-            if (victim->GetPower(POWER_MANA))
-            {
-                DoCastSpellIfCan(victim, SPELL_MARKOFKAZZAK);
-                MarkOfKazzak_Timer = 20000;
-            }
+            if (victim)
+                if (victim->GetPower(POWER_MANA))
+                {
+                    DoCastSpellIfCan(victim, SPELL_MARKOFKAZZAK);
+                    MarkOfKazzak_Timer = 20000;
+                }
         }else MarkOfKazzak_Timer -= diff;
 
         //Enrage_Timer

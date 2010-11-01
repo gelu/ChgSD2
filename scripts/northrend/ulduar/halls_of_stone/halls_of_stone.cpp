@@ -186,6 +186,8 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
             uint32 uiPositionCounter = 0;
             for(std::list<Creature*>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
             {
+                if (!(*itr)) continue;
+
                 if ((*itr)->isAlive())
                 {
                     if (uiPositionCounter == 0)
