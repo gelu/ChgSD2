@@ -1252,8 +1252,8 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
     {
         m_bIsSpawned = false;
         fDist = (float)urand(1, 5);
-        m_uiCreatorGUID = m_creature->GetCreatorGUID();
-        if (Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGUID) )
+        m_uiCreatorGuid = m_creature->GetCreatorGuid();
+        if (Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGuid) )
             fAngle = m_creature->GetAngle(pOwner);
 
         Reset();
@@ -1262,7 +1262,7 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
 
     Unit* pTarget;
 
-    uint64 m_uiCreatorGUID;
+    ObjectGuid m_uiCreatorGuid;
     uint64 m_uiTargetGUID;
     uint64 m_uiHarvesterGUID;
 
@@ -1289,7 +1289,7 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
         {
             m_uiHarvesterGUID = pWho->GetGUID();
 
-            if (Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGUID) )
+            if (Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGuid) )
             {
                 pOwner->KilledMonsterCredit(m_creature->GetEntry(), m_creature->GetGUID() );
                 // this will execute if m_creature survived Harvester's wrath
@@ -1331,7 +1331,7 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
             return;
         }
 
-        Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGUID);
+        Player* pOwner = m_creature->GetMap()->GetPlayer(m_uiCreatorGuid);
         if (!pOwner || !pOwner->IsInWorld())
         {
             m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);

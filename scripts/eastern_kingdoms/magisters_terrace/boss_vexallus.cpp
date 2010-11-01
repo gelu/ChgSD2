@@ -112,8 +112,8 @@ struct MANGOS_DLL_DECL boss_vexallusAI : public ScriptedAI
             summoned->GetMotionMaster()->MoveFollow(temp,0,0);
 
         //spells are SUMMON_TYPE_GUARDIAN, so using setOwner should be ok
-        summoned->SetOwnerGUID(m_creature->GetGUID());
-        summoned->CastSpell(summoned,SPELL_ENERGY_BOLT,false,0,0,m_creature->GetGUID());
+        summoned->SetOwnerGuid(m_creature->GetObjectGuid());
+        summoned->CastSpell(summoned,SPELL_ENERGY_BOLT,false,0,0,m_creature->GetObjectGuid());
     }
 
     void UpdateAI(const uint32 diff)

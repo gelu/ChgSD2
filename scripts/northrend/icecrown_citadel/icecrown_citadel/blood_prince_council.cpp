@@ -615,7 +615,7 @@ struct MANGOS_DLL_DECL mob_kinetic_bombAI : public ScriptedAI
 
     void Reset()
     {
-        owner = m_creature->GetMap()->GetCreature(m_creature->GetCreatorGUID());
+        owner = m_creature->GetMap()->GetCreature(m_creature->GetCreatorGuid());
 
         m_creature->SetRespawnDelay(7*DAY);
         m_creature->SetInCombatWithZone();

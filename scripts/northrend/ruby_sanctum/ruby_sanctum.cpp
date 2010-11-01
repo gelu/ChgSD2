@@ -188,7 +188,7 @@ struct MANGOS_DLL_DECL mob_xerestraszaAI : public ScriptedAI
                               if (pHalion && !pHalion->isAlive())
                                   pHalion->Respawn();
                               if (pHalion)
-                                  pHalion->SetCreatorGUID(0);
+                                  pHalion->SetCreatorGuid(ObjectGuid());
                               }
                           }
                           UpdateTimer = 4000;

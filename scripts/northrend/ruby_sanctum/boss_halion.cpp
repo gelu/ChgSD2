@@ -334,7 +334,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
                         pTwilight = m_creature->SummonCreature(NPC_HALION_TWILIGHT, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 0, TEMPSUMMON_MANUAL_DESPAWN, 1000);
                     else if (!pTwilight->isAlive())
                         pTwilight->Respawn();
-                    pTwilight->SetCreatorGUID(0);
+                    pTwilight->SetCreatorGuid(ObjectGuid());
                     m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     setStage(5);
                 }

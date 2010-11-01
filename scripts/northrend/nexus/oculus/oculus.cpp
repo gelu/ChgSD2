@@ -45,7 +45,7 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
     }
 
     bool Active;
-    uint64 ownerGUID;
+    ObjectGuid ownerGUID;
     uint32 seatSpell;
     uint32 StartTimer;
 
@@ -69,7 +69,7 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
                 seatSpell = 0;
                 break;
         }
-        ownerGUID = m_creature->GetCreatorGUID();
+        ownerGUID = m_creature->GetCreatorGuid();
 
         if (Unit* owner = m_creature->GetMap()->GetUnit(ownerGUID))
             owner->RemoveAurasDueToSpell(53797);
@@ -87,8 +87,8 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
         if (!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
             return;
 
-        if (!ownerGUID)
-            ownerGUID = m_creature->GetCreatorGUID();
+        if (ownerGUID.IsEmpty())
+            ownerGUID = m_creature->GetCreatorGuid();
 
         Unit* owner = m_creature->GetMap()->GetUnit(ownerGUID);
 
@@ -97,7 +97,7 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
 
         owner->RemoveAurasDueToSpell(seatSpell);
         owner->RemoveAurasDueToSpell(53797);
-        m_creature->SetCreatorGUID(0);
+        m_creature->SetCreatorGuid(ObjectGuid());
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
@@ -116,10 +116,10 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
     void UpdateAI(const uint32 uiDiff)
     {
 
-        if (!ownerGUID)
-            ownerGUID = m_creature->GetCreatorGUID();
+        if (ownerGUID.IsEmpty())
+            ownerGUID = m_creature->GetCreatorGuid();
 
-        if (ownerGUID)
+        if (!ownerGUID.IsEmpty())
         {
             if (StartTimer < uiDiff && !Active)
             {
