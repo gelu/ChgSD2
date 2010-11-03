@@ -302,7 +302,7 @@ struct MANGOS_DLL_DECL crystal_channelAI : public ScriptedAI
         {
             Creature* pNovos =  GetClosestCreatureWithEntry(m_creature, NPC_NOVOS, 85.0f);
             if (Creature* pTarget = GetClosestCreatureWithEntry(m_creature, NPC_CRYSTAL_CHANNEL_TARGET , 85.0f))
-                if (((boss_novosAI*)pNovos->AI())->Phase1 == true)
+                if (pNovos && ((boss_novosAI*)pNovos->AI())->Phase1 == true)
                     DoCast(pTarget, SPELL_EFFECT, true);
                 else
                     pTarget->ForcedDespawn();
