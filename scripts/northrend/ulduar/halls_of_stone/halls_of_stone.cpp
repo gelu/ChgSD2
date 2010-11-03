@@ -188,20 +188,23 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
             {
                 if (!(*itr)) continue;
 
-                if ((*itr)->isAlive())
+                if (Creature* c = (Creature *)(*itr))
                 {
-                    if (uiPositionCounter == 0)
+                    if (c->isAlive())
                     {
-                        (*itr)->GetMap()->CreatureRelocation((*itr), 927.265f, 333.200f, 218.780f, (*itr)->GetOrientation());
-                        (*itr)->MonsterMove(927.265f, 333.200f, 218.780f, 1);
+                        if (uiPositionCounter == 0)
+                        {
+                            c->GetMap()->CreatureRelocation((*itr), 927.265f, 333.200f, 218.780f, (*itr)->GetOrientation());
+                            c->MonsterMove(927.265f, 333.200f, 218.780f, 1);
+                        }
+                        else
+                        {
+                            c->GetMap()->CreatureRelocation((*itr), 921.745f, 328.076f, 218.780f, (*itr)->GetOrientation());
+                            c->MonsterMove(921.745f, 328.076f, 218.780f, 1);
+                        }
                     }
-                    else
-                    {
-                        (*itr)->GetMap()->CreatureRelocation((*itr), 921.745f, 328.076f, 218.780f, (*itr)->GetOrientation());
-                        (*itr)->MonsterMove(921.745f, 328.076f, 218.780f, 1);
-                    }
+                    ++uiPositionCounter;
                 }
-                ++uiPositionCounter;
             }
         }
         //GetCreatureListWithEntryInGrid(m_lMarnakGUIDList, m_creature, NPC_MARNAK, 50.0f);
