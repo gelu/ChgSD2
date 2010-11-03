@@ -16,11 +16,10 @@
 
 /* ScriptData
 SDName: boss_lord_marrowgar
-SD%Complete: 80%
+SD%Complete: 85%
 SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
-// Need implement properly traectory for cold flames
 #include "precompiled.h"
 #include "def_spire.h"
 enum
@@ -115,7 +114,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         if (!pTarget || !pTarget->isAlive()) return;
         float fPosX, fPosY, fPosZ;
         pTarget->GetPosition(fPosX, fPosY, fPosZ);
-        if (Unit* pSpike = doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ))
+        if (Unit* pSpike = doSummon(NPC_BONE_SPIKE, fPosX, fPosY, fPosZ + 0.5f))
         {
             pSpike->SetOwnerGuid(m_creature->GetObjectGuid());
             pSpike->SetInCombatWith(pTarget);
