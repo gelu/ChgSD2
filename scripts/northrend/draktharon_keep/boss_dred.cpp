@@ -37,8 +37,6 @@ enum
     SPELL_PIERCING_SLASH            = 48878,
     SPELL_RAPTOR_CALL                = 59416,            //not yet implemented
 
-    NPC_DRAKKARI_GUTRIPPER            = 26641,
-    NPC_DRAKKARI_SCYTHECLAW            = 26628
 };
 
 const float PosSummon1[3] = {-528.8f, -690.58f, 30.25f};

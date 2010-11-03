@@ -355,7 +355,6 @@
     <ClCompile Include="..\scripts\eastern_kingdoms\sunwell_plateau\boss_kalecgos.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\sunwell_plateau\instance_sunwell_plateau.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\uldaman\boss_archaedas.cpp" />
-    <ClCompile Include="..\scripts\eastern_kingdoms\uldaman\boss_ironaya.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\uldaman\uldaman.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\uldaman\instance_uldaman.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\zulaman\boss_akilzon.cpp" />
@@ -485,7 +484,9 @@
     <ClCompile Include="..\scripts\northrend\draktharon_keep\boss_novos.cpp" />
     <ClCompile Include="..\scripts\northrend\draktharon_keep\boss_tharonja.cpp" />
     <ClCompile Include="..\scripts\northrend\draktharon_keep\boss_trollgore.cpp" />
+    <ClCompile Include="..\scripts\northrend\draktharon_keep\instance_draktharon_keep.cpp" />
     <ClCompile Include="..\scripts\northrend\gundrak\boss_colossus.cpp" />
+    <ClCompile Include="..\scripts\northrend\gundrak\boss_eck.cpp" />
     <ClCompile Include="..\scripts\northrend\gundrak\boss_galdarah.cpp" />
     <ClCompile Include="..\scripts\northrend\gundrak\boss_moorabi.cpp" />
     <ClCompile Include="..\scripts\northrend\gundrak\boss_sladran.cpp" />
@@ -707,6 +708,7 @@
     <ClInclude Include="..\scripts\northrend\azjol-nerub\ahnkahet\ahnkahet.h" />
     <ClInclude Include="..\scripts\northrend\azjol-nerub\azjol-nerub\azjol-nerub.h" />
     <ClInclude Include="..\scripts\northrend\crusaders_coliseum\trial_of_the_crusader\trial_of_the_crusader.h" />
+    <ClInclude Include="..\scripts\northrend\draktharon_keep\draktharon_keep.h" />
     <ClInclude Include="..\scripts\northrend\gundrak\gundrak.h" />
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\forge_of_souls.h" />
     <ClInclude Include="..\scripts\northrend\naxxramas\naxxramas.h" />

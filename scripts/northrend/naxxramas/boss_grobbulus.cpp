@@ -36,6 +36,11 @@ EndScriptData */
 #define MOB_FALLOUT_SLIME   16290
 #define MOB_GROBBOLUS_CLOUD    16363
 
+enum
+{
+    EMOTE_SPRAY_SLIME               = -1533021,
+};
+
 struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
 {
     boss_grobbulusAI(Creature* pCreature) : ScriptedAI(pCreature)

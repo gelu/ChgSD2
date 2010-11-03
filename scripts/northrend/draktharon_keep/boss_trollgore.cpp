@@ -87,6 +87,9 @@ struct MANGOS_DLL_DECL boss_trollgoreAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_TROLLGORE, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -98,6 +101,15 @@ struct MANGOS_DLL_DECL boss_trollgoreAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_TROLLGORE, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_TROLLGORE, FAIL);
     }
 
     void SummonWaves()
@@ -183,10 +195,10 @@ CreatureAI* GetAI_boss_trollgore(Creature* pCreature)
 
 void AddSC_boss_trollgore()
 {
-    Script *newscript;
+    Script* pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_trollgore";
-    newscript->GetAI = &GetAI_boss_trollgore;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_trollgore";
+    pNewScript->GetAI = &GetAI_boss_trollgore;
+    pNewScript->RegisterSelf();
 }

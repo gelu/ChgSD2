@@ -28,6 +28,10 @@ enum
 {
     EMOTE_BREATH       = -1533082,
     EMOTE_ENRAGE       = -1533083,
+    EMOTE_GENERIC_ENRAGED       = -1000003,
+    EMOTE_FLY                   = -1533022,                 // NYI
+    EMOTE_GROUND                = -1533083,                 // NYI
+
 
     SPELL_ICEBOLT          = 28522,
     SPELL_FROST_BREATH     = 29318,
@@ -310,9 +314,11 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
         }
         if (Beserk_Timer < diff)
         {
-            DoScriptText(EMOTE_ENRAGE, m_creature);
-            DoCast(m_creature,SPELL_BESERK);
-            Beserk_Timer = 900000;
+            if (DoCastSpellIfCan(m_creature, SPELL_BESERK) == CAST_OK)
+            {
+                DoScriptText(EMOTE_GENERIC_ENRAGED, m_creature);
+                Beserk_Timer = 300000;
+            }
         }else Beserk_Timer -= diff;
 
 

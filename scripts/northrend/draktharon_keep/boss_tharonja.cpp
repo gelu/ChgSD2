@@ -113,6 +113,9 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_THARONJA, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -123,22 +126,16 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
- 
-                Map* pMap = m_creature->GetMap();
-/*                AchievementEntry const *AchieDraktharon = GetAchievementStore()->LookupEntry(m_bIsRegularMode ? ACHIEVEMENT_NORMAL : ACHIEVEMENT_HEROIC);
-                if(AchieDraktharon && pMap)
-                {
-                        Map::PlayerList const &lPlayers = pMap->GetPlayers();
-                        if (!lPlayers.isEmpty())
-                        {
-                                for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
-                                {
-                                        if (Player* pPlayer = itr->getSource())
-                                                pPlayer->GetAchievementMgr().CompletedAchievement(AchieDraktharon);
-                                }
-                        }
-                }*/
-        }
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_THARONJA, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_THARONJA, FAIL);
+    }
 
     void UpdateAI(const uint32 uiDiff)
     {
@@ -240,10 +237,10 @@ CreatureAI* GetAI_boss_tharonja(Creature* pCreature)
 
 void AddSC_boss_tharonja()
 {
-    Script *newscript;
+    Script* pNewScript;
 
-    newscript = new Script;
-    newscript->Name = "boss_tharonja";
-    newscript->GetAI = &GetAI_boss_tharonja;
-    newscript->RegisterSelf();
+    pNewScript = new Script;
+    pNewScript->Name = "boss_tharonja";
+    pNewScript->GetAI = &GetAI_boss_tharonja;
+    pNewScript->RegisterSelf();
 }

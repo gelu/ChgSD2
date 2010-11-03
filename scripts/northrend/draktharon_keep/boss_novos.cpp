@@ -36,23 +36,23 @@ enum
     EMOTE_ASSISTANCE                = -1600011,
 
     POS                                = 3,
-    
-    SPELL_ARCANE_FIELD                = 47346,
+
+    SPELL_ARCANE_FIELD                 = 47346,
     SPELL_FROSTBOLT                    = 49037,
-    H_SPELL_FROSTBOLT                = 59855,
-    SPELL_ARCANE_BLAST                = 49198,
-    H_SPELL_ARCANE_BLAST            = 59909,
-    SPELL_BLIZZARD                    = 49034,
-    H_SPELL_BLIZZARD                = 59854,
-    SPELL_WRATH_OF_MISERY            = 50089,
+    H_SPELL_FROSTBOLT                  = 59855,
+    SPELL_ARCANE_BLAST                 = 49198,
+    H_SPELL_ARCANE_BLAST               = 59909,
+    SPELL_BLIZZARD                     = 49034,
+    H_SPELL_BLIZZARD                   = 59854,
+    SPELL_WRATH_OF_MISERY              = 50089,
     H_SPELL_WRATH_OF_MISERY            = 59856,
 
-    SPELL_RITUAL_CRYSTAL_KEY        = 51404,
-    SPELL_EFFECT                    = 52106,
-    SPELL_DEAD_EFFECT                = 47336,
+    SPELL_RITUAL_CRYSTAL_KEY           = 51404,
+    SPELL_EFFECT                       = 52106,
+    SPELL_DEAD_EFFECT                  = 47336,
 
-    SPELL_SHADOW_BOLT                = 51363,
-    H_SPELL_SHADOW_BOLT                = 59016
+    SPELL_SHADOW_BOLT                  = 51363,
+    H_SPELL_SHADOW_BOLT                = 59016,
 };
 
 const float PosSummonHandler[POS][3] =
@@ -86,7 +86,7 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     uint32 ArcaneBlast_Timer;
     uint32 SpecialCast_Timer;
     uint32 SummonMinion_Timer;
-    
+
     void Reset()
     {
         Start_Check = 1;
@@ -96,12 +96,29 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
         Phase2 = false;
     }
 
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        // An Add reached the ground, if its z-pos is near the z pos of Novos
+        if (pWho->GetEntry() == NPC_HULKING_CORPSE || pWho->GetEntry() == NPC_FETID_TROLL_CORPSE || pWho->GetEntry() == NPC_RISEN_SHADOWCASTER)
+        {
+            // Add reached ground, and the failure has not yet been reported
+            if (pWho->GetPositionZ() < m_creature->GetPositionZ() + 1.5f && m_pInstance && m_pInstance->GetData(TYPE_NOVOS) == IN_PROGRESS)
+                m_pInstance->SetData(TYPE_NOVOS, SPECIAL);
+            return;
+        }
+
+        ScriptedAI::MoveInLineOfSight(pWho);
+    }
+
     void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_AGGRO, m_creature);
 
         m_creature->SummonCreature(NPC_CRYSTAL_CHANNEL_TARGET, -379.269f, -737.728f, 39.313f, 0 , TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000);
         m_creature->CallForHelp(50.0f);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_NOVOS, IN_PROGRESS);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -112,6 +129,15 @@ struct MANGOS_DLL_DECL boss_novosAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_NOVOS, DONE);
+    }
+
+    void JustReachedHome()
+    {
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_NOVOS, FAIL);
     }
 
     void EnterPhase1()
@@ -324,7 +350,7 @@ CreatureAI* GetAI_risen_shadowcaster(Creature* pCreature)
 }
 void AddSC_boss_novos()
 {
-    Script *newscript;
+    Script* newscript;
 
     newscript = new Script;
     newscript->Name = "boss_novos";
