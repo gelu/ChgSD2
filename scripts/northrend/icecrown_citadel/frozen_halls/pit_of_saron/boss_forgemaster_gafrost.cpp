@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_forgemaster_gafrost
-SD%Complete: 0%
-SDComment: by /dev/rsa
+SD%Complete: 60%
+SDComment: by Tacx
 SDCategory: Pit of Saron
 EndScriptData */
 
@@ -26,42 +26,184 @@ EndScriptData */
 enum
 {
         //common
-        SPELL_BERSERK                           = 47008,
+    SPELL_BERSERK                           = 47008,
         //yells
+    SAY_AGGRO                               = -1658001,
+    SAY_SLAY_1                              = -1658002,
+    SAY_SLAY_2                              = -1658003,
+    SAY_DEATH                               = -1658004,
+    SAY_PHASE2                              = -1658005,
+    SAY_PHASE3                              = -1658006,
+    SAY_DEEPFREZE                           = -1658006,
+    SAY_TYRANNUS_DEATH                      = -1659007,
         //summons
         //Abilities
-        SPELL_FEAR                              = 68950
+    SPELL_PERMAFROST                            = 70326,
+    SPELL_PERMAFROST_TRIGGER                    = 68786,
+    SPELL_THROW_SARONITE                        = 68788,
+    SPELL_THUNDERING_STOMP                      = 68771,
+    SPELL_CHILLING_WAVE                         = 68778,
+    SPELL_CHILLING_WAVE_H                       = 70333,
+    SPELL_DEEP_FREEZE                           = 70381,
+    SPELL_DEEP_FREEZE_H                         = 72930,
+    SPELL_FORGE_MACE                            = 68785,
+    SPELL_FORGE_MACE_H                          = 70335,
+    SPELL_FORGE_BLADE                           = 68774,
+    SPELL_FORGE_BLADE_H                         = 70334,
+    EQUIP_ID_SWORD                              = 49345,
+    EQUIP_ID_MACE                               = 49344,
+    ACHIEV_DOESNT_GO_TO_ELEVEN                  = 4524
+
 };
 
 struct MANGOS_DLL_DECL boss_forgemaster_gafrostAI : public ScriptedAI
 {
     boss_forgemaster_gafrostAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
-    ScriptedInstance *pInstance;
+    ScriptedInstance *m_pInstance;
+
+
+    bool m_bIsRegularMode;
+    bool m_bIsPhase2;
+    bool m_bIsPhase3;
+    bool m_bIsAchievement;
+
+    uint32 m_uiThrowSaronite_Timer;
+    uint32 m_uiChillingWave_Timer;
+    uint32 m_uiDeepFreeze_Timer;
+    uint32 m_uiBladeReturn_Timer;
+    uint32 m_uiMaceReturn_Timer;
 
     void Reset()
     {
-        if(pInstance) pInstance->SetData(TYPE_GAFROST, NOT_STARTED);
+        m_bIsPhase2 = false;
+        m_bIsPhase3 = false;
+        m_bIsAchievement = true;
+        m_uiThrowSaronite_Timer = 20000;
+        m_uiChillingWave_Timer = 9990000;
+        m_uiDeepFreeze_Timer = 9990000;
+        m_uiBladeReturn_Timer = 4500;
+        m_uiMaceReturn_Timer = 6000;
+
+        if(!m_pInstance) return;
+            m_pInstance->SetData(TYPE_GARFROST, NOT_STARTED);
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_GAFROST, IN_PROGRESS);
+        DoScriptText(SAY_AGGRO, m_creature);
+        DoCast(m_creature, SPELL_PERMAFROST);
+        if(!m_pInstance) return;
+            m_pInstance->SetData(TYPE_GARFROST, IN_PROGRESS);
     }
 
-    void JustDied(Unit *killer)
+    void KilledUnit(Unit* victim)
     {
-        if(pInstance) pInstance->SetData(TYPE_GAFROST, DONE);
+        switch (urand(0,1))
+        {
+            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
+            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+        }
+    }
+
+    void JustDied(Unit* pkiller)
+    {
+        DoScriptText(SAY_DEATH, m_creature);
+    if(!m_pInstance) return;
+            m_pInstance->SetData(TYPE_GARFROST, DONE);
     }
 
     void UpdateAI(const uint32 diff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
+
+        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 66) && !m_bIsPhase2)
+        {
+            m_bIsPhase2 = true;
+            DoScriptText(SAY_PHASE2, m_creature);
+            DoCast(m_creature, SPELL_THUNDERING_STOMP);	
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->GetMotionMaster()->Clear();
+            m_creature->GetMotionMaster()->MovePoint(0, 654.021, -201.438, 526.699); 
+        }
+
+        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 33) && !m_bIsPhase3)
+        {
+            m_bIsPhase3 = true;
+            DoScriptText(SAY_PHASE3, m_creature);
+            DoCast(m_creature, SPELL_THUNDERING_STOMP);
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->GetMotionMaster()->Clear();
+            m_creature->GetMotionMaster()->MovePoint(0, 718.009, -229.447, 526.847);
+        }
+
+        if (m_bIsPhase2)
+        {
+            if (m_uiBladeReturn_Timer < diff)
+            {
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_FORGE_BLADE : SPELL_FORGE_BLADE_H);
+                SetEquipmentSlots(false, EQUIP_ID_SWORD, -1, -1);
+                m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+                m_creature->GetMotionMaster()->Clear();
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+                m_uiBladeReturn_Timer = 9900000;
+            }
+            else
+                m_uiBladeReturn_Timer -= diff;
+
+            m_uiChillingWave_Timer = 10000;
+        }
+
+        if (m_bIsPhase3)
+        {
+            if (m_uiMaceReturn_Timer < diff)
+            {
+                m_creature->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_FORGE_BLADE : SPELL_FORGE_BLADE_H);
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_FORGE_MACE : SPELL_FORGE_MACE_H);
+                SetEquipmentSlots(false, EQUIP_ID_MACE, -1, -1);
+                m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
+                m_creature->GetMotionMaster()->Clear();
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
+                m_uiMaceReturn_Timer = 9900000;
+            }
+            else
+                m_uiMaceReturn_Timer -= diff;
+            m_uiChillingWave_Timer = 999000;
+            m_uiDeepFreeze_Timer = 10000;
+        }
+
+        if (m_uiThrowSaronite_Timer < diff)
+        {
+            if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                DoCast(Target, SPELL_THROW_SARONITE);
+            m_uiThrowSaronite_Timer = (m_bIsRegularMode ? 20000 : 25000);
+        }
+        else 
+            m_uiThrowSaronite_Timer -= diff;
+
+        if (m_uiChillingWave_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_CHILLING_WAVE);
+            m_uiChillingWave_Timer = (m_bIsRegularMode ? 40000 : 30000);
+        }
+        else 
+            m_uiChillingWave_Timer -= diff;
+
+        if (m_uiDeepFreeze_Timer < diff)
+        {
+            if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                DoCast(Target, m_bIsRegularMode ? SPELL_DEEP_FREEZE : SPELL_DEEP_FREEZE_H);
+            m_uiDeepFreeze_Timer = (m_bIsRegularMode ? 27500 : 25000);
+        }
+        else 
+            m_uiDeepFreeze_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
