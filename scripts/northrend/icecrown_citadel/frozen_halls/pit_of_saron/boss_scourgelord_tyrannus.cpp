@@ -22,7 +22,7 @@ SDCategory: Pit of Saron
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_pit.h"
+#include "pit_of_saron.h"
 
 enum
 {
@@ -111,7 +111,7 @@ CreatureAI* GetAI_mob_rimefang_pos(Creature* pCreature)
 }
 
 
-void AddSC_boss_scourgelord_tyrannus()
+void AddSC_boss_tyrannus()
 {
     Script *newscript;
     newscript = new Script;

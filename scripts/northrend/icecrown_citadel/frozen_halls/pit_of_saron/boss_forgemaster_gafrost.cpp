@@ -22,7 +22,7 @@ SDCategory: Pit of Saron
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_pit.h"
+#include "pit_of_saron.h"
 enum
 {
         //common
@@ -74,12 +74,11 @@ CreatureAI* GetAI_boss_forgemaster_gafrost(Creature* pCreature)
 }
 
 
-void AddSC_boss_forgemaster_gafrost()
+void AddSC_boss_gafrost()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "boss_forgemaster_gafrost";
     newscript->GetAI = &GetAI_boss_forgemaster_gafrost;
     newscript->RegisterSelf();
-
 }

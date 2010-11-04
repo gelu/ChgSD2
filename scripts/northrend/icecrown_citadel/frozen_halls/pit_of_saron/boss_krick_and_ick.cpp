@@ -22,7 +22,7 @@ SDCategory: Pit of Saron
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_pit.h"
+#include "pit_of_saron.h"
 enum
 {
     //common
@@ -95,17 +95,14 @@ struct MANGOS_DLL_DECL boss_ickAI : public ScriptedAI
 
     void Reset()
     {
-        if(pInstance) pInstance->SetData(TYPE_ICK, NOT_STARTED);
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_ICK, IN_PROGRESS);
     }
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_ICK, DONE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -169,7 +166,7 @@ CreatureAI* GetAI_mob_exploding_orb(Creature* pCreature)
 }
 
 
-void AddSC_boss_krick()
+void AddSC_boss_krick_and_ick()
 {
     Script *newscript;
     newscript = new Script;
@@ -186,4 +183,5 @@ void AddSC_boss_krick()
     newscript->Name = "mob_exploding_orb";
     newscript->GetAI = &GetAI_mob_exploding_orb;
     newscript->RegisterSelf();
+
 }
