@@ -127,7 +127,7 @@ REPLACE INTO script_texts (entry, content_default, content_loc8, sound, type, la
 #malganis
 (-1594170, 'This will be a fine test, Prince Arthas.', 'Это будет достойное испытание, принц Артас.',14413,1,0,0, '26499'),
 (-1594171, 'All too easy.', 'Слишком просто...',14416,1,0,0, '26499'),
-(-1594172, 'The dark lord is displeased with your interference.', 'Темный повелитель не доволен твоим вмешательством...',144107,1,0,0, '26499'),
+(-1594172, 'The dark lord is displeased with your interference.', 'Темный повелитель не доволен твоим вмешательством...',14417,1,0,0, '26499'),
 (-1594173, 'It is Prince Arthas I want, not you.', 'Мне нужен Принц Артас, а не ты...',14418,1,0,0, '26499'),
 (-1594174, 'Anak\'Keri...', 'Анак Кири...',14422,1,0,0, '26499'),
 (-1594175, 'My onslaught will wash over the Lich King\'s forces...', 'Мой натиск сметет силы Короля-Лича...',14423,1,0,0, '26499'),
