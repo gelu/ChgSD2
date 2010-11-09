@@ -78,10 +78,11 @@ class MANGOS_DLL_DECL instance_gundrak : public ScriptedInstance
         uint64 m_uiSnakeKeyGUID;
         uint64 m_uiMammothKeyGUID;
         uint64 m_uiTrollKeyGUID;
+        uint64 m_uiRhinoKeyGUID;
         uint64 m_uiAltarOfSladranGUID;
         uint64 m_uiAltarOfMoorabiGUID;
         uint64 m_uiAltarOfColossusGUID;
-        uint64 m_uiBridgeGUID;
+        uint64 m_uiCollisionGUID;
 
         uint64 m_uiSladranGUID;
         uint64 m_uiElementalGUID;

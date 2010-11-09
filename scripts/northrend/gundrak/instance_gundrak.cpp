@@ -51,10 +51,11 @@ instance_gundrak::instance_gundrak(Map* pMap) : ScriptedInstance(pMap),
     m_uiSnakeKeyGUID(0),
     m_uiMammothKeyGUID(0),
     m_uiTrollKeyGUID(0),
+    m_uiRhinoKeyGUID(0),
     m_uiAltarOfSladranGUID(0),
     m_uiAltarOfMoorabiGUID(0),
     m_uiAltarOfColossusGUID(0),
-    m_uiBridgeGUID(0),
+    m_uiCollisionGUID(0),
 
     m_uiSladranGUID(0),
     m_uiElementalGUID(0),
@@ -136,8 +137,13 @@ void instance_gundrak::OnObjectCreate(GameObject* pGo)
             if (m_auiEncounter[TYPE_MOORABI] == SPECIAL)
                 DoUseDoorOrButton(m_uiMammothKeyGUID);
             break;
-        case GO_BRIDGE:
-            m_uiBridgeGUID = pGo->GetGUID();
+        case GO_RHINO_KEY:
+            m_uiRhinoKeyGUID = pGo->GetGUID();
+            if (m_auiEncounter[TYPE_ECK] == DONE || !instance->IsRegularDifficulty())
+                DoUseDoorOrButton(m_uiRhinoKeyGUID);
+            break;
+        case GO_COLLISION:
+            m_uiCollisionGUID = pGo->GetGUID();
             break;
     }
 }
@@ -176,7 +182,7 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             if (uiData == SPECIAL)
                 DoUseDoorOrButton(m_uiSnakeKeyGUID);
-            break;
+        break;
         case TYPE_MOORABI:
             m_auiEncounter[TYPE_MOORABI] = uiData;
             if (uiData == DONE)
@@ -195,7 +201,12 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                 if (GameObject* pGo = instance->GetGameObject(m_uiAltarOfColossusGUID))
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             if (uiData == SPECIAL)
+            {
+                if (m_auiEncounter[TYPE_MOORABI] == DONE && m_auiEncounter[TYPE_SLADRAN] == DONE)
+                    if (GameObject* pGo = instance->GetGameObject(m_uiCollisionGUID))
+                        pGo->Delete();                          // Still no handling of the Bridge available
                 DoUseDoorOrButton(m_uiTrollKeyGUID);
+            }
             break;
         case TYPE_GALDARAH:
             m_auiEncounter[TYPE_GALDARAH] = uiData;
@@ -209,7 +220,10 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
         case TYPE_ECK:
             m_auiEncounter[TYPE_ECK] = uiData;
             if (uiData == DONE)
+            {
                 DoUseDoorOrButton(m_uiEckUnderwaterDoorGUID);
+                DoUseDoorOrButton(m_uiRhinoKeyGUID);
+            }
             break;
         default:
             error_log("SD2: Instance Gundrak: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
