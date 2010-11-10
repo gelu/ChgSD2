@@ -40,5 +40,5 @@ DELETE FROM `creature_questrelation` WHERE quest IN (8193,8194,8225,8224,8221);
 -- Fishbot 5000 Quest: Rare Fish - Brownell's Blue Striped Racer
 -- Fishbot 5000 Quest: Rare Fish - Dezian Queenfish
 -- Fishbot 5000 Quest: Rare Fish - Keefer's Angelfish
-DELETE FROM `game_event_creature_quest` WHERE `event` IN (15,35);
-INSERT INTO `game_event_creature_quest` (`id`,`quest`,`event`) VALUES (15077,8193,35), (15078,8194,35), (15079,8225,35), (15079,8224,35), (15079,8221,35);
+DELETE FROM `game_event_quest` WHERE `event` = 35;
+INSERT INTO `game_event_quest` (`quest`,`event`) VALUES (8193,35), (8194,35), (8225,35), (8224,35), (8221,35);
