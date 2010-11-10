@@ -1,9 +1,9 @@
 DELETE FROM script_texts WHERE entry BETWEEN -1000597 AND -1000594;
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
-(-1000594,'All systems on-line.  Prepare yourself, we leave shortly.',0,0,0,0,'max_a_million SAY_START'),
-(-1000595,'Be careful in there and come back in one piece!',0,0,0,0,'bot-specialist_alley SAY_ALLEY_FAREWELL'),
-(-1000596,'Proceed.',0,0,0,0,'max_a_million SAY_CONTINUE'),
-(-1000597,'You\'re back!  Were you able to get all of the machines?',0,0,0,0,'bot-specialist_alley SAY_ALLEY_FINISH');
+(-1667594,'All systems on-line.  Prepare yourself, we leave shortly.',0,0,0,0,'max_a_million SAY_START'),
+(-1667595,'Be careful in there and come back in one piece!',0,0,0,0,'bot-specialist_alley SAY_ALLEY_FAREWELL'),
+(-1667596,'Proceed.',0,0,0,0,'max_a_million SAY_CONTINUE'),
+(-1667597,'You\'re back!  Were you able to get all of the machines?',0,0,0,0,'bot-specialist_alley SAY_ALLEY_FINISH');
 
 DELETE FROM script_waypoint WHERE entry=19589;
 INSERT INTO script_waypoint VALUES

@@ -765,10 +765,10 @@ enum
     NPC_BOT_SPECIALIST_ALLEY    = 19578,
     GO_DRAENEI_MACHINE          = 183771,
 
-    SAY_START                   = -1000594,
-    SAY_ALLEY_FAREWELL          = -1000595,
-    SAY_CONTINUE                = -1000596,
-    SAY_ALLEY_FINISH            = -1000597
+    SAY_START                   = -1667594,
+    SAY_ALLEY_FAREWELL          = -1667595,
+    SAY_CONTINUE                = -1667596,
+    SAY_ALLEY_FINISH            = -1667597
 };
 
 struct MANGOS_DLL_DECL npc_maxx_a_million_escortAI : public npc_escortAI

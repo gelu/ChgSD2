@@ -255,8 +255,8 @@ INSERT INTO `script_texts` (`entry`, `content_default`, `content_loc1`, `content
 (-1603342,'Gul\'dan is bringing up his warlocks by nightfall. Until then, the Blackrock clan will be trying to take the Eastern Wall.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15539,'0',NULL,NULL,'v3 garona2'),
 (-1603343,'A thousand deaths... ',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15762,'0',NULL,NULL,'v3 yogg1'),
 (-1603344,'or one murder.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15763,'0',NULL,NULL,'v3 yogg2'),
-(-1603345,'We will hold until the reinforcements come. As long as men with stout hearts are manning the walls and throne Stormwind will hold.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15340,'0',NULL,NULL,'v3 king llane1'),
-(-1603346,'The orc leaders agree with your assessment.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15341,'0',NULL,NULL,'v3 garona3'),
+(-1603345,'We will hold until the reinforcements come. As long as men with stout hearts are manning the walls and throne Stormwind will hold.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15585,'0',NULL,NULL,'v3 king llane1'),
+(-1603346,'The orc leaders agree with your assessment.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15541,'0',NULL,NULL,'v3 garona3'),
 (-1603347,'Your petty quarrels only make me stronger!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,15764,'0',NULL,NULL,'v3 yogg3'),
 
 -- Alagon:
