@@ -181,7 +181,12 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                 if (GameObject* pGo = instance->GetGameObject(m_uiAltarOfSladranGUID))
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             if (uiData == SPECIAL)
+            {
                 DoUseDoorOrButton(m_uiSnakeKeyGUID);
+                if (m_auiEncounter[TYPE_COLOSSUS] == DONE && m_auiEncounter[TYPE_MOORABI] == DONE)
+                    if (GameObject* pGo = instance->GetGameObject(m_uiCollisionGUID))
+                        pGo->Delete();                          // Still no handling of the Bridge available
+            }
         break;
         case TYPE_MOORABI:
             m_auiEncounter[TYPE_MOORABI] = uiData;
@@ -193,7 +198,12 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             }
             if (uiData == SPECIAL)
+            {
                 DoUseDoorOrButton(m_uiMammothKeyGUID);
+                if (m_auiEncounter[TYPE_COLOSSUS] == DONE && m_auiEncounter[TYPE_SLADRAN] == DONE)
+                    if (GameObject* pGo = instance->GetGameObject(m_uiCollisionGUID))
+                        pGo->Delete();                          // Still no handling of the Bridge available
+            }
             break;
         case TYPE_COLOSSUS:
             m_auiEncounter[TYPE_COLOSSUS] = uiData;
@@ -202,10 +212,10 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                     pGo->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
             if (uiData == SPECIAL)
             {
+                 DoUseDoorOrButton(m_uiTrollKeyGUID);
                 if (m_auiEncounter[TYPE_MOORABI] == DONE && m_auiEncounter[TYPE_SLADRAN] == DONE)
                     if (GameObject* pGo = instance->GetGameObject(m_uiCollisionGUID))
                         pGo->Delete();                          // Still no handling of the Bridge available
-                DoUseDoorOrButton(m_uiTrollKeyGUID);
             }
             break;
         case TYPE_GALDARAH:
