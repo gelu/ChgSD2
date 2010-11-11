@@ -92,6 +92,7 @@ INSERT INTO `script_texts` (`entry`,`content_loc8`, `content_default`, `sound`, 
 ('-1631308','Йих!','...','16687','6','0','0','Princes say'),
 ('-1631309','Э-эх!','...','16688','6','0','0','Princes say'),
 ('-1631310','До-хо!','...','16689','6','0','0','Princes say'),
+('-1631311','Восстаньте, братья, и уничтожьте наших врагов!','<need translate>','16796','6','0','0','Lanathel resurrect Princes'),
 
 -- Blood Queen Lana'thel
 ('-1631321','Это было неразумное решение!','You have made an... unwise... decision.','16782','6','0','0','Lanathel Aggro'),

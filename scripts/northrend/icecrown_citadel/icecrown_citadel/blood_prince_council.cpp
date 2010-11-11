@@ -27,6 +27,7 @@ EndScriptData */
 enum BossSpells
 {
         SPELL_BERSERK                           = 47008,
+        SPELL_FAKE_DEATH                        = 71598,
 
         //Darkfallen Orb
         SPELL_INVOCATION_OF_BLOOD_V             = 70952,   //
@@ -78,26 +79,14 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
     ScriptedInstance* m_pInstance;
     Creature* pBrother1;
     Creature* pBrother2;
-    bool intro;
     bool invocated;
 
     void Reset() 
     {
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
-        intro = false;
         resetTimers();
         invocated = false;
-    }
-
-    void MoveInLineOfSight(Unit* pWho) 
-    {
-        ScriptedAI::MoveInLineOfSight(pWho);
-        if(!m_pInstance || intro) return;
-        if (pWho->GetTypeId() != TYPEID_PLAYER) return;
-        m_pInstance->SetData(TYPE_EVENT, 800);
-        debug_log("EventMGR: creature %u send signal %u ",m_creature->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
-        intro = true;
     }
 
     void KilledUnit(Unit* pVictim)
@@ -352,7 +341,8 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
     Creature* pBrother2;
     bool invocated;
 
-    void Reset() {
+    void Reset() 
+    {
         if(!m_pInstance) return;
         m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
         resetTimers();
@@ -767,6 +757,124 @@ CreatureAI* GetAI_mob_kinetic_bomb_target(Creature* pCreature)
      return new mob_kinetic_bomb_targetAI (pCreature);
 };
 
+struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public BSWScriptedAI
+{
+    boss_blood_queen_lanathel_introAI(Creature* pCreature) : BSWScriptedAI(pCreature)
+    {
+        pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance *pInstance;
+    uint32 UpdateTimer;
+
+    void Reset()
+    {
+        if(!pInstance) 
+            return;
+
+        if (pInstance->GetData(TYPE_BLOOD_COUNCIL) == IN_PROGRESS)
+            return;
+
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        if (pInstance->GetData(TYPE_BLOOD_COUNCIL) == DONE)
+        {
+            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->SetVisibility(VISIBILITY_OFF);
+        }
+        else
+        {
+            if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_TALDARAM)))
+                doCast(SPELL_FAKE_DEATH,pPrince);
+            if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_KELESETH)))
+                doCast(SPELL_FAKE_DEATH,pPrince);
+            if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_VALANAR)))
+                doCast(SPELL_FAKE_DEATH,pPrince);
+            pInstance->SetData(TYPE_BLOOD_COUNCIL, NOT_STARTED);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+            m_creature->SetVisibility(VISIBILITY_ON);
+        }
+    }
+
+    void AttackStart(Unit *who)
+    {
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (!pInstance)
+            return;
+
+        if (pInstance->GetData(TYPE_BLOOD_COUNCIL) != NOT_STARTED)
+            return;
+
+        if (pWho && pWho->GetTypeId() == TYPEID_PLAYER && pWho->IsWithinDistInMap(m_creature, 50.0f))
+        {
+            pInstance->SetData(TYPE_EVENT, 800);
+            pInstance->SetData(TYPE_BLOOD_COUNCIL,IN_PROGRESS);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+
+        if (pInstance->GetData(TYPE_BLOOD_COUNCIL) == FAIL)
+        {
+            Reset();
+            return;
+        }
+
+        if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_LANATHEL_INTRO)
+        {
+            UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
+            if (UpdateTimer <= diff)
+            {
+                debug_log("EventMGR: creature %u received signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
+                switch (pInstance->GetData(TYPE_EVENT))
+                {
+                case 800:
+                          DoScriptText(-1631301, m_creature);
+                          UpdateTimer = 15000;
+                          pInstance->SetData(TYPE_EVENT,810);
+                          break;
+                case 810:
+                          DoScriptText(-1631311, m_creature);
+                          if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_TALDARAM)))
+                          {
+                              doRemove(SPELL_FAKE_DEATH,pPrince);
+                          }
+                          if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_KELESETH)))
+                          {
+                              doRemove(SPELL_FAKE_DEATH,pPrince);
+                          }
+                          if (Creature* pPrince = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_VALANAR)))
+                          {
+                              doRemove(SPELL_FAKE_DEATH,pPrince);
+                          }
+                          UpdateTimer = 5000;
+                          pInstance->SetData(TYPE_EVENT,820);
+                          break;
+                case 820:
+                          m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+                          m_creature->SetVisibility(VISIBILITY_OFF);
+                          UpdateTimer = 2000;
+                          pInstance->SetData(TYPE_EVENT,830);
+                          break;
+                default:
+                          break;
+                }
+             } else UpdateTimer -= diff;
+             pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
+        }
+
+    }
+};
+
+CreatureAI* GetAI_boss_blood_queen_lanathel_intro(Creature* pCreature)
+{
+    return new boss_blood_queen_lanathel_introAI(pCreature);
+}
 
 void AddSC_blood_prince_council()
 {
@@ -810,6 +918,11 @@ void AddSC_blood_prince_council()
     newscript = new Script;
     newscript->Name = "mob_kinetic_bomb_target";
     newscript->GetAI = &GetAI_mob_kinetic_bomb_target;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "boss_blood_queen_lanathel_intro";
+    newscript->GetAI = &GetAI_boss_blood_queen_lanathel_intro;
     newscript->RegisterSelf();
 
 }

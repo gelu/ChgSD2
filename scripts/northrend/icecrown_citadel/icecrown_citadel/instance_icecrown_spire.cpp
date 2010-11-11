@@ -209,6 +209,9 @@ static Locations SpawnLoc[]=
             case NPC_LANATHEL:
                           m_uiLanathelGUID = pCreature->GetGUID();
                           break;
+            case NPC_LANATHEL_INTRO:
+                          m_uiLanathelintroGUID = pCreature->GetGUID();
+                          break;
             case NPC_VALITHRIA:
                           m_uiValithriaGUID = pCreature->GetGUID();
                           break;
@@ -413,6 +416,9 @@ static Locations SpawnLoc[]=
             case GO_GAS_RELEASE_VALVE: 
                                   m_uiGasReleaseValveGUID = pGo->GetGUID();
                                   break;
+            case NPC_BLOOD_ORB_CONTROL:
+                                  m_uiBloodOrbCtrlGUID = pGo->GetGUID();
+                                  break;
         }
         OpenAllDoors();
     }
@@ -424,7 +430,7 @@ static Locations SpawnLoc[]=
             case TYPE_TELEPORT:
                 break;
             case TYPE_MARROWGAR:
-                m_auiEncounter[1] = uiData;
+                m_auiEncounter[TYPE_MARROWGAR] = uiData;
                 if (uiData == DONE) 
                     {
                         OpenDoor(m_uiIcewall1GUID);
@@ -433,7 +439,7 @@ static Locations SpawnLoc[]=
                     }
                 break;
              case TYPE_DEATHWHISPER:
-                m_auiEncounter[2] = uiData; 
+                m_auiEncounter[TYPE_DEATHWHISPER] = uiData; 
                 if (uiData == DONE) {
                     if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
                         {
@@ -443,7 +449,7 @@ static Locations SpawnLoc[]=
                 }
                 break;
              case TYPE_FLIGHT_WAR:
-                if (uiData == DONE && m_auiEncounter[3] != DONE  ) {
+                if (uiData == DONE && m_auiEncounter[TYPE_FLIGHT_WAR] != DONE  ) {
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryAGUID))
                                      if (pChest && !pChest->isSpawned()) {
                                           pChest->SetRespawnTime(7*DAY);
@@ -457,7 +463,7 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[3] = uiData; 
                 break;
              case TYPE_SAURFANG:
-                m_auiEncounter[4] = uiData; 
+                m_auiEncounter[TYPE_SAURFANG] = uiData; 
                 if (uiData == DONE) 
                 {
                     OpenDoor(m_uiSaurfangDoorGUID);
@@ -472,12 +478,12 @@ static Locations SpawnLoc[]=
                 };
                 break;
              case TYPE_FESTERGUT:
-                m_auiEncounter[5] = uiData;
+                m_auiEncounter[TYPE_FESTERGUT] = uiData;
                 if (uiData == IN_PROGRESS) CloseDoor(m_uiOrangePlagueGUID);
                                       else OpenDoor(m_uiOrangePlagueGUID);
                 if (uiData == DONE)  {
                                      OpenDoor(m_uiSDoorOrangeGUID);
-                                     if (m_auiEncounter[6] == DONE) 
+                                     if (m_auiEncounter[TYPE_ROTFACE] == DONE) 
                                          {
                                              OpenDoor(m_uiSDoorCollisionGUID);
                                              OpenDoor(m_uiGreenPlagueGUID);
@@ -485,7 +491,7 @@ static Locations SpawnLoc[]=
                                      }
                 break;
              case TYPE_ROTFACE:
-                m_auiEncounter[6] = uiData;
+                m_auiEncounter[TYPE_ROTFACE] = uiData;
                 if (uiData == IN_PROGRESS)
                     CloseDoor(m_uiGreenPlagueGUID);
                 else
@@ -493,7 +499,7 @@ static Locations SpawnLoc[]=
                 if (uiData == DONE)
                 {
                     OpenDoor(m_uiSDoorGreenGUID);
-                    if (m_auiEncounter[5] == DONE) 
+                    if (m_auiEncounter[TYPE_FESTERGUT] == DONE) 
                     {
                         OpenDoor(m_uiSDoorOrangeGUID);
                         OpenDoor(m_uiSDoorCollisionGUID);
@@ -501,14 +507,26 @@ static Locations SpawnLoc[]=
                 }
                 break;
              case TYPE_PUTRICIDE:
-                m_auiEncounter[7] = uiData;
+                m_auiEncounter[TYPE_PUTRICIDE] = uiData;
                 if (uiData == IN_PROGRESS) 
                     CloseDoor(m_uiScientistDoorGUID);
                 else
                     OpenDoor(m_uiScientistDoorGUID);
+                if (uiData == DONE)
+                {
+                    if (m_auiEncounter[TYPE_SINDRAGOSA] == DONE
+                        && m_auiEncounter[TYPE_LANATHEL] == DONE)
+                        m_auiEncounter[TYPE_KINGS_OF_ICC] = DONE;
+                }
                 break;
              case TYPE_BLOOD_COUNCIL:
-                m_auiEncounter[8] = uiData;
+                m_auiEncounter[TYPE_BLOOD_COUNCIL] = uiData;
+
+                if (uiData == IN_PROGRESS)
+                    CloseDoor(m_uiCrimsonDoorGUID);
+                else
+                    OpenDoor(m_uiCrimsonDoorGUID);
+
                 if (uiData == DONE) 
                 {
                     OpenDoor(m_uiCounsilDoor1GUID);
@@ -516,10 +534,22 @@ static Locations SpawnLoc[]=
                 }
                 break;
              case TYPE_LANATHEL:
-                m_auiEncounter[9] = uiData;
+                m_auiEncounter[TYPE_LANATHEL] = uiData;
+                if (uiData == DONE)
+                {
+                    if (m_auiEncounter[TYPE_PUTRICIDE] == DONE
+                        && m_auiEncounter[TYPE_SINDRAGOSA] == DONE)
+                        m_auiEncounter[TYPE_KINGS_OF_ICC] = DONE;
+                }
                 break;
              case TYPE_VALITHRIA:
-                m_auiEncounter[10] = uiData;
+                m_auiEncounter[TYPE_VALITHRIA] = uiData;
+
+                if (uiData == IN_PROGRESS)
+                    CloseDoor(m_uiGreenDragonDoor1GUID);
+                else
+                    OpenDoor(m_uiGreenDragonDoor1GUID);
+
                 if (uiData == DONE)
                 {
                     OpenDoor(m_uiGreenDragonDoor2GUID);
@@ -533,16 +563,22 @@ static Locations SpawnLoc[]=
                 };
                 break;
              case TYPE_SINDRAGOSA:
-                m_auiEncounter[11] = uiData;
+                m_auiEncounter[TYPE_SINDRAGOSA] = uiData;
+                if (uiData == DONE)
+                {
+                    if (m_auiEncounter[TYPE_PUTRICIDE] == DONE
+                        && m_auiEncounter[TYPE_LANATHEL] == DONE)
+                        m_auiEncounter[TYPE_KINGS_OF_ICC] = DONE;
+                }
                 break;
              case TYPE_LICH_KING:
-                m_auiEncounter[12] = uiData;
+                m_auiEncounter[TYPE_LICH_KING] = uiData;
                 break;
              case TYPE_ICECROWN_QUESTS:
-                m_auiEncounter[13] = uiData;
+                m_auiEncounter[TYPE_ICECROWN_QUESTS] = uiData;
                 break;
              case TYPE_COUNT:
-                m_auiEncounter[14] = uiData;
+                m_auiEncounter[TYPE_COUNT] = uiData;
                 uiData = NOT_STARTED;
                 break;
              case DATA_BLOOD_COUNCIL_HEALTH:     m_uiDataCouncilHealth = uiData; 
@@ -580,21 +616,24 @@ static Locations SpawnLoc[]=
     {
         switch(uiType)
         {
-             case TYPE_TELEPORT:      return m_auiEncounter[0];
-             case TYPE_MARROWGAR:     return m_auiEncounter[1];
-             case TYPE_DEATHWHISPER:  return m_auiEncounter[2];
-             case TYPE_FLIGHT_WAR:    return m_auiEncounter[3];
-             case TYPE_SAURFANG:      return m_auiEncounter[4];
-             case TYPE_FESTERGUT:     return m_auiEncounter[5];
-             case TYPE_ROTFACE:       return m_auiEncounter[6];
-             case TYPE_PUTRICIDE:     return m_auiEncounter[7];
-             case TYPE_BLOOD_COUNCIL: return m_auiEncounter[8];
-             case TYPE_LANATHEL:      return m_auiEncounter[9];
-             case TYPE_VALITHRIA:     return m_auiEncounter[10];
-             case TYPE_SINDRAGOSA:    return m_auiEncounter[11];
-             case TYPE_LICH_KING:     return m_auiEncounter[12];
-             case TYPE_ICECROWN_QUESTS:  return m_auiEncounter[13];
-             case TYPE_COUNT:         return m_auiEncounter[14];
+             case TYPE_TELEPORT:
+             case TYPE_MARROWGAR:
+             case TYPE_DEATHWHISPER:
+             case TYPE_FLIGHT_WAR:
+             case TYPE_SAURFANG:
+             case TYPE_FESTERGUT:
+             case TYPE_ROTFACE:
+             case TYPE_PUTRICIDE:
+             case TYPE_BLOOD_COUNCIL:
+             case TYPE_LANATHEL:
+             case TYPE_VALITHRIA:
+             case TYPE_SINDRAGOSA:
+             case TYPE_KINGS_OF_ICC:
+             case TYPE_LICH_KING:
+             case TYPE_ICECROWN_QUESTS:
+             case TYPE_COUNT:
+                          return m_auiEncounter[uiType];
+
              case DATA_DIRECTION:     return m_uiDirection;
              case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
              case DATA_BLOOD_INVOCATION:         return m_uiCouncilInvocation; 
@@ -686,7 +725,9 @@ static Locations SpawnLoc[]=
                                                  break;
 
                                           case 800:
-                                                 return NPC_LANATHEL;
+                                          case 810:
+                                          case 820:
+                                                 return NPC_LANATHEL_INTRO;
                                                  break;
 
                                           default:
@@ -711,6 +752,7 @@ static Locations SpawnLoc[]=
             case NPC_VALANAR:                 return m_uiValanarGUID;
             case NPC_KELESETH:                return m_uiKelesethGUID;
             case NPC_LANATHEL:                return m_uiLanathelGUID;
+            case NPC_LANATHEL_INTRO:          return m_uiLanathelintroGUID;
             case NPC_VALITHRIA:               return m_uiValithriaGUID;
             case NPC_VALITHRIA_QUEST:         return m_uiValithriaQuestGUID;
             case NPC_SINDRAGOSA:              return m_uiSindragosaGUID;
@@ -741,6 +783,7 @@ static Locations SpawnLoc[]=
             case NPC_FROSTMOURNE_HOLDER:      return m_uiFrostmourneHolderGUID;
             case NPC_COMBAT_TRIGGER:          return m_uidummyTargetGUID;
             case GO_GAS_RELEASE_VALVE:        return m_uiGasReleaseValveGUID;
+            case NPC_BLOOD_ORB_CONTROL:       return m_uiBloodOrbCtrlGUID;
         }
         return 0;
     }

@@ -21,9 +21,10 @@ enum
     TYPE_LANATHEL               = 9,
     TYPE_VALITHRIA              = 10,
     TYPE_SINDRAGOSA             = 11,
-    TYPE_LICH_KING              = 12,
-    TYPE_ICECROWN_QUESTS        = 13,
-    TYPE_COUNT                  = 14,
+    TYPE_KINGS_OF_ICC           = 12,
+    TYPE_LICH_KING              = 13,
+    TYPE_ICECROWN_QUESTS        = 14,
+    TYPE_COUNT                  = 15,
     MAX_ENCOUNTERS,
 
     TYPE_STINKY,
@@ -43,6 +44,9 @@ enum
     NPC_VALITHRIA_QUEST         = 38589,
     NPC_SINDRAGOSA              = 36853,
     NPC_LICH_KING               = 36597,
+
+    NPC_LANATHEL_INTRO          = 38004,
+    NPC_BLOOD_ORB_CONTROL       = 38008,
 
     NPC_MURADIN                 = 36948,
 
@@ -188,11 +192,13 @@ private:
     uint64 m_uiValanarGUID;
     uint64 m_uiKelesethGUID;
     uint64 m_uiLanathelGUID;
+    uint64 m_uiLanathelintroGUID;
     uint64 m_uiValithriaGUID;
     uint64 m_uiValithriaQuestGUID;
     uint64 m_uiSindragosaGUID;
     uint64 m_uiLichKingGUID;
     uint64 m_uiGasReleaseValveGUID;
+    uint64 m_uiBloodOrbCtrlGUID;
 
     uint64 m_uiRimefangGUID;
     uint64 m_uiSpinestalkerGUID;
@@ -261,7 +267,6 @@ private:
 
     uint32 m_uiStinkystate;
     uint32 m_uiPreciousstate;
-
 
 };
 

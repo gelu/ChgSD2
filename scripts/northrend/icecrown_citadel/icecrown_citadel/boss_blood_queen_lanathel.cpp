@@ -268,25 +268,6 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (pInstance->GetData(TYPE_EVENT_NPC) == NPC_LANATHEL)
-        {
-            UpdateTimer = pInstance->GetData(TYPE_EVENT_TIMER);
-            if (UpdateTimer <= diff)
-            {
-            debug_log("EventMGR: creature %u received signal %u ",m_creature->GetEntry(),pInstance->GetData(TYPE_EVENT));
-            switch (pInstance->GetData(TYPE_EVENT))
-                {
-                case 800:
-                          DoScriptText(-1631301, m_creature);
-                          UpdateTimer = 2000;
-                          pInstance->SetData(TYPE_EVENT,810);
-                          break;
-                default:
-                          break;
-                }
-             } else UpdateTimer -= diff;
-             pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
-        }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
@@ -353,7 +334,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
                     if (timedQuery(SPELL_TWILIGHT_BLOODBOLT,diff) || m_creature->GetHealthPercent() < 10.0f)
                     {
                         stage = 4;
-                        DoScriptText(-1631325,m_creature);
+//                        DoScriptText(-1631325,m_creature);
                         bloodbolts = 3;
                     };
                     break;
