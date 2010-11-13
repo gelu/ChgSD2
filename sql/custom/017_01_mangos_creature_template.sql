@@ -22,3 +22,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_scarlet_miner' WHERE `entry` 
 -- Instance gundrak
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_colossus_elemental' WHERE `entry` = '29573'; -- boss colossus mob colossus elemental
+
+-- Thargold Ironwing
+
+UPDATE `creature_template` SET `ScriptName`='npc_thargold_ironwing' WHERE `entry`='29154';
