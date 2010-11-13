@@ -24,7 +24,7 @@ EndScriptData */
 #include "precompiled.h"
 #include "pit_of_saron.h"
 
-enum
+enum Spells
 {
         //common
         SPELL_BERSERK                           = 47008,
@@ -33,6 +33,23 @@ enum
         //Abilities
         SPELL_FEAR                              = 68950
 };
+
+enum
+{
+    SAY_PREFIGHT_1                      = -1658050,
+    SAY_GENERAL_TRASH                   = -1658051,
+    SAY_PREFIGHT_2                      = -1658052,
+    SAY_AGGRO                           = -1658053,
+    SAY_SLAY_1                          = -1658054,
+    SAY_SLAY_2                          = -1658055,
+    SAY_DEATH                           = -1658056,
+    SAY_MARK                            = -1658057,
+    SAY_SMASH                           = -1658058,
+
+    EMOTE_RIMEFANG_ICEBOLT              = -1658059,
+    EMOTE_SMASH                         = -1658060,
+};
+
 
 struct MANGOS_DLL_DECL boss_scourgelord_tyrannusAI : public ScriptedAI
 {
