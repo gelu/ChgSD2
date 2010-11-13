@@ -74,8 +74,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
 
     void Initialize()
     {
-//        memset(&m_auiEncounter, 0, sizeof(m_auiEncounter));
-	    for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
+        for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
             m_auiEncounter[i] = NOT_STARTED;
 
         m_uiSinclariGUID = 0;
@@ -88,7 +87,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         m_uiXevozzGUID      = 0;
         m_uiLavanthorGUID   = 0;
         m_uiZuramatGUID     = 0;
-        
+
         m_uiDisruptions     = 0;
 
         m_uiSealDoorGUID        = 0;
@@ -124,7 +123,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
         if(m_auiEncounter[0] != NOT_STARTED)
             pPlayer->SendUpdateWorldState(WORLD_STATE_VH,1);
     }
-    
+
     bool IsEncounterInProgress() const
     {
         for (uint8 i = 0; i < MAX_ENCOUNTER; ++i)
@@ -213,7 +212,8 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 {
                 DoUpdateWorldState(WORLD_STATE_VH, 0);
                 DoUseDoorOrButton(m_uiSealDoorGUID);
-                }
+                if (Creature* pSinclari = instance->GetCreature(m_uiSinclariGUID))
+                {pSinclari->ForcedDespawn(1000);}}
                 m_auiEncounter[0] = uiData;
                 break;
             case TYPE_EREKEM:
@@ -240,6 +240,16 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 m_auiEncounter[7] = uiData;
                 if (uiData == IN_PROGRESS) bIsInBoss = true;
                 break;
+            case TYPE_CYANIGOSA:
+                m_auiEncounter[8] = uiData;
+                if (uiData == IN_PROGRESS) bIsInBoss = true;
+                break;
+            case TYPE_PORTAL6:
+                m_auiEncounter[9] = uiData;
+                break;
+            case TYPE_PORTAL12:
+                m_auiEncounter[10] = uiData;
+                break;
             case TYPE_RIFT:
                 if (uiData == FAIL) DoUseDoorOrButton(m_uiSealDoorGUID);
                 m_auiEncounter[1] = uiData;
@@ -254,7 +264,7 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                     {   DoUpdateWorldState(WORLD_STATE_VH, 0);
                         DoUseDoorOrButton(m_uiSealDoorGUID);
                         m_auiEncounter[0] = FAIL;
-                        }
+                    }
                 }
                 break;
             case TYPE_DISRUPTIONS:
@@ -302,6 +312,12 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                 return m_auiEncounter[6];
             case TYPE_ZURAMAT:
                 return m_auiEncounter[7];
+            case TYPE_CYANIGOSA:
+                return m_auiEncounter[8];
+            case TYPE_PORTAL6:
+                return m_auiEncounter[9];
+            case TYPE_PORTAL12:
+                return m_auiEncounter[10];
             case TYPE_RIFT:
                 return m_uiRiftPortalCount;
             case TYPE_LASTBOSS_ID:
@@ -310,7 +326,6 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
             {
                 if (m_uiLastBossID == 0)
                     m_uiLastBossID = urand(2, 7);
-//                    m_uiLastBossID = 3;
                 else
                 {
                     m_uiLastBossID = urand(2, 7);
@@ -323,9 +338,9 @@ struct MANGOS_DLL_DECL instance_violet_hold : public ScriptedInstance
                     while ( m_auiEncounter[m_uiLastBossID] == DONE
                             || m_auiEncounter[m_uiLastBossID] == IN_PROGRESS 
                             || m_auiEncounter[m_uiLastBossID] == SPECIAL ) 
-                            {
-                    m_uiLastBossID = urand(2, 7);
-                    }
+                        {
+                            m_uiLastBossID = urand(2, 7);
+                        }
                 }
                 return m_uiLastBossID;
             }
