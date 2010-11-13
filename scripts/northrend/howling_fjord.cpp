@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Howling_Fjord
 SD%Complete: ?
-SDComment: Quest support: 11221, 11483, 11464, 11300
+SDComment: Quest support: 11221, 11483, 11300
 SDCategory: Howling Fjord
 EndScriptData */
 
@@ -26,7 +26,6 @@ npc_daegarn
 npc_deathstalker_razael
 npc_dark_ranger_lyana
 npc_mcgoyver
-npc_silvermoon_harry
 EndContentData */
 
 #include "precompiled.h"
@@ -187,9 +186,9 @@ bool GossipSelect_npc_deathstalker_razael(Player* pPlayer, Creature* pCreature, 
     return true;
 }
 
-/*######
-## npc_dark_ranger_lyana - TODO, can be moved to database
-######*/
+/*#####################
+## Dark Ranger Lyana ##
+#####################*/
 
 #define GOSSIP_ITEM_DARK_RANGER_LYANA "High Executor Anselm requests your report."
 
@@ -229,9 +228,9 @@ bool GossipSelect_npc_dark_ranger_lyana(Player* pPlayer, Creature* pCreature, ui
     return true;
 }
 
-/*######
-## npc_mcgoyver - TODO, can be moved to database
-######*/
+/*############
+## McGoyver ##
+############*/
 
 #define GOSSIP_ITEM_MCGOYVER1 "Walt sent me to pick up some dark iron ingots."
 #define GOSSIP_ITEM_MCGOYVER2 "Yarp."
@@ -293,168 +292,6 @@ bool GossipSelect_npc_mcgoyver(Player* pPlayer, Creature* pCreature, uint32 uiSe
     return true;
 }
 
-/*######
-## npc_silvermoon_harry
-######*/
-
-enum
-{
-    QUEST_GAMBLING_DEBT         = 11464,
-
-    SAY_AGRO                    = -1000603,
-    SAY_BEATEN                  = -1000604,
-
-    GOSSIP_ITEM_GAMBLING_DEBT   = -3000101,
-    GOSSIP_ITEM_PAYING          = -3000102,
-
-    SPELL_BLAST_WAVE            = 15091,
-    SPELL_SCORCH                = 50183,
-
-    ITEM_HARRY_DEBT             = 34115,
-    FACTION_HOSTILE_SH          = 90,
-};
-
-struct MANGOS_DLL_DECL npc_silvermoon_harryAI : public ScriptedAI
-{
-    npc_silvermoon_harryAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {
-        m_bHarryBeaten = false;
-        Reset();
-    }
-
-    bool m_bHarryBeaten;
-    uint32 m_uiBlastWaveTimer;
-    uint32 m_uiScorchTimer;
-    uint32 m_uiResetBeatenTimer;
-
-    void Reset()
-    {
-        m_uiScorchTimer = 5*IN_MILLISECONDS;
-        m_uiBlastWaveTimer = 7*IN_MILLISECONDS;
-        m_uiResetBeatenTimer = MINUTE*IN_MILLISECONDS;
-
-        if (m_creature->getFaction() != m_creature->GetCreatureInfo()->faction_A)
-            m_creature->setFaction(m_creature->GetCreatureInfo()->faction_A);
-    }
-
-    void UpdateAI(const uint32 uiDiff)
-    {
-        if (m_bHarryBeaten)
-        {
-            if (m_uiResetBeatenTimer < uiDiff)
-                m_bHarryBeaten = false;
-            else
-                m_uiResetBeatenTimer-= uiDiff;
-        }
-
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
-        if (m_creature->GetHealthPercent() < 20.0f && !m_bHarryBeaten)
-        {
-            DoScriptText(SAY_BEATEN, m_creature);
-            EnterEvadeMode();
-            m_bHarryBeaten = true;
-            return;
-        }
-
-        if (m_uiScorchTimer < uiDiff)
-        {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_SCORCH);
-            m_uiScorchTimer = 10*IN_MILLISECONDS;
-        }
-        else
-            m_uiScorchTimer -= uiDiff;
-
-
-        if (m_uiBlastWaveTimer < uiDiff)
-        {
-            DoCastSpellIfCan(m_creature, SPELL_BLAST_WAVE);
-            m_uiBlastWaveTimer = 50*IN_MILLISECONDS;
-        }
-        else
-            m_uiBlastWaveTimer -= uiDiff;
-
-        DoMeleeAttackIfReady();
-
-    }
-
-    void SetBeaten(bool bBeaten)
-    {
-        m_bHarryBeaten = bBeaten;
-    }
-
-    bool IsBeaten()
-    {
-        return m_bHarryBeaten;
-    }
-};
-
-CreatureAI* GetAI_npc_silvermoon_harry(Creature* pCreature)
-{
-    return new npc_silvermoon_harryAI(pCreature);
-}
-
-bool GossipHello_npc_silvermoon_harry(Player* pPlayer, Creature* pCreature)
-{
-    bool bHarryBeaten = false;
-
-    if (pCreature->isQuestGiver())
-        pPlayer->PrepareQuestMenu(pCreature->GetGUID());
-    if (pCreature->isVendor())
-        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
-
-    if (npc_silvermoon_harryAI* pHarryAI = dynamic_cast<npc_silvermoon_harryAI*>(pCreature->AI()))
-    {
-        bHarryBeaten = pHarryAI->IsBeaten();
-    }
-
-    if (pPlayer->GetQuestStatus(QUEST_GAMBLING_DEBT) == QUEST_STATUS_INCOMPLETE)
-    {
-        if (!bHarryBeaten)
-            pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_GAMBLING_DEBT, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        else
-            pPlayer->ADD_GOSSIP_ITEM_ID(GOSSIP_ICON_CHAT, GOSSIP_ITEM_PAYING, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2);
-    }
-
-    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
-
-    return true;
-}
-
-bool GossipSelect_npc_silvermoon_harry(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
-{
-    switch(uiAction)
-    {
-        case GOSSIP_ACTION_TRADE:
-            pPlayer->SEND_VENDORLIST(pCreature->GetGUID());
-            break;
-        case GOSSIP_ACTION_INFO_DEF+1:
-            pPlayer->CLOSE_GOSSIP_MENU();
-
-            DoScriptText(SAY_AGRO, pCreature, pPlayer);
-            pCreature->setFaction(FACTION_HOSTILE_SH);
-            pCreature->AI()->AttackStart(pPlayer);
-            break;
-        case GOSSIP_ACTION_INFO_DEF+2:
-            if (!pPlayer->HasItemCount(ITEM_HARRY_DEBT, 1))
-            {
-                if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(ITEM_HARRY_DEBT, 1))
-                {
-                    pPlayer->SendNewItem(pItem, 1, true, false);
-                    pPlayer->CLOSE_GOSSIP_MENU();
-                }
-                if (npc_silvermoon_harryAI* pHarryAI = dynamic_cast<npc_silvermoon_harryAI*>(pCreature->AI()))
-                {
-                    pHarryAI->SetBeaten(false);
-                }
-            }
-            break;
-    }
-
-    return true;
-}
-
 void AddSC_howling_fjord()
 {
     Script* newscript;
@@ -481,12 +318,5 @@ void AddSC_howling_fjord()
     newscript->Name = "npc_mcgoyver";
     newscript->pGossipHello = &GossipHello_npc_mcgoyver;
     newscript->pGossipSelect = &GossipSelect_npc_mcgoyver;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_silvermoon_harry";
-    newscript->GetAI = &GetAI_npc_silvermoon_harry;
-    newscript->pGossipHello = &GossipHello_npc_silvermoon_harry;
-    newscript->pGossipSelect = &GossipSelect_npc_silvermoon_harry;
     newscript->RegisterSelf();
 }

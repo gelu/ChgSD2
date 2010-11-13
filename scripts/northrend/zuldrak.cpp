@@ -22,14 +22,9 @@ SDCategory: Zuldrak
 EndScriptData */
 
 /* ContentData
-npc_gurgthock
 EndContentData */
 
 #include "precompiled.h"
-
-/*######
-## npc_gurgthock
-######*/
 
 enum
 {
