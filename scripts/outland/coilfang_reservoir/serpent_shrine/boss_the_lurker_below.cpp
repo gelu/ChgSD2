@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: boss_the_lurker_below
 SD%Complete: 5
-SDComment: Timers from ACID, Spout unused (turning howto unknown), submerge phase missing
+SDComment: Timers from ACID, only placeholder quality, Spout unused, submerge phase missing
 SDCategory: Coilfang Resevoir, Serpent Shrine Cavern
 EndScriptData */
 
@@ -26,13 +26,23 @@ EndScriptData */
 
 enum
 {
-    SPELL_LURKER_SPAWN_TRIGGER  = 54587,
-    SPELL_WHIRL                 = 37363,
-    SPELL_GEYSER                = 37478,
-    SPELL_SPOUT                 = 37433,                    // TODO, should sweep the room 360degrees, related spells 37429 37430 37431
-    SPELL_WATERBOLT             = 37138,
+    SPELL_LURKER_SPAWN_TRIGGER      = 54587,
+    SPELL_WHIRL                     = 37363,
+    SPELL_GEYSER                    = 37478,
+    SPELL_SPOUT                     = 37433,                // TODO should sweep the room 360degrees, related spells 37429 37430 37431
+    SPELL_WATERBOLT                 = 37138,                // TODO is used when no enemy in melee range (unknown if on random or top-most aggro holder in this case
     ACHIEVEMENT_LURKER          = 144,
 };
+
+enum Phases
+{
+    PHASE_EMERGEING             = 0,                        // TODO unused for now
+    PHASE_NORMAL                = 1,
+    PHASE_SPOUT                 = 2,
+    PHASE_SUBMERGED             = 3,
+};
+
+// TODO This boss should infact be a Scripted_NoMovementAI, but selecting only melee targets is not supported yet, change when implemented
 
 struct MANGOS_DLL_DECL boss_the_lurker_belowAI : public ScriptedAI
 {
@@ -44,11 +54,15 @@ struct MANGOS_DLL_DECL boss_the_lurker_belowAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
 
+    Phases m_uiPhase;
+
     uint32 m_uiWhirlTimer;
     uint32 m_uiGeyserTimer;
 
     void Reset()
     {
+        m_uiPhase = PHASE_NORMAL;
+
         m_uiWhirlTimer = 19500;
         m_uiGeyserTimer = 49700;
     }
@@ -69,39 +83,34 @@ struct MANGOS_DLL_DECL boss_the_lurker_belowAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        //Return since we have no target
+        // Return since we have no target
+        // Unclear if we will use this selecting for spout-alike situations
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_uiWhirlTimer < uiDiff)
+        switch (m_uiPhase)
         {
-            if (DoCastSpellIfCan(m_creature, SPELL_WHIRL) == CAST_OK)
-                m_uiWhirlTimer = urand(15000, 30000);
-        }
-        else
-            m_uiWhirlTimer -= uiDiff;
+            case PHASE_NORMAL:
+                if (m_uiWhirlTimer < uiDiff)
+                {
+                    if (DoCastSpellIfCan(m_creature, SPELL_WHIRL) == CAST_OK)
+                        m_uiWhirlTimer = urand(15000, 30000);
+                }
+                else
+                    m_uiWhirlTimer -= uiDiff;
 
-        if (m_uiGeyserTimer < uiDiff)
-        {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                if (DoCastSpellIfCan(pTarget, SPELL_GEYSER) == CAST_OK)
-                    m_uiGeyserTimer = urand(49700, 60000);
-        }
-        else
-            m_uiGeyserTimer -= uiDiff;
+                if (m_uiGeyserTimer < uiDiff)
+                {
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                        if (DoCastSpellIfCan(pTarget, SPELL_GEYSER) == CAST_OK)
+                            m_uiGeyserTimer = urand(49700, 60000);
+                }
+                else
+                    m_uiGeyserTimer -= uiDiff;
 
-        // Do Melee Dmg if in Range, if no Enemy in Range, then cast Waterbolt
-        // TODO, workaround, should actuall be no targets in melee range
-        // TODO, melee should most likely target topmost aggro holder in MeleeRange
-        // Remark: Similar bug with Ragnaros
-        if (!m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
-        {
-            if (!m_creature->IsNonMeleeSpellCasted(false))  // prevent selecting random target every tick
-                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                    DoCastSpellIfCan(pTarget, SPELL_WATERBOLT);
+                DoMeleeAttackIfReady();
+                break;
         }
-        else
-            DoMeleeAttackIfReady();
     }
 };
 
@@ -116,7 +125,8 @@ bool GOHello_go_strange_pool(Player* pPlayer, GameObject* pGo)
     // There is some chance to fish The Lurker Below, sources are from 20s to 10minutes, average 5min => 20 tries, hence 5%
     if (urand(0,99) < 5)
     {
-        if (ScriptedInstance* pInstance = dynamic_cast<ScriptedInstance*>(pPlayer->GetInstanceData()))
+        if (ScriptedInstance* pInstance = (ScriptedInstance*)pGo->GetInstanceData())
+        {
             if (pInstance->GetData(TYPE_THELURKER_EVENT) == NOT_STARTED)
             {
                 pPlayer->CastSpell(pPlayer, SPELL_LURKER_SPAWN_TRIGGER, true);
@@ -124,6 +134,7 @@ bool GOHello_go_strange_pool(Player* pPlayer, GameObject* pGo)
                 pInstance->SetData(TYPE_THELURKER_EVENT, IN_PROGRESS);
                 return true;
             }
+        }
     }
     return false;
 }

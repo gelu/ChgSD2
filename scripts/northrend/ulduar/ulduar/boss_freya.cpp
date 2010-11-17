@@ -994,7 +994,7 @@ struct MANGOS_DLL_DECL boss_freyaAI : public ScriptedAI
                         float angle = 2.0f * M_PI_F * rand_norm_f();
                         float x = m_creature->GetPositionX() + cos(angle) * radius;
                         float y = m_creature->GetPositionY() + sin(angle) * radius;
-                        float z = m_creature->GetMap()->GetHeight(x, y, MAX_HEIGHT);
+                        float z = m_creature->GetTerrain()->GetHeight(x, y, MAX_HEIGHT);
                         m_creature->SummonCreature(NPC_NATURE_BOMB, x, y, z, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 20000);
                     }
                     m_uiNatureBombTimer = urand(7000, 12000);
