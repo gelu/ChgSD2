@@ -224,7 +224,7 @@ struct MANGOS_DLL_DECL boss_archavonAI : public ScriptedAI
                 m_pCrushingLeapTarget = *pTarget;
                 if (m_pCrushingLeapTarget)
                 {
-                    m_creature->MonsterSay(m_pCrushingLeapTarget->GetName(), LANG_UNIVERSAL, NULL);
+                    m_creature->MonsterSay(m_pCrushingLeapTarget->GetName(), LANG_UNIVERSAL, ObjectGuid());
                     m_creature->getThreatManager().addThreat(m_pCrushingLeapTarget, 100000000.0f);
                     m_creature->SetSpeedRate(MOVE_RUN, m_fDefaultMoveSpeed*10.0f);
                     m_bCrushingLeapInProgress = true;
