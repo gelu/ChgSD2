@@ -229,7 +229,7 @@ struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
        {
            for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
            {
-                pChromi->MonsterWhisper("Good work with crates! Come to me in front of Stratholme for your next assignment!", i->getSource()->GetGUID(), false);
+                pChromi->MonsterWhisper("Good work with crates! Come to me in front of Stratholme for your next assignment!", i->getSource(), false);
                 i->getSource()->KilledMonsterCredit(30996, pChromi->GetGUID());
                 i->getSource()->DestroyItemCount(ITEM_ARCANE_DISRUPTOR, 1, true);
             }

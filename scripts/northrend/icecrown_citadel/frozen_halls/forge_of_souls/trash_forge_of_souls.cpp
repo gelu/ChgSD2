@@ -269,16 +269,16 @@ uint32 Say;
                 switch(Say)
                 {
                   case 0:
-                    m_creature->MonsterSay("Wake up deads!",LANG_UNIVERSAL, ObjectGuid());
+                    m_creature->MonsterSay("Wake up deads!",LANG_UNIVERSAL);
                     break;
                   case 1:
-                    m_creature->MonsterSay("Dead hear my call!",LANG_UNIVERSAL, ObjectGuid());
+                    m_creature->MonsterSay("Dead hear my call!",LANG_UNIVERSAL);
                     break;
                   case 2:
-                    m_creature->MonsterSay("I command power of Dead!",LANG_UNIVERSAL, ObjectGuid());
+                    m_creature->MonsterSay("I command power of Dead!",LANG_UNIVERSAL);
                     break;
                   case 3:
-                    m_creature->MonsterSay("A raise my servant!",LANG_UNIVERSAL, ObjectGuid());
+                    m_creature->MonsterSay("A raise my servant!",LANG_UNIVERSAL);
                     break;
                 }
                 DoCast(m_creature, SPELL_RAISE_DEAD);

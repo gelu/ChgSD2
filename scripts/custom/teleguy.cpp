@@ -37,14 +37,14 @@ void SendDefaultMenu_mob_teleguy(Player *player, Creature *_Creature, uint32 act
     if(!player->getAttackers().empty())
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You are in combat!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You are in combat!", LANG_UNIVERSAL);
         return;
     }
 
     if( player->getLevel() < 8  ) 
     {
          player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be lvl 8+", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be lvl 8+", LANG_UNIVERSAL);
         return;
     }
 
@@ -54,7 +54,7 @@ void SendDefaultMenu_mob_teleguy(Player *player, Creature *_Creature, uint32 act
     if (money < costo ) 
     {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You haven't enough money", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You haven't enough money", LANG_UNIVERSAL);
         return;
     }
 
@@ -244,7 +244,7 @@ if( player->getLevel() >= 8)
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 8!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 8!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -259,7 +259,7 @@ if (player->getLevel() >= 10)
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 10!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 10!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -274,7 +274,7 @@ if (player->getLevel() >= 10)
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 10!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 10!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -289,7 +289,7 @@ case 1251://teleport player to Shadowfang Keep
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 15!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 15!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -304,7 +304,7 @@ case 1252://teleport player to Blackfathom Deeps
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 15!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 15!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -319,7 +319,7 @@ case 1253://teleport player to the Stockade
 		player->ModifyMoney(-2*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 20!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 20!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -334,7 +334,7 @@ case 1254://teleport player to Razorfen Kraul
 		player->ModifyMoney(-4*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 24!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 24!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -350,7 +350,7 @@ case 1255://teleport player to Gnomeregan
 		
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 20!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 20!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -365,7 +365,7 @@ case 1256://teleport player to Razorfen Downs
 		player->ModifyMoney(-4*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 25!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 25!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -380,7 +380,7 @@ case 1257://teleport player to the Scarlet Monastery
 		player->ModifyMoney(-4*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 25!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 25!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -395,7 +395,7 @@ case 1258://teleport player to Uldaman
 		player->ModifyMoney(-6*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 35!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 35!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -410,7 +410,7 @@ case 1259://teleport player to Zul'Farrak
 		player->ModifyMoney(-6*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 35!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 35!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -426,7 +426,7 @@ case 1260://teleport player to Maraudon
 		player->ModifyMoney(-8*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 40!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 40!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -441,7 +441,7 @@ case 1261://teleport player to the Sunken Temple
 		player->ModifyMoney(-8*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 45!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 45!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -456,7 +456,7 @@ case 1262://teleport player to Blackrock Depths
 		player->ModifyMoney(-8*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 45!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 45!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -471,7 +471,7 @@ case 1263://teleport player to Dire Maul
 		player->ModifyMoney(-10*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -486,7 +486,7 @@ case 1264://teleport player to Blackrock Spire
 		player->ModifyMoney(-10*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -501,7 +501,7 @@ case 1265://teleport player to Stratholme
 		player->ModifyMoney(-10*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -516,7 +516,7 @@ case 1266://teleport player to Scholomance
 		player->ModifyMoney(-10*costo);
 	} else {
 		player->CLOSE_GOSSIP_MENU();
-		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL, ObjectGuid());
+		_Creature->MonsterSay("You must be at least level 50!", LANG_UNIVERSAL);
 	}
 	
 break;
@@ -530,7 +530,7 @@ if( player->getLevel() >= 58)
         player->ModifyMoney(-1*costo);
  } else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 58!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 58!", LANG_UNIVERSAL);
     }
     
 break;
@@ -545,7 +545,7 @@ case 1288://teleport player to Isle Of Quel'Danas
         player->ModifyMoney(-1*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 65!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 65!", LANG_UNIVERSAL);
     }
     
 break;
@@ -560,7 +560,7 @@ case 4007:// Karazhan
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -575,7 +575,7 @@ case 4008:// Gruul's Lair
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 65!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 65!", LANG_UNIVERSAL);
     }
     
 break;
@@ -602,7 +602,7 @@ case 4011:// Tempest Keep
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -617,7 +617,7 @@ case 4012:// Caverns of Time
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 66!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 66!", LANG_UNIVERSAL);
     }
     
 break;
@@ -632,7 +632,7 @@ case 4016:// Zul'Aman
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -647,7 +647,7 @@ case 4013:// Black Temple
         player->ModifyMoney(-20*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -662,7 +662,7 @@ case 4017:// magistrate
         player->ModifyMoney(-40*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -677,7 +677,7 @@ case 4018:// sunwell
         player->ModifyMoney(-40*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 70!", LANG_UNIVERSAL);
     }
     
 break;
@@ -692,7 +692,7 @@ case 4019:// Utgarde Keep
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -707,7 +707,7 @@ case 4020:// The Nexus
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -722,7 +722,7 @@ case 4021:// Azjol-Nerub
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -737,7 +737,7 @@ case 4022:// Ahn'kahet: The Old Kingdom
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -752,7 +752,7 @@ case 4023:// Drak'Tharon Keep
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -767,7 +767,7 @@ case 4024:// The Violet Hold
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -782,7 +782,7 @@ case 4025:// Gun' Drak
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -797,7 +797,7 @@ case 4026:// Utgarde Pinnacle
         player->ModifyMoney(-400*costo);
 	} else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
@@ -811,7 +811,7 @@ case 4027:// Ulduar
         player->ModifyMoney(-400*costo);
         } else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
 break;
 
@@ -824,7 +824,7 @@ case 4028:// The Obsidian Sanctum
         player->ModifyMoney(-400*costo);
         } else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
 break;
 
@@ -838,7 +838,7 @@ case 4029:// Naxxramas
         player->ModifyMoney(-400*costo);
         } else {
         player->CLOSE_GOSSIP_MENU();
-        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL, ObjectGuid());
+        _Creature->MonsterSay("You must be at least level 80!", LANG_UNIVERSAL);
     }
     
 break;
