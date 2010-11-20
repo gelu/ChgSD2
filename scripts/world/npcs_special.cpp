@@ -1769,35 +1769,40 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
 
     void Reset() 
     {
-     owner = m_creature->GetOwner();
-     if (!owner) return;
+        owner = m_creature->GetOwner();
+        if (!owner) 
+            return;
+
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_2,owner->GetUInt32Value(UNIT_FIELD_BYTES_2));
+        m_creature->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
+        m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, DEFAULT_WORLD_OBJECT_SIZE);
+        m_creature->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
+
+        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID,   owner->GetUInt32Value(PLAYER_VISIBLE_ITEM_16_ENTRYID));
+        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+1, owner->GetUInt32Value(PLAYER_VISIBLE_ITEM_17_ENTRYID));
+        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+2, owner->GetUInt32Value(PLAYER_VISIBLE_ITEM_18_ENTRYID));
+        m_creature->SetSpeedRate(MOVE_RUN, owner->GetSpeedRate(MOVE_RUN), true);
+
+        m_uiFrostboltTimer = urand(0,3000);
+        m_uiFrostringTimer = urand(2000,6000);
+        m_uiFireblastTimer = urand(0,3000);
+        inCombat = false;
+        blocked = false;
+        movement = false;
 
 
-     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
-     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_2,owner->GetUInt32Value(UNIT_FIELD_BYTES_2));
-     m_creature->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
-     m_creature->SetFloatValue(UNIT_FIELD_BOUNDINGRADIUS, DEFAULT_WORLD_OBJECT_SIZE);
-     m_creature->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
-
-     m_uiFrostboltTimer = urand(4000,9000);
-     m_uiFrostboltTimer = urand(5000,12000);
-     m_uiFireblastTimer = urand(4000,9000);
-     inCombat = false;
-     blocked = false;
-     movement = false;
-
-
-     if (owner && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
+        if (owner && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
         {
             angle = m_creature->GetAngle(owner);
             m_creature->GetMotionMaster()->Clear(false);
             m_creature->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST + 3.0f, angle);
         }
 
-      if(owner->IsPvP())
-                 m_creature->SetPvP(true);
-      if(owner->IsFFAPvP())
-                 m_creature->SetFFAPvP(true);
+        if(owner->IsPvP())
+            m_creature->SetPvP(true);
+        if(owner->IsFFAPvP())
+            m_creature->SetFFAPvP(true);
     }
 
     void AttackStart(Unit* pWho)
@@ -1829,6 +1834,7 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
         m_creature->CombatStop(true);
         if (owner && !m_creature->hasUnitState(UNIT_STAT_FOLLOW))
         {
+            angle = m_creature->GetAngle(owner);
             m_creature->GetMotionMaster()->Clear(false);
             m_creature->GetMotionMaster()->MoveFollow(owner, PET_FOLLOW_DIST + 3.0f,angle);
         }
@@ -1836,26 +1842,27 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-        if (!owner || !owner->isAlive()) m_creature->ForcedDespawn();
+        if (!owner || !owner->isAlive()) 
+            m_creature->ForcedDespawn();
 
         if (owner && !m_creature->HasAura(SPELL_CLONE_CASTER))
             m_creature->CastSpell(m_creature, SPELL_CLONE_CASTER, true, NULL, NULL, owner->GetGUID());
 
         if (owner && !m_creature->HasAura(SPELL_CLONE_CASTER_1))
-                 m_creature->CastSpell(m_creature, SPELL_CLONE_CASTER_1, true, NULL, NULL, owner->GetGUID());
+            m_creature->CastSpell(m_creature, SPELL_CLONE_CASTER_1, true, NULL, NULL, owner->GetGUID());
 
         if (owner && owner->HasAura(SPELL_FROSTSHIELD) && !m_creature->HasAura(SPELL_FROSTSHIELD))
-                 m_creature->CastSpell(m_creature, SPELL_FROSTSHIELD, false);
+            m_creature->CastSpell(m_creature, SPELL_FROSTSHIELD, false);
 
         if (owner && owner->HasAura(SPELL_FIRESHIELD) && !m_creature->HasAura(SPELL_FIRESHIELD))
-                 m_creature->CastSpell(m_creature, SPELL_FIRESHIELD, false);
+            m_creature->CastSpell(m_creature, SPELL_FIRESHIELD, false);
 
         if (!m_creature->getVictim())
             if (owner && owner->getVictim())
                 AttackStart(owner->getVictim());
 
         if (m_creature->getVictim() && m_creature->getVictim() != owner->getVictim())
-                AttackStart(owner->getVictim());
+            AttackStart(owner->getVictim());
 
         if (inCombat && !m_creature->getVictim())
         {
@@ -1863,7 +1870,8 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
             return;
         }
 
-        if (!inCombat) return;
+        if (!inCombat) 
+            return;
 
         if (m_creature->IsWithinDistInMap(m_creature->getVictim(),30.0f))
         {
@@ -1871,13 +1879,13 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
             if (m_uiFrostboltTimer <= diff)
             {
                 DoCastSpellIfCan(m_creature->getVictim(),SPELL_FROSTBOLT);
-                m_uiFrostboltTimer = urand(4000,8000);
+                m_uiFrostboltTimer = urand(1000,6000);
             } else m_uiFrostboltTimer -= diff;
 
             if (m_uiFireblastTimer <= diff)
             {
                 DoCastSpellIfCan(m_creature->getVictim(),SPELL_FIREBLAST);
-                m_uiFireblastTimer = urand(4000,8000);
+                m_uiFireblastTimer = urand(1000,6000);
             } else m_uiFireblastTimer -= diff;
 
             if (m_uiFrostringTimer <= diff && m_creature->IsWithinDistInMap(m_creature->getVictim(),5.0f))
@@ -1891,12 +1899,15 @@ struct MANGOS_DLL_DECL npc_mirror_imageAI : public ScriptedAI
                 DoCastSpellIfCan(m_creature,SPELL_ICEBLOCK);
                 blocked = true;
             }
-        } else if (!movement) {
-                                  DoStartMovement(m_creature->getVictim(), 30.0f);
-                                  movement = true;
-                               }
+        }
+        else
+            if (!movement) 
+            {
+                DoStartMovement(m_creature->getVictim(), 20.0f);
+                movement = true;
+            }
 
-        DoMeleeAttackIfReady();
+//        DoMeleeAttackIfReady();
     }
 };
 
