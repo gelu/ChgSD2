@@ -697,6 +697,11 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
         m_creature->SetInCombatWithZone();
         SetCombatMovement(false);
         m_Size0 = m_creature->GetObjectScale();
+        if (m_Size0 > 1.0f)
+        {
+            m_creature->SetObjectScale(1.0f);
+            m_Size0 = 1.0f;
+        }
         m_Size = m_Size0;
         grow_timer = 500;
     }
@@ -717,7 +722,7 @@ struct MANGOS_DLL_DECL mob_ooze_puddleAI : public ScriptedAI
             m_creature->CastSpell(m_creature, SPELL_SLIME_PUDDLE, false);
 
         // Override especially for clean core
-                   if (m_Size / m_Size0 >= 2.0f) m_creature->ForcedDespawn();
+        if (m_Size / m_Size0 >= 2.6f) m_creature->ForcedDespawn();
 
         if (grow_timer <= uiDiff)
         {
