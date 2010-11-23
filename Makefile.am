@@ -40,6 +40,8 @@ base/BSW_instance.cpp \
 base/BSW_instance.h \
 base/BSW_ai.cpp \
 base/BSW_ai.h \
+base/pet_ai.cpp \
+base/pet_ai.h \
 include/precompiled.cpp \
 include/precompiled.h \
 include/sc_creature.cpp \
