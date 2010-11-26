@@ -1,5 +1,6 @@
 #ifndef DEF_HALL_OF_REFLECTION_H
 #define DEF_HALL_OF_REFLECTION_H
+#include "BSW_ai.h"
 
 enum Data
 {

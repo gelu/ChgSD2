@@ -1276,8 +1276,10 @@ enum GENERAL_EVENT
    SAY_DEATH                    = -1594520,
 
    SPELL_SHIELD_THROWN          = 69222,
-   SPELL_SPIKE                  = 59446   // this is not right spell!
    SPELL_REFLECTION_GHOST       = 69861,
+   SPELL_CLONE                  = 69828,
+   SPELL_CLONE2                 = 69837,
+
 };
 
 struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
@@ -1291,22 +1293,21 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
    ScriptedInstance* m_pInstance;
 
    uint32 m_uiShieldTimer;
-   uint32 m_uiSpikeTimer;
 
    void Reset()
    {
-       if (!m_pInstance) return;
-       m_uiShieldTimer = 5000;
-       m_uiSpikeTimer = 14000;
-       m_pInstance->SetData(TYPE_FROST_GENERAL, NOT_STARTED);
-       m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        if (!m_pInstance) return;
+        m_uiShieldTimer = 5000;
+        m_pInstance->SetData(TYPE_FROST_GENERAL, NOT_STARTED);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
    }
 
     void JustDied(Unit* pKiller)
     {
-       if (!m_pInstance) return;
-       DoScriptText(SAY_DEATH, m_creature);
-       m_pInstance->SetData(TYPE_FROST_GENERAL, DONE);
+        if (!m_pInstance) 
+            return;
+        DoScriptText(SAY_DEATH, m_creature);
+        m_pInstance->SetData(TYPE_FROST_GENERAL, DONE);
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -1330,9 +1331,29 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
 
     void Aggro(Unit* pVictim)
     {
-       if (!m_pInstance) return;
-       DoScriptText(SAY_AGGRO, m_creature);
-       m_pInstance->SetData(TYPE_FROST_GENERAL, IN_PROGRESS);
+        if (!m_pInstance) 
+            return;
+        DoScriptText(SAY_AGGRO, m_creature);
+        m_pInstance->SetData(TYPE_FROST_GENERAL, IN_PROGRESS);
+
+        Map::PlayerList const &pList = m_creature->GetMap()->GetPlayers();
+        for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
+        {
+            if (Player* pPlayer = i->getSource())
+            {
+               if (pPlayer && pPlayer->isAlive() && pPlayer->IsInMap(m_creature))
+               {
+                   if (Creature* pMirror = m_creature->SummonCreature(NPC_SPIRITUAL_REFLECTION,0,0,0,0,TEMPSUMMON_DEAD_DESPAWN,0, true))
+                   {
+                      pMirror->SetPhaseMask(65535, true);
+                      pMirror->SetInCombatWith(pPlayer);
+                      pMirror->AddThreat(pPlayer, 1000.0f);
+                   }
+
+               }
+            }
+        };
+
     }
 
    void UpdateAI(const uint32 uiDiff)
@@ -1344,15 +1365,9 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
         {
             if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                DoCast(pTarget,SPELL_SHIELD_THROWN);
-            m_uiShieldTimer = urand(8000, 12000);
-        } else m_uiShieldTimer -= uiDiff;
-
-        if (m_uiSpikeTimer < uiDiff) 
-        {
-            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, SPELL_SPIKE);
-            m_uiSpikeTimer = urand(15000, 20000);
-        } else m_uiSpikeTimer -= uiDiff;
+            m_uiShieldTimer = urand(4000, 8000);
+        }
+        else m_uiShieldTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
    }
@@ -1361,6 +1376,63 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
 CreatureAI* GetAI_npc_frostworn_general(Creature* pCreature)
 {
     return new npc_frostworn_generalAI(pCreature);
+}
+
+struct MANGOS_DLL_DECL npc_spiritual_reflectionAI : public BSWScriptedAI
+{
+    npc_spiritual_reflectionAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool isMirror;
+
+    void Reset()
+    {
+        if (!m_pInstance) 
+            return;
+        isMirror = false;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    }
+
+    void Aggro(Unit* pVictim)
+    {
+        if (!m_pInstance) 
+            return;
+        DoStartMovement(pVictim);
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+//        if (!m_pInstance || m_pInstance->GetData(TYPE_FROST_GENERAL) != IN_PROGRESS) 
+//            m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        if (!isMirror && m_creature->getVictim()->IsWithinDistInMap(m_creature, 8.0f))
+        {
+            m_creature->getVictim()->CastSpell(m_creature, SPELL_CLONE, true);
+            m_creature->getVictim()->CastSpell(m_creature, SPELL_CLONE2, true);
+            m_creature->getVictim()->CastSpell(m_creature, SPELL_REFLECTION_GHOST, true);
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            isMirror = true;
+        }
+
+        if (!isMirror)
+            return;
+
+        doCastAll(uiDiff);
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_spiritual_reflection(Creature* pCreature)
+{
+    return new npc_spiritual_reflectionAI(pCreature);
 }
 
 void AddSC_halls_of_reflection()
@@ -1389,5 +1461,10 @@ void AddSC_halls_of_reflection()
     newscript = new Script;
     newscript->Name = "npc_frostworn_general";
     newscript->GetAI = &GetAI_npc_frostworn_general;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_spiritual_reflection";
+    newscript->GetAI = &GetAI_npc_spiritual_reflection;
     newscript->RegisterSelf();
 }
