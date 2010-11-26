@@ -40,6 +40,10 @@ enum
   SPELL_LICH_KING_CAST               = 57561,
   SPELL_GNOUL_JUMP                   = 70150,
   SPELL_ABON_STRIKE                  = 40505,
+  // summon spells
+  SPELL_WITCH_DOCTOR                 = 69836,
+  SPELL_RAGING_GHOUL                 = 69817,
+  SPELL_SUMMON_ABOM                  = 69835,
 
   /*SPELLS - Witch Doctor*/
   SPELL_COURSE_OF_DOOM               = 70144,
@@ -96,9 +100,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                 DoScriptText(SAY_LICH_KING_END_DUN, m_creature);
                 if(Creature* pLider = (m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_ESCAPE_LIDER))))
                 {
-                  pLider->CastSpell(pLider, SPELL_SILENCE, false);
-                  pLider->AddSplineFlag(SPLINEFLAG_FLYING);
-                  pLider->SendMonsterMove(pLider->GetPositionX(), pLider->GetPositionY(), pLider->GetPositionZ() + 4, SPLINETYPE_NORMAL , pLider->GetSplineFlags(), 3000); 
+                    pLider->CastSpell(pLider, SPELL_SILENCE, false);
+                    pLider->AddSplineFlag(SPLINEFLAG_FLYING);
+                    pLider->SendMonsterMove(pLider->GetPositionX(), pLider->GetPositionY(), pLider->GetPositionZ() + 4, SPLINETYPE_NORMAL , pLider->GetSplineFlags(), 3000); 
                 }
                 m_creature->SetActiveObjectState(false);
                 break;
@@ -119,7 +123,8 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
     void SummonedCreatureJustDied(Creature* summoned)
     {
-         if(!m_pInstance || !summoned) return;
+         if(!m_pInstance || !summoned) 
+             return;
          m_pInstance->SetData(DATA_SUMMONS, 0);
     }
 
@@ -135,25 +140,20 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
 
          if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
          {
-               summoned->GetMotionMaster()->MoveChase(pLider);
-               summoned->AddThreat(pLider, 100.0f);
+             summoned->GetMotionMaster()->MoveChase(pLider);
+             summoned->AddThreat(pLider, 100.0f);
          }
     }
 
-   void CallGuard(uint32 GuardID)
-   {
-       m_creature->SummonCreature(GuardID,(m_creature->GetPositionX()-15)+rand()%10, (m_creature->GetPositionY()-15)+rand()%10, m_creature->GetPositionZ(),4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,300000);
-   }
-
-   void Wall01()
-   {
+    void Wall01()
+    {
       switch(Step)
       {
          case 0:
             SetEscortPaused(true);
             m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_WALL_01, m_creature);
-            DoCast(m_creature, SPELL_DESTROY_ICE_WALL_02);
+            DoCast(m_creature, SPELL_RAGING_GHOUL);
             StepTimer = 2000;
             ++Step;
             break;
@@ -180,21 +180,21 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             ++Step;
             break;
          case 5:
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            m_pInstance->SetData(TYPE_ICE_WALL_01, DONE);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
             StepTimer = 100;
             Step = 0;
             break;
        }
-   }
+    }
 
-   void Wall02()
-   {
+    void Wall02()
+    {
       switch(Step)
       {
           case 0:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
+            DoCast(m_creature, SPELL_RAGING_GHOUL);
             DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
             StepTimer = 10000;
@@ -202,71 +202,71 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
           case 1:
             SetEscortPaused(false);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_ABON);
-            m_pInstance->SetData(TYPE_ICE_WALL_02, DONE);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
             StepTimer = 100;
             Step = 0;
             break;
       }
    }
 
-   void Wall03()
-   {
+    void Wall03()
+    {
       switch(Step)
       {
          case 0:
-           m_pInstance->SetData(DATA_SUMMONS, 3);
-           SetEscortPaused(true);
-           DoCast(m_creature, SPELL_RAISE_DEAD);
-           DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
-           StepTimer = 10000;
-           ++Step;
-           break;
+            m_pInstance->SetData(DATA_SUMMONS, 3);
+            SetEscortPaused(true);
+            DoCast(m_creature, SPELL_RAGING_GHOUL);
+            DoCast(m_creature, SPELL_RAISE_DEAD);
+            DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
+            StepTimer = 10000;
+            ++Step;
+            break;
          case 1:
             SetEscortPaused(false);
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_ABON);
-            CallGuard(NPC_ABON);
-           m_pInstance->SetData(TYPE_ICE_WALL_03, DONE);
-           StepTimer = 100;
-           Step = 0;
-           break;
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            m_pInstance->SetData(TYPE_ICE_WALL_03, DONE);
+            StepTimer = 100;
+            Step = 0;
+            break;
       }
-   }
+    }
 
    void Wall04()
    {
       switch(Step)
       {
          case 0:
-           m_pInstance->SetData(DATA_SUMMONS, 3);
-           SetEscortPaused(true);
-           DoCast(m_creature, SPELL_RAISE_DEAD);
-           DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
-           StepTimer = 10000;
-           ++Step;
-           break;
+            m_pInstance->SetData(DATA_SUMMONS, 3);
+            SetEscortPaused(true);
+            DoCast(m_creature, SPELL_RAGING_GHOUL);
+            DoCast(m_creature, SPELL_RAISE_DEAD);
+            DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
+            StepTimer = 10000;
+            ++Step;
+            break;
          case 1:
             SetEscortPaused(false);
             m_creature->SetSpeedRate(MOVE_WALK, 1.2f, true);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_ABON);
-            CallGuard(NPC_ABON);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
             StepTimer = 15000;
             ++Step;
             break;
          case 2:
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            CallGuard(NPC_RISEN_WITCH_DOCTOR);
-            m_pInstance->SetData(TYPE_ICE_WALL_04, DONE);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
             ++Step;
            break;
       }
@@ -307,47 +307,44 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          StepTimer = 100;
       }
 
-      if (Creature* pLider = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
-         if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
-         {
-            m_creature->SetActiveObjectState(false);
-            SetEscortPaused(true);
-            npc_escortAI::EnterEvadeMode();
-            DoScriptText(SAY_LICH_KING_WIN, m_creature);
-            m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
-            m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-            m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
-            m_pInstance->SetData(TYPE_LICH_KING, FAIL);
-         };
+        if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+           if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
+           {
+               SetEscortPaused(true);
+               DoScriptText(SAY_LICH_KING_WIN, m_creature);
+               m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
+               m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+               m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
+               m_pInstance->SetData(TYPE_LICH_KING, FAIL);
+               m_creature->SetActiveObjectState(false);
+               npc_escortAI::EnterEvadeMode();
+           };
 
-      if(m_pInstance->GetData(TYPE_ICE_WALL_01) == IN_PROGRESS)
-      {
-         if(StepTimer < diff)
-            Wall01();
-         else StepTimer -= diff;
-      }
-
-      if(m_pInstance->GetData(TYPE_ICE_WALL_02) == IN_PROGRESS)
-      {
-         if(StepTimer < diff)
-            Wall02();
-         else StepTimer -= diff;
-      }
-
-      if(m_pInstance->GetData(TYPE_ICE_WALL_03) == IN_PROGRESS)
-      {
-         if(StepTimer < diff)
-            Wall03();
-         else StepTimer -= diff;
-      }
-
-      if(m_pInstance->GetData(TYPE_ICE_WALL_04) == IN_PROGRESS)
-      {
-         if(StepTimer < diff)
-            Wall04();
-         else StepTimer -= diff;
-      }
-      return;
+        if (m_pInstance->GetData(TYPE_ICE_WALL_01) == IN_PROGRESS)
+        {
+           if(StepTimer < diff)
+              Wall01();
+           else StepTimer -= diff;
+        }
+        else if (m_pInstance->GetData(TYPE_ICE_WALL_02) == IN_PROGRESS)
+        {
+           if(StepTimer < diff)
+              Wall02();
+           else StepTimer -= diff;
+        }
+        else if (m_pInstance->GetData(TYPE_ICE_WALL_03) == IN_PROGRESS)
+        {
+           if(StepTimer < diff)
+              Wall03();
+           else StepTimer -= diff;
+        }
+        else if (m_pInstance->GetData(TYPE_ICE_WALL_04) == IN_PROGRESS)
+        {
+           if(StepTimer < diff)
+              Wall04();
+           else StepTimer -= diff;
+        }
+        return;
     }
 };
 

@@ -106,6 +106,11 @@ DELETE FROM `gameobject` WHERE `id` IN (201385,201596,202079);
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (197341,197342,197343);
 UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (197341,197342,197343);
 
+-- offlike way for icewalls operation
+REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69768', '1', '37014');
+REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69767', '1', '37014');
+DELETE from `creature` WHERE `id`=37014;
+
 -- Captains chest (override)
 DELETE FROM `gameobject` WHERE `id` IN (202212,201710,202337,202336);
 UPDATE `gameobject_template` SET `flags` = 0 WHERE `gameobject_template`.`entry` IN (202212,201710,202337,202336);

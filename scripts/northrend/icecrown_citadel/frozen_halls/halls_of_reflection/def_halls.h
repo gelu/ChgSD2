@@ -50,6 +50,10 @@ enum Data
     NPC_ABON                     = 37069,
 
     NPC_FROST_GENERAL            = 36723,
+    NPC_SPIRITUAL_REFLECTION     = 37068,
+
+//    NPC_QUEL_DELAR               = 37704,
+    NPC_QUEL_DELAR               = 37158,
 
     GO_ICECROWN_DOOR             = 201976, //72802
     GO_ICECROWN_DOOR_2           = 197342,
