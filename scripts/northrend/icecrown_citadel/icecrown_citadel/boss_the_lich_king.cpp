@@ -154,7 +154,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
         if (oldflag)
             if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
             {
-               pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+               pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
                pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,oldflag);
             }
         pInstance->CloseDoor(pInstance->GetData64(GO_FROSTY_WIND));
@@ -510,7 +510,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                             pInstance->OpenDoor(pInstance->GetData64(GO_ICESHARD_4));
                             if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
                             {
-                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
                                  oldflag = pGoFloor->GetUInt32Value(GAMEOBJECT_BYTES_1);
                                  pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
                             }
@@ -564,7 +564,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                     if (movementstarted) return;
                     if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
                     {
-                        pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                        pGoFloor->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
                         pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,oldflag);
                     }
                     pInstance->OpenDoor(pInstance->GetData64(GO_FROSTY_WIND));
@@ -599,7 +599,7 @@ struct MANGOS_DLL_DECL boss_the_lich_king_iccAI : public BSWScriptedAI
                        {
                             if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARTHAS_PLATFORM)))
                             {
-                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                                 pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
                                  oldflag = pGoFloor->GetUInt32Value(GAMEOBJECT_BYTES_1);
                                  pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
                             }

@@ -284,7 +284,7 @@ switch(uiAction) {
        if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARGENT_COLISEUM_FLOOR)))
           {
            pGoFloor->SetUInt32Value(GAMEOBJECT_DISPLAYID,9060);
-           pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+           pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
            pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
            }
            pCreature->CastSpell(pCreature,69016,false);
@@ -448,7 +448,7 @@ struct MANGOS_DLL_DECL boss_lich_king_tocAI : public ScriptedAI
                if (GameObject* pGoFloor = pInstance->instance->GetGameObject(pInstance->GetData64(GO_ARGENT_COLISEUM_FLOOR)))
                   {
                    pGoFloor->SetUInt32Value(GAMEOBJECT_DISPLAYID,9060);
-                   pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK_10 | GO_FLAG_NODESPAWN);
+                   pGoFloor->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
                    pGoFloor->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
                    }
                 m_creature->CastSpell(m_creature,69016,false);
