@@ -653,7 +653,11 @@ bool BSWScriptedAI::_doRemoveFromAll(uint32 SpellID)
         {
             Unit* pTarget = itr->getSource();
             if (pTarget && pTarget->IsInWorld())
+            {
                 pTarget->RemoveAurasDueToSpell(SpellID);
+                if (Pet* pPet = pTarget->GetPet())
+                    pPet->RemoveAurasDueToSpell(SpellID);
+            }
         }
         return true;
     }
