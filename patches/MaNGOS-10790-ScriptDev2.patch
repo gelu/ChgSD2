@@ -47,8 +47,8 @@ index fe1ace1..40b6fdd 100644
 -	../bindings/universal/libmangosscript.la \
 +	../bindings/ScriptDev2/libmangosscript.la \
  	../game/libmangosgame.a \
+ 	../game/vmap/libmangosvmaps.a \
  	../shared/Database/libmangosdatabase.a \
- 	../shared/Config/libmangosconfig.a \
 @@ -51,7 +51,7 @@ mangos_worldd_LDADD = \
  	../../dep/src/g3dlite/libg3dlite.a \
  	../../dep/src/gsoap/libgsoap.a
