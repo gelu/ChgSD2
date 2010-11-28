@@ -124,10 +124,10 @@ UPDATE `creature_template` SET `ScriptName`='mob_kinetic_bomb_target', `AIName`=
 -- Keleseth
 UPDATE `creature_template` SET `ScriptName`='boss_keleseth_icc', `AIName`='' WHERE `entry`= 37972;
 UPDATE `creature_template` SET `ScriptName`='mob_dark_nucleus', `AIName`='',`minlevel` = 82, `maxlevel` = 82, `faction_A` = 14, `faction_H` = 14 WHERE `entry`= 38369;
-REPLACE INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
-(37970, 0, 0, 0, 0, 0, '71598 0 71598 1'),
-(37972, 0, 0, 0, 0, 0, '71598 0 71598 1'),
-(37973, 0, 0, 0, 0, 0, '71598 0 71598 1');
+REPLACE INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `emote`, `moveflags`, `auras`) VALUES
+(37970, 0, 0, 0, 0, '71598 0 71598 1'),
+(37972, 0, 0, 0, 0, '71598 0 71598 1'),
+(37973, 0, 0, 0, 0, '71598 0 71598 1');
 
 
 UPDATE `gameobject_template` SET `faction` = '114',`data0` = '0' WHERE `gameobject_template`.`entry` IN (201920,201377,201378);
