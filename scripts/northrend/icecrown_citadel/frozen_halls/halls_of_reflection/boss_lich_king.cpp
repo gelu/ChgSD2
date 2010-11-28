@@ -31,7 +31,6 @@ enum
   SPELL_WINTER                       = 69780,
   SPELL_FURY_OF_FROSTMOURNE          = 70063,
   SPELL_SOUL_REAPER                  = 73797,
-  SPELL_RAISE_DEAD                   = 69818,
   SPELL_ICE_PRISON                   = 69708,
   SPELL_DARK_ARROW                   = 70194,
   SPELL_EMERGE_VISUAL                = 50142,
@@ -40,16 +39,22 @@ enum
   SPELL_LICH_KING_CAST               = 57561,
   SPELL_GNOUL_JUMP                   = 70150,
   SPELL_ABON_STRIKE                  = 40505,
+
   // summon spells
   SPELL_WITCH_DOCTOR                 = 69836,
-  SPELL_RAGING_GHOUL                 = 69817,
   SPELL_SUMMON_ABOM                  = 69835,
+  SPELL_RAISE_DEAD                   = 69818,
 
-  /*SPELLS - Witch Doctor*/
+  /*SPELLS - Witch Doctor, 36941 */
   SPELL_COURSE_OF_DOOM               = 70144,
   SPELL_SHADOW_BOLT_VALLEY           = 70145,
-  SPELL_SHADOW_BOLT_N                = 70080,
-  SPELL_SHADOW_BOLT_H                = 70182,
+  SPELL_SHADOW_BOLT                  = 70080,
+
+  /*SPELLS - abomination, 37069 */
+  SPELL_CLEAVE                       = 40505,
+
+  /*SPELLS - raging ghoul, 36940 */
+  SPELL_LEAP                         = 70150,
 
   SAY_LICH_KING_WALL_01              = -1594486,
   SAY_LICH_KING_WALL_02              = -1594491,
@@ -153,7 +158,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             SetEscortPaused(true);
             m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_WALL_01, m_creature);
-            DoCast(m_creature, SPELL_RAGING_GHOUL);
             StepTimer = 2000;
             ++Step;
             break;
@@ -194,7 +198,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
           case 0:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAGING_GHOUL);
             DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
             StepTimer = 10000;
@@ -218,7 +221,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 0:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAGING_GHOUL);
             DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
             StepTimer = 10000;
@@ -246,7 +248,6 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 0:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAGING_GHOUL);
             DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
             StepTimer = 10000;
@@ -353,6 +354,46 @@ CreatureAI* GetAI_boss_lich_king_hr(Creature* pCreature)
     return new boss_lich_king_hrAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_undead_horAI : public BSWScriptedAI
+{
+    npc_undead_horAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    }
+
+    ScriptedInstance* m_pInstance;
+
+    void Reset()
+    {
+    }
+
+    void EnterEvadeMode()
+    {
+        if (!m_pInstance) 
+            return;
+
+        m_creature->ForcedDespawn();
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_pInstance || m_pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS) 
+            m_creature->ForcedDespawn();
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        doCastAll(uiDiff);
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_undead_hor(Creature* pCreature)
+{
+    return new npc_undead_horAI(pCreature);
+}
+
 void AddSC_boss_lich_king_hr()
 {
     Script *newscript;
@@ -362,4 +403,8 @@ void AddSC_boss_lich_king_hr()
     newscript->GetAI = &GetAI_boss_lich_king_hr;
     newscript->RegisterSelf();
 
+    newscript = new Script;
+    newscript->Name = "npc_undead_hor";
+    newscript->GetAI = &GetAI_npc_undead_hor;
+    newscript->RegisterSelf();
 }

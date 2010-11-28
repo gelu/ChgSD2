@@ -54,7 +54,7 @@ UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_marwyn' WHERE `en
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_lich_king_hr' WHERE `entry` IN (36954);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_lich_king_hr' WHERE `entry` IN (37226);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_jaina_and_sylvana_HRextro' WHERE `entry` IN (36955, 37554);
-UPDATE `creature_template` SET `AIName`='', `Scriptname`='generic_creature' WHERE `entry` IN (36940,36941,37069);
+UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_undead_hor' WHERE `entry` IN (36940,36941,37069);
 UPDATE `creature_template` SET `scale`='0.8', `equipment_id`='1221' WHERE `entry` IN (37221, 36955);
 UPDATE `creature_template` SET `equipment_id`='1290' WHERE `entry` IN (37223, 37554);
 UPDATE `creature_template` SET `equipment_id`='0' WHERE `entry`=36954;

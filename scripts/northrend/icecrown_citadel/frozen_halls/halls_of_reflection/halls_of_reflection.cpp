@@ -1276,10 +1276,6 @@ enum GENERAL_EVENT
    SAY_DEATH                    = -1594520,
 
    SPELL_SHIELD_THROWN          = 69222,
-   SPELL_REFLECTION_GHOST       = 69861,
-   SPELL_CLONE                  = 69828,
-   SPELL_CLONE2                 = 69837,
-
 };
 
 struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
@@ -1378,6 +1374,17 @@ CreatureAI* GetAI_npc_frostworn_general(Creature* pCreature)
     return new npc_frostworn_generalAI(pCreature);
 }
 
+enum spiritual_reflection
+{
+   SPELL_REFLECTION_GHOST       = 69861,
+   SPELL_CLONE                  = 69828,
+   SPELL_CLONE2                 = 69837,
+
+   SPELL_BALEFUL_STRIKE         = 69933,
+   SPELL_SPIRIT_BURST           = 69900,
+
+};
+
 struct MANGOS_DLL_DECL npc_spiritual_reflectionAI : public BSWScriptedAI
 {
     npc_spiritual_reflectionAI(Creature *pCreature) : BSWScriptedAI(pCreature)
@@ -1388,43 +1395,62 @@ struct MANGOS_DLL_DECL npc_spiritual_reflectionAI : public BSWScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool isMirror;
+    ObjectGuid victimGuid;
 
     void Reset()
     {
         if (!m_pInstance) 
             return;
         isMirror = false;
+        victimGuid = ObjectGuid();
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void Aggro(Unit* pVictim)
     {
-        if (!m_pInstance) 
+        if (!m_pInstance || !pVictim || pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
+
+        if (victimGuid.IsEmpty())
+            victimGuid = pVictim->GetObjectGuid();
+
         DoStartMovement(pVictim);
+    }
+
+    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
+    {
+        if (!m_pInstance || !m_creature )
+            return;
+
+        if (uiDamage >= m_creature->GetHealth())
+            doCast(SPELL_SPIRIT_BURST);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-//        if (!m_pInstance || m_pInstance->GetData(TYPE_FROST_GENERAL) != IN_PROGRESS) 
-//            m_creature->ForcedDespawn();
+        if (!m_pInstance || m_pInstance->GetData(TYPE_FROST_GENERAL) != IN_PROGRESS) 
+            m_creature->ForcedDespawn();
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (!isMirror && m_creature->getVictim()->IsWithinDistInMap(m_creature, 8.0f))
+        if (!isMirror)
         {
-            m_creature->getVictim()->CastSpell(m_creature, SPELL_CLONE, true);
-            m_creature->getVictim()->CastSpell(m_creature, SPELL_CLONE2, true);
-            m_creature->getVictim()->CastSpell(m_creature, SPELL_REFLECTION_GHOST, true);
-            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            isMirror = true;
+            if (Unit* pVictim = m_creature->GetMap()->GetUnit(victimGuid))
+                if (m_creature->IsWithinDistInMap(pVictim, 5.0f))
+                {
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                    pVictim->CastSpell(m_creature, SPELL_CLONE, true);
+                    pVictim->CastSpell(m_creature, SPELL_CLONE2, true);
+                    pVictim->CastSpell(m_creature, SPELL_REFLECTION_GHOST, true);
+                    isMirror = true;
+                }
         }
 
         if (!isMirror)
             return;
 
-        doCastAll(uiDiff);
+        timedCast(SPELL_BALEFUL_STRIKE,uiDiff);
 
         DoMeleeAttackIfReady();
     }

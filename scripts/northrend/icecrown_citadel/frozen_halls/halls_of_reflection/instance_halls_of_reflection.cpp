@@ -133,10 +133,16 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
     {
         switch(pGo->GetEntry())
         {
-            case  GO_IMPENETRABLE_DOOR: m_uiMainGateGUID = pGo->GetGUID(); break;
+            case  GO_IMPENETRABLE_DOOR: m_uiMainGateGUID = pGo->GetGUID(); 
+                                        if (GetData(TYPE_MARWYN) == DONE)
+                                            DoOpenDoor(m_uiMainGateGUID);
+                                        break;
             case  GO_FROSTMOURNE:       m_uiFrostmourneGUID = pGo->GetGUID(); break;
             case  GO_ICECROWN_DOOR:     m_uiExitGateGUID = pGo->GetGUID(); break;
-            case  GO_ICECROWN_DOOR_2:   m_uiDoor2GUID = pGo->GetGUID(); break;
+            case  GO_ICECROWN_DOOR_2:   m_uiDoor2GUID = pGo->GetGUID();
+                                        if (GetData(TYPE_FROST_GENERAL) == DONE)
+                                            DoOpenDoor(m_uiDoor2GUID);
+                                        break;
             case  GO_ICECROWN_DOOR_3:   m_uiDoor3GUID = pGo->GetGUID(); break;
             case  GO_PORTAL:            m_uiPortalGUID = pGo->GetGUID(); break;
             case  GO_CAPTAIN_CHEST_1:
@@ -170,11 +176,17 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                             uiData = NOT_STARTED;
                 break;
             case TYPE_FALRIC:               m_auiEncounter[uiType] = uiData;
-                                            if(uiData == SPECIAL)
+                                            if (uiData == SPECIAL)
                                                 DoCloseDoor(m_uiExitGateGUID);
+                                            else if (uiData == FAIL)
+                                                DoOpenDoor(m_uiExitGateGUID);
                 break;
             case TYPE_MARWYN:               m_auiEncounter[uiType] = uiData;
-                                            if(uiData == DONE)
+                                            if (uiData == SPECIAL)
+                                                DoCloseDoor(m_uiExitGateGUID);
+                                            else if (uiData == FAIL)
+                                                DoOpenDoor(m_uiExitGateGUID);
+                                            else if (uiData == DONE)
                                             {
                                                DoOpenDoor(m_uiMainGateGUID);
                                                DoOpenDoor(m_uiExitGateGUID);
@@ -192,16 +204,20 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                             if (m_auiLider == 1)
                                             {
                                             if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
-                                                if (pChest && !pChest->isSpawned()) {
+                                                if (pChest && !pChest->isSpawned()) 
+                                                {
                                                     pChest->SetRespawnTime(DAY);
                                                 };
-                                            } else
+                                            } 
+                                            else
                                             if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
-                                                if (pChest && !pChest->isSpawned()) {
+                                                if (pChest && !pChest->isSpawned()) 
+                                                {
                                                     pChest->SetRespawnTime(DAY);
                                                 };
                                             if (GameObject* pPortal = instance->GetGameObject(m_uiPortalGUID))
-                                                if (pPortal && !pPortal->isSpawned()) {
+                                                if (pPortal && !pPortal->isSpawned()) 
+                                                {
                                                     pPortal->SetRespawnTime(DAY);
                                                 };
                                             }
