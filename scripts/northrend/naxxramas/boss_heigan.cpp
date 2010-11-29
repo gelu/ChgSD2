@@ -243,9 +243,7 @@ struct MANGOS_DLL_DECL npc_heigan_eruptionAI : public ScriptedAI
 
         AllGameObjectsWithEntryInRangeCheck check(m_creature, entry, 100);
         MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRangeCheck> searcher(gameobjectList, check);
-        TypeContainerVisitor<MaNGOS::GameObjectListSearcher<AllGameObjectsWithEntryInRangeCheck>, GridTypeMapContainer> visitor(searcher);
-
-        m_creature->GetMap()->Visit(cell, visitor);
+        cell.VisitAllObjects(m_creature, searcher, 100);
 
         return gameobjectList;
     }
