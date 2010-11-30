@@ -174,7 +174,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 3:
             DoCast(m_creature, SPELL_WINTER);
             DoScriptText(SAY_LICH_KING_WINTER, m_creature);
-            m_creature->SetSpeedRate(MOVE_WALK, 1.1f, true);
+            m_creature->SetSpeedRate(MOVE_WALK, 1.3f, true);
             StepTimer = 1000;
             ++Step;
             break;
@@ -186,7 +186,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          case 5:
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             StepTimer = 100;
-            Step = 0;
+            ++Step;
             break;
        }
     }
@@ -195,7 +195,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
     {
       switch(Step)
       {
-          case 0:
+          case 6:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -203,13 +203,13 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             StepTimer = 10000;
             ++Step;
             break;
-          case 1:
+          case 7:
             SetEscortPaused(false);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             DoCast(m_creature, SPELL_SUMMON_ABOM);
             StepTimer = 100;
-            Step = 0;
+            ++Step;
             break;
       }
    }
@@ -218,7 +218,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
     {
       switch(Step)
       {
-         case 0:
+         case 8:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -226,7 +226,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             StepTimer = 10000;
             ++Step;
             break;
-         case 1:
+         case 9:
             SetEscortPaused(false);
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
@@ -236,7 +236,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             DoCast(m_creature, SPELL_SUMMON_ABOM);
             m_pInstance->SetData(TYPE_ICE_WALL_03, DONE);
             StepTimer = 100;
-            Step = 0;
+            ++Step;
             break;
       }
     }
@@ -245,7 +245,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
    {
       switch(Step)
       {
-         case 0:
+         case 10:
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -253,9 +253,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             StepTimer = 10000;
             ++Step;
             break;
-         case 1:
+         case 11:
             SetEscortPaused(false);
-            m_creature->SetSpeedRate(MOVE_WALK, 1.2f, true);
+            m_creature->SetSpeedRate(MOVE_WALK, 1.3f, true);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
@@ -264,12 +264,13 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             StepTimer = 15000;
             ++Step;
             break;
-         case 2:
+         case 12:
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            StepTimer = 5000;
             ++Step;
-           break;
+            break;
       }
    }
 
@@ -301,7 +302,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
          NonFight = true;
          m_creature->AttackStop();
          m_creature->AddSplineFlag(SPLINEFLAG_WALKMODE);
-         m_creature->SetSpeedRate(MOVE_WALK, 2.6f, true);
+         m_creature->SetSpeedRate(MOVE_WALK, 2.7f, true);
          if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
              pEscortAI->Start();
          Step = 0;

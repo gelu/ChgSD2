@@ -147,8 +147,11 @@ static _Locations WallLoc[]=
     {5540.39f, 2086.48f, 731.066f, 1.00057f},
     {5494.3f, 1978.27f, 736.689f, 1.0885f},
     {5434.27f, 1881.12f, 751.303f, 0.923328f},
-    {5323.61f, 1755.85f, 770.305f, 0.784186f}
+    {5323.61f, 1755.85f, 770.305f, 0.784186f},
+    {5239.01f, 1932.64f, 707.695f, 0.8f},       // Spawn point for Jaina && Silvana intro
+    {5266.779785f, 1953.42f, 707.697f, 1.0f},
 };
+
 
 struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 {
@@ -200,11 +203,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
             case 1:
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                if (Creature* pQuelDelar = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_QUEL_DELAR)))
-                {
-                   pQuelDelar->setFaction(m_creature->getFaction());
-                   pQuelDelar->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 63135);
-                }
                 JumpNextStep(2000);
                 break;
             case 2:
@@ -1442,6 +1440,9 @@ struct MANGOS_DLL_DECL npc_spiritual_reflectionAI : public BSWScriptedAI
                     m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                     pVictim->CastSpell(m_creature, SPELL_CLONE, true);
                     pVictim->CastSpell(m_creature, SPELL_CLONE2, true);
+                    m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID,   pVictim->GetUInt32Value(PLAYER_VISIBLE_ITEM_16_ENTRYID));
+                    m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+1, pVictim->GetUInt32Value(PLAYER_VISIBLE_ITEM_17_ENTRYID));
+                    m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID+2, pVictim->GetUInt32Value(PLAYER_VISIBLE_ITEM_18_ENTRYID));
                     pVictim->CastSpell(m_creature, SPELL_REFLECTION_GHOST, true);
                     isMirror = true;
                 }
@@ -1460,6 +1461,79 @@ CreatureAI* GetAI_npc_spiritual_reflection(Creature* pCreature)
 {
     return new npc_spiritual_reflectionAI(pCreature);
 }
+
+struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
+{
+    npc_queldelar_horAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+    bool intro;
+    Team team;
+    uint32 newLeader;
+
+    void Reset()
+    {
+        intro = false;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if (!m_pInstance || intro)
+            return;
+
+        if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 20.0f))
+            return;
+
+        if (m_pInstance->GetData(TYPE_MARWYN) == DONE)
+            return;
+
+        if (Group* pGroup = ((Player*)pWho)->GetGroup())
+        {
+            ObjectGuid LeaderGuid = pGroup->GetLeaderGuid();
+            if (!LeaderGuid.IsEmpty())
+                if (Player* pLeader =m_creature->GetMap()->GetPlayer(LeaderGuid))
+                    team = pLeader->GetTeam();
+        }
+        else
+             team = ((Player*)pWho)->GetTeam();
+
+
+        if (team == ALLIANCE)
+            newLeader = NPC_JAINA;
+        else
+            newLeader = NPC_SYLVANA;
+
+        debug_log("HOR event: team %u, leader %u ",team,newLeader);
+
+        if (Creature* pNewLeader = m_creature->SummonCreature(newLeader,WallLoc[4].x,WallLoc[4].y,WallLoc[4].z,WallLoc[4].o,TEMPSUMMON_MANUAL_DESPAWN,0,true))
+        {
+             pNewLeader->SetCreatorGuid(ObjectGuid());
+             pNewLeader->setFaction(35);
+             pNewLeader->SetPhaseMask(65535, true);
+             pNewLeader->GetMotionMaster()->MovePoint(0, WallLoc[5].x,WallLoc[5].y,WallLoc[5].z);
+        }
+        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 63135);
+    }
+
+    void AttackStart(Unit* who) 
+    {
+         return;
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+    }
+};
+CreatureAI* GetAI_npc_queldelar_hor(Creature* pCreature)
+{
+    return new npc_queldelar_horAI(pCreature);
+}
+
 
 void AddSC_halls_of_reflection()
 {
@@ -1492,5 +1566,10 @@ void AddSC_halls_of_reflection()
     newscript = new Script;
     newscript->Name = "npc_spiritual_reflection";
     newscript->GetAI = &GetAI_npc_spiritual_reflection;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_queldelar_hor";
+    newscript->GetAI = &GetAI_npc_queldelar_hor;
     newscript->RegisterSelf();
 }

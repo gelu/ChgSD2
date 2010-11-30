@@ -133,7 +133,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
     {
         switch(pGo->GetEntry())
         {
-            case  GO_IMPENETRABLE_DOOR: m_uiMainGateGUID = pGo->GetGUID(); 
+            case  GO_IMPENETRABLE_DOOR: m_uiMainGateGUID = pGo->GetGUID();
                                         if (GetData(TYPE_MARWYN) == DONE)
                                             DoOpenDoor(m_uiMainGateGUID);
                                         break;
@@ -162,7 +162,10 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                   m_uiCaptainsChestAllianceGUID = pGo->GetGUID(); 
                                   break;
 
-            case  GO_ICE_WALL:    m_uiIceWallGUID  = pGo->GetGUID(); break;
+            case  GO_ICE_WALL:    m_uiIceWallGUID  = pGo->GetGUID();
+                                  pGo->SetUInt32Value(GAMEOBJECT_FACTION,114);
+                                  pGo->SetPhaseMask(65535, true);
+                                  break;
             case  GO_CAVE:        m_uiCaveGUID     = pGo->GetGUID(); break;
         }
     }

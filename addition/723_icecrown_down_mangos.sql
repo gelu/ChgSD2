@@ -111,6 +111,8 @@ UPDATE `gameobject` SET `state` = '1' WHERE `id` IN (197341,197342,197343);
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69768', '1', '37014');
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69767', '1', '37014');
 DELETE from `creature` WHERE `id`=37014;
+UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_queldelar_hor' where `entry` IN (37158);
+
 
 -- Captains chest (override)
 DELETE FROM `gameobject` WHERE `id` IN (202212,201710,202337,202336);
