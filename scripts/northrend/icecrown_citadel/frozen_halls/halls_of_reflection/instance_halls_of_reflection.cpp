@@ -24,7 +24,6 @@ SDAuthor: /dev/rsa, modified by MaxXx2021 aka Mioka
 EndScriptData */
 
 #include "precompiled.h"
-#include "BSW_instance.h"
 #include "def_halls.h"
 #include "World.h"
 
@@ -37,7 +36,6 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
     }
 
     uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
-    uint32 m_auiLider;
     std::string strSaveData;
 
     uint8 Difficulty;
@@ -100,34 +98,6 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                    break;
         }
     }
-
-    void OnPlayerEnter(Player *pPlayer)
-    {
-
-    enum PhaseControl
-    {
-        HORDE_CONTROL_PHASE_SHIFT_1    = 55773,
-        HORDE_CONTROL_PHASE_SHIFT_2    = 60028,
-        ALLIANCE_CONTROL_PHASE_SHIFT_1 = 55774,
-        ALLIANCE_CONTROL_PHASE_SHIFT_2 = 60027,
-    };
-        if (!sWorld.getConfig(CONFIG_BOOL_ALLOW_TWO_SIDE_INTERACTION_GROUP)) return;
-
-        switch (pPlayer->GetTeam())
-        {
-            case ALLIANCE:
-                  if (pPlayer && pPlayer->IsInWorld() && pPlayer->HasAura(HORDE_CONTROL_PHASE_SHIFT_1))
-                      pPlayer->RemoveAurasDueToSpell(HORDE_CONTROL_PHASE_SHIFT_1);
-                  pPlayer->CastSpell(pPlayer, HORDE_CONTROL_PHASE_SHIFT_2, false);
-                  break;
-            case HORDE:
-                  if (pPlayer && pPlayer->IsInWorld() && pPlayer->HasAura(ALLIANCE_CONTROL_PHASE_SHIFT_1)) 
-                      pPlayer->RemoveAurasDueToSpell(ALLIANCE_CONTROL_PHASE_SHIFT_1);
-                  pPlayer->CastSpell(pPlayer, ALLIANCE_CONTROL_PHASE_SHIFT_2, false);
-                  break;
-        };
-
-    };
 
     void OnObjectCreate(GameObject* pGo)
     {
@@ -204,25 +174,21 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                                DoOpenDoor(m_uiDoor3GUID);
                                             if(uiData == DONE)
                                             {
-                                            if (m_auiLider == 1)
-                                            {
-                                            if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
-                                                if (pChest && !pChest->isSpawned()) 
-                                                {
-                                                    pChest->SetRespawnTime(DAY);
-                                                };
-                                            } 
-                                            else
-                                            if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
-                                                if (pChest && !pChest->isSpawned()) 
-                                                {
-                                                    pChest->SetRespawnTime(DAY);
-                                                };
-                                            if (GameObject* pPortal = instance->GetGameObject(m_uiPortalGUID))
-                                                if (pPortal && !pPortal->isSpawned()) 
-                                                {
-                                                    pPortal->SetRespawnTime(DAY);
-                                                };
+                                                if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
+                                                    if (pChest && !pChest->isSpawned())
+                                                    {
+                                                        pChest->SetRespawnTime(DAY);
+                                                    }
+                                                if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
+                                                    if (pChest && !pChest->isSpawned())
+                                                    {
+                                                        pChest->SetRespawnTime(DAY);
+                                                    };
+                                                if (GameObject* pPortal = instance->GetGameObject(m_uiPortalGUID))
+                                                    if (pPortal && !pPortal->isSpawned()) 
+                                                    {
+                                                        pPortal->SetRespawnTime(DAY);
+                                                    };
                                             }
                 break;
             case TYPE_ICE_WALL_01:
@@ -237,9 +203,6 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                             }
                                             break;
             case TYPE_HALLS:                m_auiEncounter[uiType] = uiData; break;
-            case DATA_LIDER:                m_auiLider = uiData;
-                                            uiData = NOT_STARTED;
-                break;
             case DATA_SUMMONS:              if (uiData == 3) m_uiSummons = 0;
                                             else if (uiData == 1) ++m_uiSummons;
                                             else if (uiData == 0) --m_uiSummons;
@@ -283,7 +246,6 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
             case TYPE_ICE_WALL_03:          return m_auiEncounter[uiType];
             case TYPE_ICE_WALL_04:          return m_auiEncounter[uiType];
             case TYPE_HALLS:                return m_auiEncounter[uiType];
-            case DATA_LIDER:                return m_auiLider;
             case DATA_SUMMONS:              return m_uiSummons;
             default:                        return 0;
         }

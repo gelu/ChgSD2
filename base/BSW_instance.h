@@ -4,19 +4,29 @@
 
 #ifndef BSW_INSTANCE_H
 #define BSW_INSTANCE_H
-#define BSW_VERSION 0.6.12
+#define BSW_INSTANCE_VERSION 0.6.14
 #include "sc_instance.h"
 
 class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
 {
     public:
 
-        BSWScriptedInstance(Map* pMap) : ScriptedInstance(pMap) {}
-        ~BSWScriptedInstance() {}
+        BSWScriptedInstance(Map* pMap);
+        ~BSWScriptedInstance();
 
         //sends completed achievments to all players in instance
         void DoCompleteAchievement(uint32 uiAchievmentId);
         void DoOpenDoor(uint64 guid);
         void DoCloseDoor(uint64 guid);
+
+        void   SetNextEvent(uint32 EventNum, uint32 timer = 1000);
+        uint32 GetEvent();
+        bool   GetEventTimer(const uint32 diff);
+
+    private:
+        uint32 m_auiEvent;
+        uint32 m_auiEventTimer;
+        bool   m_auiEventLock;
+        Map*   m_pMap;
 };
 #endif

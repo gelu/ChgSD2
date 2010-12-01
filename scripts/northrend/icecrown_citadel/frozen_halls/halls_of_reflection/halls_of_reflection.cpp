@@ -157,13 +157,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 {
     npc_jaina_and_sylvana_HRintroAI(Creature *pCreature) : ScriptedAI(pCreature)
    {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
    }
 
-   ScriptedInstance* m_pInstance;
+   BSWScriptedInstance* m_pInstance;
 
-   uint32 StepTimer;
    uint32 Step;
    uint64 m_uiFrostmourneGUID;
    uint64 m_uiMainGateGUID;
@@ -180,27 +179,19 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
       Small = false;
    }
 
-   void StartEvent()
-   {
-      if(!m_pInstance) return
-      debug_log("EventMGR: creature %u received signal %u ",m_creature->GetEntry(),m_pInstance->GetData(TYPE_EVENT));
-         m_pInstance->SetData(TYPE_PHASE, 1);
-         m_pInstance->SetData(TYPE_EVENT, 0);
-      Step = 1;
-      StepTimer = 100;
-   }
-
    void JumpNextStep(uint32 Time)
    {
-      StepTimer = Time;
       Step++;
+      m_pInstance->SetNextEvent(Step, Time);
    }
 
    void Event()
    {
-         switch(Step)
+         switch(m_pInstance->GetEvent())
          {
             case 1:
+                if (m_pInstance->GetData(TYPE_EVENT) == 2)
+                    Small = true;
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
                 JumpNextStep(2000);
@@ -301,6 +292,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 }
                 break;
             case 11:
+                if (Small)
+                   Step = 24;
                 if(m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
                    DoScriptText(SAY_UTHER_A_03, pUther);
@@ -311,8 +304,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                    DoScriptText(SAY_UTHER_H_03, pUther);
                    JumpNextStep(6000);
                 }
-                if(Small)
-                   Step = 24;
                 break;
             case 12:
                 if(m_creature->GetEntry() == NPC_JAINA)
@@ -578,7 +569,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 break;
             case 38:
                 if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
-                   pGate->SetGoState(GO_STATE_READY); 
+                   pGate->SetGoState(GO_STATE_READY);
                 JumpNextStep(5000);
                 break;
             case 39:
@@ -588,6 +579,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 m_pInstance->SetData(TYPE_PHASE, 2);
                 JumpNextStep(1000);
                 break;
+            case 40:
+                m_pInstance->SetNextEvent(0);
+                break;
+            default:
+                break;
          }
     }
 
@@ -596,20 +592,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
          if(!m_pInstance)
              return;
 
-        if(m_pInstance->GetData(TYPE_EVENT) == 1
-           &&  m_pInstance->GetData64(DATA_ESCAPE_LIDER) == m_creature->GetGUID())
-           StartEvent();
-
-        if(m_pInstance->GetData(TYPE_EVENT) == 2
-           &&  m_pInstance->GetData64(DATA_ESCAPE_LIDER) == m_creature->GetGUID())
-        {
-            Small = true;
-            StartEvent();
-        }
-
-         if(StepTimer < diff && m_pInstance->GetData(TYPE_PHASE) == 1)
+         if (m_pInstance->GetEventTimer(diff) && m_pInstance->GetData(TYPE_PHASE) == 1)
             Event();
-         else StepTimer -= diff;
 
          return;
      }
@@ -617,7 +601,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 
 bool GossipHello_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCreature)
 {
-    ScriptedInstance* m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    BSWScriptedInstance* m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
 
     if(pCreature->isQuestGiver())
        pPlayer->PrepareQuestMenu( pCreature->GetGUID());
@@ -640,7 +624,7 @@ bool GossipHello_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCreat
 
 bool GossipSelect_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
-    ScriptedInstance* m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+    BSWScriptedInstance* m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
 
     if (!m_pInstance) return false;
 
@@ -649,16 +633,16 @@ bool GossipSelect_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCrea
         case GOSSIP_ACTION_INFO_DEF+1:
                pPlayer->CLOSE_GOSSIP_MENU();
                m_pInstance->SetData(TYPE_EVENT, 1);
+               m_pInstance->SetData(TYPE_PHASE, 1);
                break;
         case GOSSIP_ACTION_INFO_DEF+2:
                pPlayer->CLOSE_GOSSIP_MENU();
                m_pInstance->SetData(TYPE_EVENT, 2);
+               m_pInstance->SetData(TYPE_PHASE, 1);
                break;
     }
 
-    if(pPlayer->GetTeam() == ALLIANCE)
-            m_pInstance->SetData(DATA_LIDER, 1);
-       else m_pInstance->SetData(DATA_LIDER, 2);
+    m_pInstance->SetNextEvent(1, 500);
 
     m_pInstance->SetData64(DATA_ESCAPE_LIDER,pCreature->GetGUID());
 
@@ -1228,31 +1212,6 @@ bool GossipSelect_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCrea
     }
 }
 
-struct MANGOS_DLL_DECL npc_lich_king_hrAI : public ScriptedAI
-{
-    npc_lich_king_hrAI(Creature *pCreature) : ScriptedAI(pCreature)
-    {
-        Reset();
-    }
-
-    void Reset()
-    {
-    }
-
-    void JustDied(Unit* pKiller)
-    {
-    }
-
-    void AttackStart(Unit* who) 
-    {
-         return;
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-    }
-};
-
 CreatureAI* GetAI_npc_jaina_and_sylvana_HRintro(Creature* pCreature)
 {
     return new npc_jaina_and_sylvana_HRintroAI(pCreature);
@@ -1261,11 +1220,6 @@ CreatureAI* GetAI_npc_jaina_and_sylvana_HRintro(Creature* pCreature)
 CreatureAI* GetAI_npc_jaina_and_sylvana_HRextro(Creature* pCreature)
 {
     return new npc_jaina_and_sylvana_HRextroAI(pCreature);
-}
-
-CreatureAI* GetAI_npc_lich_king_hr(Creature* pCreature)
-{
-    return new npc_lich_king_hrAI(pCreature);
 }
 
 enum GENERAL_EVENT
@@ -1466,11 +1420,11 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
 {
     npc_queldelar_horAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    BSWScriptedInstance* m_pInstance;
     bool intro;
     Team team;
     uint32 newLeader;
@@ -1489,8 +1443,25 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
         if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 20.0f))
             return;
 
+        intro = true;
+
         if (m_pInstance->GetData(TYPE_MARWYN) == DONE)
+        {
+            m_pInstance->DoOpenDoor(m_pInstance->GetData64(GO_IMPENETRABLE_DOOR));
             return;
+        }
+
+        if (m_pInstance->GetData(TYPE_FALRIC) == DONE)
+        {
+            if (Creature* pMarwin = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MARWYN)))
+            {
+                pMarwin->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                pMarwin->SetVisibility(VISIBILITY_ON);
+                pMarwin->SetInCombatWithZone();
+            }
+            return;
+        }
+
 
         if (Group* pGroup = ((Player*)pWho)->GetGroup())
         {
@@ -1516,8 +1487,10 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
              pNewLeader->setFaction(35);
              pNewLeader->SetPhaseMask(65535, true);
              pNewLeader->GetMotionMaster()->MovePoint(0, WallLoc[5].x,WallLoc[5].y,WallLoc[5].z);
+             pNewLeader->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+             pNewLeader->SetSpeedRate(MOVE_RUN, 1.0f, true);
         }
-        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 63135);
+//        m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID, 63135);
     }
 
     void AttackStart(Unit* who) 
@@ -1551,11 +1524,6 @@ void AddSC_halls_of_reflection()
     newscript->GetAI = &GetAI_npc_jaina_and_sylvana_HRextro;
     newscript->pGossipHello = &GossipHello_npc_jaina_and_sylvana_HRextro;
     newscript->pGossipSelect = &GossipSelect_npc_jaina_and_sylvana_HRextro;
-    newscript->RegisterSelf();
-
-    newscript = new Script;
-    newscript->Name = "npc_lich_king_hr";
-    newscript->GetAI = &GetAI_npc_lich_king_hr;
     newscript->RegisterSelf();
 
     newscript = new Script;

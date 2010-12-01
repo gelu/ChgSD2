@@ -1,6 +1,7 @@
 #ifndef DEF_HALL_OF_REFLECTION_H
 #define DEF_HALL_OF_REFLECTION_H
 #include "BSW_ai.h"
+#include "BSW_instance.h"
 
 enum Data
 {
@@ -18,8 +19,7 @@ enum Data
     MAX_ENCOUNTERS,
 
     DATA_ESCAPE_LIDER       = 101,
-    DATA_LIDER              = 102,
-    DATA_SUMMONS            = 103,
+    DATA_SUMMONS            = 102,
 
     /*UNITS*/
     NPC_DARK_1                   = 38177, //Shadowy Mercenary

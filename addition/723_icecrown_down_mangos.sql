@@ -51,7 +51,7 @@ UPDATE `creature_template` SET `speed_walk`='1.5', `speed_run`='2.0' WHERE `entr
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_jaina_and_sylvana_HRintro' WHERE `entry` IN (37221, 37223);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_falric' WHERE `entry` IN (38112);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_marwyn' WHERE `entry` IN (38113);
-UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_lich_king_hr' WHERE `entry` IN (36954);
+UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_lich_king_intro_hor' WHERE `entry` IN (36954);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='boss_lich_king_hr' WHERE `entry` IN (37226);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_jaina_and_sylvana_HRextro' WHERE `entry` IN (36955, 37554);
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_undead_hor' WHERE `entry` IN (36940,36941,37069);
@@ -112,6 +112,7 @@ REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('697
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('69767', '1', '37014');
 DELETE from `creature` WHERE `id`=37014;
 UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_queldelar_hor' where `entry` IN (37158);
+DELETE from `creature` WHERE `map` = 668 AND `id` IN (37221,37223);
 
 
 -- Captains chest (override)

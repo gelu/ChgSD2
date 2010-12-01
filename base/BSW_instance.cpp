@@ -5,6 +5,20 @@
 #include "precompiled.h"
 #include "BSW_instance.h"
 
+BSWScriptedInstance::BSWScriptedInstance(Map* pMap) : ScriptedInstance(pMap)
+{
+    debug_log("BSW: Initialized BSWScriptedInstance structure for map %u difficulty %u",pMap->GetId(),pMap->GetDifficulty());
+    m_auiEvent      = 0;
+    m_auiEventTimer = 0;
+    m_auiEventLock  = false;
+    m_pMap = pMap;
+};
+
+BSWScriptedInstance::~BSWScriptedInstance()
+{
+     debug_log("BSW: Removing BSWScriptedInstance structure for map %u",m_pMap->GetId());
+};
+
 void BSWScriptedInstance::DoCompleteAchievement(uint32 uiAchievmentId)
 {
     Map::PlayerList const& lPlayers = instance->GetPlayers();
@@ -45,5 +59,39 @@ void BSWScriptedInstance::DoCloseDoor(uint64 guid)
         pGo->SetGoState(GO_STATE_READY);
     else
         debug_log("SD2: DoCloseDoor attempt set data to object %u, but no this object", guid);
+}
+
+uint32 BSWScriptedInstance::GetEvent()
+{
+    if (m_auiEventLock)
+    {
+        return 0;
+    }
+    else
+    {
+        m_auiEventLock = true;
+        return  m_auiEvent;
+    }
+}
+
+void BSWScriptedInstance::SetNextEvent(uint32 EventNum, uint32 timer)
+{
+    m_auiEvent      = EventNum;
+    m_auiEventTimer = timer;
+    m_auiEventLock  = false;
+}
+
+bool BSWScriptedInstance::GetEventTimer(const uint32 diff)
+{
+    if (m_auiEventTimer <= diff)
+    {
+        m_auiEventTimer = 0;
+        return true;
+    }
+    else
+    {
+        m_auiEventTimer -= diff;
+        return false;
+    }
 }
 
