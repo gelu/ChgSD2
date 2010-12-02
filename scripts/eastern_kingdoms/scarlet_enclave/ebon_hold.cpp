@@ -32,6 +32,7 @@ EndContentData */
 
 #include "precompiled.h"
 #include "escort_ai.h"
+#include "ObjectMgr.h"
 
 /*######
 ## npc_a_special_surprise
@@ -1158,6 +1159,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 
     int32 StartTimer;
     bool Active;
+    ObjectGuid ownerGuid;
 
     void Reset()
     {
@@ -1174,13 +1176,15 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         if(!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
             return;
 
-        Unit* owner = m_creature->GetCharmerOrOwner();
+        m_creature->RemoveAurasDueToSpell(530);
 
-        if(!owner || owner->GetTypeId() != TYPEID_PLAYER)
+        Player* owner = ObjectAccessor::FindPlayer(ownerGuid);;
+
+        if(!owner)
             return;
 
+        owner->RemoveAurasDueToSpell(51923);
         owner->RemoveAurasDueToSpell(51852);
-        m_creature->RemoveAurasDueToSpell(530);
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
@@ -1199,6 +1203,9 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
     {
         if(m_creature->isCharmed())
         {
+            if (ownerGuid.IsEmpty())
+                ownerGuid = m_creature->GetCharmerOrOwner()->GetObjectGuid();
+
             if (StartTimer < uiDiff && !Active)
             {
                 m_creature->CastSpell(m_creature, 70889, true);
@@ -1213,8 +1220,17 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
                 StartTimer -= uiDiff;
         }
         else
+        {
             if (StartTimer < uiDiff)
+            {
                 m_creature->ForcedDespawn();
+                if (Player* owner = ObjectAccessor::FindPlayer(ownerGuid))
+                {
+                    owner->RemoveAurasDueToSpell(51852);
+                    owner->RemoveAurasDueToSpell(51923);
+                }
+            }
+        }
     }
 };
 
