@@ -19,12 +19,13 @@ class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
         void DoOpenDoor(uint64 guid);
         void DoCloseDoor(uint64 guid);
 
-        void   SetNextEvent(uint32 EventNum, uint32 timer = 1000);
-        uint32 GetEvent();
-        bool   GetEventTimer(const uint32 diff);
+        void   SetNextEvent(uint32 EventNum, uint32 creatureID, uint32 timer = 1000);
+        uint32 GetEvent(uint32 creatureID);
+        bool   GetEventTimer(uint32 creatureID, const uint32 diff);
 
     private:
         uint32 m_auiEvent;
+        uint32 m_auiCreatureID;
         uint32 m_auiEventTimer;
         bool   m_auiEventLock;
         Map*   m_pMap;

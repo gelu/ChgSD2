@@ -63,6 +63,27 @@ enum
   SAY_LICH_KING_WINTER               = -1594481,
   SAY_LICH_KING_END_DUN              = -1594504,
   SAY_LICH_KING_WIN                  = -1594485,
+
+  /*INTRO - Lich King Arrive*/
+  SAY_LICH_KING_17                   = -1594468,
+  SAY_LICH_KING_18                   = -1594469,
+  SAY_LICH_KING_19                   = -1594470,
+  SAY_JAINA_20                       = -1594471,
+  SAY_SYLVANA_20                     = -1594472,
+  SAY_LICH_KING_A_21                 = -1594473,
+  SAY_LICH_KING_H_21                 = -1594474,
+  SAY_FALRIC_INTRO                   = -1594475,
+  SAY_MARWYN_INTRO                   = -1594476,
+  SAY_FALRIC_INTRO2                  = -1594505,
+
+  SPELL_TAKE_FROSTMOURNE             = 72729,
+  SPELL_FROSTMOURNE_DESPAWN          = 72726,
+  SPELL_FROSTMOURNE_SOUNDS           = 70667,
+  SPELL_CAST_VISUAL                  = 65633,  //Jaina And Sylavana cast this when summon uther.
+  SPELL_BOSS_SPAWN_AURA              = 72712,  //Falric and Marwyn
+  SPELL_UTHER_DESPAWN                = 70693,
+  SPELL_FROSTMOURNE_VISUAL           = 73220,
+
 };
 
 struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
@@ -359,11 +380,15 @@ struct MANGOS_DLL_DECL boss_lich_king_intro_horAI : public ScriptedAI
 {
     boss_lich_king_intro_horAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
     }
 
+    BSWScriptedInstance* m_pInstance;
+
     void Reset()
     {
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void JustDied(Unit* pKiller)
@@ -372,11 +397,126 @@ struct MANGOS_DLL_DECL boss_lich_king_intro_horAI : public ScriptedAI
 
     void AttackStart(Unit* who) 
     {
-         return;
+    }
+
+    uint32 GetLeader()
+    {
+         if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+             return pLider->GetEntry();
+         else return 0;
+    }
+
+    void Event()
+    {
+         switch(m_pInstance->GetEvent(m_creature->GetEntry()))
+         {
+            case 24:
+                m_pInstance->DoOpenDoor(m_pInstance->GetData64(GO_IMPENETRABLE_DOOR));
+                m_pInstance->SetNextEvent(25,GetLeader(),1000);
+                break;
+            case 25:
+                m_creature->GetMotionMaster()->MovePoint(0, 5314.881f, 2012.496f, 709.341f);
+                m_pInstance->SetNextEvent(26,m_creature->GetEntry(),3000);
+                break;
+            case 26:
+                m_pInstance->DoCloseDoor(m_pInstance->GetData64(GO_IMPENETRABLE_DOOR));
+                m_pInstance->SetNextEvent(26,m_creature->GetEntry(),7000);
+                break;
+            case 27:
+                if (Creature* pUther = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_UTHER))))
+                   pUther->CastSpell(pUther, SPELL_UTHER_DESPAWN, false);
+                m_pInstance->SetNextEvent(26,m_creature->GetEntry(),500);
+                break;
+            case 28:
+                DoScriptText(SAY_LICH_KING_17, m_creature);
+                m_pInstance->SetNextEvent(29,m_creature->GetEntry(),10000);
+                break;
+            case 29:
+                DoScriptText(SAY_LICH_KING_18, m_creature);
+                m_pInstance->SetNextEvent(30,m_creature->GetEntry(),5000);
+                break;
+            case 30:
+                m_creature->CastSpell(m_creature, SPELL_TAKE_FROSTMOURNE, false);
+                m_pInstance->DoCloseDoor(m_pInstance->GetData64(GO_FROSTMOURNE));
+                m_pInstance->SetNextEvent(31,m_creature->GetEntry(),1500);
+                break;
+            case 31:
+                if (GameObject* pFrostmourne = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_FROSTMOURNE)))
+                    pFrostmourne->SetPhaseMask(0, true);
+                m_creature->CastSpell(m_creature, SPELL_FROSTMOURNE_VISUAL, false);
+                m_pInstance->SetNextEvent(31,GetLeader(),500);
+                break;
+            case 32:
+                DoScriptText(SAY_LICH_KING_19, m_creature);
+                m_pInstance->SetNextEvent(33,m_creature->GetEntry(),9000);
+                break;
+            case 33:
+                if (Creature* pFalric = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_FALRIC))))
+                {
+                    pFalric->SetVisibility(VISIBILITY_ON);
+                    pFalric->CastSpell(pFalric, SPELL_BOSS_SPAWN_AURA, false);
+                    pFalric->GetMotionMaster()->MovePoint(0, 5283.309f, 2031.173f, 709.319f);
+                }
+                if (Creature* pMarwyn = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MARWYN))))
+                {
+                    pMarwyn->SetVisibility(VISIBILITY_ON);
+                    pMarwyn->CastSpell(pMarwyn, SPELL_BOSS_SPAWN_AURA, false);
+                    pMarwyn->GetMotionMaster()->MovePoint(0, 5335.585f, 1981.439f, 709.319f);
+                }
+                m_creature->GetMotionMaster()->MovePoint(0, 5402.286f, 2104.496f, 707.695f);
+                m_pInstance->SetNextEvent(34,m_creature->GetEntry(),1000);
+                break;
+            case 34:
+                if (Creature* pFalric = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_FALRIC))))
+                    DoScriptText(SAY_FALRIC_INTRO, pFalric);
+                if (Creature* pMarwyn = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MARWYN))))
+                    DoScriptText(SAY_MARWYN_INTRO, pMarwyn);
+                m_pInstance->SetNextEvent(35,m_creature->GetEntry(),3000);
+                break;
+            case 35:
+                if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_IMPENETRABLE_DOOR)))
+                     pGate->SetGoState(GO_STATE_ACTIVE);
+                if (Creature* pFalric = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_FALRIC))))
+                    DoScriptText(SAY_FALRIC_INTRO2, pFalric);
+                m_pInstance->SetData(TYPE_FALRIC, SPECIAL);
+                m_pInstance->SetNextEvent(36,GetLeader(),4000);
+                break;
+            case 37:
+                m_creature->GetMotionMaster()->MovementExpired(false);
+                m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+                m_creature->GetMotionMaster()->MovePoint(0, 5443.880f, 2147.095f, 707.695f);
+                if (GetLeader() == NPC_JAINA)
+                    DoScriptText(SAY_LICH_KING_A_21, m_creature);
+                else if (GetLeader() == NPC_SYLVANA)
+                    DoScriptText(SAY_LICH_KING_H_21, m_creature);
+                m_pInstance->SetNextEvent(38,m_creature->GetEntry(),8000);
+                break;
+            case 38:
+                m_pInstance->DoCloseDoor(m_pInstance->GetData64(GO_IMPENETRABLE_DOOR));
+                m_pInstance->SetNextEvent(39,m_creature->GetEntry(),5000);
+                break;
+            case 39:
+                m_creature->SetVisibility(VISIBILITY_OFF);
+                m_pInstance->SetData(TYPE_PHASE, 2);
+                m_pInstance->SetNextEvent(39,GetLeader(),1000);
+                break;
+            case 40:
+                m_pInstance->SetData(TYPE_PHASE, 2);
+                m_pInstance->SetNextEvent(0,0);
+                break;
+            default:
+                break;
+         }
     }
 
     void UpdateAI(const uint32 diff)
     {
+         if (!m_pInstance)
+             return;
+
+         if (m_pInstance->GetEventTimer(m_creature->GetEntry(),diff) && m_pInstance->GetData(TYPE_PHASE) == 1)
+            Event();
+
     }
 };
 

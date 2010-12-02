@@ -10,6 +10,7 @@ BSWScriptedInstance::BSWScriptedInstance(Map* pMap) : ScriptedInstance(pMap)
     debug_log("BSW: Initialized BSWScriptedInstance structure for map %u difficulty %u",pMap->GetId(),pMap->GetDifficulty());
     m_auiEvent      = 0;
     m_auiEventTimer = 0;
+    m_auiCreatureID = 0;
     m_auiEventLock  = false;
     m_pMap = pMap;
 };
@@ -61,9 +62,9 @@ void BSWScriptedInstance::DoCloseDoor(uint64 guid)
         debug_log("SD2: DoCloseDoor attempt set data to object %u, but no this object", guid);
 }
 
-uint32 BSWScriptedInstance::GetEvent()
+uint32 BSWScriptedInstance::GetEvent(uint32 creatureID)
 {
-    if (m_auiEventLock)
+    if (m_auiEventLock || m_auiCreatureID != creatureID)
     {
         return 0;
     }
@@ -74,15 +75,19 @@ uint32 BSWScriptedInstance::GetEvent()
     }
 }
 
-void BSWScriptedInstance::SetNextEvent(uint32 EventNum, uint32 timer)
+void BSWScriptedInstance::SetNextEvent(uint32 EventNum, uint32 creatureID, uint32 timer)
 {
     m_auiEvent      = EventNum;
+    m_auiCreatureID = creatureID;
     m_auiEventTimer = timer;
     m_auiEventLock  = false;
 }
 
-bool BSWScriptedInstance::GetEventTimer(const uint32 diff)
+bool BSWScriptedInstance::GetEventTimer(uint32 creatureID, const uint32 diff)
 {
+    if (m_auiEvent == 0 || m_auiCreatureID != creatureID)
+        return false;
+
     if (m_auiEventTimer <= diff)
     {
         m_auiEventTimer = 0;

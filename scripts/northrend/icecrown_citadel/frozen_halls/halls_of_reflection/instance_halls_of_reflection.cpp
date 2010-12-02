@@ -45,6 +45,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
     uint64 m_uiMarwynGUID;
     uint64 m_uiLichKingGUID;
     uint64 m_uiLiderGUID;
+    uint64 m_uiUtherGUID;
 
     uint64 m_uiQuelDelarGUID;
 
@@ -95,6 +96,9 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                    break;
             case NPC_QUEL_DELAR:
                    m_uiQuelDelarGUID = pCreature->GetGUID();
+                   break;
+            case NPC_UTHER:
+                   m_uiUtherGUID = pCreature->GetGUID();
                    break;
         }
     }
@@ -270,6 +274,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
             case GO_FROSTMOURNE:       return m_uiFrostmourneGUID;
             case NPC_FALRIC:           return m_uiFalricGUID;
             case NPC_MARWYN:           return m_uiMarwynGUID;
+            case NPC_UTHER:            return m_uiUtherGUID;
             case BOSS_LICH_KING:       return m_uiLichKingGUID;
             case DATA_ESCAPE_LIDER:    return m_uiLiderGUID;
             case NPC_FROST_GENERAL:    return m_uiFrostGeneralGUID;

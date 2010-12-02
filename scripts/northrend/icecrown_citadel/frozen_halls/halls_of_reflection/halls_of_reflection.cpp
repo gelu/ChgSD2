@@ -163,7 +163,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 
    BSWScriptedInstance* m_pInstance;
 
-   uint32 Step;
    uint64 m_uiFrostmourneGUID;
    uint64 m_uiMainGateGUID;
    uint64 m_uiFalricGUID;
@@ -179,408 +178,298 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
       Small = false;
    }
 
-   void JumpNextStep(uint32 Time)
-   {
-      Step++;
-      m_pInstance->SetNextEvent(Step, Time);
-   }
-
    void Event()
    {
-         switch(m_pInstance->GetEvent())
+         switch(m_pInstance->GetEvent(m_creature->GetEntry()))
          {
             case 1:
                 if (m_pInstance->GetData(TYPE_EVENT) == 2)
                     Small = true;
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
                 m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-                JumpNextStep(2000);
+                m_pInstance->SetNextEvent(2,m_creature->GetEntry(),2000);
                 break;
             case 2:
                 if(m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_INTRO_01, m_creature);
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_JAINA_INTRO_01, m_creature);
+                    m_pInstance->SetNextEvent(3,m_creature->GetEntry(),5000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if(m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_INTRO_01, m_creature);
-                   JumpNextStep(8000);
+                    DoScriptText(SAY_SYLVANA_INTRO_01, m_creature);
+                    m_pInstance->SetNextEvent(3,m_creature->GetEntry(),8000);
                 }
                 break;
             case 3: 
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_INTRO_02, m_creature);
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_JAINA_INTRO_02, m_creature);
+                    m_pInstance->SetNextEvent(4,m_creature->GetEntry(),5000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
-                   JumpNextStep(500);
+                else if(m_creature->GetEntry() == NPC_SYLVANA)
+                    m_pInstance->SetNextEvent(4,m_creature->GetEntry(),500);
                 break;
             case 4:
                 m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
                 m_creature->GetMotionMaster()->MovePoint(0, 5307.031f, 1997.920f, 709.341f);
-                JumpNextStep(10000);
+                m_pInstance->SetNextEvent(5,m_creature->GetEntry(),10000);
                 break;
             case 5:
                 if(Creature* pTarget = m_creature->SummonCreature(NPC_ALTAR_TARGET,5309.374f,2006.788f,711.615f,1.37f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000))
                 {
-                   m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
-                   pTarget->SetCreatorGuid(ObjectGuid());
+                    m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pTarget->GetGUID());
+                    pTarget->SetCreatorGuid(ObjectGuid());
                 }
-                JumpNextStep(1000);
+                m_pInstance->SetNextEvent(6,m_creature->GetEntry(),1000);
                 break;
             case 6:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_INTRO_03, m_creature);
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_JAINA_INTRO_03, m_creature);
+                    m_pInstance->SetNextEvent(7,m_creature->GetEntry(),5000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_INTRO_03, m_creature);
-                   JumpNextStep(6000);
+                    DoScriptText(SAY_SYLVANA_INTRO_03, m_creature);
+                    m_pInstance->SetNextEvent(7,m_creature->GetEntry(),5000);
                 }
                 break;
             case 7:
                 DoCast(m_creature, SPELL_CAST_VISUAL);
-                if(m_creature->GetEntry() == NPC_JAINA)
-                   DoScriptText(SAY_JAINA_INTRO_04, m_creature);
-                if(m_creature->GetEntry() == NPC_SYLVANA)
-                   DoScriptText(SAY_SYLVANA_INTRO_04, m_creature);
-                JumpNextStep(3000);
+                if (m_creature->GetEntry() == NPC_JAINA)
+                    DoScriptText(SAY_JAINA_INTRO_04, m_creature);
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
+                    DoScriptText(SAY_SYLVANA_INTRO_04, m_creature);
+                m_pInstance->SetNextEvent(8,m_creature->GetEntry(),3000);
                 break;
             case 8:
                 DoCast(m_creature, SPELL_FROSTMOURNE_SOUNDS);
-                m_uiFrostmourneGUID = m_pInstance->GetData64(GO_FROSTMOURNE);
-                if(GameObject* pFrostmourne = m_pInstance->instance->GetGameObject(m_uiFrostmourneGUID))
-                   pFrostmourne->SetGoState(GO_STATE_ACTIVE);
+                if(GameObject* pFrostmourne = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_FROSTMOURNE)))
+                    pFrostmourne->SetGoState(GO_STATE_ACTIVE);
                 if(m_creature->GetEntry() == NPC_JAINA)
-                   JumpNextStep(12000);
+                    m_pInstance->SetNextEvent(9,m_creature->GetEntry(),12000);
                 if(m_creature->GetEntry() == NPC_SYLVANA)
-                   JumpNextStep(8000);
+                    m_pInstance->SetNextEvent(9,m_creature->GetEntry(),8000);
                 break;
             case 9:
                 if(Creature* Uther = m_creature->SummonCreature(NPC_UTHER,5308.228f,2003.641f,709.341f,4.17f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000))
                 {
-                   pUther = Uther;
-                   Uther->SetCreatorGuid(ObjectGuid());
-                   Uther->SetUInt64Value(UNIT_FIELD_TARGET, m_creature->GetGUID());
-                   m_creature->SetUInt64Value(UNIT_FIELD_TARGET, Uther->GetGUID());
-                   if(m_creature->GetEntry() == NPC_JAINA)
-                   {
-                       DoScriptText(SAY_UTHER_A_01, Uther);
-                       JumpNextStep(3000);
-                   }
-                   if(m_creature->GetEntry() == NPC_SYLVANA)
-                   {
-                       DoScriptText(SAY_UTHER_H_01, Uther);
-                       JumpNextStep(10000);
-                   }
+                    pUther = Uther;
+                    Uther->SetCreatorGuid(ObjectGuid());
+                    Uther->SetUInt64Value(UNIT_FIELD_TARGET, m_creature->GetGUID());
+                    m_creature->SetUInt64Value(UNIT_FIELD_TARGET, Uther->GetGUID());
+                    if (m_creature->GetEntry() == NPC_JAINA)
+                    {
+                        DoScriptText(SAY_UTHER_A_01, Uther);
+                        m_pInstance->SetNextEvent(10,m_creature->GetEntry(),3000);
+                    }
+                    else if (m_creature->GetEntry() == NPC_SYLVANA)
+                    {
+                        DoScriptText(SAY_UTHER_H_01, Uther);
+                        m_pInstance->SetNextEvent(10,m_creature->GetEntry(),10000);
+                    }
                 }
                 break;
             case 10:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_02, m_creature);
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_JAINA_02, m_creature);
+                    m_pInstance->SetNextEvent(11,m_creature->GetEntry(),5000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if(m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_02, m_creature);
-                   JumpNextStep(3000);
+                    DoScriptText(SAY_SYLVANA_02, m_creature);
+                    m_pInstance->SetNextEvent(11,m_creature->GetEntry(),3000);
                 }
                 break;
             case 11:
-                if (Small)
-                   Step = 24;
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_03, pUther);
-                   JumpNextStep(7000);
+                    DoScriptText(SAY_UTHER_A_03, pUther);
+                    m_pInstance->SetNextEvent(Small ? 24 : 12,m_creature->GetEntry(),7000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_H_03, pUther);
-                   JumpNextStep(6000);
+                    DoScriptText(SAY_UTHER_H_03, pUther);
+                    m_pInstance->SetNextEvent(Small ? 24 : 12,m_creature->GetEntry(),6000);
                 }
                 break;
             case 12:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_04, m_creature);
-                   JumpNextStep(2000);
+                    DoScriptText(SAY_JAINA_04, m_creature);
+                    m_pInstance->SetNextEvent(13,m_creature->GetEntry(),2000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_04, m_creature);
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_SYLVANA_04, m_creature);
+                    m_pInstance->SetNextEvent(13,m_creature->GetEntry(),5000);
                 }
                 break;
             case 13:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_05, pUther);
-                   JumpNextStep(10000);
+                    DoScriptText(SAY_UTHER_A_05, pUther);
+                    m_pInstance->SetNextEvent(14,m_creature->GetEntry(),10000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_H_05, pUther); 
-                   JumpNextStep(19000);
+                    DoScriptText(SAY_UTHER_H_05, pUther); 
+                    m_pInstance->SetNextEvent(14,m_creature->GetEntry(),19000);
                 }
                 break;
             case 14:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_06, m_creature);
-                   JumpNextStep(6000);
+                    DoScriptText(SAY_JAINA_06, m_creature);
+                    m_pInstance->SetNextEvent(15,m_creature->GetEntry(),6000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_06, m_creature); 
-                   JumpNextStep(2000);
+                    DoScriptText(SAY_SYLVANA_06, m_creature); 
+                    m_pInstance->SetNextEvent(15,m_creature->GetEntry(),2000);
                 }
                 break;
             case 15:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_07, pUther); 
-                   JumpNextStep(12000);
+                    DoScriptText(SAY_UTHER_A_07, pUther); 
+                    m_pInstance->SetNextEvent(16,m_creature->GetEntry(),12000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_H_07, pUther);
-                   JumpNextStep(20000);
+                    DoScriptText(SAY_UTHER_H_07, pUther);
+                    m_pInstance->SetNextEvent(16,m_creature->GetEntry(),6000);
                 }
                 break;
             case 16:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_08, m_creature); 
-                   JumpNextStep(6000);
+                    DoScriptText(SAY_JAINA_08, m_creature); 
+                    m_pInstance->SetNextEvent(17,m_creature->GetEntry(),6000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_08, m_creature);
-                   JumpNextStep(3000);
+                    DoScriptText(SAY_SYLVANA_08, m_creature);
+                    m_pInstance->SetNextEvent(17,m_creature->GetEntry(),3000);
                 }
                 break;
             case 17:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_09, pUther);
-                   JumpNextStep(12000);
+                    DoScriptText(SAY_UTHER_A_09, pUther);
+                    m_pInstance->SetNextEvent(18,m_creature->GetEntry(),12000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_H_09, pUther);
-                   JumpNextStep(11000);
+                    DoScriptText(SAY_UTHER_H_09, pUther);
+                    m_pInstance->SetNextEvent(18,m_creature->GetEntry(),11000);
                 }
                 break;
             case 18:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_10, m_creature);
-                   JumpNextStep(11000);
+                    DoScriptText(SAY_JAINA_10, m_creature);
+                    m_pInstance->SetNextEvent(19,m_creature->GetEntry(),12000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if(m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   JumpNextStep(100);
+                    m_pInstance->SetNextEvent(19,m_creature->GetEntry(),500);
                 }
                 break;
             case 19:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_11, pUther);
-                   JumpNextStep(24000);
+                    DoScriptText(SAY_UTHER_A_11, pUther);
+                    m_pInstance->SetNextEvent(20,m_creature->GetEntry(),24000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_H_11, pUther);
-                   JumpNextStep(9000);
+                    DoScriptText(SAY_UTHER_H_11, pUther);
+                    m_pInstance->SetNextEvent(20,m_creature->GetEntry(),9000);
                 }
                 break;
             case 20:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_12, m_creature);
-                   JumpNextStep(2000);
+                    DoScriptText(SAY_JAINA_12, m_creature);
+                    m_pInstance->SetNextEvent(21,m_creature->GetEntry(),2000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   DoScriptText(SAY_SYLVANA_12, m_creature);
-                   JumpNextStep(2100);
+                    DoScriptText(SAY_SYLVANA_12, m_creature);
+                    m_pInstance->SetNextEvent(21,m_creature->GetEntry(),2100);
                 }
                 break;
             case 21:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_13, pUther); 
-                   JumpNextStep(5000);
+                    DoScriptText(SAY_UTHER_A_13, pUther); 
+                    m_pInstance->SetNextEvent(22,m_creature->GetEntry(),5000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   JumpNextStep(100);
+                    m_pInstance->SetNextEvent(22,m_creature->GetEntry(),500);
                 }
                 break;
             case 22:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
-                   DoScriptText(SAY_UTHER_A_14, pUther); 
-                   JumpNextStep(12000);
+                    DoScriptText(SAY_UTHER_A_14, pUther); 
+                    m_pInstance->SetNextEvent(23,m_creature->GetEntry(),12000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   JumpNextStep(100);
+                    m_pInstance->SetNextEvent(23,m_creature->GetEntry(),500);
                 }
                 break;
             case 23:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                 {
-                   DoScriptText(SAY_JAINA_15, m_creature);
-                   JumpNextStep(2000);
+                    DoScriptText(SAY_JAINA_15, m_creature);
+                    m_pInstance->SetNextEvent(24,m_creature->GetEntry(),2000);
                 }
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if (m_creature->GetEntry() == NPC_SYLVANA)
                 {
-                   JumpNextStep(100);
+                    m_pInstance->SetNextEvent(24,m_creature->GetEntry(),500);
                 }
                 break;
             case 24:
-                if(m_creature->GetEntry() == NPC_JAINA && pUther)
+                if (m_creature->GetEntry() == NPC_JAINA && pUther)
                    DoScriptText(SAY_UTHER_A_16, pUther);
-                if(m_creature->GetEntry() == NPC_SYLVANA && pUther)
+                else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                    DoScriptText(SAY_UTHER_H_16, pUther);
-                m_uiMainGateGUID = m_pInstance->GetData64(GO_IMPENETRABLE_DOOR);
-                if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
-                   pGate->SetGoState(GO_STATE_ACTIVE);
-                if(Creature* LichKing = m_creature->SummonCreature(NPC_LICH_KING,5362.469f,2062.342f,707.695f,3.97f,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,360000))
+                if(Creature* LichKing = m_creature->SummonCreature(NPC_LICH_KING,5362.469f,2062.342f,707.695f,3.97f,TEMPSUMMON_MANUAL_DESPAWN,0,true))
                 {
                    LichKing->SetCreatorGuid(ObjectGuid());
-                   pLichKing = LichKing;
-                   LichKing->SetActiveObjectState(true);
                 }
-                JumpNextStep(1000);
+                m_pInstance->SetNextEvent(24,NPC_LICH_KING,2000);
                 break;
             case 25:
-                if(pUther)
+                if (pUther)
                    pUther->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_COWER);
-                if(pLichKing)
-                {
-                   pLichKing->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                   pLichKing->GetMotionMaster()->MovePoint(0, 5314.881f, 2012.496f, 709.341f);
-                }
-                JumpNextStep(3000);
-                break;
-            case 26:
-                if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
-                   pGate->SetGoState(GO_STATE_READY);
-                JumpNextStep(7000);
-                break;
-            case 27:
-                if(pUther)
-                   pUther->CastSpell(pUther, SPELL_UTHER_DESPAWN, false);
-                JumpNextStep(500);
-                break;
-            case 28:
-                if(pLichKing)
-                   DoScriptText(SAY_LICH_KING_17, pLichKing);
-                JumpNextStep(10000);
-                break;
-            case 29:
-                if(pLichKing)
-                   DoScriptText(SAY_LICH_KING_18, pLichKing);
-                JumpNextStep(5000);
-                break;
-            case 30:
-                if(pLichKing)
-                   pLichKing->CastSpell(pLichKing, SPELL_TAKE_FROSTMOURNE, false);
-                if(GameObject* pFrostmourne = m_pInstance->instance->GetGameObject(m_uiFrostmourneGUID))
-                   pFrostmourne->SetGoState(GO_STATE_READY);
-                JumpNextStep(1500);
+                m_pInstance->SetNextEvent(25,NPC_LICH_KING,2000);
                 break;
             case 31:
-                if(GameObject* pFrostmourne = m_pInstance->instance->GetGameObject(m_uiFrostmourneGUID))
-                   pFrostmourne->SetPhaseMask(0, true);
-                if(pLichKing)
-                   pLichKing->CastSpell(pLichKing, SPELL_FROSTMOURNE_VISUAL, false);
-                   //pLichKing->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 0, uint32(36942));
                 m_creature->RemoveAurasDueToSpell(SPELL_FROSTMOURNE_SOUNDS);
-                JumpNextStep(5000);
-                break;
-            case 32:
-                if(pLichKing)
-                   DoScriptText(SAY_LICH_KING_19, pLichKing);
-                JumpNextStep(9000);
-                break;
-            case 33:
-                m_uiFalricGUID = m_pInstance->GetData64(NPC_FALRIC);
-                m_uiMarwynGUID = m_pInstance->GetData64(NPC_MARWYN);
-                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
-                { 
-                   Falric->SetVisibility(VISIBILITY_ON);
-                   Falric->CastSpell(Falric, SPELL_BOSS_SPAWN_AURA, false);
-                   Falric->GetMotionMaster()->MovePoint(0, 5283.309f, 2031.173f, 709.319f);
-                }
-                if(Creature* Marwyn = (m_creature->GetMap()->GetCreature( m_uiMarwynGUID)))
-                {
-                   Marwyn->SetVisibility(VISIBILITY_ON);
-                   Marwyn->CastSpell(Marwyn, SPELL_BOSS_SPAWN_AURA, false);
-                   Marwyn->GetMotionMaster()->MovePoint(0, 5335.585f, 1981.439f, 709.319f);
-                }
-                if(pLichKing)
-                   pLichKing->GetMotionMaster()->MovePoint(0, 5402.286f, 2104.496f, 707.695f);
-                JumpNextStep(600);
-                break;
-            case 34:
-                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
-                   DoScriptText(SAY_FALRIC_INTRO, Falric);
-                if(Creature* Marwyn = (m_creature->GetMap()->GetCreature( m_uiMarwynGUID)))
-                   DoScriptText(SAY_MARWYN_INTRO, Marwyn);
-                JumpNextStep(3000);
-                break;
-            case 35:
-                if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
-                   pGate->SetGoState(GO_STATE_ACTIVE);
-                if(Creature* Falric = (m_creature->GetMap()->GetCreature( m_uiFalricGUID)))
-                   DoScriptText(SAY_FALRIC_INTRO2, Falric);
-                m_pInstance->SetData(TYPE_FALRIC, SPECIAL);
-                JumpNextStep(4000);
+                m_pInstance->SetNextEvent(32,NPC_LICH_KING,4500);
                 break;
             case 36:
-                if(m_creature->GetEntry() == NPC_JAINA)
+                if (m_creature->GetEntry() == NPC_JAINA)
                    DoScriptText(SAY_JAINA_20, m_creature);
-                if(m_creature->GetEntry() == NPC_SYLVANA)
+                else if(m_creature->GetEntry() == NPC_SYLVANA)
                    DoScriptText(SAY_SYLVANA_20, m_creature);
                 m_creature->GetMotionMaster()->MovePoint(0, 5443.880f, 2147.095f, 707.695f);
-                JumpNextStep(4000);
-                break;
-            case 37:
-                if(pLichKing)
-                {
-                   pLichKing->GetMotionMaster()->MovementExpired(false);
-                   pLichKing->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-                   pLichKing->GetMotionMaster()->MovePoint(0, 5443.880f, 2147.095f, 707.695f);
-                }
-                if(m_creature->GetEntry() == NPC_JAINA && pLichKing)
-                   DoScriptText(SAY_LICH_KING_A_21, pLichKing);
-                if(m_creature->GetEntry() == NPC_SYLVANA && pLichKing)
-                   DoScriptText(SAY_LICH_KING_H_21, pLichKing);
-                JumpNextStep(8000);
-                break;
-            case 38:
-                if(GameObject* pGate = m_pInstance->instance->GetGameObject(m_uiMainGateGUID))
-                   pGate->SetGoState(GO_STATE_READY);
-                JumpNextStep(5000);
+                m_pInstance->SetNextEvent(37,NPC_LICH_KING,4000);
                 break;
             case 39:
                 m_creature->SetVisibility(VISIBILITY_OFF);
-                if(pLichKing)
-                   pLichKing->SetVisibility(VISIBILITY_OFF);
-                m_pInstance->SetData(TYPE_PHASE, 2);
-                JumpNextStep(1000);
+                m_pInstance->SetNextEvent(40,NPC_LICH_KING,1000);
                 break;
             case 40:
-                m_pInstance->SetNextEvent(0);
+                m_pInstance->SetData(TYPE_PHASE, 2);
+                m_pInstance->SetNextEvent(0,0);
                 break;
             default:
                 break;
@@ -589,10 +478,10 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 
     void UpdateAI(const uint32 diff)
     {
-         if(!m_pInstance)
+         if (!m_pInstance)
              return;
 
-         if (m_pInstance->GetEventTimer(diff) && m_pInstance->GetData(TYPE_PHASE) == 1)
+         if (m_pInstance->GetEventTimer(m_creature->GetEntry(),diff) && m_pInstance->GetData(TYPE_PHASE) == 1)
             Event();
 
          return;
@@ -642,7 +531,7 @@ bool GossipSelect_npc_jaina_and_sylvana_HRintro(Player* pPlayer, Creature* pCrea
                break;
     }
 
-    m_pInstance->SetNextEvent(1, 500);
+    m_pInstance->SetNextEvent(1, pCreature->GetEntry(), 500);
 
     m_pInstance->SetData64(DATA_ESCAPE_LIDER,pCreature->GetGUID());
 
