@@ -181,13 +181,10 @@ struct MANGOS_DLL_DECL boss_marwynAI : public BSWScriptedAI
     {
         if(!m_pInstance) return;
 
-        if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL)
+        if (m_pInstance->GetData(TYPE_EVENT) == 6)
         {
-            if(!m_bIsCall)
-            {
-               m_bIsCall = true;
-               Summon();
-            }
+            m_pInstance->SetData(TYPE_EVENT, 7);
+            Summon();
         }
 
         if(m_pInstance->GetData(TYPE_MARWYN) == SPECIAL)

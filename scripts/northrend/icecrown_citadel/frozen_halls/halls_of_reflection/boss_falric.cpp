@@ -174,15 +174,17 @@ struct MANGOS_DLL_DECL boss_falricAI : public BSWScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if(!m_pInstance) return;
+        if (!m_pInstance) 
+            return;
+
+        if (m_pInstance->GetData(TYPE_EVENT) == 5)
+        {
+            m_pInstance->SetData(TYPE_EVENT, 6);
+            Summon();
+        }
 
         if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL)
         {
-            if(!m_bIsCall) 
-            {
-               m_bIsCall = true;
-               Summon();
-            }
 
             if (m_uiSummonTimer < uiDiff) 
             {

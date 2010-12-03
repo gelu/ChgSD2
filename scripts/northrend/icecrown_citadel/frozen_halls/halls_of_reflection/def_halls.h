@@ -11,11 +11,7 @@ enum Data
     TYPE_MARWYN             = 3,
     TYPE_FROST_GENERAL      = 4,
     TYPE_LICH_KING          = 5,
-    TYPE_ICE_WALL_01        = 6,
-    TYPE_ICE_WALL_02        = 7,
-    TYPE_ICE_WALL_03        = 8,
-    TYPE_ICE_WALL_04        = 9,
-    TYPE_HALLS              = 10,
+    TYPE_HALLS              = 6,
     MAX_ENCOUNTERS,
 
     DATA_ESCAPE_LIDER       = 101,

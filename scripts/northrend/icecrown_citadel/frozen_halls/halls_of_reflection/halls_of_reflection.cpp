@@ -163,16 +163,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
 
    BSWScriptedInstance* m_pInstance;
 
-   uint64 m_uiFrostmourneGUID;
-   uint64 m_uiMainGateGUID;
-   uint64 m_uiFalricGUID;
-   uint64 m_uiMarwynGUID;
    Creature* pUther;
-   Creature* pLichKing;
    bool Small;
 
    void Reset()
    {
+      m_creature->SetPhaseMask(65535, true);
       m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
       m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
       Small = false;
@@ -287,12 +283,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 if (m_creature->GetEntry() == NPC_JAINA && pUther)
                 {
                     DoScriptText(SAY_UTHER_A_03, pUther);
-                    m_pInstance->SetNextEvent(Small ? 24 : 12,m_creature->GetEntry(),7000);
+                    m_pInstance->SetNextEvent(Small ? 24 : 12, m_creature->GetEntry(),7000);
                 }
                 else if (m_creature->GetEntry() == NPC_SYLVANA && pUther)
                 {
                     DoScriptText(SAY_UTHER_H_03, pUther);
-                    m_pInstance->SetNextEvent(Small ? 24 : 12,m_creature->GetEntry(),6000);
+                    m_pInstance->SetNextEvent(Small ? 24 : 12, m_creature->GetEntry(),6000);
                 }
                 break;
             case 12:
@@ -464,12 +460,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRintroAI : public ScriptedAI
                 m_pInstance->SetNextEvent(37,NPC_LICH_KING,4000);
                 break;
             case 39:
-                m_creature->SetVisibility(VISIBILITY_OFF);
                 m_pInstance->SetNextEvent(40,NPC_LICH_KING,1000);
-                break;
-            case 40:
-                m_pInstance->SetData(TYPE_PHASE, 2);
-                m_pInstance->SetNextEvent(0,0);
+                m_creature->ForcedDespawn();
                 break;
             default:
                 break;
@@ -542,26 +534,26 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 {
    npc_jaina_and_sylvana_HRextroAI(Creature *pCreature) : npc_escortAI(pCreature)
    {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (BSWScriptedInstance*)pCreature->GetInstanceData();
         Reset();
    }
 
-   ScriptedInstance* m_pInstance;
+    BSWScriptedInstance* m_pInstance;
 
-   uint32 CastTimer;
-   uint32 StepTimer;
-   uint32 Step;
-   int32 HoldTimer;
-   uint32 Count;
-   bool Fight;
-   bool Event;
-   bool PreFight;
-   bool WallCast;
-   uint64 m_uiLichKingGUID;
-   uint64 m_uiLiderGUID;
-   ObjectGuid wallTarget;
-   Creature* pLichKing;
-   uint32    m_chestID;
+    uint32 CastTimer;
+    uint32 StepTimer;
+    uint32 Step;
+    int32 HoldTimer;
+    uint32 Count;
+    bool Fight;
+    bool Event;
+    bool PreFight;
+    bool WallCast;
+    uint64 m_uiLichKingGUID;
+    uint64 m_uiLiderGUID;
+    ObjectGuid wallTarget;
+    Creature* pLichKing;
+    uint32    m_chestID;
 
    void Reset()
    {
@@ -581,6 +573,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
           m_creature->CastSpell(m_creature, SPELL_ICE_BARRIER, false);
           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY2HL);
        }
+
        if(m_pInstance->GetData(TYPE_LICH_KING) == DONE)
           m_creature->SetVisibility(VISIBILITY_OFF);
 
@@ -591,9 +584,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
        if(!who)
            return;
 
-       if(m_creature->GetEntry() != NPC_SYLVANA_OUTRO) return;
+       if(m_creature->GetEntry() != NPC_SYLVANA_OUTRO) 
+           return;
 
-       if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || Fight != true) return;
+       if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || Fight != true) 
+           return;
 
        npc_escortAI::AttackStart(who);
 
@@ -601,7 +596,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
     void JustDied(Unit* pKiller)
     {
-        if(!m_pInstance) return;
+        if(!m_pInstance) 
+            return;
         m_pInstance->SetData(TYPE_LICH_KING, FAIL);
     }
 
@@ -612,11 +608,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
         switch (wallNum)
         {
-            case 0: m_pInstance->SetData(TYPE_ICE_WALL_01, IN_PROGRESS); break;
-            case 1: m_pInstance->SetData(TYPE_ICE_WALL_02, IN_PROGRESS); break;
-            case 2: m_pInstance->SetData(TYPE_ICE_WALL_03, IN_PROGRESS); break;
-            case 3: m_pInstance->SetData(TYPE_ICE_WALL_04, IN_PROGRESS); break;
-            default: break;
+            case 0: m_pInstance->SetNextEvent(200,BOSS_LICH_KING,500); break;
+            case 1: m_pInstance->SetNextEvent(300,BOSS_LICH_KING,500); break;
+            case 2: m_pInstance->SetNextEvent(400,BOSS_LICH_KING,500); break;
+            case 3: m_pInstance->SetNextEvent(500,BOSS_LICH_KING,500); break;
+            default:
+                break;
         }
 
         if (Creature* pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,WallLoc[wallNum].x,WallLoc[wallNum].y,WallLoc[wallNum].z,WallLoc[wallNum].o,TEMPSUMMON_MANUAL_DESPAWN,0, true))
@@ -629,20 +626,9 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
         }
     }
 
-    void DoDestructWall(uint8 wallNum)
+    void DoDestructWall()
     {
-        if(!m_pInstance || wallNum > 3 )
-            return;
-
-        switch (wallNum)
-        {
-            case 0: m_pInstance->SetData(TYPE_ICE_WALL_01, DONE); break;
-            case 1: m_pInstance->SetData(TYPE_ICE_WALL_02, DONE); break;
-            case 2: m_pInstance->SetData(TYPE_ICE_WALL_03, DONE); break;
-            case 3: m_pInstance->SetData(TYPE_ICE_WALL_04, DONE); break;
-            default: break;
-        }
-
+        m_pInstance->DoOpenDoor(m_pInstance->GetData64(GO_ICE_WALL));
         if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
         {
             pWallTarget->ForcedDespawn();
@@ -731,9 +717,9 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                     DoScriptText(SAY_JAINA_ESCAPE_02, m_creature);
                 else if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
                     DoScriptText(SAY_SYLVANA_ESCAPE_02, m_creature);
-                DoSummonWall(3);
                 break;
             case 15:
+                DoSummonWall(3);
                 break;
             case 16:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -1021,22 +1007,22 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
          switch(Count)
          {
             case 2:
-                DoDestructWall(0);
+                DoDestructWall();
                 if(pLichKing && pLichKing->isAlive())
                     DoScriptText(SAY_LICH_KING_WALL_02, pLichKing);
               break;
             case 3:
-                DoDestructWall(0);
+                DoDestructWall();
                 if(pLichKing && pLichKing->isAlive())
                     DoScriptText(SAY_LICH_KING_WALL_03, pLichKing);
               break;
             case 4:
-                DoDestructWall(0);
+                DoDestructWall();
                 if(pLichKing && pLichKing->isAlive())
                     DoScriptText(SAY_LICH_KING_WALL_04, pLichKing);
               break;
             case 5:
-                DoDestructWall(0);
+                DoDestructWall();
                 if(pLichKing && pLichKing->isAlive())
                 {
                     pLichKing->RemoveAurasDueToSpell(SPELL_WINTER);
@@ -1329,10 +1315,16 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
         if (!m_pInstance || intro)
             return;
 
-        if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 20.0f))
+        if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 22.0f))
             return;
 
         intro = true;
+
+        if (m_pInstance->GetData(TYPE_FROST_GENERAL) == DONE)
+        {
+            m_pInstance->DoOpenDoor(m_pInstance->GetData64(GO_ICECROWN_DOOR_2));
+            return;
+        }
 
         if (m_pInstance->GetData(TYPE_MARWYN) == DONE)
         {
@@ -1342,11 +1334,12 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
 
         if (m_pInstance->GetData(TYPE_FALRIC) == DONE)
         {
-            if (Creature* pMarwin = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MARWYN)))
+            if (Creature* pMarwyn = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_MARWYN)))
             {
-                pMarwin->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                pMarwin->SetVisibility(VISIBILITY_ON);
-                pMarwin->SetInCombatWithZone();
+                pMarwyn->SetVisibility(VISIBILITY_ON);
+                pMarwyn->CastSpell(pMarwyn, SPELL_BOSS_SPAWN_AURA, false);
+                m_pInstance->SetData(TYPE_EVENT, 7);
+                m_pInstance->SetData(TYPE_MARWYN, SPECIAL);
             }
             return;
         }
