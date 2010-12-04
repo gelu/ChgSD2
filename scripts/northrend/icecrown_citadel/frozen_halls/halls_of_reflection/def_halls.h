@@ -114,4 +114,15 @@ static _Locations SpawnLoc[]=
     {5298.198f, 2037.762f, 707.694f, 4.71f}  //0
 };
 
+static _Locations WallLoc[]=
+{
+    {5540.39f, 2086.48f, 731.066f, 1.00057f},
+    {5494.3f, 1978.27f, 736.689f, 1.0885f},
+    {5434.27f, 1881.12f, 751.303f, 0.923328f},
+    {5323.61f, 1755.85f, 770.305f, 0.784186f},
+    {5239.01f, 1932.64f, 707.695f, 0.8f},       // Spawn point for Jaina && Silvana intro
+    {5266.779785f, 1953.42f, 707.697f, 1.0f},
+    {5547.27002f, 2256.949951f, 733.010986f, 0.9f},   // Spawn point for Jaina && Silvana outro
+};
+
 #endif

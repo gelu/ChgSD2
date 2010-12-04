@@ -108,8 +108,60 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
-   void JustDied(Unit* pKiller)
-   {
+    void JustDied(Unit* pKiller)
+    {
+    }
+
+    void MoveInLineOfSight(Unit* who)
+    {
+        if (!who || !m_pInstance)
+            return;
+
+        if (who->GetTypeId() != TYPEID_PLAYER) 
+            return;
+
+        Player* pPlayer = (Player *)who;
+
+        if (pPlayer->isGameMaster()) 
+            return;
+
+        if (m_pInstance->GetData(TYPE_PHASE) != 3
+           || !m_creature->IsWithinDistInMap(who, 50.0f)
+           || m_pInstance->GetData(TYPE_FROST_GENERAL) != DONE)
+           return;
+
+        Team team;
+        if (Group* pGroup = pPlayer->GetGroup())
+        {
+            ObjectGuid LeaderGuid = pGroup->GetLeaderGuid();
+            if (!LeaderGuid.IsEmpty())
+                if (Player* pLeader =m_creature->GetMap()->GetPlayer(LeaderGuid))
+                    team = pLeader->GetTeam();
+        }
+        else
+             team = ((Player*)who)->GetTeam();
+
+        uint32 newLeader;
+
+        if (team == ALLIANCE)
+            newLeader = NPC_JAINA_OUTRO;
+        else
+            newLeader = NPC_SYLVANA_OUTRO;
+
+        if (Creature* pNewLeader = m_creature->SummonCreature(newLeader,WallLoc[6].x,WallLoc[6].y,WallLoc[6].z,WallLoc[6].o,TEMPSUMMON_MANUAL_DESPAWN,0,true))
+        {
+             pNewLeader->SetCreatorGuid(ObjectGuid());
+             pNewLeader->setFaction(2076);
+             pNewLeader->SetPhaseMask(65535, true);
+             pNewLeader->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+             pNewLeader->SetSpeedRate(MOVE_RUN, 1.0f, true);
+             pNewLeader->SetRespawnDelay(DAY);
+             pNewLeader->SetHealth(pNewLeader->GetMaxHealth()/10);
+             m_pInstance->SetData64(DATA_ESCAPE_LIDER, pNewLeader->GetGUID());
+             m_pInstance->SetData(DATA_SUMMONS, 3);
+        }
+        m_pInstance->DoOpenDoor(m_pInstance->GetData64(GO_ICECROWN_DOOR_2));
+        m_pInstance->SetData(TYPE_PHASE, 4);
    }
 
    void WaypointReached(uint32 i)
@@ -210,6 +262,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
 
         case 300:
+            DoCast(m_creature, SPELL_WINTER);
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -233,6 +286,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
 
         case 400:
+            DoCast(m_creature, SPELL_WINTER);
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -263,6 +317,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
 
         case 500:
+            DoCast(m_creature, SPELL_WINTER);
             m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
             DoCast(m_creature, SPELL_RAISE_DEAD);
@@ -302,6 +357,14 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_pInstance->SetNextEvent(590,GetLeader(),5000);
             break;
 
+        case 900:
+            m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
+            m_pInstance->SetData(TYPE_LICH_KING, FAIL);
+            m_creature->SetActiveObjectState(false);
+            m_pInstance->SetNextEvent(0,0);
+            npc_escortAI::EnterEvadeMode();
+            break;
+
         default:
             break;
         }
@@ -318,10 +381,8 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
                return;
 
            DoMeleeAttackIfReady();
+           return;
         }
-
-        if(m_creature->isInCombat() && m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS)
-           npc_escortAI::EnterEvadeMode();
 
         if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && !StartEscort)
         {
@@ -342,16 +403,13 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
         }
 
         if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
-           if (pLider->IsWithinDistInMap(m_creature, 2.0f)) 
+           if (pLider->isAlive() && pLider->IsWithinDistInMap(m_creature, 2.0f)) 
            {
                SetEscortPaused(true);
                DoScriptText(SAY_LICH_KING_WIN, m_creature);
-               m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
+               m_pInstance->SetNextEvent(900,m_creature->GetEntry(),5000);
                m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-               m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
-               m_pInstance->SetData(TYPE_LICH_KING, FAIL);
-               m_creature->SetActiveObjectState(false);
-               npc_escortAI::EnterEvadeMode();
+               m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
            };
 
         if (m_pInstance->GetEventTimer(m_creature->GetEntry(),diff) && m_pInstance->GetData(TYPE_PHASE) == 5)
