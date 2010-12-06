@@ -532,17 +532,11 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
     BSWScriptedInstance* m_pInstance;
 
     uint32 CastTimer;
-    uint32 StepTimer;
-    uint32 Step;
     int32 HoldTimer;
-    uint32 Count;
+    uint8 m_wallNum;
     bool Fight;
-    bool PreFight;
     bool WallCast;
-    uint64 m_uiLichKingGUID;
-    uint64 m_uiLiderGUID;
     ObjectGuid wallTarget;
-    Creature* pLichKing;
     uint32    m_chestID;
 
     void Reset()
@@ -551,9 +545,9 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
         if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS) return;
 
-        Step = 0;
-        StepTimer = 500;
+        HoldTimer = 10000;
         Fight = true;
+        m_wallNum = 0;
         wallTarget = ObjectGuid();
         m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
         m_creature->RemoveFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -568,13 +562,13 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
     void AttackStart(Unit* who)
     {
-       if(!who)
+       if (!who)
            return;
 
-       if(m_creature->GetEntry() != NPC_SYLVANA_OUTRO) 
+       if (m_creature->GetEntry() != NPC_SYLVANA_OUTRO) 
            return;
 
-       if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || Fight != true) 
+       if (m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS || Fight != true) 
            return;
 
        npc_escortAI::AttackStart(who);
@@ -583,7 +577,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
 
     void JustDied(Unit* pKiller)
     {
-        if(!m_pInstance) 
+        if(!m_pInstance)
             return;
     }
 
@@ -591,6 +585,9 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
     {
         if(!m_pInstance || wallNum > 3)
             return;
+
+        m_wallNum = wallNum+1;
+        HoldTimer = 10000;
 
         switch (wallNum)
         {
@@ -620,14 +617,21 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
             pWallTarget->ForcedDespawn();
         }
         wallTarget =  ObjectGuid();
+        m_wallNum = 0;
     }
 
     void WaypointReached(uint32 i)
     {
         switch(i)
         {
+            case 0:
+                break;
+            case 1:
+                break;
             case 2:
                 DoSummonWall(0);
+                break;
+            case 3:
                 break;
             case 4:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -648,8 +652,12 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 }
                 WallCast = true;
                 break;
+            case 5:
+                break;
             case 6:
                 DoSummonWall(1);
+                break;
+            case 7:
                 break;
             case 8:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -676,6 +684,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 else if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
                    DoScriptText(SAY_SYLVANA_ESCAPE_01, m_creature);
                 DoSummonWall(2);
+                break;
+            case 10:
                 break;
             case 11:
                 break;
@@ -704,6 +714,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 else if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
                     DoScriptText(SAY_SYLVANA_ESCAPE_02, m_creature);
                 break;
+            case 14:
+                break;
             case 15:
                 DoSummonWall(3);
                 break;
@@ -726,6 +738,10 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 }
                 WallCast = true;
                 break;
+            case 17:
+                break;
+            case 18:
+                break;
             case 19:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
                     DoScriptText(SAY_JAINA_TRAP, m_creature);
@@ -739,271 +755,210 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                 else if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
                    m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_READY1H);
                 break;
+            default:
+                break;
         }
-    }
-
-    void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
-    {
-        if(!m_pInstance) return;
-
-        if(m_pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS)
-        {
-          uiDamage = 0;
-          return;
-        }
-
-        if(m_pInstance->GetData(TYPE_LICH_KING) == IN_PROGRESS && WallCast == true)
-        {
-          HoldTimer = HoldTimer + 100;
-          return;
-        }
-    }
-
-    void JumpNextStep(uint32 Time)
-    {
-       StepTimer = Time;
-       Step++;
     }
 
     void Intro()
     {
-        switch(Step)
+        switch(m_pInstance->GetEvent(m_creature->GetEntry()))
         {
-           case 0:
-              m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
-              m_uiLichKingGUID = m_pInstance->GetData64(BOSS_LICH_KING);
-              pLichKing = m_creature->GetMap()->GetCreature( m_uiLichKingGUID);
-              JumpNextStep(100);
-              break;
-           case 1:
-              if(pLichKing)
-              {
-                 pLichKing->SetPhaseMask(65535, true);
-                 if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
-                    DoScriptText(SAY_LICH_KING_AGGRO_A, pLichKing);
-                 if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-                    DoScriptText(SAY_LICH_KING_AGGRO_H, pLichKing);
-                 pLichKing->AI()->AttackStart(m_creature);
-                 m_creature->AI()->AttackStart(pLichKing);
-              }
-              JumpNextStep(3000);
-              break; 
-           case 2:
-              if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-              {
-                 Fight = false;
-                 if(pLichKing)
+            case 100:
+                m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+                if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                {
+                    if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                        AttackStart(pLichKing);
+                }
+                m_pInstance->SetNextEvent(101,BOSS_LICH_KING,500);
+                break;
+           case 102:
+                if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                {
+                    Fight = false;
                     m_creature->GetMotionMaster()->MovePoint(0, (m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ());
-                 JumpNextStep(3000);
-              }
-              else
-                  JumpNextStep(100);
+                    m_pInstance->SetNextEvent(103,m_creature->GetEntry(),3000);
+                }
+                else
+                    m_pInstance->SetNextEvent(103,m_creature->GetEntry(),500);
               break;
-           case 3:
-              if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-                 Fight = true;
-              JumpNextStep(100);
+           case 103:
+                if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                   Fight = true;
+                m_pInstance->SetNextEvent(104,m_creature->GetEntry(),500);
+                break;
+           case 104:
+                if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                {
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        m_creature->CastSpell(pLichKing, SPELL_SYLVANA_STEP, false);
+                    m_pInstance->SetNextEvent(105,m_creature->GetEntry(),3000);
+                }
+                else
+                    m_pInstance->SetNextEvent(105,m_creature->GetEntry(),500);
               break;
-           case 4:
-              if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-              {
-                 if(pLichKing)
-                    m_creature->CastSpell(pLichKing, SPELL_SYLVANA_STEP, false);
-                 JumpNextStep(3000);
-              }
-              else
-                  JumpNextStep(100);
-              break;
-           case 5:
-              if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-              {
-                 Fight = false;
-                 if(pLichKing)
+           case 105:
+                if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                {
+                    Fight = false;
                     m_creature->GetMotionMaster()->MovePoint(0, (m_creature->GetPositionX()-5)+rand()%10, (m_creature->GetPositionY()-5)+rand()%10, m_creature->GetPositionZ());
-                 JumpNextStep(3000);
-              }
-              else 
-                  JumpNextStep(12000);
-              break;
-           case 6:
-              Fight = true;
-              if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
-              {
-                 if(pLichKing)
-                    m_creature->CastSpell(pLichKing,SPELL_ICE_PRISON,true);
-              }
-              if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-              {
-                 if(pLichKing)
-                    m_creature->CastSpell(pLichKing,SPELL_DARK_ARROW,true);
-              }
-              JumpNextStep(2500);
-              break;
-           case 7:
-              if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
-              {
-                 if (pLichKing && !pLichKing->HasAura(SPELL_ICE_PRISON))
-                    pLichKing->CastSpell(pLichKing,SPELL_ICE_PRISON,true);
-              }
-              else if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-              {
-                 if (pLichKing && !pLichKing->HasAura(SPELL_DARK_ARROW))
-                    pLichKing->CastSpell(pLichKing,SPELL_DARK_ARROW,true);
-              }
-              m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
-              m_creature->AttackStop();
-
-              if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
-              {
-                 m_creature->RemoveAurasDueToSpell(SPELL_ICE_BARRIER);
-                 DoScriptText(SAY_JAINA_AGGRO, m_creature);
-              }
-              else if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
-                 DoScriptText(SAY_SYLVANA_AGGRO, m_creature);
-              JumpNextStep(3000);
-              break;
-
-           case 8:
-              m_creature->GetMotionMaster()->MovePoint(0, 5577.187f, 2236.003f, 733.012f);
-              if(pLichKing)
-                 m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pLichKing->GetGUID());
-              JumpNextStep(10000);
-              break; 
-
-           case 9:
-              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
-              m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-              Count = 1;
-              JumpNextStep(10000);
-              break;
+                    m_pInstance->SetNextEvent(106,m_creature->GetEntry(),3000);
+                }
+                else 
+                    m_pInstance->SetNextEvent(106,m_creature->GetEntry(),12000);
+                break;
+           case 106:
+                Fight = true;
+                if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                    m_creature->CastSpell(pLichKing,(m_creature->GetEntry() == NPC_JAINA_OUTRO ? SPELL_ICE_PRISON : SPELL_DARK_ARROW),true);
+                m_pInstance->SetNextEvent(107,m_creature->GetEntry(),2500);
+                break;
+           case 107:
+                if(m_creature->GetEntry() == NPC_JAINA_OUTRO)
+                {
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        if (!pLichKing->HasAura(SPELL_ICE_PRISON))
+                            pLichKing->CastSpell(pLichKing,SPELL_ICE_PRISON,true);
+                    m_creature->RemoveAurasDueToSpell(SPELL_ICE_BARRIER);
+                    DoScriptText(SAY_JAINA_AGGRO, m_creature);
+                }
+                else if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+                {
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        if (!pLichKing->HasAura(SPELL_DARK_ARROW))
+                            pLichKing->CastSpell(pLichKing,SPELL_DARK_ARROW,true);
+                    DoScriptText(SAY_SYLVANA_AGGRO, m_creature);
+                }
+                m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
+                m_creature->AttackStop();
+                m_pInstance->SetNextEvent(108,m_creature->GetEntry(),3000);
+                break;
+           case 108:
+                m_creature->GetMotionMaster()->MovePoint(0, 5577.187f, 2236.003f, 733.012f);
+                m_creature->SetUInt64Value(UNIT_FIELD_TARGET, m_pInstance->GetData64(BOSS_LICH_KING));
+                m_pInstance->SetNextEvent(109,m_creature->GetEntry(),10000);
+                break;
+           case 109:
+                m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
+                m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
+//              Count = 1;
+                m_pInstance->SetNextEvent(110,m_creature->GetEntry(),10000);
+                break;
         }
    }
 
-   void Outro()
-   {
-        switch(Step)
+    void Outro()
+    {
+        switch(m_pInstance->GetEvent(m_creature->GetEntry()))
         {
-           case 10:
+            case 610:
               m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
               m_creature->RemoveAurasDueToSpell(SPELL_SILENCE);
               m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
-              JumpNextStep(6000);
+              m_pInstance->SetNextEvent(611,m_creature->GetEntry(),6000);
               break;
-           case 11:
+            case 611:
               if (GameObject* pCave = m_creature->SummonGameobject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0))
                   pCave->SetGoState(GO_STATE_READY);
               m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
               m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
               m_creature->GetMotionMaster()->MovePoint(0, 5258.911328f,1652.112f,784.295166f);
               DoScriptText(SAY_ESCAPE_01, m_creature);
-              JumpNextStep(10000);
+              m_pInstance->SetNextEvent(612,m_creature->GetEntry(),10000);
               break;
-           case 12:
+           case 612:
               m_pInstance->SetData(TYPE_LICH_KING, DONE);
               DoScriptText(SAY_ESCAPE_02, m_creature);
-              JumpNextStep(10000);
+              m_pInstance->SetNextEvent(613,m_creature->GetEntry(),10000);
               break;
-           case 13:
+           case 613:
               DoScriptText(SAY_ESCAPE_03, m_creature);
-              JumpNextStep(20000);
+              m_pInstance->SetNextEvent(614,m_creature->GetEntry(),10000);
               break;
-           case 14:
+           case 614:
               m_creature->GetMotionMaster()->MovePoint(0, 5240.66f, 1646.93f, 784.302f);
-              JumpNextStep(5000);
+              m_pInstance->SetNextEvent(615,m_creature->GetEntry(),5000);
               break;
-           case 15:
+           case 615:
               m_creature->SetOrientation(0.68f);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
-              JumpNextStep(5000);
+              m_pInstance->SetNextEvent(616,m_creature->GetEntry(),5000);
               break;
         }
    }
 
-   void UpdateEscortAI(const uint32 diff)
-   {
-      if(!m_pInstance || m_pInstance->GetData(TYPE_PHASE) < 4)
-          return;
+    void UpdateEscortAI(const uint32 diff)
+    {
+        if(!m_pInstance || m_pInstance->GetData(TYPE_PHASE) < 4)
+            return;
 
-      DoMeleeAttackIfReady();
-
-      if(m_pInstance->GetData(TYPE_PHASE) == 4)
-      {
-         if(StepTimer < diff)
-            Intro();
-         else StepTimer -= diff;
-      }
-
-      if(m_pInstance->GetData(TYPE_LICH_KING) == SPECIAL
-         && m_pInstance->GetData(TYPE_PHASE) != 6)       //End Cinematic
-      {
-          m_pInstance->SetData(TYPE_PHASE, 6);
-          Step = 10;
-      }
-
-      if (m_pInstance->GetData(TYPE_PHASE) == 6)
-      {
-         if(StepTimer < diff)
+        if (m_pInstance->GetData(TYPE_PHASE) == 6 && m_pInstance->GetEventTimer(m_creature->GetEntry(),diff))
+        {
             Outro();
-         else StepTimer -= diff;
-         return;
-      }
+            return;
+        }
 
-      if (WallCast == true && CastTimer < diff)
-      {
-         if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
-         {
-            if(m_creature->GetEntry() == NPC_SYLVANA_OUTRO)
+        DoMeleeAttackIfReady();
+
+        if (m_pInstance->GetData(TYPE_PHASE) == 4 && m_pInstance->GetEventTimer(m_creature->GetEntry(),diff))
+        {
+            Intro();
+            return;
+        }
+
+        if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO && WallCast == true && m_wallNum && CastTimer < diff)
+        {
+            if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_03, false);
             CastTimer = 1000;
-         }
-      }
-      else CastTimer -= diff;
+        }
+        else
+            CastTimer -= diff;
 
-      if (WallCast == true && HoldTimer < 10000 &&  m_pInstance->GetData(DATA_SUMMONS) == 0)
-      {
-         WallCast = false;
-         m_creature->InterruptNonMeleeSpells(false);
-         SetEscortPaused(false);
-         ++Count;
-         switch(Count)
+        if (WallCast == true && m_wallNum && m_pInstance->GetData(DATA_SUMMONS) == 0 && HoldTimer < 1000)
+        {
+            WallCast = false;
+            m_creature->InterruptNonMeleeSpells(false);
+            SetEscortPaused(false);
+
+            switch(m_wallNum)
+            {
+                case 1:
+                    DoDestructWall();
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        DoScriptText(SAY_LICH_KING_WALL_02, pLichKing);
+                    break;
+                case 2:
+                    DoDestructWall();
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        DoScriptText(SAY_LICH_KING_WALL_03, pLichKing);
+                    break;
+                case 3:
+                    DoDestructWall();
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                        DoScriptText(SAY_LICH_KING_WALL_04, pLichKing);
+                    break;
+                case 4:
+                    DoDestructWall();
+                    if (Creature* pLichKing = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(BOSS_LICH_KING)))
+                    {
+                        pLichKing->RemoveAurasDueToSpell(SPELL_WINTER);
+                        pLichKing->SetSpeedRate(MOVE_WALK, 2.5f, true);
+                    }
+                    break;
+            }
+            HoldTimer = 10000;
+         }
+         else
          {
-            case 2:
-                DoDestructWall();
-                if(pLichKing && pLichKing->isAlive())
-                    DoScriptText(SAY_LICH_KING_WALL_02, pLichKing);
-              break;
-            case 3:
-                DoDestructWall();
-                if(pLichKing && pLichKing->isAlive())
-                    DoScriptText(SAY_LICH_KING_WALL_03, pLichKing);
-              break;
-            case 4:
-                DoDestructWall();
-                if(pLichKing && pLichKing->isAlive())
-                    DoScriptText(SAY_LICH_KING_WALL_04, pLichKing);
-              break;
-            case 5:
-                DoDestructWall();
-                if(pLichKing && pLichKing->isAlive())
-                {
-                    pLichKing->RemoveAurasDueToSpell(SPELL_WINTER);
-                    pLichKing->SetSpeedRate(MOVE_WALK, 2.5f, true);
-                    Step = 0;
-                }
-              break;
+             if (HoldTimer <= diff)
+                 HoldTimer = 0;
+             else
+                 HoldTimer -= diff;
          }
-         HoldTimer = 30000;
-      }
-      else
-      {
-         HoldTimer -= diff;
-         if (HoldTimer <= 0) 
-             HoldTimer = 0;
-      }
-
-      return;
-   }
+    }
 };
 
 bool GossipHello_npc_jaina_and_sylvana_HRextro(Player* pPlayer, Creature* pCreature)
@@ -1281,6 +1236,8 @@ struct MANGOS_DLL_DECL npc_queldelar_horAI : public ScriptedAI
 
         if (!pWho || pWho->GetTypeId() != TYPEID_PLAYER || !pWho->IsWithinDistInMap(m_creature, 22.0f))
             return;
+
+        debug_log("HOR event started");
 
         intro = true;
 
