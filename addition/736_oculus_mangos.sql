@@ -20,6 +20,13 @@ INSERT INTO `gossip_menu_option` VALUES
 (27658,2,0,'Take the Ruby Essence if you want to fly on the wings of the Red Flight.',1,1,0,0,27658,0,0,NULL,9,13127,0,16,37860,1,0,0,0),
 (27658,3,0,'Take the Ruby Essence if you want to fly on the wings of the Red Flight.',1,1,0,0,27658,0,0,NULL,9,13128,0,16,37860,1,0,0,0),
 (27658,0,0,'GOSSIP_OPTION_QUESTGIVER',2,2,0,0,0,0,0,NULL,0,0,0,0,0,0,0,0,0);
+
+REPLACE INTO `gossip_menu` (`entry`,`text_id`) values (27657,384),(27658,384),(27659,384);
+UPDATE `creature_template` SET `InhabitType` = 3, spell6 = 0 WHERE `entry` IN (27755,27756,27692);
+REPLACE INTO `creature_template_addon` VALUES (27755,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
+REPLACE INTO `creature_template_addon` VALUES (27756,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
+REPLACE INTO `creature_template_addon` VALUES (27692,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
+
 /* hack for broken Nexus Portal */
 UPDATE `gameobject_template` SET `data0` = 49665 WHERE `entry` = 189985;
 UPDATE `spell_target_position` SET `id` = 49665 WHERE `id` = 49305;
