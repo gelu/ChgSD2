@@ -535,7 +535,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
     int32 HoldTimer;
     uint8 m_wallNum;
     bool Fight;
-    bool WallCast;
     ObjectGuid wallTarget;
     uint32    m_chestID;
 
@@ -579,6 +578,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
     {
         if(!m_pInstance)
             return;
+        DoDestructWall();
     }
 
     void DoSummonWall(uint8 wallNum)
@@ -587,7 +587,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
             return;
 
         m_wallNum = wallNum+1;
-        HoldTimer = 10000;
+        HoldTimer = 20000;
 
         switch (wallNum)
         {
@@ -602,6 +602,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
         if (Creature* pWallTarget = m_creature->SummonCreature(NPC_ICE_WALL,WallLoc[wallNum].x,WallLoc[wallNum].y,WallLoc[wallNum].z,WallLoc[wallNum].o,TEMPSUMMON_MANUAL_DESPAWN,0, true))
         {
             pWallTarget->SetPhaseMask(65535, true);
+            pWallTarget->setFaction(114);
             pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             pWallTarget->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             wallTarget = pWallTarget->GetObjectGuid();
@@ -650,7 +651,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                     if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                         m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_02, false);
                 }
-                WallCast = true;
                 break;
             case 5:
                 break;
@@ -676,7 +676,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                     if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                         m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_02, false);
                 }
-                WallCast = true;
                 break;
             case 9:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -706,7 +705,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                     if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                         m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_02, false);
                 }
-                WallCast = true;
                 break;
             case 13:
                 if (m_creature->GetEntry() == NPC_JAINA_OUTRO)
@@ -736,7 +734,6 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
                     if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                         m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_02, false);
                 }
-                WallCast = true;
                 break;
             case 17:
                 break;
@@ -854,13 +851,15 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
         {
             case 610:
               m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
-              m_creature->RemoveAurasDueToSpell(SPELL_SILENCE);
-              m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
+              m_pInstance->SetData(DATA_ESCAPE_LIDER,m_creature->GetEntry());
+              m_creature->SummonGameobject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0);
               m_pInstance->SetNextEvent(611,m_creature->GetEntry(),6000);
               break;
             case 611:
-              if (GameObject* pCave = m_creature->SummonGameobject(GO_CAVE, 5275.28f, 1694.23f, 786.147f, 0.981225f, 0))
+              if (GameObject* pCave = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_CAVE)))
                   pCave->SetGoState(GO_STATE_READY);
+              m_creature->RemoveAurasDueToSpell(SPELL_SILENCE);
+              m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
               m_creature->CastSpell(m_creature, SPELL_SHIELD_DISRUPTION,false);
               m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
               m_creature->GetMotionMaster()->MovePoint(0, 5258.911328f,1652.112f,784.295166f);
@@ -881,6 +880,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
               m_pInstance->SetNextEvent(615,m_creature->GetEntry(),5000);
               break;
            case 615:
+              m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_STAND);
               m_creature->SetOrientation(0.68f);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER);
               m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_GOSSIP);
@@ -908,7 +908,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
             return;
         }
 
-        if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO && WallCast == true && m_wallNum && CastTimer < diff)
+        if (m_creature->GetEntry() == NPC_SYLVANA_OUTRO && !wallTarget.IsEmpty() && m_wallNum && CastTimer < diff)
         {
             if (Creature* pWallTarget = m_creature->GetMap()->GetCreature(wallTarget))
                m_creature->CastSpell(pWallTarget, SPELL_DESTROY_ICE_WALL_03, false);
@@ -917,9 +917,8 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
         else
             CastTimer -= diff;
 
-        if (WallCast == true && m_wallNum && m_pInstance->GetData(DATA_SUMMONS) == 0 && HoldTimer < 1000)
+        if (!wallTarget.IsEmpty() && m_wallNum && m_pInstance->GetData(DATA_SUMMONS) == 0 && HoldTimer < 1000)
         {
-            WallCast = false;
             m_creature->InterruptNonMeleeSpells(false);
             SetEscortPaused(false);
 
@@ -1060,7 +1059,7 @@ struct MANGOS_DLL_DECL npc_frostworn_generalAI : public ScriptedAI
 
         if (pWho->GetTypeId() != TYPEID_PLAYER
             || m_pInstance->GetData(TYPE_MARWYN) != DONE
-            || !m_creature->IsWithinDistInMap(pWho, 20.0f)
+            || !m_creature->IsWithinDistInMap(pWho, 30.0f)
             ) return;
 
         if (Player* pPlayer = (Player*)pWho)

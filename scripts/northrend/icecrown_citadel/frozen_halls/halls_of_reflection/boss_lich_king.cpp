@@ -112,6 +112,9 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
         StartEscort = false;
         m_creature->SetUInt32Value(UNIT_VIRTUAL_ITEM_SLOT_ID + 0, 36942);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        if (m_pInstance->GetData(TYPE_LICH_KING) == DONE)
+            m_creature->SetVisibility(VISIBILITY_OFF);
     }
 
     void JustDied(Unit* pKiller)
@@ -123,7 +126,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
         if (!who || !m_pInstance)
             return;
 
-        if (who->GetTypeId() != TYPEID_PLAYER) 
+        if (who->GetTypeId() != TYPEID_PLAYER)
             return;
 
         Player* pPlayer = (Player *)who;
@@ -132,6 +135,7 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             return;
 
         if (m_pInstance->GetData(TYPE_PHASE) != 3
+           || m_pInstance->GetData(TYPE_LICH_KING) == DONE
            || !m_creature->IsWithinDistInMap(who, 50.0f)
            || m_pInstance->GetData(TYPE_FROST_GENERAL) != DONE)
            return;
@@ -210,8 +214,10 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
         if (summoned->GetEntry() == NPC_JAINA_OUTRO
             || summoned->GetEntry() == NPC_SYLVANA_OUTRO)
         {
+            m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
             if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
                 pEscortAI->EnterEvadeMode();
+            StartEscort = false;
         }
         else
             m_pInstance->SetData(DATA_SUMMONS, 0);
@@ -284,61 +290,56 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_pInstance->SetNextEvent(230,m_creature->GetEntry(),7000);
             break;
         case 230:
-            DoCast(m_creature, SPELL_WINTER);
             DoScriptText(SAY_LICH_KING_WINTER, m_creature);
+            DoCast(m_creature, SPELL_WINTER);
             m_creature->SetSpeedRate(MOVE_WALK, 1.3f, true);
             m_pInstance->SetNextEvent(240,m_creature->GetEntry(),1000);
             break;
         case 240:
-            SetEscortPaused(false);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
+            SetEscortPaused(false);
             m_pInstance->SetNextEvent(250,m_creature->GetEntry(),2000);
             break;
         case 250:
-            m_pInstance->SetNextEvent(290,GetLeader(),100);
+            m_pInstance->SetNextEvent(290,GetLeader(),1000);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
             break;
 
         case 300:
-            DoCast(m_creature, SPELL_WINTER);
-            m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAISE_DEAD);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
-            m_pInstance->SetNextEvent(310,m_creature->GetEntry(),10000);
+            m_pInstance->SetNextEvent(310,m_creature->GetEntry(),500);
             break;
         case 310:
-            SetEscortPaused(false);
-            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
             m_pInstance->SetNextEvent(320,m_creature->GetEntry(),500);
             break;
         case 320:
-            SetEscortPaused(false);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(330,m_creature->GetEntry(),500);
+            m_pInstance->SetNextEvent(330,m_creature->GetEntry(),5000);
             break;
         case 330:
+            DoCast(m_creature, SPELL_RAISE_DEAD);
             SetEscortPaused(false);
-            DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(390,GetLeader(),500);
+            m_pInstance->SetNextEvent(390,GetLeader(),1000);
             break;
 
         case 400:
-            DoCast(m_creature, SPELL_WINTER);
-            m_pInstance->SetData(DATA_SUMMONS, 3);
             SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAISE_DEAD);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            m_pInstance->SetData(DATA_SUMMONS, 3);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
-            m_pInstance->SetNextEvent(410,m_creature->GetEntry(),10000);
+            m_pInstance->SetNextEvent(410,m_creature->GetEntry(),500);
             break;
         case 410:
-            SetEscortPaused(false);
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
             DoCast(m_creature, SPELL_SUMMON_ABOM);
             m_pInstance->SetNextEvent(420,m_creature->GetEntry(),500);
             break;
         case 420:
-            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
             m_pInstance->SetNextEvent(430,m_creature->GetEntry(),500);
             break;
         case 430:
@@ -350,26 +351,24 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             m_pInstance->SetNextEvent(450,m_creature->GetEntry(),500);
             break;
         case 450:
-            DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(490,GetLeader(),500);
+            DoCast(m_creature, SPELL_RAISE_DEAD);
+            m_pInstance->SetNextEvent(490,GetLeader(),5000);
+            SetEscortPaused(false);
             break;
 
         case 500:
-            DoCast(m_creature, SPELL_WINTER);
             m_pInstance->SetData(DATA_SUMMONS, 3);
-            SetEscortPaused(true);
-            DoCast(m_creature, SPELL_RAISE_DEAD);
             DoScriptText(SAY_LICH_KING_GNOUL, m_creature);
+            DoCast(m_creature, SPELL_SUMMON_ABOM);
             m_pInstance->SetNextEvent(510,m_creature->GetEntry(),10000);
             break;
         case 510:
-            SetEscortPaused(false);
             m_creature->SetSpeedRate(MOVE_WALK, 1.3f, true);
             DoCast(m_creature, SPELL_SUMMON_ABOM);
             m_pInstance->SetNextEvent(520,m_creature->GetEntry(),500);
             break;
         case 520:
-            DoCast(m_creature, SPELL_SUMMON_ABOM);
+            DoCast(m_creature, SPELL_WITCH_DOCTOR);
             m_pInstance->SetNextEvent(530,m_creature->GetEntry(),500);
             break;
         case 530:
@@ -382,23 +381,25 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
             break;
         case 550:
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(570,m_creature->GetEntry(),10000);
+            m_pInstance->SetNextEvent(570,m_creature->GetEntry(),2000);
             break;
         case 570:
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
             DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(580,m_creature->GetEntry(),500);
+            m_pInstance->SetNextEvent(580,m_creature->GetEntry(),5000);
             break;
         case 580:
             DoScriptText(SAY_LICH_KING_ABON, m_creature);
-            DoCast(m_creature, SPELL_WITCH_DOCTOR);
-            m_pInstance->SetNextEvent(590,GetLeader(),5000);
+            DoCast(m_creature, SPELL_RAISE_DEAD);
+            m_pInstance->SetNextEvent(590,GetLeader(),1000);
             break;
 
         case 900:
-//            m_creature->NearTeleportTo(5572.077f, 2283.1f, 734.976f, 3.89f);
+            if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+                m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
             m_pInstance->SetData(TYPE_LICH_KING, FAIL);
             m_creature->SetActiveObjectState(false);
+            m_pInstance->SetData(TYPE_PHASE, 3);
             m_pInstance->SetNextEvent(0,0);
             break;
 
@@ -411,6 +412,10 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
      {
         if(!m_pInstance)
             return;
+
+        if ( (m_pInstance->GetData(TYPE_PHASE) == 4 || m_pInstance->GetData(TYPE_PHASE) == 5 || m_pInstance->GetData(TYPE_PHASE) == 7)
+             && m_pInstance->GetEventTimer(m_creature->GetEntry(),diff))
+            Event();
 
         if(m_pInstance->GetData(TYPE_LICH_KING) != IN_PROGRESS)
         {
@@ -438,20 +443,17 @@ struct MANGOS_DLL_DECL boss_lich_king_hrAI : public npc_escortAI
            if (boss_lich_king_hrAI* pEscortAI = dynamic_cast<boss_lich_king_hrAI*>(m_creature->AI()))
                pEscortAI->Start();
         }
-
-        if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
-            if (pLider->isAlive() && pLider->IsWithinDistInMap(m_creature, 2.0f)) 
-            {
-                SetEscortPaused(true);
-                m_creature->GetMotionMaster()->Clear();
-                DoScriptText(SAY_LICH_KING_WIN, m_creature);
-                m_pInstance->SetNextEvent(900,m_creature->GetEntry(),4000);
-//                m_creature->DealDamage(pLider, pLider->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-                m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
+        if (m_pInstance->GetData(TYPE_PHASE) == 5)
+            if (Creature* pLider = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ESCAPE_LIDER)))
+                if (pLider->isAlive() && pLider->IsWithinDistInMap(m_creature, 2.0f))
+                {
+                    m_pInstance->SetData(TYPE_PHASE,7);
+                    SetEscortPaused(true);
+                    m_creature->GetMotionMaster()->Clear();
+                    DoScriptText(SAY_LICH_KING_WIN, m_creature);
+                    m_pInstance->SetNextEvent(900,m_creature->GetEntry(),4000);
+                    m_creature->CastSpell(m_creature, SPELL_FURY_OF_FROSTMOURNE, false);
             };
-
-        if (m_pInstance->GetEventTimer(m_creature->GetEntry(),diff) && m_pInstance->GetData(TYPE_PHASE) == 5)
-            Event();
 
         return;
     }
@@ -513,7 +515,7 @@ struct MANGOS_DLL_DECL boss_lich_king_intro_horAI : public ScriptedAI
                 DoScriptText(SAY_LICH_KING_17, m_creature);
                 if (Creature* pUther = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_UTHER))))
                     pUther->CastSpell(pUther, SPELL_UTHER_DESPAWN, false);
-                m_pInstance->SetNextEvent(28,m_creature->GetEntry(),500);
+                m_pInstance->SetNextEvent(28,m_creature->GetEntry(),1500);
                 break;
             case 28:
                 if (Creature* pUther = (m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_UTHER))))
@@ -630,7 +632,7 @@ struct MANGOS_DLL_DECL npc_undead_horAI : public BSWScriptedAI
 
     void EnterEvadeMode()
     {
-        if (!m_pInstance) 
+        if (!m_pInstance)
             return;
 
         m_creature->ForcedDespawn();

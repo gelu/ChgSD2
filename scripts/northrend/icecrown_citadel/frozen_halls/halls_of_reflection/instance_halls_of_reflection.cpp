@@ -41,6 +41,8 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
     uint8 Difficulty;
     uint8 m_uiSummons;
 
+    uint32 m_auiLeader;
+
     uint64 m_uiFalricGUID;
     uint64 m_uiMarwynGUID;
     uint64 m_uiLichKingGUID;
@@ -137,10 +139,11 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                   break;
 
             case  GO_ICE_WALL:    m_uiIceWallGUID  = pGo->GetGUID();
-                                  pGo->SetUInt32Value(GAMEOBJECT_FACTION,114);
                                   pGo->SetPhaseMask(65535, true);
                                   break;
-            case  GO_CAVE:        m_uiCaveGUID     = pGo->GetGUID(); break;
+            case  GO_CAVE:        m_uiCaveGUID     = pGo->GetGUID(); 
+                                  DoOpenDoor(m_uiCaveGUID);
+                                  break;
         }
     }
 
@@ -179,12 +182,12 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                             if(uiData == DONE)
                                             {
                                                 if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestAllianceGUID))
-                                                    if (pChest && !pChest->isSpawned())
+                                                    if (pChest && !pChest->isSpawned() && GetData(DATA_ESCAPE_LIDER) == NPC_JAINA_OUTRO)
                                                     {
                                                         pChest->SetRespawnTime(DAY);
                                                     }
                                                 if (GameObject* pChest = instance->GetGameObject(m_uiCaptainsChestHordeGUID))
-                                                    if (pChest && !pChest->isSpawned())
+                                                    if (pChest && !pChest->isSpawned() && GetData(DATA_ESCAPE_LIDER) == NPC_SYLVANA_OUTRO)
                                                     {
                                                         pChest->SetRespawnTime(DAY);
                                                     };
@@ -200,6 +203,11 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
                                             else if (uiData == 1) ++m_uiSummons;
                                             else if (uiData == 0) --m_uiSummons;
                                             uiData = NOT_STARTED;
+                break;
+            case DATA_ESCAPE_LIDER:         m_auiLeader = uiData;
+                                            uiData = NOT_STARTED;
+                break;
+            default:
                 break;
         }
 
@@ -236,6 +244,7 @@ struct MANGOS_DLL_DECL instance_halls_of_reflection : public BSWScriptedInstance
             case TYPE_FROST_GENERAL:        return m_auiEncounter[uiType];
             case TYPE_HALLS:                return m_auiEncounter[uiType];
             case DATA_SUMMONS:              return m_uiSummons;
+            case DATA_ESCAPE_LIDER:        return m_auiLeader;
             default:                        return 0;
         }
         return 0;
