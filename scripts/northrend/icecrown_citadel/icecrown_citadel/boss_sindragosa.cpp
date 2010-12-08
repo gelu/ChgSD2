@@ -125,8 +125,10 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
     void JustReachedHome()
     {
-        if (!pInstance) return;
+        if (!pInstance)
+            return;
         pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
+        doRemoveFromAll(SPELL_ICY_TOMB);
         if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
             pTemp->Respawn();
         if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))
@@ -144,7 +146,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(!pInstance) return;
+        if (!pInstance)
+            return;
+        doRemoveFromAll(SPELL_ICY_TOMB);
         pInstance->SetData(TYPE_SINDRAGOSA, DONE);
         DoScriptText(-1631423,m_creature,killer);
         doCast(QUEST_24757);
@@ -152,7 +156,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if (!pInstance) return;
+        if (!pInstance) 
+            return;
+
         if (type != POINT_MOTION_TYPE || !MovementStarted) return;
 
         if (id == 1) {
@@ -169,14 +175,14 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
                  if (pList.isEmpty()) return;
 
         for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
-              if (Player* player = i->getSource())
-                 if (player->isAlive() && player->IsWithinDistInMap(m_creature, 30.0f))
-                        {
-                        float fPosX, fPosY, fPosZ;
-                        m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                        m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, 1.0f, fPosX, fPosY, fPosZ);
-                        player->NearTeleportTo(fPosX, fPosY, fPosZ+1.0f, (float)(urand(0,6)), true);
-                        }
+            if (Player* player = i->getSource())
+                if (player->isAlive() && player->IsWithinDistInMap(m_creature, 30.0f))
+                {
+                    float fPosX, fPosY, fPosZ;
+                    m_creature->GetPosition(fPosX, fPosY, fPosZ);
+                    m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, 1.0f, fPosX, fPosY, fPosZ);
+                    player->NearTeleportTo(fPosX, fPosY, fPosZ+1.0f, (float)(urand(0,6)), true);
+                }
         doCast(SPELL_BLISTERING_COLD);
     }
 
@@ -202,22 +208,6 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
                     pTemp1->AddThreat(marked[i], 1000.0f);
             };
 
-/*        Map::PlayerList const &pList = pMap->GetPlayers();
-                 if (pList.isEmpty()) return;
-
-        for(Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
-          {
-              if (Player* player = i->getSource())
-                 {
-                  if ( player->isAlive() && (player->HasAura(SPELL_ICY_TOMB)) )
-                     {
-                        float fPosX, fPosY, fPosZ;
-                        player->GetPosition(fPosX, fPosY, fPosZ);
-                        if (Unit* pTemp = doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
-                            pTemp->AddThreat(player, 100.0f);
-                     };
-                 };
-           };*/
     }
 
     void UpdateAI(const uint32 diff)
@@ -348,6 +338,7 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
 
     void Reset()
     {
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         SetCombatMovement(false);
         victimGUID = 0;
         m_creature->SetRespawnDelay(7*DAY);
@@ -369,13 +360,14 @@ struct MANGOS_DLL_DECL mob_ice_tombAI : public BSWScriptedAI
              }
 
         }
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
             if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
-                doRemove(SPELL_ICY_TOMB,pVictim);
+                doRemove(SPELL_ICY_TOMB, pVictim);
     }
 
     void AttackStart(Unit *pWho)
@@ -433,8 +425,6 @@ struct MANGOS_DLL_DECL mob_frost_bombAI : public ScriptedAI
         boom_timer = 9000;
         finita = false;
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-//        m_creature->SetDisplayId(15880);
-        m_creature->SetDisplayId(22523);
     }
 
     void AttackStart(Unit *pWho)

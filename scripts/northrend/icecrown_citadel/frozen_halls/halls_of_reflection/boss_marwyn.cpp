@@ -43,9 +43,9 @@ enum
     SPELL_BERSERK                           = 47008,
 };
 
-struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_marwynAI : public BSWScriptedAI
 {
-   boss_marwynAI(Creature *pCreature) : ScriptedAI(pCreature)
+   boss_marwynAI(Creature *pCreature) : BSWScriptedAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -53,12 +53,6 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
 
    ScriptedInstance* m_pInstance;
    bool m_bIsCall;
-   uint32 m_uiBerserkTimer;
-   uint32 m_uiSharedSufferingTimer;
-   uint32 m_uiWellTimer;
-   uint32 m_uiTouchTimer;
-   uint32 m_uiFleshTimer;
-   uint32 m_uiObliterateTimer;
    uint32 m_uiSummonTimer;
 
    uint32 m_uiLocNo;
@@ -71,12 +65,6 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
 
    void Reset()
    {
-      m_uiBerserkTimer = 180000;
-      m_uiSharedSufferingTimer = 4000;
-      m_uiWellTimer = 12000;
-      m_uiTouchTimer = 8000;
-      m_uiFleshTimer = 21000;
-      m_uiObliterateTimer = 5000;
       SummonCount = 0;
       m_bIsCall = false;
       m_uiSummonTimer = 15000;
@@ -193,16 +181,13 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
     {
         if(!m_pInstance) return;
 
-        if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL) 
+        if (m_pInstance->GetData(TYPE_EVENT) == 6)
         {
-            if(!m_bIsCall) 
-            {
-               m_bIsCall = true;
-               Summon();
-            }
+            m_pInstance->SetData(TYPE_EVENT, 7);
+            Summon();
         }
 
-        if(m_pInstance->GetData(TYPE_MARWYN) == SPECIAL) 
+        if(m_pInstance->GetData(TYPE_MARWYN) == SPECIAL)
         {
            if(m_uiSummonTimer < uiDiff) 
            {
@@ -225,44 +210,14 @@ struct MANGOS_DLL_DECL boss_marwynAI : public ScriptedAI
         if(!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if(m_uiObliterateTimer < uiDiff)
-        {
-            DoCast(m_creature->getVictim(), SPELL_OBLITERATE);
-                m_uiObliterateTimer = urand(8000, 12000);
-        } else m_uiObliterateTimer -= uiDiff;
+        timedCast(SPELL_OBLITERATE, uiDiff);
+        timedCast(SPELL_WELL_OF_CORRUPTION, uiDiff);
+        timedCast(SPELL_SHARED_SUFFERING, uiDiff);
+        timedCast(SPELL_CORRUPTED_FLESH, uiDiff);
 
-        if (m_uiWellTimer < uiDiff) 
-        {
-            DoScriptText(SAY_MARWYN_SP02, m_creature);
-//            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-//               DoCast(pTarget, SPELL_WELL_OF_CORRUPTION);
-            m_uiWellTimer= urand(25000, 30000);
-        } else m_uiWellTimer -= uiDiff;
-
-        if (m_uiSharedSufferingTimer < uiDiff) 
-        {
-            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, SPELL_SHARED_SUFFERING);
-            m_uiSharedSufferingTimer = urand(15000, 20000);
-        } else m_uiSharedSufferingTimer -= uiDiff;
-
-        if (m_uiFleshTimer < uiDiff) 
-        {
-            DoScriptText(SAY_MARWYN_SP01, m_creature);
-            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCast(pTarget, SPELL_CORRUPTED_FLESH);
-            m_uiFleshTimer = urand(10000, 16000);
-        } else m_uiFleshTimer -= uiDiff;
-
-        if(m_uiBerserkTimer < uiDiff)
-        {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserkTimer = 180000;
-        } else  m_uiBerserkTimer -= uiDiff;
+        timedCast(SPELL_BERSERK, uiDiff);
 
         DoMeleeAttackIfReady();
-
-        return;
     }
 };
 

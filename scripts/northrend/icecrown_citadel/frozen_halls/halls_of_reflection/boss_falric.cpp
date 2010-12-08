@@ -42,9 +42,9 @@ enum
     SPELL_BERSERK                           = 47008
 };
 
-struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
+struct MANGOS_DLL_DECL boss_falricAI : public BSWScriptedAI
 {
-    boss_falricAI(Creature *pCreature) : ScriptedAI(pCreature)
+    boss_falricAI(Creature *pCreature) : BSWScriptedAI(pCreature)
    {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         Reset();
@@ -53,10 +53,6 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
    ScriptedInstance* m_pInstance;
    bool m_bIsCall;
 
-   uint32 m_uiBerserkTimer;
-   uint32 m_uiGrowlTimer;
-   uint32 m_uiHorrorTimer;
-   uint32 m_uiStrikeTimer;
    uint32 m_uiSummonTimer;
    uint32 m_uiLocNo;
    uint64 m_uiSummonGUID[16];
@@ -68,12 +64,8 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
 
     void Reset()
     {
-      m_uiBerserkTimer = 180000;
       SummonCount = 0;
       m_bIsCall = false;
-      m_uiGrowlTimer = 20000;
-      m_uiHorrorTimer = urand(14000,20000);
-      m_uiStrikeTimer = 2000;
       m_uiSummonTimer = 11000;
       m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
       m_creature->SetVisibility(VISIBILITY_OFF);
@@ -182,15 +174,17 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if(!m_pInstance) return;
+        if (!m_pInstance) 
+            return;
+
+        if (m_pInstance->GetData(TYPE_EVENT) == 5)
+        {
+            m_pInstance->SetData(TYPE_EVENT, 6);
+            Summon();
+        }
 
         if (m_pInstance->GetData(TYPE_FALRIC) == SPECIAL)
         {
-            if(!m_bIsCall) 
-            {
-               m_bIsCall = true;
-               Summon();
-            }
 
             if (m_uiSummonTimer < uiDiff) 
             {
@@ -209,39 +203,14 @@ struct MANGOS_DLL_DECL boss_falricAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if(m_uiStrikeTimer < uiDiff)
-        {
-            DoCast(m_creature->getVictim(), SPELL_QUIVERING_STRIKE);
-            m_uiStrikeTimer = (urand(7000, 14000));
-        }
-        else m_uiStrikeTimer -= uiDiff;
+        timedCast(SPELL_QUIVERING_STRIKE, uiDiff);
+        timedCast(SPELL_IMPENDING_DESPAIR, uiDiff);
+        timedCast(SPELL_DEFILING_HORROR, uiDiff);
 
-        if(m_uiHorrorTimer < uiDiff)
-        {
-            DoScriptText(SAY_FALRIC_SP01, m_creature);
-            if(Unit *pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-               DoCast(pTarget, SPELL_IMPENDING_DESPAIR);
-            m_uiHorrorTimer = (urand(15000, 25000));
-        }
-        else m_uiHorrorTimer -= uiDiff;
+        timedCast(SPELL_BERSERK, uiDiff);
 
-        if(m_uiGrowlTimer < uiDiff)
-        {
-            DoScriptText(SAY_FALRIC_SP02, m_creature);
-            DoCast(m_creature, SPELL_DEFILING_HORROR);
-            m_uiGrowlTimer = (urand(25000, 30000));
-        }
-        else m_uiGrowlTimer -= uiDiff;
+        DoMeleeAttackIfReady();
 
-        if (m_uiBerserkTimer < uiDiff)
-        {
-            DoCast(m_creature, SPELL_BERSERK);
-            m_uiBerserkTimer = 180000;
-        } else  m_uiBerserkTimer -= uiDiff;
-
-        DoMeleeAttackIfReady();  
-
-        return;
     }
 };
 
