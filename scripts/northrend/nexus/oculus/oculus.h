@@ -13,10 +13,9 @@ enum
     TYPE_VAROS,
     TYPE_UROM,
     TYPE_EREGOS,
-    MAX_ENCOUNTERS,
-
     TYPE_ROBOTS,
     TYPE_UROM_PHASE,
+    MAX_ENCOUNTERS,
 
     DATA_DRAKOS,
     DATA_VAROS,
@@ -31,8 +30,9 @@ enum
     NPC_EREGOS             = 27656,
 //
     GO_DRAGON_CAGE_DOOR    = 193995,
-    GO_EREGOS_CACHE        = 191351,
+    GO_EREGOS_CACHE        = 191349,
     GO_EREGOS_CACHE_H      = 193603,
+    GO_SPOTLIGHT           = 191351,
 
     BELGAR_TEXT_0          = 13267,
     BELGAR_TEXT_1          = 13268,

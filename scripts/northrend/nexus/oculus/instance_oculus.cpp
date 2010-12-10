@@ -50,14 +50,21 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
     uint64 m_uiEregosGUID;
     uint64 uiProect;
     uint64 uiCacheEregosGUID;
+    uint64 uiCacheEregosHGUID;
+    uint64 m_uiSpotLightGUID;
 
-    uint8 m_auiEncounter[MAX_ENCOUNTERS+3];
+    uint32 m_auiEncounter[MAX_ENCOUNTERS+1];
+
     std::string strSaveData;
     bool m_bIsRegularMode;
 
     void Initialize()
     {
+        for (uint8 i = 0; i < MAX_ENCOUNTERS+1; ++i)
+            m_auiEncounter[i] = NOT_STARTED;
+
         uiCacheEregosGUID = 0;
+        m_uiSpotLightGUID = 0;
         uiProect = 0;
         m_uiVarosGUID = 0;
         m_uiUromGUID = 0;
@@ -66,13 +73,18 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
         m_auiEncounter[TYPE_UROM_PHASE] = 0;
     }
 
-    void OnGameObjectCreate(GameObject* pGO, bool bAdd)
+    void OnObjectCreate(GameObject* pGO)
     {
         switch(pGO->GetEntry())
         {
             case GO_EREGOS_CACHE:
-            case GO_EREGOS_CACHE_H:
                 uiCacheEregosGUID = pGO->GetGUID();
+                break;
+            case GO_EREGOS_CACHE_H:
+                uiCacheEregosHGUID = pGO->GetGUID();
+                break;
+            case GO_SPOTLIGHT:
+                m_uiSpotLightGUID = pGO->GetGUID();
                 break;
         }
     }
@@ -110,13 +122,10 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
                 break;
             case TYPE_EREGOS:
                 m_auiEncounter[type] = data;
-                if(data == DONE)
+                if (data == DONE)
                 {
-                    if (GameObject* pChest = instance->GetGameObject(uiCacheEregosGUID))
-                        if (pChest && !pChest->isSpawned())
-                        {
-                            pChest->SetRespawnTime(DAY);
-                        }
+                    DoRespawnGameObject((m_bIsRegularMode ? uiCacheEregosGUID : uiCacheEregosHGUID), HOUR);
+                    DoRespawnGameObject(m_uiSpotLightGUID, HOUR);
                 }
                 break;
             case TYPE_ROBOTS:
@@ -208,6 +217,9 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
             if (m_auiEncounter[i] == IN_PROGRESS)
                 m_auiEncounter[i] = NOT_STARTED;
         }
+
+        m_auiEncounter[TYPE_ROBOTS] = 10;
+        m_auiEncounter[TYPE_UROM_PHASE] = 0;
 
         OUT_LOAD_INST_DATA_COMPLETE;
     }

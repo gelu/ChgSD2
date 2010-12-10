@@ -40,6 +40,10 @@ UPDATE `locales_npc_text` SET `Text0_0_loc8` = `Text0_1_loc8` WHERE `Text0_0_loc
 
 UPDATE `creature` SET `spawnMask` = 3 WHERE `map` = 578 AND `spawnMask` = 1;
 
+-- Eregos chests
+UPDATE `gameobject` SET `spawnMask` = 2, `flags` = 0, `questItem1` = 0 WHERE `map` = 578 AND `id` = 193603;
+UPDATE `gameobject` SET `spawnMask` = 1, `flags` = 0, `questItem1` = 0 WHERE `map` = 578 AND `id` = 191349;
+
 UPDATE `creature_template` SET `InhabitType` = 3, spell6 = 0 WHERE `entry` IN (27755,27756,27692);
 REPLACE INTO `creature_template_addon` VALUES (27755,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
 REPLACE INTO `creature_template_addon` VALUES (27756,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
@@ -50,6 +54,14 @@ UPDATE `gameobject_template` SET `data0` = 49665 WHERE `entry` = 189985;
 UPDATE `spell_target_position` SET `id` = 49665 WHERE `id` = 49305;
 
 UPDATE `creature_template` SET `spell6` = 57403, `InhabitType` = 3 WHERE `entry` IN (27692,27755,27756);
+
+DELETE FROM `gameobject_scripts` WHERE `id` IN 
+(40557,42275);
+INSERT  INTO `gameobject_scripts` 
+(`id`, `delay`, `command`, `datalong`, `datalong2`, `dataint`, `x`, `y`, `z`, `o`) 
+VALUES 
+(42275, 1, 6, 571, 0, '0', 3878.0, 6984.0, 106.0, 0),
+(40557, 1, 6, 578, 0, '0', 1001.61, 1051.13, 359.48, 3.1);
 
 -- from lanc
 UPDATE `creature_template` SET
