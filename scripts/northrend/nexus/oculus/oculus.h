@@ -13,13 +13,31 @@ enum
     TYPE_VAROS,
     TYPE_UROM,
     TYPE_EREGOS,
+    MAX_ENCOUNTERS,
+
+    TYPE_ROBOTS,
+    TYPE_UROM_PHASE,
+
+    DATA_DRAKOS,
+    DATA_VAROS,
+    DATA_UROM,
+    DATA_EREGOS,
+
+    NPC_ROBOT              = 27641,
+    NPC_BALGAR_IMAGE       = 28012,
+    NPC_DRAKOS             = 27654,
+    NPC_VAROS              = 27447,
+    NPC_UROM               = 27655,
+    NPC_EREGOS             = 27656,
 //
-    NPC_DRAKOS        = 27654,
-    NPC_VAROS         = 27447,
-    NPC_UROM          = 27655,
-    NPC_EREGOS        = 27656,
-//
-    GO_DRAGON_CAGE_DOOR   = 193995,
+    GO_DRAGON_CAGE_DOOR    = 193995,
+    GO_EREGOS_CACHE        = 191351,
+    GO_EREGOS_CACHE_H      = 193603,
+
+    BELGAR_TEXT_0          = 13267,
+    BELGAR_TEXT_1          = 13268,
+    BELGAR_TEXT_2          = 13269,
+
 };
 
 #endif

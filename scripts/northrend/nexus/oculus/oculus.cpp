@@ -145,6 +145,71 @@ CreatureAI* GetAI_mob_oculus_dragon(Creature* pCreature)
     return new mob_oculus_dragonAI(pCreature);
 }
 
+/*#####
+# npc_robot
+#####*/
+
+struct MANGOS_DLL_DECL npc_oculus_robotAI : public ScriptedAI
+{
+    npc_oculus_robotAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+
+    void Reset()
+    {
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+        if(m_pInstance)
+           m_pInstance->SetData(TYPE_ROBOTS, 1);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+        DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_oculus_robot(Creature* pCreature)
+{
+    return new npc_oculus_robotAI (pCreature);
+}
+
+struct MANGOS_DLL_DECL npc_belgar_imageAI : public ScriptedAI
+{
+    npc_belgar_imageAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        Reset();
+    }
+
+    ScriptedInstance* m_pInstance;
+
+    void Reset()
+    {
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if(!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
+
+    }
+};
+
+CreatureAI* GetAI_npc_belgar_image(Creature* pCreature)
+{
+    return new npc_belgar_imageAI (pCreature);
+}
+
 void AddSC_oculus()
 {
     Script *newscript;
@@ -153,4 +218,15 @@ void AddSC_oculus()
     newscript->Name = "mob_oculus_dragon";
     newscript->GetAI = &GetAI_mob_oculus_dragon;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_oculus_robot";
+    newscript->GetAI = &GetAI_npc_oculus_robot;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_belgar_image";
+    newscript->GetAI = &GetAI_npc_belgar_image;
+    newscript->RegisterSelf();
+
 }
