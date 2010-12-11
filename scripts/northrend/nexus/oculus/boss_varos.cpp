@@ -412,9 +412,9 @@ struct MANGOS_DLL_DECL npc_varos_orbAI : public ScriptedAI
     }
 };
 
-struct MANGOS_DLL_DECL npc_vapos_beam_targetAI : public ScriptedAI
+struct MANGOS_DLL_DECL npc_varos_beam_targetAI : public ScriptedAI
 {
-    npc_vapos_beam_targetAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    npc_varos_beam_targetAI(Creature *pCreature) : ScriptedAI(pCreature) 
     {
        Reset();
     }
@@ -444,9 +444,9 @@ CreatureAI* GetAI_npc_varos_orb(Creature* pCreature)
     return new npc_varos_orbAI (pCreature);
 }
 
-CreatureAI* GetAI_npc_vapos_beam_target(Creature* pCreature)
+CreatureAI* GetAI_npc_varos_beam_target(Creature* pCreature)
 {
-    return new npc_vapos_beam_targetAI (pCreature);
+    return new npc_varos_beam_targetAI (pCreature);
 }
 
 void AddSC_boss_varos()
@@ -464,7 +464,7 @@ void AddSC_boss_varos()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name = "npc_vapos_beam_target";
-    newscript->GetAI = &GetAI_npc_vapos_beam_target;
+    newscript->Name = "npc_varos_beam_target";
+    newscript->GetAI = &GetAI_npc_varos_beam_target;
     newscript->RegisterSelf();
 }

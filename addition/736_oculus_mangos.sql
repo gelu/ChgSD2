@@ -22,12 +22,12 @@ INSERT INTO `gossip_menu_option` (`menu_id`, `id`, `option_icon`, `option_text`,
 
 DELETE FROM `locales_gossip_menu_option` WHERE `menu_id` IN (27657, 27658, 27659);
 INSERT INTO `locales_gossip_menu_option` (`menu_id`, `id`, `option_text_loc1`, `option_text_loc2`, `option_text_loc3`, `option_text_loc4`, `option_text_loc5`, `option_text_loc6`, `option_text_loc7`, `option_text_loc8`, `box_text_loc1`, `box_text_loc2`, `box_text_loc3`, `box_text_loc4`, `box_text_loc5`, `box_text_loc6`, `box_text_loc7`, `box_text_loc8`) VALUES
-(27657, 0, 'What\'s can Emerald Drake?', NULL, NULL, NULL, NULL, NULL, NULL, '╨з╤В╨╛ ╤Г╨╝╨╡╨╡╤В ╨Ш╨╖╤Г╨╝╤А╤Г╨┤╨╜╤Л╨╣ ╨┤╤А╨░╨║╨╛╨╜?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(27657, 1, 'Take the Emerald Essence if you want to fly on the wings of the Green Flight.', NULL, NULL, NULL, NULL, NULL, NULL, '╨Т╨╛╨╖╤М╨╝╨╕╤В╨╡ ╨Ш╨╖╤Г╨╝╤А╤Г╨┤╨╜╤Г╤О ╤Н╤Б╤Б╨╡╨╜╤Ж╨╕╤О, ╨╡╤Б╨╗╨╕ ╨Т╤Л ╤Е╨╛╤В╨╕╤В╨╡ ╨╗╨╡╤В╨╡╤В╤М ╨╜╨░ ╨╖╨╡╨╗╨╡╨╜╨╛╨╝ ╨┤╤А╨░╨║╨╛╨╜╨╡.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(27659, 0, 'What\'s can Bronze Drake?', NULL, NULL, NULL, NULL, NULL, NULL, '╨з╤В╨╛ ╤Г╨╝╨╡╨╡╤В ╨С╤А╨╛╨╜╨╖╨╛╨▓╤Л╨╣ ╨┤╤А╨░╨║╨╛╨╜?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(27659, 1, 'Take the Amber Essence if you want to fly on the wings of the Bronze Flight.', NULL, NULL, NULL, NULL, NULL, NULL, '╨Т╨╛╨╖╤М╨╝╨╕╤В╨╡ ╨п╨╜╤В╨░╤А╨╜╤Г╤О ╤Н╤Б╤Б╨╡╨╜╤Ж╨╕╤О, ╨╡╤Б╨╗╨╕ ╨Т╤Л ╤Е╨╛╤В╨╕╤В╨╡ ╨╗╨╡╤В╨╡╤В╤М ╨╜╨░ ╨▒╤А╨╛╨╜╨╖╨╛╨▓╨╛╨╝ ╨┤╤А╨░╨║╨╛╨╜╨╡.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(27658, 0, 'What\'s can Red Drake?', NULL, NULL, NULL, NULL, NULL, NULL, '╨з╤В╨╛ ╤Г╨╝╨╡╨╡╤В ╨Ъ╤А╨░╤Б╨╜╤Л╨╣ ╨┤╤А╨░╨║╨╛╨╜?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(27658, 1, 'Take the Ruby Essence if you want to fly on the wings of the Red Flight.', NULL, NULL, NULL, NULL, NULL, NULL, '╨Т╨╛╨╖╤М╨╝╨╕╤В╨╡ ╨а╤Г╨▒╨╕╨╜╨╛╨▓╤Г╤О ╤Н╤Б╤Б╨╡╨╜╤Ж╨╕╤О, ╨╡╤Б╨╗╨╕ ╨Т╤Л ╤Е╨╛╤В╨╕╤В╨╡ ╨╗╨╡╤В╨╡╤В╤М ╨╜╨░ ╨║╤А╨░╤Б╨╜╨╛╨╝ ╨┤╤А╨░╨║╨╛╨╜╨╡.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(27657, 0, 'What\'s can Emerald Drake?', NULL, NULL, NULL, NULL, NULL, NULL, 'Что умеет Изумрудный дракон?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(27657, 1, 'Take the Emerald Essence if you want to fly on the wings of the Green Flight.', NULL, NULL, NULL, NULL, NULL, NULL, 'Возьмите Изумрудную эссенцию, если Вы хотите лететь на зеленом драконе.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(27659, 0, 'What\'s can Bronze Drake?', NULL, NULL, NULL, NULL, NULL, NULL, 'Что умеет Бронзовый дракон?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(27659, 1, 'Take the Amber Essence if you want to fly on the wings of the Bronze Flight.', NULL, NULL, NULL, NULL, NULL, NULL, 'Возьмите Янтарную эссенцию, если Вы хотите лететь на бронзовом драконе.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(27658, 0, 'What\'s can Red Drake?', NULL, NULL, NULL, NULL, NULL, NULL, 'Что умеет Красный дракон?', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(27658, 1, 'Take the Ruby Essence if you want to fly on the wings of the Red Flight.', NULL, NULL, NULL, NULL, NULL, NULL, 'Возьмите Рубиновую эссенцию, если Вы хотите лететь на красном драконе.', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 DELETE FROM `gossip_menu` WHERE `entry` IN (27657, 27658, 27659);
 INSERT INTO `gossip_menu` (`entry`,`text_id`) VALUES (27657,13258),(27658,13254),(27659,13256);
@@ -41,8 +41,8 @@ UPDATE `locales_npc_text` SET `Text0_0_loc8` = `Text0_1_loc8` WHERE `Text0_0_loc
 UPDATE `creature` SET `spawnMask` = 3 WHERE `map` = 578 AND `spawnMask` = 1;
 
 -- Eregos chests
-UPDATE `gameobject` SET `spawnMask` = 2, `flags` = 0, `questItem1` = 0 WHERE `map` = 578 AND `id` = 193603;
-UPDATE `gameobject` SET `spawnMask` = 1, `flags` = 0, `questItem1` = 0 WHERE `map` = 578 AND `id` = 191349;
+UPDATE `gameobject` SET `spawnMask` = 2 WHERE `map` = 578 AND `id` = 193603;
+UPDATE `gameobject` SET `spawnMask` = 1 WHERE `map` = 578 AND `id` = 191349;
 
 UPDATE `creature_template` SET `InhabitType` = 3, spell6 = 0 WHERE `entry` IN (27755,27756,27692);
 REPLACE INTO `creature_template_addon` VALUES (27755,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
