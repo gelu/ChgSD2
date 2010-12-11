@@ -329,30 +329,31 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
-    uint64 victimGUID;
+    ObjectGuid victimGuid;
 
     void Reset()
     {
+        SetCombatMovement(false);
         m_creature->SetRespawnDelay(7*DAY);
-        victimGUID = 0;
+        victimGuid = ObjectGuid();
         m_creature->SetInCombatWithZone();
     }
 
     void Aggro(Unit* pWho)
     {
-        if (!victimGUID && pWho && pWho->GetTypeId() == TYPEID_PLAYER)
+        if (victimGuid.IsEmpty() && pWho && pWho->GetTypeId() == TYPEID_PLAYER)
         {
-            victimGUID = pWho->GetGUID();
+            victimGuid = pWho->GetObjectGuid();
             m_creature->SetInCombatWith(pWho);
-            m_creature->SetSpeedRate(MOVE_RUN, 5.0f);
-            m_creature->GetMotionMaster()->MoveChase(pWho);
+            doCast(SPELL_BONE_STRIKE_IMPALE,pWho);
+            doCast(SPELL_VEHICLE_HARDCODED,pWho);
         }
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (uiDamage > m_creature->GetHealth())
-            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGuid))
                 doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
@@ -362,14 +363,14 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
 
     void KilledUnit(Unit* _Victim)
     {
-        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
-            if (pVictim->GetGUID() == victimGUID)
+        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGuid))
+            if (pVictim->GetObjectGuid() == victimGuid)
                 doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
     void JustDied(Unit* Killer)
     {
-        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGuid))
             doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
     }
 
@@ -377,31 +378,21 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
     {
         if(m_pInstance && m_pInstance->GetData(TYPE_MARROWGAR) != IN_PROGRESS)
         {
-            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+            if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGuid))
                 doRemove(SPELL_BONE_STRIKE_IMPALE,pVictim);
             m_creature->ForcedDespawn();
         }
 
-        if (!victimGUID)
+        if (victimGuid.IsEmpty())
             return;
 
-        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGUID))
+        if (Player* pVictim = m_creature->GetMap()->GetPlayer(victimGuid))
         {
             if(!pVictim->isAlive())
                 m_creature->ForcedDespawn();
-
-            if ( pVictim
-                && !hasAura(SPELL_BONE_STRIKE_IMPALE, pVictim)
-                && pVictim->IsInMap(m_creature)
-                && m_creature->IsWithinDistInMap(pVictim, 1.0f)
-                && pVictim->isAlive())
-                {
-                    m_creature->GetMotionMaster()->Clear();
-                    SetCombatMovement(false);
-                    doCast(SPELL_BONE_STRIKE_IMPALE,pVictim);
-                    doCast(SPELL_VEHICLE_HARDCODED,pVictim);
-                }
         }
+        else
+            m_creature->ForcedDespawn();
     }
 };
 
