@@ -15,10 +15,10 @@
  */
 
 /* ScriptData
-SDName: boss_malygos
+SDName: boss_coren_direbrew
 SD%Complete: 0
 SDComment: Placeholder
-SDCategory: Eye of Eternity
+SDCategory: Blackrock Depths
 EndScriptData */
 
 #include "precompiled.h"

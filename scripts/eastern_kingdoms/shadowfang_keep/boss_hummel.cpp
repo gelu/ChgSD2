@@ -15,10 +15,10 @@
  */
 
 /* ScriptData
-SDName: boss_malygos
+SDName: boss_hummel
 SD%Complete: 0
 SDComment: Placeholder
-SDCategory: Eye of Eternity
+SDCategory: Shadowfang Keep
 EndScriptData */
 
 #include "precompiled.h"

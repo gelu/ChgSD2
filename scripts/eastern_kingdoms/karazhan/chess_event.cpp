@@ -15,10 +15,10 @@
  */
 
 /* ScriptData
-SDName: boss_malygos
+SDName: chess_event
 SD%Complete: 0
 SDComment: Placeholder
-SDCategory: Eye of Eternity
+SDCategory: Karazhan
 EndScriptData */
 
 #include "precompiled.h"

@@ -15,10 +15,10 @@
  */
 
 /* ScriptData
-SDName: boss_malygos
+SDName: boss_anzu
 SD%Complete: 0
 SDComment: Placeholder
-SDCategory: Eye of Eternity
+SDCategory: Auchindoun, Sethekk Halls
 EndScriptData */
 
 #include "precompiled.h"

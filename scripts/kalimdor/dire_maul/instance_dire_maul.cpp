@@ -15,10 +15,10 @@
  */
 
 /* ScriptData
-SDName: boss_malygos
+SDName: instance_dire_maul
 SD%Complete: 0
 SDComment: Placeholder
-SDCategory: Eye of Eternity
+SDCategory: Dire Maul
 EndScriptData */
 
 #include "precompiled.h"
