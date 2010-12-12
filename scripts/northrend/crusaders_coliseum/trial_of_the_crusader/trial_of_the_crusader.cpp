@@ -566,6 +566,7 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     pTrigger =  m_creature->SummonCreature(NPC_TRIGGER, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 5.0f, TEMPSUMMON_MANUAL_DESPAWN, 5000);
                     if (pTrigger)  {
                                    pTrigger->SetDisplayId(17612);
+                                   pTrigger->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
                                    pTrigger->CastSpell(pTrigger, SPELL_WILFRED_PORTAL, false);
                                    pTrigger->SetRespawnDelay(DAY);
                                    }
@@ -574,8 +575,6 @@ struct MANGOS_DLL_DECL npc_fizzlebang_tocAI : public ScriptedAI
                     pInstance->SetData(TYPE_EVENT, 1135);
                     break;
                case 1135:
-                    if (pTrigger) pTrigger->SetFloatValue(OBJECT_FIELD_SCALE_X, 2.0f);
-                    m_creature->HandleEmoteCommand(EMOTE_ONESHOT_SPELLCAST_OMNI);
                     UpdateTimer = 3000;
                     pInstance->SetData(TYPE_EVENT, 1140);
                     break;
