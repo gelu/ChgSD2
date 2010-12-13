@@ -662,7 +662,6 @@
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\boss_bronjahm.cpp" />
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\boss_devourer_of_souls.cpp" />
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\instance_forge_of_souls.cpp" />
->>>>>>> scriptdev2
     <ClCompile Include="..\scripts\outland\blades_edge_mountains.cpp" />
     <ClCompile Include="..\scripts\outland\boss_doomlord_kazzak.cpp" />
     <ClCompile Include="..\scripts\outland\boss_doomwalker.cpp" />
