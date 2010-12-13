@@ -22,7 +22,7 @@ DELETE FROM `gameobject` WHERE `guid` IN (913334);
 UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map`=631;
 
 -- Saurfang
-UPDATE `creature_template` SET `faction_A` = '14', `faction_H` = '14', `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3, `faction_A` = '14', `faction_H` = '14', `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
 UPDATE `creature` SET `position_x` = -476.621,`position_y` = 2211.11,`position_z` = 541.197, `spawntimesecs` = 604800 WHERE `id` = 37813;
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
 DELETE FROM `spell_script_target` WHERE `entry` = 72260;
@@ -101,6 +101,12 @@ UPDATE `creature_template` SET `ScriptName`='mob_icc_volatile_ooze', `AIName`=''
 UPDATE `creature_template` SET `ScriptName`='mob_choking_gas_bomb', `AIName`='',`minlevel` = 82, `maxlevel` = 82, `faction_A` = 14, `faction_H` = 14, `scale` = 0.5 WHERE `entry`= 38159;
 UPDATE `creature_template` SET `ScriptName`='mob_ooze_puddle',`scale` = '1.0', `AIName`='', `minlevel` = 82, `maxlevel` = 82, `modelid_1` = 11686, `modelid_2` = 11686, `modelid_3` = 11686, `modelid_4` = 11686, `faction_A` = 14, `faction_H` = 14  WHERE `entry`= 37690;
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_plague_sigil' WHERE `gameobject_template`.`entry` IN (202182);
+-- Abomination
+DELETE FROM `creature_template_addon` WHERE (`entry`=37672);
+INSERT INTO `creature_template_addon` (`entry`, `auras`) VALUES (37672, '70385 0 70405 0');
+UPDATE `creature_template` SET `VehicleId`=587 WHERE `entry` in (36678,38431,38585,38586);
+UPDATE `creature_template` SET `VehicleId`=591 WHERE `entry` in (37672,38605,38786,38787);
+INSERT INTO `spell_script_target` VALUES (70360,1,37690);
 
 -- Blood wing
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_bloodwing_sigil' WHERE `gameobject_template`.`entry` IN (202183);
