@@ -1732,21 +1732,6 @@
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron\pit_of_saron.cpp">
       <Filter>scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron</Filter>
     </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_falryn.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_lich_king.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\boss_marwyn.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\halls_of_reflection.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\instance_halls_of_reflection.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection</Filter>
-    </ClCompile>
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\boss_bronjahm.cpp">
       <Filter>scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls</Filter>
     </ClCompile>
@@ -1843,6 +1828,21 @@
     <ClCompile Include="..\scripts\northrend\nexus\oculus\oculus.cpp">
       <Filter>scripts\northrend\nexus\oculus</Filter>
     </ClCompile>
+    <ClCompile Include="..\scripts\northrend\nexus\oculus\instance_oculus.cpp">
+      <Filter>scripts\northrend\nexus\oculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\northrend\nexus\oculus\boss_drakos.cpp">
+      <Filter>scripts\northrend\nexus\oculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\northrend\nexus\oculus\boss_varos.cpp">
+      <Filter>scripts\northrend\nexus\oculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\northrend\nexus\oculus\boss_urom.cpp">
+      <Filter>scripts\northrend\nexus\oculus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\northrend\nexus\oculus\boss_eregos.cpp">
+      <Filter>scripts\northrend\nexus\oculus</Filter>
+    </ClCompile>
     <ClCompile Include="..\scripts\northrend\obsidian_sanctum\boss_sartharion.cpp">
       <Filter>scripts\northrend\obsidian_sanctum</Filter>
     </ClCompile>
@@ -1874,9 +1874,6 @@
       <Filter>scripts\northrend\ulduar\halls_of_lightning</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\outland\coilfang_reservoir\serpent_shrine\boss_the_lurker_below.cpp">
-      <Filter>scripts\outland\coilfang_reservoir\serpent_shrine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\outland\coilfang_reservoir\serpent_shrine\instance_serpent_shrine.cpp">
       <Filter>scripts\outland\coilfang_reservoir\serpent_shrine</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\outland\coilfang_reservoir\slave_pens\boss_ahune.cpp">
@@ -1983,8 +1980,6 @@
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\utgarde_keep\utgarde_pinnacle\instance_utgarde_pinnacle.cpp">
       <Filter>scripts\northrend\utgarde_keep\utgarde_pinnacle</Filter>
-    <ClCompile Include="..\scripts\outland\tempest_keep\the_mechanar\boss_gatewatcher_ironhand.cpp">
-      <Filter>scripts\outland\tempest_keep\the_mechanar</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\vault_of_archavon\boss_archavon.cpp">
       <Filter>scripts\northrend\vault_of_archavon</Filter>
@@ -2060,9 +2055,6 @@
     </ClCompile>
     <ClCompile Include="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\trash_culling_of_stratholme.cpp">
       <Filter>scripts\kalimdor\caverns_of_time\culling_of_stratholme</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\outland\coilfang_reservoir\serpent_shrine\boss_the_lurker_below.cpp">
-      <Filter>scripts\outland\coilfang_reservoir\serpent_shrine</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\instance_ruby_sanctum.cpp">
       <Filter>scripts\northrend\ruby_sanctum</Filter>

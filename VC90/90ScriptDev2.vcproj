@@ -2073,6 +2073,35 @@
 					<Filter
 						Name="oculus"
 						>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\oculus.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\oculus.h"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\instance_oculus.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\boss_drakos.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\boss_varos.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\boss_urom.cpp"
+							>
+						</File>
+
+						<File
+							RelativePath="..\scripts\northrend\nexus\oculus\boss_eregos.cpp"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter
@@ -2193,62 +2222,6 @@
 					<Filter
 						Name="ulduar"
 						>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\assembly_of_iron.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_algalon.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_auriaya.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_flame_leviathan.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_freya.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_general_vezax.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_hodir.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_ignis.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_kologarn.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_mimiron.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_razorscale.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_thorim.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_xt_002.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_yogg_saron.cpp"
-							>
-						</File>
 						<File
 							RelativePath="..\scripts\northrend\ulduar\ulduar\instance_ulduar.cpp"
 							>
@@ -2527,6 +2500,18 @@
 						</File>
 						<File
 							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_citadel.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_spire.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_spire.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_teleport.cpp"
 							>
 						</File>
 					</Filter>
@@ -3058,6 +3043,10 @@
 					<Filter
 						Name="the_mechanar"
 						>
+						<File
+							RelativePath="..\scripts\outland\tempest_keep\the_mechanar\boss_gatewatcher_gyrokill.cpp"
+							>
+						</File>
 						<File
 							RelativePath="..\scripts\outland\tempest_keep\the_mechanar\boss_gatewatcher_ironhand.cpp"
 							>
