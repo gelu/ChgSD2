@@ -112,6 +112,7 @@ INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `spellID_N25`, `spellID_
 (37813, 72358, 0, 0, 0, 45000, 0, 0, 0, 45000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (37813, 72769, 0, 0, 0, 15000, 0, 0, 0, 27000, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0),
 (37813, 72723, 0, 0, 0, 15000, 0, 0, 0, 27000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
+(37813, 72242, 0, 0, 0, 1000, 0, 0, 0, 1000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
 (37813, 47008, 0, 0, 0, 480000, 0, 0, 0, 480000, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 -- summons
 INSERT INTO `boss_spell_table` (`entry`, `spellID_N10`, `timerMin_N10`, `timerMax_N10`,  `data1`, `data2`, `data3`, `data4`, `locData_x`, `locData_y`, `locData_z`, `CastType` ) VALUES

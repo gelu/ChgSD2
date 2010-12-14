@@ -25,8 +25,9 @@ UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map
 UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3, `faction_A` = '14', `faction_H` = '14', `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
 UPDATE `creature` SET `position_x` = -476.621,`position_y` = 2211.11,`position_z` = 541.197, `spawntimesecs` = 604800 WHERE `id` = 37813;
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
-DELETE FROM `spell_script_target` WHERE `entry` = 72260;
+DELETE FROM `spell_script_target` WHERE `entry` IN (72260, 72202);
 INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72260', '1', '37813');
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72202', '1', '37813');
 
 -- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
