@@ -1983,6 +1983,8 @@
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\utgarde_keep\utgarde_pinnacle\instance_utgarde_pinnacle.cpp">
       <Filter>scripts\northrend\utgarde_keep\utgarde_pinnacle</Filter>
+    <ClCompile Include="..\scripts\outland\tempest_keep\the_mechanar\boss_gatewatcher_ironhand.cpp">
+      <Filter>scripts\outland\tempest_keep\the_mechanar</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\vault_of_archavon\boss_archavon.cpp">
       <Filter>scripts\northrend\vault_of_archavon</Filter>
