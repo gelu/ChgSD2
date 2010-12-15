@@ -2124,10 +2124,6 @@
 					Name="ruby_sanctum"
 					>
 					<File
-						RelativePath="..\scripts\northrend\ruby_sanctum\def_ruby_sanctum.h"
-						>
-					</File>
-					<File
 						RelativePath="..\scripts\northrend\ruby_sanctum\instance_ruby_sanctum.cpp"
 						>
 					</File>
@@ -2148,7 +2144,7 @@
 						>
 					</File>
 					<File
-						RelativePath="..\scripts\northrend\ruby_sanctum\boss_ragefire.cpp"
+						RelativePath="..\scripts\northrend\ruby_sanctum\boss_saviana.cpp"
 						>
 					</File>
 					<File

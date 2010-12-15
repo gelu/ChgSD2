@@ -1855,10 +1855,10 @@
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_halion.cpp">
       <Filter>scripts\northrend\ruby_sanctum</Filter>
     </ClCompile>
-    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_ragefire.cpp">
+    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_saviana.cpp">
       <Filter>scripts\northrend\ruby_sanctum</Filter>
     </ClCompile>
-    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_zarithian.cpp">
+    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_zarithrian.cpp">
       <Filter>scripts\northrend\ruby_sanctum</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\instance_ruby_sanctum.cpp">

@@ -577,8 +577,8 @@
     <ClCompile Include="..\scripts\northrend\obsidian_sanctum\instance_obsidian_sanctum.cpp" />
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_baltharus.cpp" />
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_halion.cpp" />
-    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_ragefire.cpp" />
-    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_zarithian.cpp" />
+    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_saviana.cpp" />
+    <ClCompile Include="..\scripts\northrend\ruby_sanctum\boss_zarithrian.cpp" />
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\instance_ruby_sanctum.cpp" />
     <ClCompile Include="..\scripts\northrend\ruby_sanctum\ruby_sanctum.cpp" />
     <ClCompile Include="..\scripts\northrend\sholazar_basin.cpp" />
