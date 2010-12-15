@@ -25,7 +25,7 @@ EndScriptData */
 // Attention please! This script required some core modification.
 
 #include "precompiled.h"
-#include "def_ruby_sanctum.h"
+#include "ruby_sanctum.h"
 
 enum 
 {

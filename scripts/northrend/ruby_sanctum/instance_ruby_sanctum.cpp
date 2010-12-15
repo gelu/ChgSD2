@@ -23,7 +23,7 @@ EndScriptData */
 //TODO:  Trash mobs, spawn and removal of fire ring/walls, spawn of halion
 
 #include "precompiled.h"
-#include "def_ruby_sanctum.h"
+#include "ruby_sanctum.h"
 
 struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
 {

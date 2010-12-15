@@ -21,7 +21,7 @@ SDCategory: ruby_sanctum
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_ruby_sanctum.h"
+#include "ruby_sanctum.h"
 
 static Locations SpawnLoc[]=
 {
