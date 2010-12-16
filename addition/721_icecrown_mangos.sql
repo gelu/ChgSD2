@@ -22,12 +22,22 @@ DELETE FROM `gameobject` WHERE `guid` IN (913334);
 UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map`=631;
 
 -- Saurfang
-UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3, `faction_A` = '14', `faction_H` = '14', `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3, `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
 UPDATE `creature` SET `position_x` = -476.621,`position_y` = 2211.11,`position_z` = 541.197, `spawntimesecs` = 604800 WHERE `id` = 37813;
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
-DELETE FROM `spell_script_target` WHERE `entry` IN (72260, 72202);
-INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72260', '1', '37813');
-INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('72202', '1', '37813');
+DELETE FROM `spell_script_target` WHERE `entry` IN (72260, 72202, 72278,72279,72280);
+INSERT INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES
+('72260', '1', '37813'),
+('72278', '1', '37813'),
+('72279', '1', '37813'),
+('72280', '1', '37813'),
+('72202', '1', '37813');
+
+DELETE FROM `spell_proc_event` WHERE entry IN (72176,72178, 72256);
+INSERT INTO `spell_proc_event` VALUES
+(72256, 0x7F,  0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0.000000, 0.000000, 0),
+(72178, 0x7F,  0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0.000000, 0.000000, 0),
+(72176, 0x7F,  0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0.000000, 0.000000, 0);
 
 -- Deathwhisper
 UPDATE `creature_template` SET `ScriptName`='boss_lady_deathwhisper' WHERE `entry`=36855;
@@ -107,6 +117,7 @@ DELETE FROM `creature_template_addon` WHERE (`entry`=37672);
 INSERT INTO `creature_template_addon` (`entry`, `auras`) VALUES (37672, '70385 0 70405 0');
 UPDATE `creature_template` SET `VehicleId`=587 WHERE `entry` in (36678,38431,38585,38586);
 UPDATE `creature_template` SET `VehicleId`=591 WHERE `entry` in (37672,38605,38786,38787);
+DELETE FROM `spell_script_target` WHERE `entry` IN (70360);
 INSERT INTO `spell_script_target` VALUES (70360,1,37690);
 
 -- Blood wing

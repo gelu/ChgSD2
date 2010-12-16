@@ -34,6 +34,7 @@ enum
         SPELL_BLOOD_LINK                        = 72178,
         SPELL_BLOOD_POWER                       = 72371,
         SPELL_MARK                              = 72293,
+        SPELL_MARK_SELF                         = 72256,
         SPELL_FRENZY                            = 72737,
         SPELL_BOILING_BLOOD                     = 72385,
         SPELL_BLOOD_NOVA                        = 72380,
@@ -83,7 +84,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
         beasts = 0;
         resetTimers();
         m_creature->SetPower(m_creature->getPowerType(), 0);
-//        doCast(SPELL_ZERO_REGEN);
+        doCast(SPELL_ZERO_REGEN);
         oldPower = 0;
     }
 
@@ -95,6 +96,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 
         if (!m_creature->isInCombat() && pWho->IsWithinDistInMap(m_creature, 20.0f))
         {
+            m_creature->setFaction(21);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
@@ -136,7 +138,6 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
                DoScriptText(-1631104,m_creature,pVictim);
                break;
         };
-
     }
 
     void JustSummoned(Creature* summoned)
@@ -155,18 +156,11 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(!pInstance) return;
+        if(!pInstance)
+            return;
         pInstance->SetData(TYPE_SAURFANG, DONE);
         DoScriptText(-1631106,m_creature);
-
-        Map::PlayerList const &pList = m_creature->GetMap()->GetPlayers();
-        if (pList.isEmpty()) return;
-
-        for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
-           if (Player* pPlayer = i->getSource())
-               if (pPlayer && pPlayer->isAlive())
-                  if (pPlayer->HasAura(SPELL_MARK))
-                     doRemove(SPELL_MARK,pPlayer);
+        doRemoveFromAll(SPELL_MARK);
     }
 
     void UpdateAI(const uint32 diff)
@@ -174,18 +168,14 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (oldPower != m_creature->GetPower(m_creature->getPowerType()))
-        {
-            oldPower = m_creature->GetPower(m_creature->getPowerType());
+        if (!m_creature->HasAura(SPELL_BLOOD_POWER))
+            doCast(SPELL_BLOOD_POWER);
 
-            if (m_creature->HasAura(SPELL_BLOOD_POWER))
-                doRemove(SPELL_BLOOD_POWER);
+        if (!m_creature->HasAura(SPELL_BLOOD_LINK))
+            doCast(SPELL_BLOOD_LINK);
 
-            m_creature->CastCustomSpell(m_creature, SPELL_BLOOD_POWER, &oldPower, &oldPower, NULL, true);
-        }
-
-//        if (!m_creature->HasAura(SPELL_ZERO_REGEN))
-//            doCast(SPELL_ZERO_REGEN);
+        if (!m_creature->HasAura(SPELL_MARK_SELF))
+            doCast(SPELL_MARK_SELF);
 
         switch(getStage())
         {
@@ -219,10 +209,10 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public BSWScriptedAI
             timedCast(SPELL_RUNE_OF_BLOOD, diff);
 
             if (timedQuery(SPELL_CALL_BLOOD_BEAST_1, diff))
-                {
-                    beasts = getSpellData(SPELL_CALL_BLOOD_BEAST_1);
-                    DoScriptText(-1631102,m_creature);
-                };
+            {
+                beasts = getSpellData(SPELL_CALL_BLOOD_BEAST_1);
+                DoScriptText(-1631102,m_creature);
+            };
 
             if (beasts > 0)
             {
@@ -275,12 +265,6 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public BSWScriptedAI
          pOwner = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_DEATHBRINGER_SAURFANG));
          resetTimers();
          scentcasted = false;
-    }
-
-    void KilledUnit(Unit* pVictim)
-    {
-        if (pOwner && pOwner->isAlive())
-            pOwner->ModifyHealth(pOwner->GetMaxHealth() * 0.05f);
     }
 
     void UpdateAI(const uint32 uiDiff)
