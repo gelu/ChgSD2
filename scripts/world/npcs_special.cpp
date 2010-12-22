@@ -2179,6 +2179,76 @@ CreatureAI* GetAI_npc_death_knight_gargoyle(Creature* pCreature)
     return new npc_death_knight_gargoyle(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_risen_allyAI : public ScriptedAI
+{
+    npc_risen_allyAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+    }
+
+    uint32 StartTimer;
+
+    void Reset()
+    {
+        StartTimer = 2000;
+        m_creature->SetSheath(SHEATH_STATE_MELEE);
+        m_creature->SetByteFlag(UNIT_FIELD_BYTES_2, 2, UNIT_CAN_BE_ABANDONED);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 2048);
+        m_creature->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
+        m_creature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
+        m_creature->SetFloatValue(UNIT_FIELD_COMBATREACH, 1.5f);
+        if (Player* creator = m_creature->GetMap()->GetPlayer(m_creature->GetCreatorGuid()))
+        {
+           m_creature->SetLevel(creator->getLevel());
+           m_creature->setFaction(creator->getFaction());
+        }
+    }
+
+    void JustDied(Unit* killer)
+    {
+        if (!m_creature)
+            return;
+
+        if (Player* creator = m_creature->GetMap()->GetPlayer(m_creature->GetCreatorGuid()))
+        {
+            creator->RemoveAurasDueToSpell(46619);
+            creator->RemoveAurasDueToSpell(62218);
+        }
+    }
+
+    void AttackStart(Unit* pWho)
+    {
+        if (!pWho) return;
+
+        if (m_creature->Attack(pWho, true))
+        {
+            m_creature->SetInCombatWith(pWho);
+            pWho->SetInCombatWith(m_creature);
+            DoStartMovement(pWho, 10.0f);
+            SetCombatMovement(true);
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if(StartTimer > uiDiff)
+        {
+            StartTimer -= uiDiff;
+            return;
+        }
+
+        if(!m_creature->isCharmed())
+            m_creature->ForcedDespawn();
+
+        if (m_creature->isInCombat())
+            DoMeleeAttackIfReady();
+    }
+};
+
+CreatureAI* GetAI_npc_risen_ally(Creature* pCreature)
+{
+    return new npc_risen_allyAI(pCreature);
+}
+
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -2287,5 +2357,10 @@ void AddSC_npcs_special()
     newscript = new Script;
     newscript->Name = "npc_death_knight_gargoyle";
     newscript->GetAI = &GetAI_npc_death_knight_gargoyle;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_risen_ally";
+    newscript->GetAI = &GetAI_npc_risen_ally;
     newscript->RegisterSelf();
 }
