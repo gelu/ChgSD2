@@ -23,6 +23,7 @@ UPDATE `instance_template` SET `ScriptName`='instance_icecrown_spire' WHERE `map
 
 -- Saurfang
 UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3, `ScriptName`='boss_deathbringer_saurfang' WHERE `entry`=37813;
+UPDATE `creature_template` SET `VehicleId` = 639, `AIName`='', `PowerType` = 3 WHERE `entry` IN (38402,38582,38583);
 UPDATE `creature` SET `position_x` = -476.621,`position_y` = 2211.11,`position_z` = 541.197, `spawntimesecs` = 604800 WHERE `id` = 37813;
 UPDATE `creature_template` SET `ScriptName`='mob_blood_beast', `AIName`='' WHERE `entry`= 38508;
 DELETE FROM `spell_script_target` WHERE `entry` IN (72260, 72202, 72278,72279,72280);
@@ -157,6 +158,9 @@ UPDATE `gameobject` SET `state` = '0' WHERE `id` IN (201376);
 UPDATE `creature_template` SET `ScriptName`='boss_blood_queen_lanathel', `AIName`='' WHERE `entry`= 37955;
 UPDATE `creature_template` SET  `minlevel` = 80, `maxlevel` = 80, `AIName` ='', `faction_A`= 14, `faction_H` = 14,`ScriptName`='mob_swarming_shadows' WHERE `entry`= 38163;
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_frostwing_sigil' WHERE `gameobject_template`.`entry` IN (202181);
+DELETE FROM `spell_proc_event` WHERE entry IN (70871);
+INSERT INTO `spell_proc_event` VALUES
+(70871, 0x7F,  0, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0.000000, 0.000000, 0);
 
 -- Valithria dreamwalker
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `ScriptName`='boss_valithria_dreamwalker' WHERE `entry`= 36789;

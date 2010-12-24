@@ -123,11 +123,12 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,1)) {
-        case 0:
+        switch (urand(0,1)) 
+        {
+            case 0:
                DoScriptText(-1631029,m_creature,pVictim);
                break;
-        case 1:
+            case 1:
                DoScriptText(-1631030,m_creature,pVictim);
                break;
         };
@@ -135,7 +136,8 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
 
     void JustReachedHome()
     {
-        if (pInstance) pInstance->SetData(TYPE_DEATHWHISPER, FAIL);
+        if (pInstance)
+            pInstance->SetData(TYPE_DEATHWHISPER, FAIL);
     }
 
     void MovementInform(uint32 type, uint32 id)
@@ -144,18 +146,21 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
         if(type != POINT_MOTION_TYPE) return;
         if(MovementStarted && id != 1)
         {
-             m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
+            m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
         }
-        else    {
-                m_creature->GetMotionMaster()->MovementExpired();
-                MovementStarted = false;
-                SetCombatMovement(false);
-                }
+        else
+        {
+            m_creature->GetMotionMaster()->MovementExpired();
+            MovementStarted = false;
+            SetCombatMovement(false);
+        }
     }
 
     void Aggro(Unit *who) 
     {
-        if(pInstance) pInstance->SetData(TYPE_DEATHWHISPER, IN_PROGRESS);
+        if (!pInstance)
+            return;
+        pInstance->SetData(TYPE_DEATHWHISPER, IN_PROGRESS);
         doCast(SPELL_MANA_BARRIER );
         MovementStarted = true;
         SetCombatMovement(false);
@@ -165,27 +170,30 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(pInstance) pInstance->SetData(TYPE_DEATHWHISPER, DONE);
+        if(pInstance)
+            pInstance->SetData(TYPE_DEATHWHISPER, DONE);
         DoScriptText(-1631032,m_creature,killer);
+        doRemoveFromAll(SPELL_INSIGNIFICANCE);
     }
 
     void JustSummoned(Creature* summoned)
     {
         if(!pInstance || !summoned) return;
 
-        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
+        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) 
+        {
             summoned->AddThreat(pTarget, 100.0f);
-            }
+        }
     }
 
     void CallGuard(uint8 place)
     {
-    if (place < 2) 
-       {
-          doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z);
-          doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z);
-       }
-       doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z);
+        if (place < 2)
+        {
+            doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z);
+            doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z);
+        }
+        doSummon(urand(0,1) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
@@ -193,53 +201,65 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if (hasAura(SPELL_MANA_BARRIER, m_creature)) {
-            if (m_creature->GetPower(POWER_MANA) > uiDamage) {
-                     m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-uiDamage);
-                     uiDamage = 0;
-                     }
-                else {
-                     m_creature->SetPower(POWER_MANA,0);
-                     doRemove(SPELL_MANA_BARRIER);
-                     };
-            } else return;
+        if (hasAura(SPELL_MANA_BARRIER, m_creature)) 
+        {
+            if (m_creature->GetPower(POWER_MANA) > uiDamage) 
+            {
+                m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-uiDamage);
+                uiDamage = 0;
+            }
+            else
+            {
+                m_creature->SetPower(POWER_MANA,0);
+                doRemove(SPELL_MANA_BARRIER);
+            };
+        }
+        else
+            return;
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (intro && timedQuery(SPELL_SHADOW_BOLT,diff)) 
-            switch (stage) {
-                                   case 0:
-                                          DoScriptText(-1631020,m_creature);
-                                          stage = 1;
-                                          break;
-                                   case 1:
-                                          DoScriptText(-1631021,m_creature);
-                                          stage = 2;
-                                          break;
-                                   case 2:
-                                          DoScriptText(-1631022,m_creature);
-                                          stage = 3;
-                                          break;
-                                   default:
-                                          break;
-                                   }
+        if (intro && timedQuery(SPELL_SHADOW_BOLT,diff))
+        {
+            switch (stage)
+            {
+                case 0:
+                       DoScriptText(-1631020,m_creature);
+                       stage = 1;
+                       break;
+                case 1:
+                       DoScriptText(-1631021,m_creature);
+                       stage = 2;
+                       break;
+                case 2:
+                       DoScriptText(-1631022,m_creature);
+                       stage = 3;
+                       break;
+                default:
+                       break;
+            }
+        }
 
-        if (hasAura(SPELL_MANA_BARRIER, m_creature)) {
-             if(m_creature->GetHealth() <= m_creature->GetMaxHealth()) {
-                  if (m_creature->GetPower(POWER_MANA) > (m_creature->GetMaxHealth() - m_creature->GetHealth()))
-                        {
-                         m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth() - m_creature->GetHealth()));
-                         m_creature->SetHealth(m_creature->GetMaxHealth());
-                        }
-                        else m_creature->SetPower(POWER_MANA,0);
+        if (hasAura(SPELL_MANA_BARRIER, m_creature)) 
+        {
+            if(m_creature->GetHealth() <= m_creature->GetMaxHealth()) 
+            {
+                if (m_creature->GetPower(POWER_MANA) > (m_creature->GetMaxHealth() - m_creature->GetHealth()))
+                {
+                    m_creature->SetPower(POWER_MANA,m_creature->GetPower(POWER_MANA)-(m_creature->GetMaxHealth() - m_creature->GetHealth()));
+                    m_creature->SetHealth(m_creature->GetMaxHealth());
+                }
+                else
+                    m_creature->SetPower(POWER_MANA,0);
             }
         }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (MovementStarted) return;
+        if (MovementStarted)
+            return;
 
         switch(stage)
         {

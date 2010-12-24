@@ -76,7 +76,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
 
     void Reset()
     {
-        if(!pInstance) return;
+        if(!pInstance) 
+            return;
         if (m_creature->isAlive()) pInstance->SetData(TYPE_LANATHEL, NOT_STARTED);
         stage = 0;
         UpdateTimer = 1000;
@@ -145,20 +146,15 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if(!pInstance) return;
+        if(!pInstance)
+            return;
         doBloodMirror(false);
         pInstance->SetData(TYPE_LANATHEL, DONE);
         DoScriptText(-1631333,m_creature,killer);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
         m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-        for (uint8 i = 0; i < 5; ++i)
-        {
-             if (Unit* pPlayer = doSelectRandomPlayer(SPELL_ESSENCE_OF_BLOOD_QWEEN, true, 100.0f))
-             {
-                 doCast(QUEST_24756, pPlayer);
-                 doRemove(SPELL_ESSENCE_OF_BLOOD_QWEEN, pPlayer);
-             }
-        }
+        doRemoveFromAll(SPELL_ESSENCE_OF_BLOOD_QWEEN);
+        doRemoveFromAll(SPELL_PACT_OF_DARKFALLEN);
     }
 
     void doPactOfDarkfallen(bool command)
@@ -323,7 +319,8 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
                     stage = 2;
                     break;
             case 2:
-                    if (movementstarted) return;
+                    if (movementstarted) 
+                        return;
                     DoScriptText(-1631327,m_creature);
                     doCast(SPELL_BLOODBOLT_WHIRL);
                     stage = 3;
@@ -340,15 +337,15 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
                     break;
             case 4:             // Go in grownd phase
                     m_creature->AttackStop();
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+                    m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
                     StartMovement(0);
                     stage = 5;
                     break;
             case 5:
                     if (movementstarted) return;
                     DoScriptText(-1631325,m_creature);
-                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
-                    m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                    m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
                     stage = 0;
                     SetCombatMovement(true);
                     m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
