@@ -113,13 +113,7 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
         if (!m_pInstance) return;
         DoScriptText(-1631304,m_creature,pKiller);
         if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-           {
-                m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
-                m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother1->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother2->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-           }
-            else  m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
     }
 
     void Aggro(Unit* pWho)
@@ -231,13 +225,7 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
     {
         if (!m_pInstance) return;
         if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-           {
-                m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
-                m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother1->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother2->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-           }
-            else  m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
     }
 
     void KilledUnit(Unit* pVictim)
@@ -360,13 +348,7 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
     {
         if (!m_pInstance) return;
         if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-           {
-                m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
-                m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother1->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pBrother2->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-           }
-            else  m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
     }
 
     void KilledUnit(Unit* pVictim)
