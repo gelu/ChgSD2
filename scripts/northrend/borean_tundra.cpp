@@ -676,8 +676,8 @@ enum eBerylSorcerer
 struct MANGOS_DLL_DECL npc_beryl_sorcererAI : public FollowerAI
 {
     npc_beryl_sorcererAI(Creature* pCreature) : FollowerAI(pCreature) { 
-        Reset(); 
         m_uiNormalFaction = pCreature->getFaction();
+        Reset(); 
     }
 
     bool bEnslaved;
