@@ -581,9 +581,6 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_COUNT] = uiData;
                 uiData = NOT_STARTED;
                 break;
-             case DATA_BLOOD_COUNCIL_HEALTH:     m_uiDataCouncilHealth = uiData; 
-                                                 uiData = NOT_STARTED; 
-                                                 break;
              case DATA_BLOOD_INVOCATION:         m_uiCouncilInvocation = uiData;
                                                  uiData = NOT_STARTED;
                                                  break;
@@ -635,7 +632,6 @@ static Locations SpawnLoc[]=
                           return m_auiEncounter[uiType];
 
              case DATA_DIRECTION:     return m_uiDirection;
-             case DATA_BLOOD_COUNCIL_HEALTH:     return m_uiDataCouncilHealth; 
              case DATA_BLOOD_INVOCATION:         return m_uiCouncilInvocation; 
              case TYPE_STINKY:        return m_uiStinkystate;
              case TYPE_PRECIOUS:      return m_uiPreciousstate;

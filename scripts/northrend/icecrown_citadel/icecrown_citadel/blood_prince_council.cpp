@@ -80,100 +80,123 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
     Creature* pBrother1;
     Creature* pBrother2;
     bool invocated;
+    uint32 m_health;
 
-    void Reset() 
+    void Reset()
     {
-        if(!m_pInstance) return;
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        if(!m_pInstance)
+            return;
         resetTimers();
         invocated = false;
+        m_health = m_creature->GetMaxHealth();
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,1)) {
-        case 0:
-               DoScriptText(-1631302,m_creature,pVictim);
-               break;
-        case 1:
-               DoScriptText(-1631303,m_creature,pVictim);
-               break;
+        switch (urand(0,1))
+        {
+            case 0:
+                DoScriptText(-1631302,m_creature,pVictim);
+                break;
+            case 1:
+                DoScriptText(-1631303,m_creature,pVictim);
+                break;
         }
     }
 
     void JustReachedHome()
     {
-        if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
-            m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        if (!m_pInstance)
+            return;
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
     }
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
         DoScriptText(-1631304,m_creature,pKiller);
-        if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+
+        if (pBrother1 && pBrother1->isAlive())
+            pKiller->DealDamage(pBrother1, pBrother1->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+
+        if (pBrother2 && pBrother2->isAlive())
+            pKiller->DealDamage(pBrother2, pBrother2->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
     }
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         pBrother1 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_TALDARAM));
         pBrother2 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_KELESETH));
-        if (pBrother1 && !pBrother1->isAlive()) pBrother1->Respawn();
-        if (pBrother2 && !pBrother2->isAlive()) pBrother2->Respawn();
+
+        if (pBrother1 && !pBrother1->isAlive())
+            pBrother1->Respawn();
+        if (pBrother2 && !pBrother2->isAlive())
+            pBrother2->Respawn();
+
         if (pBrother1) pBrother1->SetInCombatWithZone();
         if (pBrother2) pBrother2->SetInCombatWithZone();
 
+        invocated = false;
+        m_health = m_creature->GetMaxHealth();
+        m_creature->SetHealth(1);
+
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, IN_PROGRESS);
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
-        doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_T : SPELL_INVOCATION_OF_BLOOD_K);
+        m_creature->CastSpell(m_creature,(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_T : SPELL_INVOCATION_OF_BLOOD_K),true);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if(pDoneBy->GetGUID() == m_creature->GetGUID()) return;
-
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetHealth() >= uiDamage ? m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) - uiDamage : 0);
-
-        uiDamage /=3;
+        if (!invocated)
+            uiDamage = 0;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_creature->GetHealth() > m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3 &&
-                                      m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
-                m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
-
         if (hasAura(SPELL_INVOCATION_OF_BLOOD_V))
         {
-                if (!invocated)
+            if (!invocated)
+            {
+                DoScriptText(-1631307,m_creature);
+                m_creature->SetHealth(m_health);
+                invocated = true;
+            }
+            if (timedQuery(SPELL_INVOCATION_OF_BLOOD_V, uiDiff))
+            {
+                if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_K : SPELL_INVOCATION_OF_BLOOD_T) == CAST_OK)
                 {
-                    DoScriptText(-1631307,m_creature);
-                    invocated = true;
+                    doRemove(SPELL_INVOCATION_OF_BLOOD_V);
+                    invocated = false;
+                    m_health = m_creature->GetHealth();
+                    m_creature->SetHealth(1);
                 }
-                if (timedQuery(SPELL_INVOCATION_OF_BLOOD_V, uiDiff))
-                {
-                    if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_K : SPELL_INVOCATION_OF_BLOOD_T) == CAST_OK)
-                        doRemove(SPELL_INVOCATION_OF_BLOOD_V);
-                }
-                timedCast(SPELL_KINETIC_BOMB, uiDiff);
-                timedCast(SPELL_SHOCK_VORTEX_2, uiDiff);
-        } else 
+            }
+            timedCast(SPELL_KINETIC_BOMB, uiDiff);
+            timedCast(SPELL_SHOCK_VORTEX_2, uiDiff);
+        }
+        else
         {
-                invocated = false;
 
-                timedCast(SPELL_KINETIC_BOMB, uiDiff);
-                timedCast(SPELL_SHOCK_VORTEX, uiDiff);
+            timedCast(SPELL_KINETIC_BOMB, uiDiff);
+            timedCast(SPELL_SHOCK_VORTEX, uiDiff);
         }
 
         if (timedQuery(SPELL_BERSERK, uiDiff))
@@ -204,108 +227,137 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
     Creature* pBrother2;
     bool invocated;
     uint8 ballscount;
+    uint32 m_health;
 
-
-    void Reset() {
-        if(!m_pInstance) return;
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+    void Reset()
+    {
+        if(!m_pInstance)
+            return;
         resetTimers();
         invocated = false;
         ballscount = 0;
+        m_health = m_creature->GetMaxHealth();
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void JustReachedHome()
     {
         if (!m_pInstance) return;
             m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
-            m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
     }
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) return;
-        if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+        if (!m_pInstance)
+            return;
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+
+        if (pBrother1 && pBrother1->isAlive())
+            pKiller->DealDamage(pBrother1, pBrother1->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+
+        if (pBrother2 && pBrother2->isAlive())
+            pKiller->DealDamage(pBrother2, pBrother2->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+
     }
 
     void KilledUnit(Unit* pVictim)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
     }
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         pBrother1 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_VALANAR));
         pBrother2 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_KELESETH));
-        if (pBrother1 && !pBrother1->isAlive()) pBrother1->Respawn();
-        if (pBrother2 && !pBrother2->isAlive()) pBrother2->Respawn();
-        if (pBrother1) pBrother1->SetInCombatWithZone();
-        if (pBrother2) pBrother2->SetInCombatWithZone();
+        if (pBrother1 && !pBrother1->isAlive())
+            pBrother1->Respawn();
+        if (pBrother2 && !pBrother2->isAlive())
+            pBrother2->Respawn();
+        if (pBrother1)
+            pBrother1->SetInCombatWithZone();
+        if (pBrother2)
+            pBrother2->SetInCombatWithZone();
+
+        if (!hasAura(SPELL_INVOCATION_OF_BLOOD_T))
+        {
+            invocated = false;
+            m_health = m_creature->GetMaxHealth();
+            m_creature->SetHealth(1);
+        }
+        else
+            m_creature->SetHealth(m_creature->GetMaxHealth());
 
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, IN_PROGRESS);
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if(pDoneBy->GetGUID() == m_creature->GetGUID()) return;
-
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetHealth() >= uiDamage ? m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) - uiDamage : 0);
-
-        uiDamage /=3;
+        if (!invocated)
+            uiDamage = 0;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_creature->GetHealth() > m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3 &&
-                                      m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
-                m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
-
         if (hasAura(SPELL_INVOCATION_OF_BLOOD_T))
         {
-                if (!invocated)
+            if (!invocated)
+            {
+                DoScriptText(-1631307,m_creature);
+                m_creature->SetHealth(m_health);
+                invocated = true;
+            }
+            if (timedQuery(SPELL_INVOCATION_OF_BLOOD_T, uiDiff))
+            {
+                if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_V : SPELL_INVOCATION_OF_BLOOD_K) == CAST_OK)
                 {
-                    DoScriptText(-1631307,m_creature);
-                    invocated = true;
+                    doRemove(SPELL_INVOCATION_OF_BLOOD_T);
+                    invocated = false;
+                    m_health = m_creature->GetHealth();
+                    m_creature->SetHealth(1);
                 }
-                if (timedQuery(SPELL_INVOCATION_OF_BLOOD_T, uiDiff))
-                {
-                    if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_V : SPELL_INVOCATION_OF_BLOOD_K) == CAST_OK)
-                        doRemove(SPELL_INVOCATION_OF_BLOOD_T);
-                }
-                if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
-                {
-                     doCast(SPELL_SUMMON_FLAME_2);
-                     --ballscount;
-                };
-                timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
-                if (timedCast(SPELL_CONJURE_FLAME_2, uiDiff) == CAST_OK) ballscount = 1;
-         } else
+            }
+            if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
+            {
+                doCast(SPELL_SUMMON_FLAME_2);
+                --ballscount;
+            };
+            timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
+            if (timedCast(SPELL_CONJURE_FLAME_2, uiDiff) == CAST_OK) ballscount = 1;
+         }
+         else
          {
-                invocated = false;
-                if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
-                {
-                     doCast(SPELL_SUMMON_FLAME_1);
-                     --ballscount;
-                };
-                timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
-                if (timedCast(SPELL_CONJURE_FLAME_1, uiDiff) == CAST_OK) ballscount = 1;
+            if (ballscount > 0 && !m_creature->IsNonMeleeSpellCasted(false))
+            {
+                doCast(SPELL_SUMMON_FLAME_1);
+                --ballscount;
+            };
+            timedCast(SPELL_GLITTERING_SPARKS, uiDiff);
+            if (timedCast(SPELL_CONJURE_FLAME_1, uiDiff) == CAST_OK) 
+                ballscount = 1;
          }
 
-
-        if (timedQuery(SPELL_BERSERK, uiDiff)){
-                 doCast(SPELL_BERSERK);
-                 DoScriptText(-1631305,m_creature);
-                 };
+        if (timedQuery(SPELL_BERSERK, uiDiff))
+        {
+            doCast(SPELL_BERSERK);
+            DoScriptText(-1631305,m_creature);
+        };
 
         DoMeleeAttackIfReady();
     }
@@ -328,100 +380,129 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
     Creature* pBrother1;
     Creature* pBrother2;
     bool invocated;
+    uint32 m_health;
 
-    void Reset() 
+    void Reset()
     {
-        if(!m_pInstance) return;
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        if(!m_pInstance)
+            return;
         resetTimers();
         invocated = false;
+        m_health = m_creature->GetMaxHealth();
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
     void JustReachedHome()
     {
-        if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
-            m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        if (!m_pInstance)
+            return;
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
     }
 
     void JustDied(Unit* pKiller)
     {
-        if (!m_pInstance) return;
-        if (pBrother1 && pBrother2 && !pBrother1->isAlive() && !pBrother2->isAlive()) 
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+        if (!m_pInstance)
+            return;
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, DONE);
+
+        if (pBrother1 && pBrother1->isAlive())
+            pKiller->DealDamage(pBrother1, pBrother1->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+
+        if (pBrother2 && pBrother2->isAlive())
+            pKiller->DealDamage(pBrother2, pBrother2->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+
     }
 
     void KilledUnit(Unit* pVictim)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
     }
 
     void Aggro(Unit* pWho)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
         pBrother1 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_TALDARAM));
         pBrother2 = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_VALANAR));
-        if (pBrother1 && !pBrother1->isAlive()) pBrother1->Respawn();
-        if (pBrother2 && !pBrother2->isAlive()) pBrother2->Respawn();
-        if (pBrother1) pBrother1->SetInCombatWithZone();
-        if (pBrother2) pBrother2->SetInCombatWithZone();
+
+        if (pBrother1 && !pBrother1->isAlive())
+            pBrother1->Respawn();
+        if (pBrother2 && !pBrother2->isAlive())
+            pBrother2->Respawn();
+        if (pBrother1)
+            pBrother1->SetInCombatWithZone();
+        if (pBrother2)
+            pBrother2->SetInCombatWithZone();
+
+        if (!hasAura(SPELL_INVOCATION_OF_BLOOD_K))
+        {
+            invocated = false;
+            m_health = m_creature->GetMaxHealth();
+            m_creature->SetHealth(1);
+        }
+        else
+            m_creature->SetHealth(m_creature->GetMaxHealth());
 
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, IN_PROGRESS);
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetMaxHealth()*3);
+        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         DoStartMovement(pWho, 30.0f);
     }
 
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature || !m_creature->isAlive())
             return;
 
-        if(pDoneBy->GetGUID() == m_creature->GetGUID()) return;
-
-        m_pInstance->SetData(DATA_BLOOD_COUNCIL_HEALTH, m_creature->GetHealth() >= uiDamage ? m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) - uiDamage : 0);
-
-        uiDamage /=3;
+        if (!invocated)
+            uiDamage = 0;
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (!m_pInstance) return;
+        if (!m_pInstance)
+            return;
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_creature->GetHealth() > m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3 &&
-                                      m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH) != 0)
-                m_creature->SetHealth(m_pInstance->GetData(DATA_BLOOD_COUNCIL_HEALTH)/3);
-
         if (hasAura(SPELL_INVOCATION_OF_BLOOD_K))
         {
-                if (!invocated)
-                {
-                    DoScriptText(-1631307,m_creature);
-                    invocated = true;
-                };
+            if (!invocated)
+            {
+                DoScriptText(-1631307,m_creature);
+                m_creature->SetHealth(m_health);
+                invocated = true;
+            };
 
-                if (timedQuery(SPELL_INVOCATION_OF_BLOOD_K, uiDiff))
+            if (timedQuery(SPELL_INVOCATION_OF_BLOOD_K, uiDiff))
+            {
+                if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_V : SPELL_INVOCATION_OF_BLOOD_T) == CAST_OK)
                 {
-                    if (doCast(urand(0,1) ? SPELL_INVOCATION_OF_BLOOD_V : SPELL_INVOCATION_OF_BLOOD_T) == CAST_OK)
-                        doRemove(SPELL_INVOCATION_OF_BLOOD_K);
+                    doRemove(SPELL_INVOCATION_OF_BLOOD_K);
+                    invocated = false;
+                    m_health = m_creature->GetHealth();
+                    m_creature->SetHealth(1);
                 }
+            }
 
-                timedCast(SPELL_SHADOW_LANCE_2, uiDiff);
-                timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
-         } else
-         {
-                invocated = false;
-                timedCast(SPELL_SHADOW_LANCE, uiDiff);
-                timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
-         }
+            timedCast(SPELL_SHADOW_LANCE_2, uiDiff);
+            timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
+        }
+        else
+        {
+            timedCast(SPELL_SHADOW_LANCE, uiDiff);
+            timedCast(SPELL_SHADOW_RESONANCE, uiDiff);
+        }
 
-
-        if (timedQuery(SPELL_BERSERK, uiDiff)){
-                 doCast(SPELL_BERSERK);
-                 DoScriptText(-1631305,m_creature);
-                 };
+        if (timedQuery(SPELL_BERSERK, uiDiff))
+        {
+            doCast(SPELL_BERSERK);
+            DoScriptText(-1631305,m_creature);
+        };
 
         DoMeleeAttackIfReady();
     }
@@ -752,7 +833,9 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public BSWScriptedAI
 
     void Reset()
     {
-        if(!pInstance) 
+        m_creature->SetVisibility(VISIBILITY_OFF);
+
+        if(!pInstance)
             return;
 
         if (pInstance->GetData(TYPE_BLOOD_COUNCIL) == IN_PROGRESS)
@@ -775,7 +858,6 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public BSWScriptedAI
                 doCast(SPELL_FAKE_DEATH,pPrince);
             pInstance->SetData(TYPE_BLOOD_COUNCIL, NOT_STARTED);
             m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetVisibility(VISIBILITY_ON);
         }
     }
 
@@ -816,6 +898,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public BSWScriptedAI
                 switch (pInstance->GetData(TYPE_EVENT))
                 {
                 case 800:
+                          m_creature->SetVisibility(VISIBILITY_ON);
                           DoScriptText(-1631301, m_creature);
                           UpdateTimer = 15000;
                           pInstance->SetData(TYPE_EVENT,810);
@@ -846,8 +929,10 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathel_introAI : public BSWScriptedAI
                 default:
                           break;
                 }
-             } else UpdateTimer -= diff;
-             pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
+            }
+            else
+                UpdateTimer -= diff;
+            pInstance->SetData(TYPE_EVENT_TIMER, UpdateTimer);
         }
 
     }
