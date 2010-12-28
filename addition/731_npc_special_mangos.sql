@@ -8,3 +8,6 @@ UPDATE `creature_template` SET  `modelid_1` = 11686, `modelid_3` = 11686,`AIName
 UPDATE `creature_template` SET `ScriptName` = 'npc_death_knight_gargoyle' WHERE `entry` = '27829';
 -- Explosive decoy
 UPDATE `creature_template` SET `ScriptName` = 'npc_explosive_decoy' WHERE `entry` = '29134';
+-- Eye of Kilrogg
+UPDATE `creature_template` SET `ScriptName` = 'npc_eye_of_kilrogg' WHERE `entry` = '4277';
+
