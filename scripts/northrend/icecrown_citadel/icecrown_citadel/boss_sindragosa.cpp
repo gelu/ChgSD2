@@ -146,6 +146,11 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
         if (getStage() == 4)
             return;
+        SetCombatMovement(true);
+        m_creature->RemoveAurasDueToSpell(SPELL_FLY);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+        m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
 
         ScriptedAI::EnterEvadeMode();
     }
@@ -268,13 +273,13 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
                     if (!MovementStarted) 
                     {
                         setStage(3);
+                        m_creature->SetOrientation(3.1f);
                         m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_FLY_FALL);
                     };
                 break;
             case 3:
-                          setStage(4);
-                          IceBlock();
-                          m_creature->SetOrientation(3.1f);
+                    IceBlock();
+                    setStage(4);
                 break;
             case 4: 
                     if (timedQuery(SPELL_FROST_BOMB, diff))
@@ -552,7 +557,12 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
         if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) 
             return;
         if (pBrother && !pBrother->isAlive())
-            m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
+        if (pBrother && !pBrother->isAlive())
+        {
+            Creature* pSindr = m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
+            if (pSindr)
+                pSindr->SetCreatorGuid(ObjectGuid());
+        }
     }
 
     void UpdateAI(const uint32 diff)
@@ -639,7 +649,11 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
         if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
             return;
         if (pBrother && !pBrother->isAlive())
-            m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
+        {
+            Creature* pSindr = m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
+            if (pSindr)
+                pSindr->SetCreatorGuid(ObjectGuid());
+        }
     }
 
     void UpdateAI(const uint32 diff)
