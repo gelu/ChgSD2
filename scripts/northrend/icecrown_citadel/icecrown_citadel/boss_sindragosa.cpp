@@ -40,16 +40,17 @@ enum BossSpells
     SPELL_FROST_BEACON       = 70126,
     SPELL_ICY_TOMB           = 70157,
     SPELL_ASPHYXATION        = 71665,
-    SPELL_FROST_BOMB         = 71053,
+    SPELL_FROST_BOMB         = 69845,
     SPELL_FROST_BOMB_TRIGGER = 69846,
     SPELL_FROST_BOMB_VISUAL  = 64624,
-    SPELL_FROST_BOMB_VISUAL2 = 69016,
+    SPELL_FROST_BOMB_VISUAL2 = 64626,
     SPELL_ICE_TOMB_TRIGGER   = 69675,
     SPELL_MYSTIC_BUFFET      = 70128,
 
     NPC_ICE_TOMB             = 36980,
     NPC_FROST_BOMB           = 37186,
 
+    SPELL_FLY                = 59553,
     QUEST_24757              = 72289,
     SPELL_BERSERK            = 47008,
 
@@ -79,47 +80,45 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
     }
 
     ScriptedInstance *pInstance;
-    uint8 stage;
-    uint8 icecount;
     bool MovementStarted;
+    bool gripped;
     Unit* marked[5];
+    uint8 bombs;
 
     void Reset()
     {
-        if(!pInstance) return;
-        resetTimers();
-        stage = 0;
-        memset(&marked, 0, sizeof(marked));
+        if(!pInstance) 
+            return;
 
+        resetTimers();
+        setStage(0);
+        bombs = 0;
+        gripped = false;
         m_creature->SetRespawnDelay(7*DAY);
-        switch (currentDifficulty) {
-                             case RAID_DIFFICULTY_10MAN_NORMAL:
-                                       icecount = 2;
-                                       break;
-                             case RAID_DIFFICULTY_10MAN_HEROIC:
-                                       icecount = 2;
-                                       break;
-                             case RAID_DIFFICULTY_25MAN_NORMAL:
-                                       icecount = 5;
-                                       break;
-                             case RAID_DIFFICULTY_25MAN_HEROIC:
-                                       icecount = 5;
-                                       break;
-                             default:
-                                       icecount = 2;
-                                       break;
-                            }
+        m_creature->SetSpeedRate(MOVE_RUN, 1.0f);
+        m_creature->SetSpeedRate(MOVE_WALK, 1.0f);
+
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+
+        Creature* pTemp1 = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG));
+        Creature* pTemp2 = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER));
+
+        if (pTemp1 && pTemp1->isAlive() && pTemp2 && pTemp2->isAlive())
+            m_creature->ForcedDespawn();
+
     }
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,1)) {
-        case 0:
-               DoScriptText(-1631421,m_creature,pVictim);
-               break;
-        case 1:
-               DoScriptText(-1631422,m_creature,pVictim);
-               break;
+        switch (urand(0,1)) 
+        {
+            case 0:
+                DoScriptText(-1631421,m_creature,pVictim);
+                break;
+            case 1:
+                DoScriptText(-1631422,m_creature,pVictim);
+                break;
         }
     }
 
@@ -127,20 +126,36 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
     {
         if (!pInstance)
             return;
+
         pInstance->SetData(TYPE_SINDRAGOSA, FAIL);
         doRemoveFromAll(SPELL_ICY_TOMB);
-        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
-            pTemp->Respawn();
-        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))
-            pTemp->Respawn();
         DoScriptText(-1631422,m_creature);
-        m_creature->ForcedDespawn();
+
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
+           if (!pTemp->isAlive())
+                pTemp->SetRespawnDelay(HOUR);
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))
+           if (!pTemp->isAlive())
+                pTemp->SetRespawnDelay(HOUR);
+    }
+
+    void EnterEvadeMode()
+    {
+        if (!pInstance)
+            return;
+
+        if (getStage() == 4)
+            return;
+
+        ScriptedAI::EnterEvadeMode();
     }
 
     void Aggro(Unit *who) 
     {
-        if(!pInstance) return;
-           DoScriptText(-1631420,m_creature,who);
+        if(!pInstance) 
+            return;
+
+        DoScriptText(-1631420,m_creature,who);
         doCast(SPELL_FROST_AURA_1);
     }
 
@@ -152,57 +167,45 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
         pInstance->SetData(TYPE_SINDRAGOSA, DONE);
         DoScriptText(-1631423,m_creature,killer);
         doCast(QUEST_24757);
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
+            pTemp->SetRespawnDelay(7*DAY);
+        if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))
+            pTemp->SetRespawnDelay(7*DAY);
     }
 
     void MovementInform(uint32 type, uint32 id)
     {
-        if (!pInstance) 
+        if (!pInstance)
             return;
 
-        if (type != POINT_MOTION_TYPE || !MovementStarted) return;
+        if (type != POINT_MOTION_TYPE || !MovementStarted)
+            return;
 
-        if (id == 1) {
-                m_creature->GetMotionMaster()->MovementExpired();
-                MovementStarted = false;
-                }
-    }
-
-    void doBlisteringCold()
-    {
-        doCast(SPELL_ICY_GRIP);
-        Map* pMap = m_creature->GetMap();
-        Map::PlayerList const &pList = pMap->GetPlayers();
-                 if (pList.isEmpty()) return;
-
-        for (Map::PlayerList::const_iterator i = pList.begin(); i != pList.end(); ++i)
-            if (Player* player = i->getSource())
-                if (player->isAlive() && player->IsWithinDistInMap(m_creature, 30.0f))
-                {
-                    float fPosX, fPosY, fPosZ;
-                    m_creature->GetPosition(fPosX, fPosY, fPosZ);
-                    m_creature->GetRandomPoint(fPosX, fPosY, fPosZ, 1.0f, fPosX, fPosY, fPosZ);
-                    player->NearTeleportTo(fPosX, fPosY, fPosZ+1.0f, (float)(urand(0,6)), true);
-                }
-        doCast(SPELL_BLISTERING_COLD);
+        if (id == 1)
+        {
+            m_creature->GetMotionMaster()->MovementExpired();
+            MovementStarted = false;
+        }
     }
 
     void IceMark()
     {
-        memset(&marked, 0, sizeof(marked));
+        for (uint8 i = 0; i < getSpellData(SPELL_FROST_BEACON); i++)
+            marked[i] = NULL;
 
-        for (uint8 i = 0; i < icecount; i++)
+        for (uint8 i = 0; i < getSpellData(SPELL_FROST_BEACON); i++)
             if (marked[i] = doSelectRandomPlayer(SPELL_FROST_BEACON, false, 200.0f))
                 doCast(SPELL_FROST_BEACON, marked[i]);
     }
 
     void IceBlock()
     {
-        for (uint8 i = 0; i < icecount; i++)
+        for (uint8 i = 0; i < getSpellData(SPELL_FROST_BEACON); i++)
             if (marked[i] && marked[i]->isAlive())
             {
                 doCast(SPELL_ICY_TOMB, marked[i]);
                 marked[i]->RemoveAurasDueToSpell(SPELL_FROST_BEACON);
-                    float fPosX, fPosY, fPosZ;
+                float fPosX, fPosY, fPosZ;
                 marked[i]->GetPosition(fPosX, fPosY, fPosZ);
                 if (Unit* pTemp1 = doSummon(NPC_ICE_TOMB,fPosX, fPosY, fPosZ))
                     pTemp1->AddThreat(marked[i], 1000.0f);
@@ -215,9 +218,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        switch(stage)
+        switch(getStage())
         {
-            case 0: 
+            case 0:
                     timedCast(SPELL_CLEAVE_1, diff);
                     timedCast(SPELL_TAIL_SMASH, diff);
                     timedCast(SPELL_FROST_BREATH_1, diff);
@@ -225,95 +228,122 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
                     timedCast(SPELL_UNCHAINED_MAGIC, diff);
 
-                    if (timedQuery(SPELL_ICY_GRIP, diff))
-                         {
-                         DoScriptText(-1631426,m_creature);
-                         doBlisteringCold();
-                         }
+                    if (timedQuery(SPELL_ICY_GRIP, diff) && !gripped)
+                    {
+                        doCast(SPELL_ICY_GRIP);
+                        gripped = true;
+                    }
 
-                    if (timedQuery(SPELL_FROST_BEACON, diff) && m_creature->GetHealthPercent() < 85.0f) stage = 1;
+                    if (gripped && !m_creature->IsNonMeleeSpellCasted(true,false,false))
+                    {
+                        DoScriptText(-1631426,m_creature);
+                        doCast(SPELL_BLISTERING_COLD);
+                        gripped = false;
+                    }
+
+                    if (timedQuery(SPELL_FROST_BEACON, diff) && m_creature->GetHealthPercent() < 85.0f)
+                        setStage(1);
 
                     if (m_creature->GetHealthPercent() < 35.0f) 
-                       {
-                            doCast(SPELL_MYSTIC_BUFFET);
-                            stage = 9;
-                            DoScriptText(-1631429,m_creature);
-                       }
-            break;
+                    {
+                        doCast(SPELL_MYSTIC_BUFFET);
+                        setStage(9);
+                        DoScriptText(-1631429,m_creature);
+                    }
+                break;
             case 1: 
                     DoScriptText(-1631425,m_creature);
                     IceMark();
-                    stage = 2;
+                    setStage(2);
                     MovementStarted = true;
                     SetCombatMovement(false);
+                    m_creature->CastSpell(m_creature,SPELL_FLY, true);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 50331648);
                     m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 50331648);
+                    m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
                     m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z);
                     m_creature->HandleEmoteCommand(EMOTE_ONESHOT_FLY_SIT_GROUND_UP);
-                    m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
-            break;
-            case 2: 
-                    if (!MovementStarted) {
-                           stage = 3;
-                           m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_FLY_FALL);
-                          };
-            break;
-            case 3: 
-                          stage = 4;
+                break;
+            case 2:
+                    if (!MovementStarted) 
+                    {
+                        setStage(3);
+                        m_creature->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_FLY_FALL);
+                    };
+                break;
+            case 3:
+                          setStage(4);
                           IceBlock();
                           m_creature->SetOrientation(3.1f);
-            break;
+                break;
             case 4: 
                     if (timedQuery(SPELL_FROST_BOMB, diff))
-                           if (Unit* pTemp = doSelectRandomPlayerAtRange(300.0f))
-                                doCast(SPELL_FROST_BOMB_TRIGGER, pTemp);
+                    {
+                        if (Unit* pTemp = doSelectRandomPlayerAtRange(300.0f))
+                        {
+                            doCast(SPELL_FROST_BOMB_TRIGGER, pTemp);
+                        }
+                        ++bombs;
+                    }
 
                     timedCast(SPELL_FROST_BREATH_1, diff);
 
-                    if (timedQuery(SPELL_FROST_BEACON, diff)) {
-                           stage = 5;
-                           }
-            break;
-            case 5: 
+                    if (timedQuery(SPELL_FROST_BEACON, diff) || bombs >= getSpellData(SPELL_FROST_BOMB))
+                    {
+                        setStage(5);
+                    }
+                break;
+            case 5:
+                    bombs = 0;
                     MovementStarted = true;
                     SetCombatMovement(false);
                     m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
-                    stage = 6;
+                    setStage(6);
                     m_creature->HandleEmoteCommand(EMOTE_STATE_FLY_SIT_GROUND);
-            break;
-            case 6: 
-                    if (!MovementStarted) {
-                           stage = 0;
-                           SetCombatMovement(true);
-                           m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                           m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
-                           m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
-                           m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
-                          };
-            break;
+                break;
+            case 6:
+                    if (!MovementStarted) 
+                    {
+                        setStage(0);
+                        SetCombatMovement(true);
+                        m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                        m_creature->RemoveAurasDueToSpell(SPELL_FLY);
+                        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_0, 0);
+                        m_creature->SetUInt32Value(UNIT_FIELD_BYTES_1, 0);
+                        m_creature->RemoveSplineFlag(SPLINEFLAG_FLYING);
+                    };
+                break;
 
-            case 9: 
+            case 9:
                     timedCast(SPELL_CLEAVE_1, diff);
                     timedCast(SPELL_TAIL_SMASH, diff);
                     timedCast(SPELL_FROST_BREATH_1, diff);
                     timedCast(SPELL_PERMEATING_CHILL, diff);
                     timedCast(SPELL_UNCHAINED_MAGIC, diff);
 
-                    if (timedQuery(SPELL_ICY_GRIP, diff))
-                         {
-                         DoScriptText(-1631426,m_creature);
-                         doBlisteringCold();
-                         }
+                    if (timedQuery(SPELL_ICY_GRIP, diff) && !gripped)
+                    {
+                        doCast(SPELL_ICY_GRIP);
+                        gripped = true;
+                    }
 
-            break;
-            default: break;
+                    if (gripped && !m_creature->IsNonMeleeSpellCasted(true,false,false))
+                    {
+                        DoScriptText(-1631426,m_creature);
+                        doCast(SPELL_BLISTERING_COLD);
+                        gripped = false;
+                    }
+
+                break;
+            default:
+                break;
         }
 
-         if (timedQuery(SPELL_BERSERK, diff))
-                {
-                doCast(SPELL_BERSERK);
-                DoScriptText(-1631424,m_creature);
-                };
+        if (timedQuery(SPELL_BERSERK, diff))
+        {
+            doCast(SPELL_BERSERK);
+            DoScriptText(-1631424,m_creature);
+        };
 
         DoMeleeAttackIfReady();
     }
@@ -519,9 +549,10 @@ struct MANGOS_DLL_DECL mob_rimefangAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) return;
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) 
+            return;
         if (pBrother && !pBrother->isAlive())
-                 m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_MANUAL_DESPAWN, DESPAWN_TIME);
+            m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
     }
 
     void UpdateAI(const uint32 diff)
@@ -603,10 +634,12 @@ struct MANGOS_DLL_DECL mob_spinestalkerAI : public BSWScriptedAI
 
     void JustDied(Unit *killer)
     {
-        if (!pInstance) return;
-        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE) return;
+        if (!pInstance)
+            return;
+        if (pInstance->GetData(TYPE_SINDRAGOSA) == DONE)
+            return;
         if (pBrother && !pBrother->isAlive())
-                 m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_MANUAL_DESPAWN, DESPAWN_TIME);
+            m_creature->SummonCreature(NPC_SINDRAGOSA, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z, 3.17f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, HOUR*IN_MILLISECONDS, true);
     }
 
     void UpdateAI(const uint32 diff)
