@@ -679,7 +679,7 @@ CreatureAI* GetAI_npc_rocknot(Creature* pCreature)
     return new npc_rocknotAI(pCreature);
 }
 
-bool ChooseReward_npc_rocknot(Player* pPlayer, Creature* pCreature, const Quest* pQuest, uint32 item)
+bool ChooseReward_npc_rocknot(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
     ScriptedInstance* pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
 
