@@ -532,15 +532,15 @@ Unit* BSWScriptedAI::_doSummonAtPosition(uint8 m_uiSpellIdx, float fPosX, float 
     switch (pSpell->m_CastTarget) 
     {
         case SUMMON_NORMAL:
-             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 0, fPosX, fPosY, fPosZ);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[currentDifficulty], TEMPSUMMON_CORPSE_TIMED_DESPAWN, 0, fPosX, fPosY, fPosZ);
              break;
 
         case SUMMON_TEMP:
-             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[currentDifficulty], TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
              break;
 
         case SUMMON_INSTANT:
-             return _doSummonAtPosition(pSpell->m_uiSpellEntry[m_uiSpellIdx], TEMPSUMMON_MANUAL_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
+             return _doSummonAtPosition(pSpell->m_uiSpellEntry[currentDifficulty], TEMPSUMMON_MANUAL_DESPAWN, urand(pSpell->m_uiSpellTimerMin[currentDifficulty],pSpell->m_uiSpellTimerMax[currentDifficulty]), fPosX, fPosY, fPosZ);
              break;
 
         default:

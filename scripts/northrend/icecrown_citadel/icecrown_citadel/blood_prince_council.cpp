@@ -105,11 +105,22 @@ struct MANGOS_DLL_DECL boss_valanar_iccAI : public BSWScriptedAI
         }
     }
 
+    void EnterEvadeMode()
+    {
+        m_creature->CombatStop(true);
+        m_creature->RemoveAllAuras();
+        m_creature->DeleteThreatList();
+        m_creature->GetMotionMaster()->MoveTargetedHome();
+        m_creature->SetLootRecipient(NULL);
+        Reset();
+    }
+
     void JustReachedHome()
     {
         if (!m_pInstance)
             return;
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
+        m_creature->LoadCreatureAddon();
     }
 
     void JustDied(Unit* pKiller)
@@ -240,10 +251,22 @@ struct MANGOS_DLL_DECL boss_taldaram_iccAI : public BSWScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
+    void EnterEvadeMode()
+    {
+        m_creature->CombatStop(true);
+        m_creature->RemoveAllAuras();
+        m_creature->DeleteThreatList();
+        m_creature->GetMotionMaster()->MoveTargetedHome();
+        m_creature->SetLootRecipient(NULL);
+        Reset();
+    }
+
     void JustReachedHome()
     {
-        if (!m_pInstance) return;
-            m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
+        if (!m_pInstance)
+            return;
+        m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
+        m_creature->LoadCreatureAddon();
     }
 
     void JustDied(Unit* pKiller)
@@ -392,11 +415,22 @@ struct MANGOS_DLL_DECL boss_keleseth_iccAI : public BSWScriptedAI
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
     }
 
+    void EnterEvadeMode()
+    {
+        m_creature->CombatStop(true);
+        m_creature->RemoveAllAuras();
+        m_creature->DeleteThreatList();
+        m_creature->GetMotionMaster()->MoveTargetedHome();
+        m_creature->SetLootRecipient(NULL);
+        Reset();
+    }
+
     void JustReachedHome()
     {
         if (!m_pInstance)
             return;
         m_pInstance->SetData(TYPE_BLOOD_COUNCIL, FAIL);
+        m_creature->LoadCreatureAddon();
     }
 
     void JustDied(Unit* pKiller)
