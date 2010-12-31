@@ -221,7 +221,7 @@ struct MANGOS_DLL_DECL BSWScriptedAI : public ScriptedAI
 
         bool  is25()     { Map* pMap = m_creature->GetMap(); return pMap->IsRaid() ? _isDifficultyInMask(10) : false; };
 
-        uint32 getSpellWithDifficulty(uint32 SpellID) { queryIndex(_findSpellIDX(SpellID)) ? m_BSWRecords[_findSpellIDX(SpellID)].m_uiSpellEntry[currentDifficulty] : SpellID; };
+        uint32 getSpellWithDifficulty(uint32 SpellID) { return (queryIndex(_findSpellIDX(SpellID)) ? m_BSWRecords[_findSpellIDX(SpellID)].m_uiSpellEntry[currentDifficulty] : SpellID); };
 
     protected:
 
