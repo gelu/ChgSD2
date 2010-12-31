@@ -2260,6 +2260,6 @@ void AddSC_boss_mimiron()
 
     newscript = new Script;
     newscript->Name = "go_red_button";
-    newscript->pGOHello = &GOHello_go_red_button;
+    newscript->pGOUse = &GOHello_go_red_button;
     newscript->RegisterSelf();
 }

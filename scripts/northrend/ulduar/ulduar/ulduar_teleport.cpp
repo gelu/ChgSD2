@@ -113,7 +113,7 @@ void AddSC_ulduar_teleport()
 
     newscript = new Script;
     newscript->Name = "go_ulduar_teleporter";
-    newscript->pGOGossipHello  = &GOGossipHello_go_ulduar_teleporter;
-    newscript->pGOGossipSelect = &GOGossipSelect_go_ulduar_teleporter;
+    newscript->pGossipHelloGO  = &GOGossipHello_go_ulduar_teleporter;
+    newscript->pGossipSelectGO = &GOGossipSelect_go_ulduar_teleporter;
     newscript->RegisterSelf();
 }

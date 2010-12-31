@@ -1114,7 +1114,7 @@ void AddSC_violet_hold()
     newscript->Name = "npc_azure_saboteur";
     newscript->GetAI = &GetAI_npc_azure_saboteur;
     newscript->RegisterSelf();
- 
+
     newscript = new Script;
     newscript->Name = "mob_vh_dragons";
     newscript->GetAI = &GetAI_mob_vh_dragons;

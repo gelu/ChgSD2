@@ -230,7 +230,7 @@ bool QuestAccept_npc_kelerun_bloodmourn(Player* pPlayer, Creature* pCreature, co
     return true;
 }
 
-bool GOHello_go_harbinger_second_trial(Player* pPlayer, GameObject* pGO)
+bool GOUse_go_harbinger_second_trial(Player* pPlayer, GameObject* pGO)
 {
     if (pGO->GetGoType() == GAMEOBJECT_TYPE_GOOBER)
     {
@@ -542,12 +542,12 @@ void AddSC_eversong_woods()
     pNewScript = new Script;
     pNewScript->Name = "npc_kelerun_bloodmourn";
     pNewScript->GetAI = &GetAI_npc_kelerun_bloodmourn;
-    pNewScript->pQuestAccept = &QuestAccept_npc_kelerun_bloodmourn;
+    pNewScript->pQuestAcceptNPC = &QuestAccept_npc_kelerun_bloodmourn;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
     pNewScript->Name = "go_harbinger_second_trial";
-    pNewScript->pGOHello = &GOHello_go_harbinger_second_trial;
+    pNewScript->pGOUse = &GOUse_go_harbinger_second_trial;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
@@ -560,7 +560,7 @@ void AddSC_eversong_woods()
     pNewScript = new Script;
     pNewScript->Name = "npc_apprentice_mirveda";
     pNewScript->GetAI = &GetAI_npc_apprentice_mirvedaAI;
-    pNewScript->pQuestAccept = &QuestAccept_unexpected_results;
+    pNewScript->pQuestAcceptNPC = &QuestAccept_unexpected_results;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;

@@ -916,6 +916,6 @@ void AddSC_boss_algalon()
 
     newscript = new Script;
     newscript->Name = "go_celestial_acces";
-    newscript->pGOHello = &GOHello_go_celestial_acces;
+    newscript->pGOUse = &GOHello_go_celestial_acces;
     newscript->RegisterSelf();
 }

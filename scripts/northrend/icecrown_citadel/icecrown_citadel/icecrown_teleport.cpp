@@ -125,22 +125,22 @@ void AddSC_icecrown_teleporter()
 
     newscript = new Script;
     newscript->Name = "go_icecrown_teleporter";
-    newscript->pGOGossipHello  = &GOGossipHello_go_icecrown_teleporter;
-    newscript->pGOGossipSelect = &GOGossipSelect_go_icecrown_teleporter;
+    newscript->pGossipHelloGO  = &GOGossipHello_go_icecrown_teleporter;
+    newscript->pGossipSelectGO = &GOGossipSelect_go_icecrown_teleporter;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_plague_sigil";
-    newscript->pGOHello  = &GOHello_go_plague_sigil;
+    newscript->pGOUse  = &GOHello_go_plague_sigil;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_bloodwing_sigil";
-    newscript->pGOHello  = &GOHello_go_bloodwing_sigil;
+    newscript->pGOUse  = &GOHello_go_bloodwing_sigil;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_frostwing_sigil";
-    newscript->pGOHello  = &GOHello_go_frostwing_sigil;
+    newscript->pGOUse  = &GOHello_go_frostwing_sigil;
     newscript->RegisterSelf();
 }

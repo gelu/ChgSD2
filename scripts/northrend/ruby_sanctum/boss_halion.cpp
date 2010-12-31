@@ -1243,11 +1243,11 @@ void AddSC_boss_halion()
 
     newscript = new Script;
     newscript->Name = "go_halion_portal_twilight";
-    newscript->pGOHello  = &GOHello_go_halion_portal_twilight;
+    newscript->pGOUse  = &GOHello_go_halion_portal_twilight;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "go_halion_portal_real";
-    newscript->pGOHello  = &GOHello_go_halion_portal_real;
+    newscript->pGOUse  = &GOHello_go_halion_portal_real;
     newscript->RegisterSelf();
 }

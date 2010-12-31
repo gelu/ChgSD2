@@ -183,7 +183,7 @@ bool GossipHello_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature)
     return true;
 }
 
-bool ChooseReward_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature, const Quest* pQuest, uint32 uiItem)
+bool ChooseReward_npc_riggle_bassbait(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 {
     // TODO: check if this can only be called if NPC has QUESTGIVER flag.
     if (pQuest->GetQuestId() == QUEST_MASTER_ANGLER && ((npc_riggle_bassbaitAI*)(pCreature->AI()))->bEventWinnerFound == false)
@@ -221,6 +221,6 @@ void AddSC_stranglethorn_vale()
     newscript->Name = "npc_riggle_bassbait";
     newscript->GetAI = &GetAI_npc_riggle_bassbait;
     newscript->pGossipHello = &GossipHello_npc_riggle_bassbait;
-    newscript->pChooseReward = &ChooseReward_npc_riggle_bassbait;
+    newscript->pQuestRewardedNPC = &ChooseReward_npc_riggle_bassbait;
     newscript->RegisterSelf();
 }

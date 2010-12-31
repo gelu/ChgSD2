@@ -867,11 +867,5 @@ void AddSC_mob_teleguy()
     newscript->Name = "mob_teleguy";
     newscript->pGossipHello = &GossipHello_mob_teleguy;
     newscript->pGossipSelect = &GossipSelect_mob_teleguy;
-    newscript->pItemHello = NULL;
-    newscript->pGOHello = NULL;
-    newscript->pAreaTrigger = NULL;
-    newscript->pItemQuestAccept = NULL;
-    newscript->pGOQuestAccept = NULL;
-    newscript->pGOChooseReward = NULL;
     newscript->RegisterSelf();
 }

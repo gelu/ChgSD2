@@ -884,6 +884,6 @@ void AddSC_boss_razorscale()
 
     NewScript = new Script;
     NewScript->Name = "go_broken_harpoon";
-    NewScript->pGOHello = &GOHello_go_broken_harpoon;
+    NewScript->pGOUse = &GOHello_go_broken_harpoon;
     NewScript->RegisterSelf();
 }
