@@ -61,7 +61,7 @@ struct TSpellSummary {
 }extern *SpellSummary;
 
 MANGOS_DLL_EXPORT
-void FreeScriptLibrary()
+void ScriptsFree()
 {
     // Free Spell Summary
     delete []SpellSummary;
@@ -75,7 +75,7 @@ void FreeScriptLibrary()
 }
 
 MANGOS_DLL_EXPORT
-void InitScriptLibrary()
+void ScriptsInit()
 {
     //ScriptDev2 startup
     outstring_log("");
@@ -228,7 +228,7 @@ void Script::RegisterSelf(bool bReportError)
 //*** Functions to be Exported ***
 
 MANGOS_DLL_EXPORT
-char const* GetScriptLibraryVersion()
+char const* ScriptsVersion()
 {
     if (!strSD2Version.empty())
     {
@@ -480,7 +480,7 @@ bool AreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry)
 }
 
 MANGOS_DLL_EXPORT
-bool ProcessEvent(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsStart)
+bool ProcessEventId(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsStart)
 {
     Script *tmpscript = m_scripts[GetEventIdScriptId(uiEventId)];
     if (!tmpscript || !tmpscript->pProcessEventId)
@@ -491,7 +491,7 @@ bool ProcessEvent(uint32 uiEventId, Object* pSource, Object* pTarget, bool bIsSt
 }
 
 MANGOS_DLL_EXPORT
-CreatureAI* GetCreatureAI(Creature* pCreature)
+CreatureAI* GetAI(Creature* pCreature)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
 
