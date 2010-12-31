@@ -266,17 +266,6 @@ bool GOGossipHello(Player *pPlayer, GameObject *pGo)
 }
 
 MANGOS_DLL_EXPORT
-bool GOHello(Player* pPlayer, GameObject* pGo)
-{
-    Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
-
-    if (!tmpscript || !tmpscript->pGOHello)
-        return false;
-
-    return tmpscript->pGOHello(pPlayer, pGo);
-}
-
-MANGOS_DLL_EXPORT
 bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
     debug_log("SD2: Gossip selection, sender: %u, action: %u", uiSender, uiAction);
@@ -378,7 +367,7 @@ bool QuestComplete(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 }
 
 MANGOS_DLL_EXPORT
-bool QuestRewarded(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+bool ChooseReward(Player* pPlayer, Creature* pCreature, const Quest* pQuest, uint32 opt)
 {
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
 
@@ -387,7 +376,7 @@ bool QuestRewarded(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
 
     pPlayer->PlayerTalkClass->ClearMenus();
 
-    return tmpscript->pChooseReward(pPlayer, pCreature, pQuest);
+    return tmpscript->pChooseReward(pPlayer, pCreature, pQuest, opt);
 }
 
 MANGOS_DLL_EXPORT
@@ -443,6 +432,17 @@ bool ItemQuestAccept(Player* pPlayer, Item *_Item, const Quest* pQuest)
 }
 
 MANGOS_DLL_EXPORT
+bool GOHello(Player* pPlayer, GameObject* pGo)
+{
+    Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
+
+    if (!tmpscript || !tmpscript->pGOHello)
+        return false;
+
+    return tmpscript->pGOHello(pPlayer, pGo);
+}
+
+MANGOS_DLL_EXPORT
 bool GOQuestAccept(Player* pPlayer, GameObject* pGo, const Quest* pQuest)
 {
     Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
@@ -456,7 +456,7 @@ bool GOQuestAccept(Player* pPlayer, GameObject* pGo, const Quest* pQuest)
 }
 
 MANGOS_DLL_EXPORT
-bool GOQuestRewarded(Player* pPlayer, GameObject* pGo, const Quest* pQuest)
+bool GOChooseReward(Player* pPlayer, GameObject* pGo, const Quest* pQuest, uint32 opt)
 {
     Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
 
@@ -465,7 +465,7 @@ bool GOQuestRewarded(Player* pPlayer, GameObject* pGo, const Quest* pQuest)
 
     pPlayer->PlayerTalkClass->ClearMenus();
 
-    return tmpscript->pGOChooseReward(pPlayer, pGo, pQuest);
+    return tmpscript->pGOChooseReward(pPlayer, pGo, pQuest,opt);
 }
 
 MANGOS_DLL_EXPORT

@@ -322,7 +322,7 @@ CreatureAI* GetAI_npc_niby_the_almighty(Creature* pCreature)
     return new npc_niby_the_almightyAI(pCreature);
 }
 
-bool ChooseReward_npc_niby_the_almighty(Player* pPlayer, Creature* pCreature, const Quest* pQuest)
+bool ChooseReward_npc_niby_the_almighty(Player* pPlayer, Creature* pCreature, const Quest* pQuest, uint32 slot)
 {
     if (pQuest->GetQuestId() == QUEST_KROSHIUS)
     {
