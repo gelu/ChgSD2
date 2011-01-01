@@ -347,6 +347,9 @@ extern void AddSC_boss_varos();
 extern void AddSC_boss_urom();
 extern void AddSC_boss_eregos();
 
+extern void AddSC_boss_malygos();                           //eye of eternity
+extern void AddSC_instance_eye_of_eternity();
+
 extern void AddSC_boss_sartharion();                        //obsidian_sanctum
 extern void AddSC_instance_obsidian_sanctum();
 extern void AddSC_instance_vault_of_archavon();             //vault_of_archavon
@@ -857,6 +860,9 @@ void AddScripts()
     AddSC_boss_varos();
     AddSC_boss_urom();
     AddSC_boss_eregos();
+
+    AddSC_boss_malygos();                                   //eye of eternity
+    AddSC_instance_eye_of_eternity();
 
     AddSC_boss_sartharion();                                //obsidian_sanctum
     AddSC_instance_obsidian_sanctum();
