@@ -2041,6 +2041,12 @@
     <ClCompile Include="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\boss_lord_epoch.cpp">
       <Filter>scripts\kalimdor\caverns_of_time\culling_of_stratholme</Filter>
     </ClCompile>
+    <ClCompile Include="..\system\MangosdRev.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\system\ScriptLoader.cpp">
+      <Filter>system</Filter>
+    </ClCompile>
     <ClCompile Include="..\scripts\kalimdor\caverns_of_time\culling_of_stratholme\boss_malganis.cpp">
       <Filter>scripts\kalimdor\caverns_of_time\culling_of_stratholme</Filter>
     </ClCompile>
