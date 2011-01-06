@@ -133,28 +133,43 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
 
     void UpdateWorldState(bool command, uint32 value)
     {
-       Map::PlayerList const &players = instance->GetPlayers();
-
-       if (command)
-       {
-       for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
-              if(Player* pPlayer = i->getSource())
+        Map::PlayerList const &players = instance->GetPlayers();
+    
+        if (command)
+        {
+            for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
+            {
+                if(Player* pPlayer = i->getSource())
+                {
                     if(pPlayer->isAlive())
                     {
                         pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,0);
                         if (pPlayer->HasAura(74807))
+                        {
                             pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT_T, 100 - value);
-                        else pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT_R, value);
+                        }
+                        else 
+                        {
+                            pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_COUNT_R, value);
+                        }
                         pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,1);
                     }
-       }
-       else
-       {
-       for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
-              if(Player* pPlayer = i->getSource())
+                }
+            }
+        }
+        else
+        {
+            for (Map::PlayerList::const_iterator i = players.begin(); i != players.end(); ++i)
+            {
+                if(Player* pPlayer = i->getSource())
+                {
                     if(pPlayer->isAlive())
+                    {
                         pPlayer->SendUpdateWorldState(UPDATE_STATE_UI_SHOW,0);
-       }
+                    }
+                }
+            }
+        }
     }
 
     void OpenAllDoors()
@@ -170,19 +185,19 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
     {
         switch(pCreature->GetEntry())
         {
-            case NPC_HALION_REAL:  m_uiHalion_pGUID = pCreature->GetGUID(); break;
-            case NPC_HALION_TWILIGHT:   m_uiHalion_tGUID = pCreature->GetGUID();  break;
-            case NPC_HALION_CONTROL:    m_uiHalionControlGUID = pCreature->GetGUID();  break;
-            case NPC_RAGEFIRE:     m_uiRagefireGUID = pCreature->GetGUID();  break;
-            case NPC_ZARITHIAN:    m_uiZarithianGUID = pCreature->GetGUID(); break;
-            case NPC_BALTHARUS:    m_uiBaltharusGUID = pCreature->GetGUID(); break;
-            case NPC_BALTHARUS_TARGET:  m_uiBaltharusTargetGUID = pCreature->GetGUID(); break;
-            case NPC_CLONE:        m_uiCloneGUID = pCreature->GetGUID();     break;
-            case NPC_XERESTRASZA:  m_uiXerestraszaGUID = pCreature->GetGUID();          break;
-            case NPC_SHADOW_PULSAR_N:        m_uiOrbNGUID = pCreature->GetGUID();       break;
-            case NPC_SHADOW_PULSAR_S:        m_uiOrbSGUID = pCreature->GetGUID();       break;
-            case NPC_ORB_ROTATION_FOCUS:     m_uiOrbFocusGUID = pCreature->GetGUID();   break;
-            case NPC_ORB_CARRIER:            m_uiOrbCarrierGUID = pCreature->GetGUID(); break;
+            case NPC_HALION_REAL:        m_uiHalion_pGUID = pCreature->GetGUID();        break;
+            case NPC_HALION_TWILIGHT:    m_uiHalion_tGUID = pCreature->GetGUID();        break;
+            case NPC_HALION_CONTROL:     m_uiHalionControlGUID = pCreature->GetGUID();   break;
+            case NPC_RAGEFIRE:           m_uiRagefireGUID = pCreature->GetGUID();        break;
+            case NPC_ZARITHIAN:          m_uiZarithianGUID = pCreature->GetGUID();       break;
+            case NPC_BALTHARUS:          m_uiBaltharusGUID = pCreature->GetGUID();       break;
+            case NPC_BALTHARUS_TARGET:   m_uiBaltharusTargetGUID = pCreature->GetGUID(); break;
+            case NPC_CLONE:              m_uiCloneGUID = pCreature->GetGUID();           break;
+            case NPC_XERESTRASZA:        m_uiXerestraszaGUID = pCreature->GetGUID();     break;
+            case NPC_SHADOW_PULSAR_N:    m_uiOrbNGUID = pCreature->GetGUID();            break;
+            case NPC_SHADOW_PULSAR_S:    m_uiOrbSGUID = pCreature->GetGUID();            break;
+            case NPC_ORB_ROTATION_FOCUS: m_uiOrbFocusGUID = pCreature->GetGUID();        break;
+            case NPC_ORB_CARRIER:        m_uiOrbCarrierGUID = pCreature->GetGUID();      break;
         }
     }
 
@@ -258,11 +273,16 @@ struct MANGOS_DLL_DECL instance_ruby_sanctum : public ScriptedInstance
             case DATA_ORB_N:                m_auiOrbNState = uiData; uiData = NOT_STARTED; break;
             case DATA_ORB_S:                m_auiOrbSState = uiData; uiData = NOT_STARTED; break;
             case TYPE_COUNTER:
-                                   if (uiData == 0)
-                                       UpdateWorldState(false,0);
-                                   else UpdateWorldState(true,uiData);
-                                   uiData = NOT_STARTED;
-                                   break;
+                                    if (uiData == COUNTER_OFF)
+                                    {
+                                        UpdateWorldState(false,0);
+                                    }
+                                    else 
+                                    {
+                                        UpdateWorldState(true,uiData);
+                                    }
+                                    uiData = NOT_STARTED;
+                                    break;
         }
 
         if (uiData == DONE)

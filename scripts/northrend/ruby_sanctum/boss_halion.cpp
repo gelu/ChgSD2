@@ -208,7 +208,7 @@ struct MANGOS_DLL_DECL boss_halion_realAI : public BSWScriptedAI
             {
                 pInstance->SetData(TYPE_HALION, DONE);
                 m_creature->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pInstance->SetData(TYPE_COUNTER, 0);
+                pInstance->SetData(TYPE_COUNTER, COUNTER_OFF);
             }
             else
             {
@@ -494,7 +494,7 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
             {
                 pInstance->SetData(TYPE_HALION, DONE);
                 pReal->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-                pInstance->SetData(TYPE_COUNTER, 0);
+                pInstance->SetData(TYPE_COUNTER, COUNTER_OFF);
             }
         m_creature->ForcedDespawn();
     }
@@ -548,6 +548,7 @@ struct MANGOS_DLL_DECL boss_halion_twilightAI : public BSWScriptedAI
                 if (GameObject* pGoPortal = pInstance->instance->GetGameObject(pInstance->GetData64(GO_HALION_PORTAL_3)))
                       pGoPortal->SetPhaseMask(32,true);
                 doCast(SPELL_TWILIGHT_DIVISION);
+                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 setStage(3);
                 break;
 
@@ -687,22 +688,23 @@ struct HalionBuffLine
 {
     float diff;                // Health diff in percent
     uint32 real, twilight;     // Buff pair
+    uint8 disp_corp;           // Displayed Corporeality
 };
 
 static HalionBuffLine Buff[]=
 {
-    {-10.0f,SPELL_CORPOREALITY_100I, SPELL_CORPOREALITY_100D},
-    {-8.0f,SPELL_CORPOREALITY_80I, SPELL_CORPOREALITY_80D},
-    {-6.0f,SPELL_CORPOREALITY_60I, SPELL_CORPOREALITY_60D},
-    {-4.0f,SPELL_CORPOREALITY_40I, SPELL_CORPOREALITY_40D},
-    {-2.0f,SPELL_CORPOREALITY_20I, SPELL_CORPOREALITY_20D},
-    {-1.0f,SPELL_CORPOREALITY_EVEN, SPELL_CORPOREALITY_EVEN},
-    {1.0f,SPELL_CORPOREALITY_EVEN, SPELL_CORPOREALITY_EVEN},
-    {2.0f,SPELL_CORPOREALITY_20D, SPELL_CORPOREALITY_20I},
-    {4.0f,SPELL_CORPOREALITY_40D, SPELL_CORPOREALITY_40I},
-    {6.0f,SPELL_CORPOREALITY_60D, SPELL_CORPOREALITY_60I},
-    {8.0f,SPELL_CORPOREALITY_80D, SPELL_CORPOREALITY_80I},
-    {10.0f,SPELL_CORPOREALITY_100D, SPELL_CORPOREALITY_100I},
+    {-10.0f, SPELL_CORPOREALITY_100D , SPELL_CORPOREALITY_100I , 0   },
+    {-8.0f,  SPELL_CORPOREALITY_80D  , SPELL_CORPOREALITY_80I  , 10  },
+    {-6.0f,  SPELL_CORPOREALITY_60D  , SPELL_CORPOREALITY_60I  , 20  },
+    {-4.0f,  SPELL_CORPOREALITY_40D  , SPELL_CORPOREALITY_40I  , 30  },
+    {-2.0f,  SPELL_CORPOREALITY_20D  , SPELL_CORPOREALITY_20I  , 40  },
+    {-1.0f,  SPELL_CORPOREALITY_EVEN , SPELL_CORPOREALITY_EVEN , 50  },
+    {1.0f,   SPELL_CORPOREALITY_EVEN , SPELL_CORPOREALITY_EVEN , 50  },
+    {2.0f,   SPELL_CORPOREALITY_20I  , SPELL_CORPOREALITY_20D  , 60  },
+    {4.0f,   SPELL_CORPOREALITY_40I  , SPELL_CORPOREALITY_40D  , 70  },
+    {6.0f,   SPELL_CORPOREALITY_60I  , SPELL_CORPOREALITY_60D  , 80  },
+    {8.0f,   SPELL_CORPOREALITY_80I  , SPELL_CORPOREALITY_80D  , 90  },
+    {10.0f,  SPELL_CORPOREALITY_100I , SPELL_CORPOREALITY_100D , 100 },
 };
 
 struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
@@ -732,7 +734,7 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
         m_lastBuffReal = 0;
         m_lastBuffTwilight = 0;
         m_creature->SetActiveObjectState(true);
-        pInstance->SetData(TYPE_COUNTER, 0);
+        pInstance->SetData(TYPE_COUNTER, COUNTER_OFF);
         pInstance->SetData(TYPE_HALION_EVENT, NOT_STARTED);
     }
 
@@ -759,13 +761,24 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
                     pInstance->SetData(TYPE_HALION_EVENT, FAIL);
                     pInstance->SetData(TYPE_HALION, FAIL);
                     m_creature->ForcedDespawn();
-                } else m_detectplayers = false;
-            } else m_detectplayers = true;
+                } 
+                else 
+                {
+                    m_detectplayers = false;
+                }
+            } 
+            else 
+            {
+                m_detectplayers = true;
+            }
 
             if (pInstance->GetData(TYPE_HALION_EVENT) != SPECIAL) return;
 
             pHalionReal = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_HALION_REAL));
             pHalionTwilight = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_HALION_TWILIGHT));
+
+            //pHalionReal->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            pHalionTwilight->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
             float p_RealHP = (pHalionReal && pHalionReal->isAlive()) ? pHalionReal->GetHealthPercent() : 0.0f;
             float p_TwilightHP = (pHalionTwilight && pHalionTwilight->isAlive()) ? pHalionTwilight->GetHealthPercent() : 0.0f;
@@ -773,29 +786,48 @@ struct MANGOS_DLL_DECL mob_halion_controlAI : public BSWScriptedAI
             float m_diff = (p_RealHP - p_TwilightHP);
 
             uint8 buffnum;
-            if (m_diff <= Buff[0].diff) buffnum = 0;
-            else for (uint8 i = 0; i < 11; i++)
-                     if (m_diff >= Buff[i].diff)
-                         buffnum = i+1;
-                     else break;
+            if (m_diff <= Buff[0].diff)
+            {
+                buffnum = 0;
+            }
+            else 
+            {
+                for (uint8 i = 0; i < 11; i++)
+                {
+                    if (m_diff >= Buff[i].diff)
+                    {
+                        buffnum = i+1;
+                    }
+                    else 
+                    {
+                        break;
+                    }
+                }
+            }
 
             if (!m_lastBuffReal || m_lastBuffReal != Buff[buffnum].real)
             {
-                if (m_lastBuffReal) doRemove(m_lastBuffReal, pHalionReal);
+                if (m_lastBuffReal)
+                {
+                    doRemove(m_lastBuffReal, pHalionReal);
+                }
                 doCast(Buff[buffnum].real, pHalionReal);
                 m_lastBuffReal = Buff[buffnum].real;
             }
 
             if (!m_lastBuffTwilight || m_lastBuffTwilight != Buff[buffnum].twilight)
             {
-                if (m_lastBuffTwilight) doRemove(m_lastBuffTwilight, pHalionReal);
+                if (m_lastBuffTwilight) 
+                {
+                    doRemove(m_lastBuffTwilight, pHalionTwilight);
+                }
                 doCast(Buff[buffnum].twilight, pHalionTwilight);
                 m_lastBuffTwilight = Buff[buffnum].twilight;
             }
 
             debug_log("ruby_sanctum: Buff num = %u, m_diff = %d ", buffnum, m_diff);
 
-            pInstance->SetData(TYPE_COUNTER, 50 + (int)Buff[buffnum].diff);
+            pInstance->SetData(TYPE_COUNTER, (uint32)Buff[buffnum].disp_corp);
 
         }
 

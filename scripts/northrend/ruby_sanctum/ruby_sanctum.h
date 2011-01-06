@@ -20,6 +20,8 @@ enum
     TYPE_COUNTER                   = 6, // for WorldUpdateState
     TYPE_HALION_EVENT              = 7,
 
+    COUNTER_OFF                    = 255,
+
     TYPE_EVENT_TIMER               = 50,
     TYPE_EVENT_NPC                 = 51,
 
