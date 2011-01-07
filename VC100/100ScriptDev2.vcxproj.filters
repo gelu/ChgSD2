@@ -1792,6 +1792,9 @@
     <ClCompile Include="..\scripts\northrend\naxxramas\boss_patchwerk.cpp">
       <Filter>scripts\northrend\naxxramas</Filter>
     </ClCompile>
+    <ClCompile Include="..\scripts\outland\auchindoun\sethekk_halls\boss_talon_king_ikiss.cpp">
+      <Filter>scripts\outland\auchindoun\sethekk_halls</Filter>
+    </ClCompile>
     <ClCompile Include="..\scripts\northrend\naxxramas\boss_razuvious.cpp">
       <Filter>scripts\northrend\naxxramas</Filter>
     </ClCompile>
