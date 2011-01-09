@@ -195,7 +195,7 @@ struct MANGOS_DLL_DECL boss_faerlinaAI : public ScriptedAI
                 m_uiEnrageTimer = 61000;
             }
         }
-        else 
+        else
             m_uiEnrageTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
