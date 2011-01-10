@@ -72,3 +72,17 @@ void ScriptedInstance::DoCompleteAchievement(uint32 uiAchievmentId)
     else
         debug_log("SD2: DoCompleteAchievement attempt set data but no players in map.");
 }
+
+Player* ScriptedInstance::GetPlayerInMap(bool bOnlyAlive /*=false*/, bool bCanBeGamemaster /*=true*/)
+{
+    Map::PlayerList const& lPlayers = instance->GetPlayers();
+
+    for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+    {
+        Player* pPlayer = itr->getSource();
+        if (pPlayer && (!bOnlyAlive || pPlayer->isAlive()) && (bCanBeGamemaster || !pPlayer->isGameMaster()))
+            return pPlayer;
+    }
+
+    return NULL;
+}
