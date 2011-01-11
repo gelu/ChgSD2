@@ -52,7 +52,7 @@ struct MANGOS_DLL_DECL boss_broodlordAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiCleaveTimer         = 8000;                                // These times are probably wrong
+        m_uiCleaveTimer         = 8000;                     // These times are probably wrong
         m_uiBlastWaveTimer      = 12000;
         m_uiMortalStrikeTimer   = 20000;
         m_uiKnockAwayTimer      = 30000;
@@ -114,7 +114,7 @@ struct MANGOS_DLL_DECL boss_broodlordAI : public ScriptedAI
         if (m_uiKnockAwayTimer < uiDiff)
         {
             DoCastSpellIfCan(m_creature->getVictim(), SPELL_KNOCK_AWAY);
-            // Drop 50% aggro
+            // Drop 50% aggro - TODO should be scriptedEffect?
             if (m_creature->getThreatManager().getThreat(m_creature->getVictim()))
                 m_creature->getThreatManager().modifyThreatPercent(m_creature->getVictim(), -50);
 
