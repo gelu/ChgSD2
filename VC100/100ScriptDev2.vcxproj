@@ -475,6 +475,14 @@
     <ClCompile Include="..\scripts\kalimdor\zulfarrak\boss_zumrah.cpp" />
     <ClCompile Include="..\scripts\kalimdor\zulfarrak\instance_zulfarrak.cpp" />
     <ClCompile Include="..\scripts\kalimdor\zulfarrak\zulfarrak.cpp" />
+    <ClCompile Include="..\scripts\northrend\borean_tundra.cpp" />
+    <ClCompile Include="..\scripts\northrend\dalaran.cpp" />
+    <ClCompile Include="..\scripts\northrend\dragonblight.cpp" />
+    <ClCompile Include="..\scripts\northrend\grizzly_hills.cpp" />
+    <ClCompile Include="..\scripts\northrend\howling_fjord.cpp" />
+    <ClCompile Include="..\scripts\northrend\icecrown.cpp" />
+    <ClCompile Include="..\scripts\northrend\sholazar_basin.cpp" />
+    <ClCompile Include="..\scripts\northrend\storm_peaks.cpp" />
     <ClCompile Include="..\scripts\northrend\zuldrak.cpp" />
     <ClCompile Include="..\scripts\northrend\azjol-nerub\ahnkahet\boss_jedoga.cpp" />
     <ClCompile Include="..\scripts\northrend\azjol-nerub\ahnkahet\boss_nadox.cpp" />
