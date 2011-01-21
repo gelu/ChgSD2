@@ -127,7 +127,6 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
-    bool m_bIsDebugMode;  //if only one player(GM) in instance
     uint8 m_uiPhase;
     uint64 m_uiLastShiverTargetGUID;
     uint8 m_uiShiverJumpTimer;
@@ -144,7 +143,6 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
     void Reset()
     {
         m_uiPhase = PHASE_NOSTART;
-        m_bIsDebugMode = false;
         m_uiLastSacrifaceHP = 0;
 
         m_uiMindFlayTimer = 10000;
@@ -159,33 +157,29 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         //Insanity
         m_uiInsanityCastTimer = 5000;
 
-        if (m_pInstance)
+        if (m_pInstance && m_pInstance->GetData(TYPE_VOLAZJ) != DONE)
             m_pInstance->SetData(TYPE_VOLAZJ, NOT_STARTED);
     }
 
     void Aggro(Unit* pWho)
     {
-        m_bIsDebugMode;
         DoScriptText(SAY_AGGRO, m_creature);
         if (m_pInstance)
             m_pInstance->SetData(TYPE_VOLAZJ, IN_PROGRESS);
         m_uiPhase = PHASE_FIGHT;
 
         Map* pMap = m_creature->GetMap();
-        if(pMap)
-        {
-            Map::PlayerList const &lPlayers = pMap->GetPlayers();
-            if(lPlayers.getSize() == 1)
-                m_bIsDebugMode = true;
-        }
     }
+
     void EnterEvadeMode()
     {
         if(m_uiPhase != PHASE_FIGHT)
             return;
 
         m_creature->GetMotionMaster()->MoveTargetedHome();
+        m_pInstance->SetData(TYPE_VOLAZJ, FAIL);
     }
+
     void KilledUnit(Unit* pVictim)
     {
         switch(urand(0, 2))
@@ -202,6 +196,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_VOLAZJ, DONE);
     }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if(m_uiPhase == PHASE_FIGHT)
