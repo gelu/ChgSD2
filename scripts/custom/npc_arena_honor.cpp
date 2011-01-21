@@ -20,7 +20,6 @@ SD%Complete: 100%
 SDComment: by tempura, corrected by /dev/rsa
 SDCategory: custom
 EndScriptData */
-/* проверка русского */
 #include "precompiled.h"
 #include "sc_creature.h"
 #include "sc_gossip.h"
@@ -50,7 +49,7 @@ bool GossipSelect_npc_arena_honor(Player *pPlayer, Creature *pCreature, uint32 s
         if (pPlayer->GetHonorPoints() >= 1000)
         {
             pPlayer->ModifyHonorPoints(-1000);
-            pPlayer->ModifyArenaPoints(+90);
+            pPlayer->ModifyArenaPoints(+50);
         }
         else
             DoScriptText(UNSUCCESSFUL_HONOR, pCreature);
@@ -60,7 +59,7 @@ bool GossipSelect_npc_arena_honor(Player *pPlayer, Creature *pCreature, uint32 s
         if (pPlayer->GetHonorPoints() >= 10000)
         {
             pPlayer->ModifyHonorPoints(-10000);
-            pPlayer->ModifyArenaPoints(+900);
+            pPlayer->ModifyArenaPoints(+500);
         }
         else
             DoScriptText(UNSUCCESSFUL_HONOR, pCreature);
@@ -70,7 +69,7 @@ bool GossipSelect_npc_arena_honor(Player *pPlayer, Creature *pCreature, uint32 s
         if (pPlayer->GetArenaPoints() >= 100)
         {
             pPlayer->ModifyArenaPoints(-100);
-            pPlayer->ModifyHonorPoints(+900);
+            pPlayer->ModifyHonorPoints(+2000);
         }
         else
             DoScriptText(UNSUCCESSFUL_ARENA, pCreature);
@@ -80,7 +79,7 @@ bool GossipSelect_npc_arena_honor(Player *pPlayer, Creature *pCreature, uint32 s
         if (pPlayer->GetArenaPoints() >= 1000)
         {
             pPlayer->ModifyArenaPoints(-1000);
-            pPlayer->ModifyHonorPoints(+9000);
+            pPlayer->ModifyHonorPoints(+20000);
         }
         else
             DoScriptText(UNSUCCESSFUL_ARENA, pCreature);
