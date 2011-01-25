@@ -136,12 +136,26 @@ static Locations SpawnLoc[]=
                              };
     }
 
-    bool instance_icecrown_spire::IsEncounterInProgress() const
+    bool instance_icecrown_spire::IsEncounterInProgress()
     {
         for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
             if (m_auiEncounter[i] == IN_PROGRESS) return true;
 
         return false;
+    }
+
+    uint32 instance_icecrown_spire::GetCompletedEncounters(bool /*type*/)
+    {
+        uint32 count = 0;
+        uint32 mask = 1;
+        for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
+        {
+            if (m_auiEncounter[i] == DONE)
+                count += mask;
+            mask = mask << 1;
+        }
+
+        return count;
     }
 
     void instance_icecrown_spire::OnPlayerEnter(Player *pPlayer)

@@ -164,7 +164,8 @@ public:
     void CloseDoor(uint64 guid);
     void OpenAllDoors();
     void OnPlayerEnter(Player* pPlayer);
-    bool IsEncounterInProgress() const;
+    bool IsEncounterInProgress();
+    uint32 GetCompletedEncounters(bool /*type*/);
 
     void SetData(uint32 uiType, uint32 uiData);
     uint32 GetData(uint32 uiType);
