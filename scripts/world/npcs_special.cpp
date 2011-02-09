@@ -26,6 +26,9 @@ EndScriptData
 #include "escort_ai.h"
 #include "ObjectMgr.h"
 #include "GameEventMgr.h"
+#include "PetAI.h"
+#include "Pet.h"
+#include "SpellMgr.h"
 
 /* ContentData
 npc_air_force_bots       80%    support for misc (invisible) guard bots in areas where player allowed to fly. Summon guards after a preset time if tagged by spell
@@ -2339,6 +2342,85 @@ CreatureAI* GetAI_npc_eye_of_kilrogg(Creature* pCreature)
     return new npc_eye_of_kilrogg(pCreature);
 }
 
+struct MANGOS_DLL_DECL pet_simple_guardianAI : public PetAI
+{
+    /* This AI is more a kind of additional initialisation,
+       that adds spells to the autocast list, defined in
+       CreatureInfo::Spells.
+       The AI functions are processed by PetAI.
+    */
+    pet_simple_guardianAI(Pet* pPet): PetAI(pPet)
+    {
+        // lookup spells
+        if (CreatureInfo const* pPetInfo = pPet->GetCreatureInfo())
+            for (uint8 i = 0; i<CREATURE_MAX_SPELLS; i++)
+            {
+                if (!pPetInfo->spells[i])
+                  continue;
+
+                if (SpellEntry const *spellInfo = GetSpellStore()->LookupEntry(pPetInfo->spells[i]))
+                {
+                    // skip spells without any cooldown
+                    if (!spellInfo->StartRecoveryTime && !GetSpellRecoveryTime(spellInfo) && !(spellInfo->Attributes & SPELL_ATTR_PASSIVE))
+                        continue;
+
+                    // add spell, if pet does not know
+                    pPet->addSpell(spellInfo->Id);
+
+                    // toggle autocast (normally disabled for non-controlled pets)
+                    pPet->ToggleAutocast(spellInfo->Id, true, true);
+                }
+            }
+    }
+};
+
+CreatureAI* GetAI_pet_simple_guardian(Creature* pCreature)
+{
+    if (pCreature->IsPet())
+        return new pet_simple_guardianAI((Pet*)pCreature);
+    else
+        return NULL;
+}
+
+/*######
+## pet_dk_ghoul
+######*/
+
+enum
+{
+    SPELL_DK_SCALING_01 = 54566,
+    SPELL_DK_SCALING_02 = 51996,
+    SPELL_LEAP          = 47482
+};
+
+struct MANGOS_DLL_DECL pet_dk_ghoulAI : public pet_simple_guardianAI
+{
+    pet_dk_ghoulAI(Pet* pPet) : pet_simple_guardianAI(pPet) {}
+
+    // some hacky-hacky for "Leap" :-/
+    void AttackStart(Unit *u)
+    {
+        Unit* oldTarget = m_creature->getVictim();
+        PetAI::AttackStart(u);
+
+        // PetAI::AttackStart was successfull
+        if (m_creature->getVictim() != oldTarget && m_creature->getVictim() == u
+            && !m_creature->IsNonMeleeSpellCasted(false))
+        {
+            float dist = m_creature->GetDistance(m_creature->getVictim());
+            if (dist > 5.0f && dist < 30.0f)
+                // self cast (works only like this, because target mode is buggy)
+                m_creature->CastSpell(m_creature, SPELL_LEAP, false);
+        }
+    }
+};
+CreatureAI* GetAI_pet_dk_ghoul(Creature* pCreature)
+{
+    if (pCreature->IsPet())
+        return new pet_dk_ghoulAI((Pet*)pCreature);
+    else
+        return NULL;
+}
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -2463,4 +2545,15 @@ void AddSC_npcs_special()
     newscript->Name = "npc_eye_of_kilrogg";
     newscript->GetAI = &GetAI_npc_eye_of_kilrogg;
     newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "pet_simple_guardian";
+    newscript->GetAI = &GetAI_pet_simple_guardian;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "pet_dk_ghoul";
+    newscript->GetAI = &GetAI_pet_dk_ghoul;
+    newscript->RegisterSelf();
+
 }
