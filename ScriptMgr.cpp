@@ -514,15 +514,12 @@ bool AuraDummy(Aura const* pAura, bool apply)
 }
 
 MANGOS_DLL_EXPORT
-InstanceData* CreateInstanceData(Map *map)
+InstanceData* CreateInstanceData(Map* pMap)
 {
-    if (!map->IsDungeon())
-        return NULL;
-
-    Script *tmpscript = m_scripts[map->GetScriptId()];
+    Script *tmpscript = m_scripts[pMap->GetScriptId()];
 
     if (!tmpscript || !tmpscript->GetInstanceData)
         return NULL;
 
-    return tmpscript->GetInstanceData(map);
+    return tmpscript->GetInstanceData(pMap);
 }
