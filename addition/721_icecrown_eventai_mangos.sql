@@ -116,9 +116,9 @@ UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37546;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3754601;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
 (3754601,37546,0,0,100,31,3000,5000,3000,5000,11,70191,1,0,0,0,0,0,0,0,0,0, 'Frenzied abomination - abomination cleave');
-DELETE FROM `creature_ai_scripts` WHERE `id`=7037102;
+DELETE FROM `creature_ai_scripts` WHERE `id`=3754602;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(7037102,70371,2,0,100,30,10,10,0,0,11,70371,0,0,0,0,0,0,0,0,0,0, 'Frenzied abomination - enrage');
+(3754602,37546,2,0,100,30,10,9,0,0,11,70371,0,0,0,0,0,0,0,0,0,0, 'Frenzied abomination - enrage');
 -- Spire Gargoyle
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37544;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3754401;
@@ -158,7 +158,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 (3702302,37023,0,0,100,31,8000,11000,8000,11000,11,73079,4,0,0,0,0,0,0,0,0,0, 'Plague scientist - plague blast');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3702303;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3702303,37023,16,0,100,31,15000,20000,15000,20000,11,69871,6,0,0,0,0,0,0,0,0,0, 'Plague scientist - plague stream');
+(3702303,37023,0,0,100,31,15000,20000,15000,20000,11,69871,6,0,0,0,0,0,0,0,0,0, 'Plague scientist - plague stream');
 
 -- Vengefull fleshreaper
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37038;
@@ -205,7 +205,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37595;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3759501;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3759501,37595,4,0,100,31,0,0,0,0,11,71736,0,0,0,0,0,0,0,0,0,0, 'Darkfallen blood knight - vampiric aura');
+(3759501,37595,4,0,100,6,0,0,0,0,11,71736,0,0,0,0,0,0,0,0,0,0, 'Darkfallen blood knight - vampiric aura');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3759502;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
 (3759502,37595,0,0,100,31,5000,9000,5000,9000,11,70450,1,0,0,0,0,0,0,0,0,0, 'Darkfallen blood knight - blood mirror');
@@ -258,12 +258,12 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 (3766602,37666,0,0,100,31,7000,10000,7000,10000,11,70437,1,0,0,0,0,0,0,0,0,0, 'Darkfallen tactitian - unholy strike');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3766603;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3766603,37666,4,0,100,31,0,0,0,0,11,70431,0,0,0,0,0,0,0,0,0,0, 'Darkfallen tactitian - shadowstep');
+(3766603,37666,4,0,100,6,0,0,0,0,11,70431,0,0,0,0,0,0,0,0,0,0, 'Darkfallen tactitian - shadowstep');
 -- Darkfallen Commander
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37662;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3766201;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3766201,37662,4,0,100,31,0,0,0,0,11,70750,0,0,0,0,0,0,0,0,0,0, 'Darkfallen commander - battle shout');
+(3766201,37662,4,0,100,6,0,0,0,0,11,70750,0,0,0,0,0,0,0,0,0,0, 'Darkfallen commander - battle shout');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3766202;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
 (3766202,37662,0,0,100,11,3000,5000,5000,7000,11,70449,5,0,0,0,0,0,0,0,0,0, 'Darkfallen commander - vampire rush 10');
@@ -347,7 +347,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 (3713404,37134,0,0,100,31,6000,8000,7000,10000,11,71252,4,0,0,0,0,0,0,0,0,0, 'Ymirjar huntress - volley');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3713405;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3713405,37134,4,0,100,31,0,0,0,0,11,71705,0,0,0,0,0,0,0,0,0,0, 'Ymirjar huntress - summon warhawk');
+(3713405,37134,4,0,100,6,0,0,0,0,11,71705,0,0,0,0,0,0,0,0,0,0, 'Ymirjar huntress - summon warhawk');
 -- Ymirjar frostbinder
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37127;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712701;
@@ -358,7 +358,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 (3712702,37127,0,0,100,31,15000,20000,15000,20000,11,71274,5,0,0,0,0,0,0,0,0,0, 'Ymirjar frostbinder - frozen orb');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712703;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3712703,37127,4,0,100,31,0,0,0,0,11,71270,0,0,0,0,0,0,0,0,0,0, 'Ymirjar frostbinder - arctic chill');
+(3712703,37127,4,0,100,6,0,0,0,0,11,71270,0,0,0,0,0,0,0,0,0,0, 'Ymirjar frostbinder - arctic chill');
 
 #-- ###############
 #-- VALITHRIA EVENT
@@ -483,7 +483,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 (3712301,37123,0,0,100,31,10000,10000,10000,10000,11,71549,1,0,0,0,0,0,0,0,0,0, 'Captain Brandon - crusader strike');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712302;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3712302,37123,2,0,100,30,25,25,0,0,11,71550,0,0,0,0,0,0,0,0,0,0, 'Captain Brandon - divine shield');
+(3712302,37123,2,0,100,30,25,24,0,0,11,71550,0,0,0,0,0,0,0,0,0,0, 'Captain Brandon - divine shield');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712303;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
 (3712303,37123,0,0,100,31,5000,8000,7000,10000,11,71784,4,0,0,0,0,0,0,0,0,0, 'Captain Brandon - hammer of betrayal');
@@ -529,7 +529,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37129;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712904;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3712904,37129,4,0,100,31,0,0,0,0,39,30,0,0,0,0,0,0,0,0,0,0, 'Crock Scrougebane - call for help');
+(3712904,37129,4,0,100,6,0,0,0,0,39,30,0,0,0,0,0,0,0,0,0,0, 'Crock Scrougebane - call for help');
 -- Svalna spear
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=38248;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3824801;
@@ -542,7 +542,7 @@ INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_invers
 UPDATE `creature_template` SET `AIName`='EventAI' WHERE `entry`=37126;
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712601;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
-(3712601,37126,4,0,100,31,0,0,0,0,11,71465,0,0,0,0,0,0,0,0,0,0, 'Sister Svalna - divine surge');
+(3712601,37126,4,0,100,6,0,0,0,0,11,71465,0,0,0,0,0,0,0,0,0,0, 'Sister Svalna - divine surge');
 DELETE FROM `creature_ai_scripts` WHERE `id`=3712602;
 INSERT INTO `creature_ai_scripts` (`id`,`creature_id`,`event_type`,`event_inverse_phase_mask`,`event_chance`,`event_flags`,`event_param1`,`event_param2`,`event_param3`,`event_param4`,`action1_type`,`action1_param1`,`action1_param2`,`action1_param3`,`action2_type`,`action2_param1`,`action2_param2`,`action2_param3`,`action3_type`,`action3_param1`,`action3_param2`,`action3_param3`,`comment`) VALUES 
 (3712602,37126,0,0,100,11,15000,20000,20000,25000,11,71468,0,0,0,0,0,0,0,0,0,0, 'Sister Svalna - aether burst 10');
