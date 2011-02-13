@@ -365,7 +365,7 @@ scripts/northrend/icecrown_citadel/frozen_halls/forge_of_souls/boss_devourer_of_
 scripts/northrend/icecrown_citadel/frozen_halls/forge_of_souls/boss_bronjahm.cpp \
 scripts/northrend/icecrown_citadel/frozen_halls/forge_of_souls/forge_of_souls.cpp \
 scripts/northrend/icecrown_citadel/frozen_halls/forge_of_souls/trash_forge_of_souls.cpp \
-scripts/northrend/icecrown_citadel/frozen_halls/pit_of_saron/boss_forgemaster_gafrost.cpp \
+scripts/northrend/icecrown_citadel/frozen_halls/pit_of_saron/boss_forgemaster_garfrost.cpp \
 scripts/northrend/icecrown_citadel/frozen_halls/pit_of_saron/boss_krick_and_ick.cpp \
 scripts/northrend/icecrown_citadel/frozen_halls/pit_of_saron/boss_scourgelord_tyrannus.cpp \
 scripts/northrend/icecrown_citadel/frozen_halls/pit_of_saron/instance_pit_of_saron.cpp \
