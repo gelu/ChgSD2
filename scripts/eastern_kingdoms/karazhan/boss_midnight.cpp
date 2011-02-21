@@ -117,7 +117,7 @@ struct MANGOS_DLL_DECL boss_midnightAI : public ScriptedAI
                 {
                     m_uiPhase = 2;
 
-                    if (Creature* pAttumen = m_creature->SummonCreature(SUMMON_ATTUMEN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 30000))
+                    if (Creature* pAttumen = m_creature->SummonCreature(SUMMON_ATTUMEN, 0.0f, 0.0f, 0.0f, 0.0f, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 120000))
                     {
                         m_uiAttumenGUID = pAttumen->GetGUID();
                         pAttumen->AI()->AttackStart(m_creature->getVictim());
