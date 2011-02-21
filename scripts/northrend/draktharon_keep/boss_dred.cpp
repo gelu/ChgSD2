@@ -29,14 +29,13 @@ enum
     SAY_KING_DRED_TALON                = -1600020,
     SAY_CALL_FOR_RAPTOR                = -1600021,
     
-    SPELL_BELLOWING_ROAR            = 22686,
+    SPELL_BELLOWING_ROAR               = 22686,
     SPELL_FEARSOME_ROAR                = 48849,
-    H_SPELL_FEARSOME_ROAR            = 59422,
+    H_SPELL_FEARSOME_ROAR              = 59422,
     SPELL_GRIEVOUS_BITE                = 48920,
-    SPELL_MANGLING_SLASH            = 48873,
-    SPELL_PIERCING_SLASH            = 48878,
-    SPELL_RAPTOR_CALL                = 59416,            //not yet implemented
-
+    SPELL_MANGLING_SLASH               = 48873,
+    SPELL_PIERCING_SLASH               = 48878,
+    SPELL_RAPTOR_CALL                  = 59416,            //not yet implemented
 };
 
 const float PosSummon1[3] = {-528.8f, -690.58f, 30.25f};
@@ -137,7 +136,7 @@ struct MANGOS_DLL_DECL boss_dredAI : public ScriptedAI
             Unit* pPlayer = m_creature->getVictim();
             if (pPlayer->GetHealth() == pPlayer->GetMaxHealth())
                 if (pPlayer->HasAura(SPELL_GRIEVOUS_BITE))
-                        pPlayer->RemoveAura(SPELL_GRIEVOUS_BITE, EFFECT_INDEX_0);
+                    pPlayer->RemoveAura(SPELL_GRIEVOUS_BITE, EFFECT_INDEX_0);
             Check_Timer = 1000;
         }else Check_Timer -= uiDiff;
         
@@ -157,20 +156,21 @@ struct MANGOS_DLL_DECL boss_dredAI : public ScriptedAI
             CallForRaptorSpawnCheck();
         }else CallForRaptor_Timer -= uiDiff;
 
-        //Call For Raptor - spawn
+        //Call For Raptor
         if (CallForRaptorSpawn_Timer < uiDiff && CallForRaptorSpawn_Check == 1)
         {    
-            switch(urand(0, 1))
+            std::list<Creature*> assistList;
+
+            GetCreatureListWithEntryInGrid(assistList,m_creature,NPC_DRAKKARI_GUTRIPPER,30.f);
+            if(assistList.empty())
+                GetCreatureListWithEntryInGrid(assistList,m_creature,NPC_DRAKKARI_SCYTHECLAW,30.f);
+
+            if(!assistList.empty())
             {
-                case 0:
+                Creature* target = *(assistList.begin());
+                if(target && target->isAlive())
                 {
-                    if (Creature* pRaptor1 = m_creature->SummonCreature(NPC_DRAKKARI_GUTRIPPER, PosSummon1[0], PosSummon1[1], PosSummon1[2], 0 , TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 240000))
-                        pRaptor1->AI()->AttackStart(m_creature->getVictim());
-                }
-                case 1:
-                {
-                    if (Creature* pRaptor2 = m_creature->SummonCreature(NPC_DRAKKARI_SCYTHECLAW, PosSummon1[0], PosSummon1[1], PosSummon1[2], 0 , TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 240000))
-                        pRaptor2->AI()->AttackStart(m_creature->getVictim());
+                    target->AI()->AttackStart(m_creature->getVictim());
                 }
             }
             CallForRaptorSpawn_Check = 0;
