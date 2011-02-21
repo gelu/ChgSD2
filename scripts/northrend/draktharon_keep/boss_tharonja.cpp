@@ -36,49 +36,50 @@ enum
     SAY_DEATH                       = -1600019,
 
     //Phase 1 (Skeleton) Spells
-    SPELL_CURSE_OF_LIFE                = 49527,
-    H_SPELL_CURSE_OF_LIFE            = 59972,
+    SPELL_CURSE_OF_LIFE             = 49527,
+    H_SPELL_CURSE_OF_LIFE           = 59972,
 
-    SPELL_SHADOW_VOLLEY                = 49528,
-    H_SPELL_SHADOW_VOLLEY            = 59973,
-    SPELL_RAIN_OF_FIRE                = 49518,
+    SPELL_SHADOW_VOLLEY             = 49528,
+    H_SPELL_SHADOW_VOLLEY           = 59973,
+    SPELL_RAIN_OF_FIRE              = 49518,
     H_SPELL_RAIN_OF_FIRE            = 59971,
     
-    SPELL_DECAY_FLESH                = 49356,            //not working
+    SPELL_DECAY_FLESH               = 49356,            //not working
 
     //Phase 2 (Flesh) Spells
-    SPELL_GIFT_OF_THARONJA            = 52509,
+    SPELL_GIFT_OF_THARONJA          = 52509,
 
-    SPELL_LIGHTNING_BREATH            = 49537,
+    SPELL_LIGHTNING_BREATH          = 49537,
     H_SPELL_LIGHTNING_BREATH        = 59936,
-    SPELL_EYE_BEAM                    = 49544,
+    SPELL_EYE_BEAM                  = 49544,
     H_SPELL_EYE_BEAM                = 59965,
 
-    SPELL_POISON_CLOUD                = 49548,
+    SPELL_POISON_CLOUD              = 49548,
     H_SPELL_POSION_CLOUD            = 59969,
     
-    SPELL_RETURN_FLESH                = 53463,                //not working
+    SPELL_RETURN_FLESH              = 53463,                //not working
 
     //achie hacks
-    ACHIEVEMENT_NORMAL                = 482,
-    ACHIEVEMENT_HEROIC                = 493
+    ACHIEVEMENT_NORMAL              = 482,
+    ACHIEVEMENT_HEROIC              = 493,
 
+    ACHIEVEMENT_SPELL_THARONJA      = 61863,
 };
 
 //Phasses
 enum Phase
 {
-    PHASE_SKELETON                    =   0,
-    PHASE_INTOFLESH                    =   1,
-    PHASE_FLESH                        =   2,
-    PHASE_INTOSKELETON                =   3
+    PHASE_SKELETON                  = 0,
+    PHASE_INTOFLESH                 = 1,
+    PHASE_FLESH                     = 2,
+    PHASE_INTOSKELETON              = 3
 };
 
 enum PhaseChangeTimer
 {
-    PHASE_CHANGE_SKELETON            = 12000,
-    PHASE_CHANGE_REAL                = 6000,
-    PHASE_CHANGE_FLESH                = 20000
+    PHASE_CHANGE_SKELETON           = 12000,
+    PHASE_CHANGE_REAL               = 6000,
+    PHASE_CHANGE_FLESH              = 20000
 };
 /*######
 ## boss_tharonja
@@ -126,6 +127,11 @@ struct MANGOS_DLL_DECL boss_tharonjaAI : public ScriptedAI
     void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
+
+        if(Player* pPlayer = pKiller->GetCharmerOrOwnerPlayerOrPlayerItself())
+        {
+            m_creature->CastSpell(pPlayer,ACHIEVEMENT_SPELL_THARONJA,true);
+        }
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_THARONJA, DONE);
