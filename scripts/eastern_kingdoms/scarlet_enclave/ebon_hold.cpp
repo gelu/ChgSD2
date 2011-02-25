@@ -1150,6 +1150,21 @@ bool GOUse_go_acherus_soul_prison(Player* pPlayer, GameObject* pGo)
 ## npc_eye_of_acherus
 ######*/
 
+enum eEyeOfAcherus
+{
+    DISPLAYID_EYE_HUGE      = 26320,
+    DISPLAYID_EYE_SMALL     = 25499,
+
+    SPELL_EYE_PHASEMASK     = 70889,
+    SPELL_EYE_VISUAL        = 51892,
+    //SPELL_EYE_FL_BOOST_RUN  = 51923,
+    SPELL_EYE_FL_BOOST_FLY  = 51890,
+    SPELL_EYE_CONTROL       = 51852,
+
+    TEXT_EYE_UNDER_CONTROL  = -1666452,
+    TEXT_EYE_LAUNCHED       = -1666451,
+};
+
 struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 {
     npc_eye_of_acherusAI(Creature *pCreature) : ScriptedAI(pCreature)
@@ -1157,80 +1172,64 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         Reset();
     }
 
-    int32 StartTimer;
-    bool Active;
-    ObjectGuid ownerGuid;
+    bool m_isActive;
 
     void Reset()
     {
-        m_creature->SetDisplayId(26320);
-        StartTimer = 2000;
-        Active = false;
+        m_creature->SetDisplayId(DISPLAYID_EYE_HUGE);
+        m_isActive = false;
     }
 
-    void AttackStart(Unit *) {}
-    void MoveInLineOfSight(Unit*) {}
-
-    void JustDied(Unit* killer)
+    void AttackStart(Unit *)
     {
-        if(!m_creature || m_creature->GetTypeId() != TYPEID_UNIT)
-            return;
+    }
 
-        m_creature->RemoveAurasDueToSpell(530);
+    void MoveInLineOfSight(Unit *)
+    {
+    }
 
-        Player* owner = ObjectAccessor::FindPlayer(ownerGuid);;
-
-        if(!owner)
-            return;
-
-        owner->RemoveAurasDueToSpell(51923);
-        owner->RemoveAurasDueToSpell(51852);
+    void JustDied(Unit *)
+    {
+        if (Unit* charmer = m_creature->GetCharmer())
+            charmer->RemoveAurasDueToSpell(SPELL_EYE_CONTROL);
     }
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
-        if (uiType != POINT_MOTION_TYPE && uiPointId == 0)
+       if (uiType != POINT_MOTION_TYPE || uiPointId != 0)
             return;
 
-            DoScriptText(-1666452, m_creature);
-            m_creature->SetDisplayId(25499);
-//            m_creature->SetDisplayId(26320);
-            m_creature->RemoveAurasDueToSpell(51923);
-            m_creature->CastSpell(m_creature, 51890, true);
+        DoScriptText(TEXT_EYE_UNDER_CONTROL, m_creature);
+        m_creature->SetDisplayId(DISPLAYID_EYE_SMALL);
+        m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
+    }
+
+    void AttackedBy(Unit * attacker)
+    {
+        // called on remove SPELL_AURA_MOD_POSSESS
+        if (!m_creature->isCharmed() && attacker->GetTypeId() == TYPEID_PLAYER)
+        {
+            attacker->RemoveAurasDueToSpell(SPELL_EYE_CONTROL);
+//            m_creature->ForcedDespawn();
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if(m_creature->isCharmed())
+        if (m_creature->isCharmed())
         {
-            if (ownerGuid.IsEmpty())
-                ownerGuid = m_creature->GetCharmerOrOwner()->GetObjectGuid();
-
-            if (StartTimer < uiDiff && !Active)
+            if (!m_isActive)
             {
-                m_creature->CastSpell(m_creature, 70889, true);
-                m_creature->CastSpell(m_creature, 51892, true);
-                m_creature->CastSpell(m_creature, 51923, true);
-                m_creature->SetSpeedRate(MOVE_FLIGHT, 4.0f,true);
-                DoScriptText(-1666451, m_creature);
-                m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
-                Active = true;
+                m_creature->CastSpell(m_creature, SPELL_EYE_PHASEMASK, true);
+                m_creature->CastSpell(m_creature, SPELL_EYE_VISUAL, true);
+                m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
+                DoScriptText(TEXT_EYE_LAUNCHED, m_creature);
+                m_creature->GetMotionMaster()->MovePoint(0,1750.8276f, -5873.788f, 147.2266f);
+                m_isActive = true;
             }
-            else
-                StartTimer -= uiDiff;
         }
         else
-        {
-            if (StartTimer < uiDiff)
-            {
-                m_creature->ForcedDespawn();
-                if (Player* owner = ObjectAccessor::FindPlayer(ownerGuid))
-                {
-                    owner->RemoveAurasDueToSpell(51852);
-                    owner->RemoveAurasDueToSpell(51923);
-                }
-            }
-        }
+            m_creature->ForcedDespawn();
     }
 };
 
