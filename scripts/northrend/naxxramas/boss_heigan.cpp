@@ -149,7 +149,7 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
             // Fever
             if (m_uiFeverTimer < uiDiff)
             {
-                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_DECREPIT_FEVER_N : SPELL_DECREPIT_FEVER_H);
+//                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_DECREPIT_FEVER_N : SPELL_DECREPIT_FEVER_H);
                 m_uiFeverTimer = 21000;
             }
             else
@@ -208,6 +208,35 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
             m_uiTauntTimer -= uiDiff;
 
         DoMeleeAttackIfReady();
+
+        // Handling of the erruptions, this is not related to melee attack or spell-casting
+        if (!m_pInstance)
+            return;
+
+        // Eruption
+        if (m_uiEruptionTimer <= uiDiff)
+        {
+            static int const m_auiMaxHeiganTraps[MAX_HEIGAN_TRAP_AREAS] =
+            {
+                m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_1), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_2), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_3), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_4)
+            };
+
+            for (uint8 uiArea = 0; uiArea < MAX_HEIGAN_TRAP_AREAS; ++uiArea)
+            {
+                if (uiArea == (m_uiPhaseEruption % 6) || uiArea == 6 - (m_uiPhaseEruption % 6))
+                    continue;
+                for (uint8 i = 0; i < m_auiMaxHeiganTraps[uiArea]; i++)
+                {
+                    if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetHeiganTrapData64(uiArea, i)))
+                        pGo->Use(m_creature);
+                }
+            }
+
+            m_uiEruptionTimer = m_uiPhase == PHASE_GROUND ? urand(8000, 12000) : urand(2000, 3000);
+            ++m_uiPhaseEruption;
+        }
+        else
+            m_uiEruptionTimer -= uiDiff;
     }
 };
 

@@ -37,6 +37,12 @@ enum
 
     TYPE_UNDYING_FAILED         = 16,                       // Achievements Undying and Immortal, needs to be saved to database
 
+    MAX_HEIGAN_TRAP_AREAS       = 4,
+    TYPE_MAX_HEIGAN_TRAPS_1     = 18,
+    TYPE_MAX_HEIGAN_TRAPS_2     = 19,
+    TYPE_MAX_HEIGAN_TRAPS_3     = 20,
+    TYPE_MAX_HEIGAN_TRAPS_4     = 21,
+
     MAX_SPECIAL_ACHIEV_CRITS    = 6,
 
     TYPE_ACHIEV_SAFETY_DANCE    = 0,
@@ -196,6 +202,9 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         void GetGothSummonPointCreatures(std::list<Creature*> &lList, bool bRightSide);
         bool IsInRightSideGothArea(Unit* pUnit);
 
+        // Heigan
+        uint64 GetHeiganTrapData64(uint8 uiAreaIndex, uint32 uiIndex);
+
         // kel
         void SetChamberCenterCoords(float fX, float fY, float fZ);
         void GetChamberCenterCoords(float &fX, float &fY, float &fZ) { fX = m_fChamberCenterX; fY = m_fChamberCenterY; fZ = m_fChamberCenterZ; }
@@ -257,6 +266,7 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiHeigEntryDoorGUID;
         uint64 m_uiHeigExitDoorGUID;
         uint64 m_uiLoathebDoorGUID;
+        std::vector<uint64> m_avuiHeiganTraps[MAX_HEIGAN_TRAP_AREAS];
 
         uint64 m_uiKelthuzadDoorGUID;
         uint64 m_uiKelthuzadExitDoorGUID;

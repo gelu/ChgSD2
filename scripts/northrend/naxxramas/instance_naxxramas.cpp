@@ -248,6 +248,20 @@ void instance_naxxramas::OnObjectCreate(GameObject* pGo)
             m_uiConsPortalGUID = pGo->GetGUID();
             break;
     }
+
+    // Heigan Traps - many entries, and never used again
+    if (pGo->GetEntry() >= 181510 && pGo->GetEntry() <= 181695)
+    {
+        if (((pGo->GetEntry() >= 181517) && (pGo->GetEntry() <= 181524)) || (pGo->GetEntry() == 181678))
+            m_avuiHeiganTraps[0].push_back(pGo->GetGUID());
+        else if (((pGo->GetEntry() >= 181510) && (pGo->GetEntry() <= 181516)) || ((pGo->GetEntry() >= 181525) && (pGo->GetEntry() <= 181531)) || (pGo->GetEntry() == 181533 || pGo->GetEntry() == 181676))
+            m_avuiHeiganTraps[1].push_back(pGo->GetGUID());
+        else if (((pGo->GetEntry() >= 181534) && (pGo->GetEntry() <= 181544)) || (pGo->GetEntry() == 181532) || (pGo->GetEntry() == 181677))
+            m_avuiHeiganTraps[2].push_back(pGo->GetGUID());
+        else if (((pGo->GetEntry() >= 181545) && (pGo->GetEntry() <= 181552)) || (pGo->GetEntry() == 181695))
+            m_avuiHeiganTraps[3].push_back(pGo->GetGUID());
+    }
+
 }
 
 void instance_naxxramas::OnPlayerDeath(Player* pPlayer)
@@ -503,6 +517,13 @@ uint32 instance_naxxramas::GetData(uint32 uiType)
             return m_auiEncounter[14];
         case TYPE_UNDYING_FAILED:
             return m_auiEncounter[15];
+
+        // Number of Heigan traps per area
+        case TYPE_MAX_HEIGAN_TRAPS_1:   return m_avuiHeiganTraps[0].size();
+        case TYPE_MAX_HEIGAN_TRAPS_2:   return m_avuiHeiganTraps[1].size();
+        case TYPE_MAX_HEIGAN_TRAPS_3:   return m_avuiHeiganTraps[2].size();
+        case TYPE_MAX_HEIGAN_TRAPS_4:   return m_avuiHeiganTraps[3].size();
+
         default:
             return 0;
 
@@ -662,6 +683,13 @@ bool instance_naxxramas::IsInRightSideGothArea(Unit* pUnit)
 
     error_log("SD2: left/right side check, Gothik combat area failed.");
     return true;
+}
+
+uint64 instance_naxxramas::GetHeiganTrapData64(uint8 uiAreaIndex, uint32 uiIndex)
+{
+    if (0 <= uiAreaIndex && uiAreaIndex < MAX_HEIGAN_TRAP_AREAS && uiIndex < m_avuiHeiganTraps[uiAreaIndex].size())
+        return m_avuiHeiganTraps[uiAreaIndex].at(uiIndex);
+    return 0;
 }
 
 void instance_naxxramas::SetChamberCenterCoords(float fX, float fY, float fZ)
