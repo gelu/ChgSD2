@@ -1178,7 +1178,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
 
         m_creature->RemoveAurasDueToSpell(530);
 
-        Player* owner = ObjectAccessor::FindPlayer(ownerGuid);;
+        Player* owner = ObjectAccessor::FindPlayer(ownerGuid);
 
         if(!owner)
             return;
