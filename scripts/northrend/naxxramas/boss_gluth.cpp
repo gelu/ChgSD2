@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,6 @@ enum
     SPELL_ENRAGE                    = 28371,
     SPELL_ENRAGE_H                  = 54427,
     SPELL_BERSERK                   = 26662,
-    SPELL_INFECTED_WOUND            = 29306,
 
     NPC_ZOMBIE_CHOW                 = 16360
 };
@@ -76,93 +75,39 @@ enum
 #define ADD_9Y -3180.766f
 #define ADD_9Z 297.423f
 
-struct MANGOS_DLL_DECL mob_zombie_chowsAI : public ScriptedAI
-{
-    mob_zombie_chowsAI(Creature* pCreature) : ScriptedAI(pCreature)
-    {
-        Reset();
-    }
-
-    bool bIsForceMove;
-
-    void Reset()
-    {
-        bIsForceMove = false;
-    }
-    void JustDied(Unit* Killer) {}
-
-    void DoMeleeAttackIfReady()
-    {
-        //If we are within range melee the target
-        if (m_creature->IsWithinDistInMap(m_creature->getVictim(), ATTACK_DISTANCE))
-        {
-            //Make sure our attack is ready and we aren't currently casting
-            if (m_creature->isAttackReady() && !m_creature->IsNonMeleeSpellCasted(false))
-            {
-                DoCast(m_creature->getVictim(), SPELL_INFECTED_WOUND, true);
-                m_creature->AttackerStateUpdate(m_creature->getVictim());
-                m_creature->resetAttackTimer();
-            }
-        }
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim() || bIsForceMove)
-            return;
-
-        DoMeleeAttackIfReady();
-    }
-};
-
 struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
 {
     boss_gluthAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
 
     uint32 m_uiMortalWoundTimer;
     uint32 m_uiDecimateTimer;
     uint32 m_uiEnrageTimer;
-    uint32 Summon_Timer;
+    uint32 m_uiSummonTimer;
 
     uint32 m_uiBerserkTimer;
-
-    uint32 RangeCheck_Timer;
-    std::list<uint64> m_lZombieGUIDList;
 
     void Reset()
     {
         m_uiMortalWoundTimer = 8000;
         m_uiDecimateTimer = 100000;
         m_uiEnrageTimer = 60000;
-        Summon_Timer = 10000;
+        m_uiSummonTimer = 10000;
 
         m_uiBerserkTimer = MINUTE*8*IN_MILLISECONDS;
-
-        RangeCheck_Timer = 1000;
-        m_lZombieGUIDList.clear();
     }
 
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GLUTH, DONE);
-        
-        std::list<Creature*> pZombies;
-        GetCreatureListWithEntryInGrid(pZombies, m_creature, NPC_ZOMBIE_CHOW, DEFAULT_VISIBILITY_INSTANCE);
-
-        if (!pZombies.empty())
-            for(std::list<Creature*>::iterator itr = pZombies.begin(); itr != pZombies.end(); ++itr)
-            {
-                (*itr)->ForcedDespawn();
-            }
     }
 
     void Aggro(Unit* pWho)
@@ -177,11 +122,6 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
             m_pInstance->SetData(TYPE_GLUTH, FAIL);
     }
 
-    void JustSummoned(Creature* summoned)
-    {
-        summoned->SetSpeedRate(MOVE_RUN, 0.8f);
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -190,88 +130,52 @@ struct MANGOS_DLL_DECL boss_gluthAI : public ScriptedAI
         // Mortal Wound
         if (m_uiMortalWoundTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(), SPELL_MORTALWOUND);
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_MORTALWOUND);
             m_uiMortalWoundTimer = 10000;
         }
         else
             m_uiMortalWoundTimer -= uiDiff;
 
-         //Decimate_Timer
+        // Decimate
         if (m_uiDecimateTimer < uiDiff)
         {
-            DoCast(m_creature->getVictim(),SPELL_DECIMATE); // need core support
-
-            // workaround below
-            std::list<HostileReference*> t_list = m_creature->getThreatManager().getThreatList();
-            if (t_list.size())
-            {
-                //begin + 1 , so we don't target the one with the highest threat
-                std::list<HostileReference*>::iterator itr = t_list.begin();
-                std::advance(itr, 1);
-                for(; itr!= t_list.end(); ++itr)
-                {
-                    Unit *target = m_creature->GetMap()->GetUnit((*itr)->getUnitGuid());
-                    if (target && target->isAlive() && target->GetTypeId() == TYPEID_PLAYER &&
-                        (target->GetHealth() > target->GetMaxHealth() * 0.05))
-                        target->SetHealth(target->GetMaxHealth() * 0.05);
-                }
-            }
-            // Move Zombies
-            if (!m_lZombieGUIDList.empty())
-            {
-                for(std::list<uint64>::iterator itr = m_lZombieGUIDList.begin(); itr != m_lZombieGUIDList.end(); ++itr)
-                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
-                        if (pTemp->isAlive())
-                        {
-                            ((mob_zombie_chowsAI*)pTemp->AI())->bIsForceMove = true;
-                            if (m_creature->GetHealth() > m_creature->GetMaxHealth() * 0.05) // remove when SPELL_DECIMATE is working
-                                pTemp->SetHealth(pTemp->GetMaxHealth() * 0.02);
-                            pTemp->AddThreat(m_creature, 1000000000.0f); // force move toward to Gluth
-                        }
-            }
-            m_uiDecimateTimer = (m_bIsRegularMode ? 100000 : 120000);
-        }else m_uiDecimateTimer -= uiDiff;
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_DECIMATE);
+            m_uiDecimateTimer = 100000;
+        }
+        else
+            m_uiDecimateTimer -= uiDiff;
 
         // Enrage
         if (m_uiEnrageTimer < uiDiff)
         {
-            DoCast(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : SPELL_ENRAGE_H);
+            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_ENRAGE : SPELL_ENRAGE_H);
             m_uiEnrageTimer = 60000;
         }
-        else m_uiEnrageTimer -= uiDiff;
+        else
+            m_uiEnrageTimer -= uiDiff;
 
-        if (RangeCheck_Timer < uiDiff)
+        // Summon
+        if (m_uiSummonTimer < uiDiff)
         {
-            if (!m_lZombieGUIDList.empty())
+            if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW, ADD_1X, ADD_1Y, ADD_1Z, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000))
             {
-                for(std::list<uint64>::iterator itr = m_lZombieGUIDList.begin(); itr != m_lZombieGUIDList.end(); ++itr)
-                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(*itr))
-                        if (pTemp->isAlive() && m_creature->IsWithinDistInMap(pTemp, ATTACK_DISTANCE))
-                        {
-                            DoScriptText(EMOTE_ZOMBIE, m_creature);
-                            m_creature->SetHealth(m_creature->GetHealth() + m_creature->GetMaxHealth() * 0.05);
-                            pTemp->ForcedDespawn();
-                        }
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                    pZombie->AddThreat(pTarget);
             }
-            RangeCheck_Timer = 1000;
-        }else RangeCheck_Timer -= uiDiff;
 
-        //Summon_Timer
-        if (Summon_Timer < uiDiff)
-        {
-            for(uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); i++)
+            if (!m_bIsRegularMode)
             {
-                if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW,ADD_1X,ADD_1Y,ADD_1Z,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000))
+                if (Creature* pZombie = m_creature->SummonCreature(NPC_ZOMBIE_CHOW, ADD_1X, ADD_1Y, ADD_1Z, 0.0f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000))
                 {
                     if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                    {
                         pZombie->AddThreat(pTarget);
-                        m_lZombieGUIDList.push_back(pZombie->GetGUID());
-                    }
                 }
             }
-            Summon_Timer = 10000;
-        } else Summon_Timer -= uiDiff;
+
+            m_uiSummonTimer = 10000;
+        }
+        else
+            m_uiSummonTimer -= uiDiff;
 
         // Berserk
         if (m_uiBerserkTimer < uiDiff)
@@ -291,21 +195,11 @@ CreatureAI* GetAI_boss_gluth(Creature* pCreature)
     return new boss_gluthAI(pCreature);
 }
 
-CreatureAI* GetAI_mob_zombie_chows(Creature* pCreature)
-{
-    return new mob_zombie_chowsAI(pCreature);
-}
-
 void AddSC_boss_gluth()
 {
     Script* NewScript;
     NewScript = new Script;
     NewScript->Name = "boss_gluth";
     NewScript->GetAI = &GetAI_boss_gluth;
-    NewScript->RegisterSelf();
-
-    NewScript = new Script;
-    NewScript->Name = "mob_zombie_chows";
-    NewScript->GetAI = &GetAI_mob_zombie_chows;
     NewScript->RegisterSelf();
 }

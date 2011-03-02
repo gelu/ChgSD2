@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Noth
-SD%Complete: 40
-SDComment: Missing Balcony stage
+SD%Complete: 80
+SDComment: Summons need verify, need better phase-switch support (unattackable?)
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -34,243 +34,288 @@ enum
     SAY_SLAY2                           = -1533080,
     SAY_DEATH                           = -1533081,
 
-    SPELL_BLINK                         = 29211,            //29208, 29209 and 29210 too
+    EMOTE_WARRIOR                       = -1533130,
+    EMOTE_SKELETON                      = -1533131,
+    EMOTE_TELEPORT                      = -1533132,
+    EMOTE_TELEPORT_RETURN               = -1533133,
+
+    SPELL_TELEPORT                      = 29216,
+    SPELL_TELEPORT_RETURN               = 29231,
+
+    SPELL_BLINK_1                       = 29208,
+    SPELL_BLINK_2                       = 29209,
+    SPELL_BLINK_3                       = 29210,
+    SPELL_BLINK_4                       = 29211,
+
     SPELL_CRIPPLE                       = 29212,
     SPELL_CRIPPLE_H                     = 54814,
     SPELL_CURSE_PLAGUEBRINGER           = 29213,
     SPELL_CURSE_PLAGUEBRINGER_H         = 54835,
 
-    SPELL_SUMMON_CHAMPION_AND_CONSTRUCT = 29240,
-    SPELL_SUMMON_GUARDIAN_AND_CONSTRUCT = 29269,
+    SPELL_BERSERK                       = 26662,            // guesswork, but very common berserk spell in naxx
 
-    NPC_PLAGUED_WARRIOR                 = 16984,
-    NPC_PLAGUED_CHAMPIONS               = 16983,
-    NPC_PLAGUED_GUARDIANS               = 16981
+    SPELL_SUMMON_WARRIOR_1              = 29247,
+    SPELL_SUMMON_WARRIOR_2              = 29248,
+    SPELL_SUMMON_WARRIOR_3              = 29249,
 
+    SPELL_SUMMON_WARRIOR_THREE          = 29237,
+
+    SPELL_SUMMON_CHAMP01                = 29217,
+    SPELL_SUMMON_CHAMP02                = 29224,
+    SPELL_SUMMON_CHAMP03                = 29225,
+    SPELL_SUMMON_CHAMP04                = 29227,
+    SPELL_SUMMON_CHAMP05                = 29238,
+    SPELL_SUMMON_CHAMP06                = 29255,
+    SPELL_SUMMON_CHAMP07                = 29257,
+    SPELL_SUMMON_CHAMP08                = 29258,
+    SPELL_SUMMON_CHAMP09                = 29262,
+    SPELL_SUMMON_CHAMP10                = 29267,
+
+    SPELL_SUMMON_GUARD01                = 29226,
+    SPELL_SUMMON_GUARD02                = 29239,
+    SPELL_SUMMON_GUARD03                = 29256,
+    SPELL_SUMMON_GUARD04                = 29268,
+
+    PHASE_GROUND                        = 0,
+    PHASE_BALCONY                       = 1,
+
+    PHASE_SKELETON_1                    = 1,
+    PHASE_SKELETON_2                    = 2,
+    PHASE_SKELETON_3                    = 3
 };
-
-uint32 m_auiSpellSummonPlaguedWarrior[]=
-{
-    29247, 29248, 29249
-};
-
-uint32 m_auiSpellSummonPlaguedChampion[]=
-{
-    29217, 29224, 29225, 29227, 29238, 29255, 29257, 29258, 29262, 29267
-};
-
-uint32 m_auiSpellSummonPlaguedGuardian[]=
-{
-    29226, 29239, 29256, 29268
-};
-
-// Teleport position of Noth on his balcony
-#define TELE_X 2631.370f
-#define TELE_Y -3529.680f
-#define TELE_Z 274.040f
-#define TELE_O 6.277f
-
-// IMPORTANT: BALCONY TELEPORT NOT ADDED YET! WILL BE ADDED SOON!
-// Dev note 26.12.2008: When is soon? :)
-// Dev note 12.10.2009: http://www.wowwiki.com/Soon
 
 struct MANGOS_DLL_DECL boss_nothAI : public ScriptedAI
 {
     boss_nothAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
-        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_pInstance = (instance_naxxramas*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
-    ScriptedInstance* m_pInstance;
+    instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
 
-    bool isTeleported;
+    uint8 m_uiPhase;
+    uint8 m_uiPhaseSub;
+    uint32 m_uiPhaseTimer;
 
-    uint8 SecondPhaseCounter;
-
-    uint32 Blink_Timer;
-    uint32 Curse_Timer;
-    uint32 Summon_Timer;
-    uint32 SecondPhase_Timer;
-    uint32 Teleport_Timer;
-
-    float LastX, LastY, LastZ;
+    uint32 m_uiBlinkTimer;
+    uint32 m_uiCurseTimer;
+    uint32 m_uiSummonTimer;
 
     void Reset()
     {
-        isTeleported = false;
-        SecondPhaseCounter = 0;
-        Blink_Timer = 25000;
-        Curse_Timer = 4000;
-        Summon_Timer = 30000;
-        SecondPhase_Timer = 17000;
-        Teleport_Timer = 120000;
+        m_uiPhase = PHASE_GROUND;
+        m_uiPhaseSub = PHASE_GROUND;
+        m_uiPhaseTimer = 90000;
 
-        LastX = 0;
-        LastY = 0;
-        LastZ = 0;
-
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-
-        if(m_pInstance)
-            m_pInstance->SetData(TYPE_NOTH, NOT_STARTED);
+        m_uiBlinkTimer = 25000;
+        m_uiCurseTimer = 4000;
+        m_uiSummonTimer = 12000;
     }
 
-    void Aggro(Unit *who)
+    void Aggro(Unit* pWho)
     {
-        switch (rand()%3)
+        switch(urand(0, 2))
         {
             case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
             case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
             case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
         }
 
-        if (!who || m_creature->getVictim())
-            return;
-
-        if (who->isTargetableForAttack() && who->isInAccessablePlaceFor(m_creature) && m_creature->IsHostileTo(who))
-            AttackStart(who);
-
-        if(m_pInstance)
+        if (m_pInstance)
             m_pInstance->SetData(TYPE_NOTH, IN_PROGRESS);
     }
 
-    void AttackStart(Unit* who)
+    void JustSummoned(Creature* pSummoned)
     {
-        if (isTeleported)
-            return;
-
-        if (!who || who == m_creature)
-            return;
-
-        if (m_creature->Attack(who, true))
-        {
-            m_creature->SetInCombatWithZone();
-            DoStartMovement(who);
-        }
+        pSummoned->SetInCombatWithZone();
     }
 
-    void JustSummoned(Creature* summoned)
+    void KilledUnit(Unit* pVictim)
     {
-        if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
-        {
-            summoned->AddThreat(target,0.0f);
-            summoned->AI()->AttackStart(target);
-        }
+        DoScriptText(urand(0, 1) ? SAY_SLAY1 : SAY_SLAY2, m_creature);
     }
 
-    void KilledUnit(Unit* victim)
-    {
-        switch (rand()%2)
-        {
-            case 0: DoScriptText(SAY_SLAY1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY2, m_creature); break;
-        }
-    }
-
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        if(m_pInstance)
+        if (m_pInstance)
             m_pInstance->SetData(TYPE_NOTH, DONE);
     }
 
-    void UpdateAI(const uint32 diff)
+    void JustReachedHome()
     {
-        if (isTeleported)
-        {
-            if (Teleport_Timer < diff)
-            {
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                m_creature->MonsterMove(LastX, LastY, LastZ,0);
-                DoStartMovement(m_creature->getVictim());
-                LastX = 0;
-                LastY = 0;
-                LastZ = 0;
-                isTeleported = false;
-                Teleport_Timer = 120000;
-            }else Teleport_Timer -= diff;
+        if (m_pInstance)
+            m_pInstance->SetData(TYPE_NOTH, FAIL);
+    }
 
-            if (SecondPhase_Timer < diff)
-            {
-                switch (SecondPhaseCounter)
-                {
-                    case 0:
-                        for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-                        break;
-                    case 1:
-                    case 2:
-                        for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4) - (m_bIsRegularMode ? 2 : 1); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_CHAMPIONS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-                        for(uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); i++)
-                            m_creature->SummonCreature(NPC_PLAGUED_GUARDIANS,2684.804f,-3502.517f,261.313f,0,TEMPSUMMON_TIMED_OR_DEAD_DESPAWN,80000);
-                        break;
-                }
-                SecondPhaseCounter ++;
-                SecondPhase_Timer = 22000;
-            } else SecondPhase_Timer -= diff;
-            return;
-        }
+    void SpellHit(Unit* pCaster, const SpellEntry* pSpell)
+    {
+        if (pCaster == m_creature && pSpell->Effect[EFFECT_INDEX_0] == SPELL_EFFECT_LEAP)
+            DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_CRIPPLE : SPELL_CRIPPLE_H);
+    }
 
+    void UpdateAI(const uint32 uiDiff)
+    {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        //Blink_Timer
-        if (Blink_Timer < diff)
+        if (m_uiPhase == PHASE_GROUND)
         {
-            DoCast(m_creature->getVictim(), m_bIsRegularMode ? SPELL_CRIPPLE : SPELL_CRIPPLE_H);
-            //DoCast(m_creature, SPELL_BLINK);
-            m_creature->GetMap()->CreatureRelocation(m_creature, 2670.804f + rand()%30, -3517.517f + rand()%30, 261.313f, m_creature->GetOrientation());
-            DoResetThreat();
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                AttackStart(pTarget);
-            Blink_Timer = 25000;
-        }else Blink_Timer -= diff;
+            if (m_uiPhaseTimer)                             // After PHASE_SKELETON_3 we won't have a balcony phase
+            {
+                if (m_uiPhaseTimer <= uiDiff)
+                {
+                    if (DoCastSpellIfCan(m_creature, SPELL_TELEPORT) == CAST_OK)
+                    {
+                        DoScriptText(EMOTE_TELEPORT, m_creature);
+                        m_creature->GetMotionMaster()->MoveIdle();
+                        m_uiPhase = PHASE_BALCONY;
+                        ++m_uiPhaseSub;
 
-        //Curse_Timer
-        if (Curse_Timer < diff)
+                        switch(m_uiPhaseSub)                // Set Duration of Skeleton phase
+                        {
+                            case PHASE_SKELETON_1: m_uiPhaseTimer = 70000;  break;
+                            case PHASE_SKELETON_2: m_uiPhaseTimer = 97000;  break;
+                            case PHASE_SKELETON_3: m_uiPhaseTimer = 120000; break;
+                        }
+                        return;
+                    }
+                }
+                else
+                    m_uiPhaseTimer -= uiDiff;
+            }
+
+            if (!m_bIsRegularMode)                          // Blink is used only in 25man
+            {
+                if (m_uiBlinkTimer < uiDiff)
+                {
+                    static uint32 const auiSpellBlink[4] =
+                    {
+                        SPELL_BLINK_1, SPELL_BLINK_2, SPELL_BLINK_3, SPELL_BLINK_4
+                    };
+
+                    if (DoCastSpellIfCan(m_creature, auiSpellBlink[urand(0, 3)]) == CAST_OK)
+                    {
+                        DoResetThreat();
+                        m_uiBlinkTimer = 25000;
+                    }
+                }
+                else
+                    m_uiBlinkTimer -= uiDiff;
+            }
+
+            if (m_uiCurseTimer < uiDiff)
+            {
+                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_CURSE_PLAGUEBRINGER : SPELL_CURSE_PLAGUEBRINGER_H);
+                m_uiCurseTimer = 28000;
+            }
+            else
+                m_uiCurseTimer -= uiDiff;
+
+            if (m_uiSummonTimer < uiDiff)
+            {
+                DoScriptText(SAY_SUMMON, m_creature);
+                DoScriptText(EMOTE_WARRIOR, m_creature);
+
+                if (m_bIsRegularMode)
+                {
+                    static uint32 const auiSpellSummonPlaguedWarrior[3] =
+                    {
+                        SPELL_SUMMON_WARRIOR_1, SPELL_SUMMON_WARRIOR_2, SPELL_SUMMON_WARRIOR_3
+                    };
+
+                    for(uint8 i = 0; i < 2; ++i)
+                        DoCastSpellIfCan(m_creature, auiSpellSummonPlaguedWarrior[urand(0,2)], CAST_TRIGGERED);
+                }
+                else
+                {
+                    DoCastSpellIfCan(m_creature, SPELL_SUMMON_WARRIOR_THREE, CAST_TRIGGERED);
+                }
+
+                m_uiSummonTimer = 30000;
+            }
+            else
+                m_uiSummonTimer -= uiDiff;
+
+            DoMeleeAttackIfReady();
+        }
+        else                                                // PHASE_BALCONY
         {
-            DoCast(m_creature->getVictim(), m_bIsRegularMode? SPELL_CURSE_PLAGUEBRINGER : SPELL_CURSE_PLAGUEBRINGER_H);
-            Curse_Timer = 28000;
-        }else Curse_Timer -= diff;
+            if (m_uiPhaseTimer < uiDiff)
+            {
+                if (DoCastSpellIfCan(m_creature, SPELL_TELEPORT_RETURN) == CAST_OK)
+                {
+                    DoScriptText(EMOTE_TELEPORT_RETURN, m_creature);
+                    m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                    switch (m_uiPhaseSub)
+                    {
+                        case PHASE_SKELETON_1: m_uiPhaseTimer = 110000; break;
+                        case PHASE_SKELETON_2: m_uiPhaseTimer = 180000; break;
+                        case PHASE_SKELETON_3:
+                            m_uiPhaseTimer = 0;
+                            // Go Berserk after third Balcony Phase
+                            DoCastSpellIfCan(m_creature, SPELL_BERSERK, CAST_TRIGGERED);
+                            break;
+                    }
+                    m_uiPhase = PHASE_GROUND;
 
-        //Summon_Timer
-        if (Summon_Timer < diff)
-        {
-            DoScriptText(SAY_SUMMON, m_creature);
+                    return;
+                }
+            }
+            else
+                m_uiPhaseTimer -= uiDiff;
 
-            for(uint8 i = 0; i < (m_bIsRegularMode ? 2 : 3); ++i)
-                m_creature->SummonCreature(NPC_PLAGUED_WARRIOR, 2672.804f + rand()%15,-3509.517f + rand()%15, 261.313f, 0, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 80000);
+            if (m_uiSummonTimer < uiDiff)
+            {
+                DoScriptText(EMOTE_SKELETON, m_creature);
 
-            Summon_Timer = 30000;
-        } else Summon_Timer -= diff;
+                static uint32 const auiSpellSummonPlaguedChampion[10] =
+                {
+                    SPELL_SUMMON_CHAMP01, SPELL_SUMMON_CHAMP02, SPELL_SUMMON_CHAMP03, SPELL_SUMMON_CHAMP04, SPELL_SUMMON_CHAMP05, SPELL_SUMMON_CHAMP06, SPELL_SUMMON_CHAMP07, SPELL_SUMMON_CHAMP08, SPELL_SUMMON_CHAMP09, SPELL_SUMMON_CHAMP10
+                };
 
-        if (Teleport_Timer < diff)
-        {
-            m_creature->InterruptNonMeleeSpells(true);
-            LastX = m_creature->GetPositionX();
-            LastY = m_creature->GetPositionY();
-            LastZ = m_creature->GetPositionZ();
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-            m_creature->StopMoving();
-            m_creature->GetMotionMaster()->Clear(false);
-            m_creature->GetMotionMaster()->MoveIdle();
-            m_creature->MonsterMove(TELE_X, TELE_Y, TELE_Z,0);
-            isTeleported = true;
-            SecondPhaseCounter = 0;
-            SecondPhase_Timer = 0;
-            Teleport_Timer = 70000;
-            return;
-        }else Teleport_Timer -= diff;
+                static uint32 const auiSpellSummonPlaguedGuardian[4] =
+                {
+                    SPELL_SUMMON_GUARD01, SPELL_SUMMON_GUARD02, SPELL_SUMMON_GUARD03, SPELL_SUMMON_GUARD04
+                };
 
-        DoMeleeAttackIfReady();
+                // A bit unclear how many in each sub phase
+                switch(m_uiPhaseSub)
+                {
+                    case PHASE_SKELETON_1:
+                    {
+                        for (uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4); ++i)
+                            DoCastSpellIfCan(m_creature, auiSpellSummonPlaguedChampion[urand(0,9)], CAST_TRIGGERED);
+
+                        break;
+                    }
+                    case PHASE_SKELETON_2:
+                    {
+                        for (uint8 i = 0; i < (m_bIsRegularMode ? 1 : 2); ++i)
+                        {
+                            DoCastSpellIfCan(m_creature, auiSpellSummonPlaguedChampion[urand(0,9)], CAST_TRIGGERED);
+                            DoCastSpellIfCan(m_creature, auiSpellSummonPlaguedGuardian[urand(0,3)], CAST_TRIGGERED);
+                        }
+                        break;
+                    }
+                    case PHASE_SKELETON_3:
+                    {
+                        for (uint8 i = 0; i < (m_bIsRegularMode ? 2 : 4); ++i)
+                            DoCastSpellIfCan(m_creature, auiSpellSummonPlaguedGuardian[urand(0,3)], CAST_TRIGGERED);
+
+                        break;
+                    }
+                }
+
+                m_uiSummonTimer = 30000;
+            }
+            else
+                m_uiSummonTimer -= uiDiff;
+        }
     }
 };
 
@@ -281,9 +326,10 @@ CreatureAI* GetAI_boss_noth(Creature* pCreature)
 
 void AddSC_boss_noth()
 {
-    Script* NewScript;
-    NewScript = new Script;
-    NewScript->Name = "boss_noth";
-    NewScript->GetAI = &GetAI_boss_noth;
-    NewScript->RegisterSelf();
+    Script* pNewScript;
+
+    pNewScript = new Script;
+    pNewScript->Name = "boss_noth";
+    pNewScript->GetAI = &GetAI_boss_noth;
+    pNewScript->RegisterSelf();
 }
