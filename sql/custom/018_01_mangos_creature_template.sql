@@ -31,3 +31,7 @@ UPDATE `creature_template` SET `ScriptName`='npc_thargold_ironwing' WHERE `entry
 
 UPDATE `creature_template` SET `ScriptName`='npc_mana_wyrm' WHERE `entry`='15274';
 
+-- Feast of Winter Veil Fixes
+
+UPDATE `creature_template` SET `ScriptName` = 'npc_winter_reveler' WHERE `entry`='15760';
+UPDATE `creature_template` SET `ScriptName` = 'npc_metzen', `npcflag` = '1' WHERE entry = '15664';
