@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -154,6 +154,17 @@ uint64 instance_pit_of_saron::GetData64(uint32 uiData)
     }
 }
 
+bool AreaTrigger_at_tyrannus(Player* pPlayer, AreaTriggerEntry const* pAt)
+{
+    if (instance_pit_of_saron* pInstance = (instance_pit_of_saron*)pPlayer->GetInstanceData())
+    {
+        if (pInstance->GetData(TYPE_TYRANNUS) == NOT_STARTED)
+            pInstance->SetData(TYPE_TYRANNUS, SPECIAL);
+    }
+
+    return false;
+}
+
 InstanceData* GetInstanceData_instance_pit_of_saron(Map* pMap)
 {
     return new instance_pit_of_saron(pMap);
@@ -166,5 +177,10 @@ void AddSC_instance_pit_of_saron()
     pNewScript = new Script;
     pNewScript->Name = "instance_pit_of_saron";
     pNewScript->GetInstanceData = &GetInstanceData_instance_pit_of_saron;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "at_tyrannus";
+    pNewScript->pAreaTrigger = &AreaTrigger_at_tyrannus;
     pNewScript->RegisterSelf();
 }
