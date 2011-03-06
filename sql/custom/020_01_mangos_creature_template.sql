@@ -22,3 +22,16 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_scarlet_miner' WHERE `entry` 
 -- Instance gundrak
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_colossus_elemental' WHERE `entry` = '29573'; -- boss colossus mob colossus elemental
+
+-- Thargold Ironwing
+
+UPDATE `creature_template` SET `ScriptName`='npc_thargold_ironwing' WHERE `entry`='29154';
+
+-- Thirst Unending
+
+UPDATE `creature_template` SET `ScriptName`='npc_mana_wyrm' WHERE `entry`='15274';
+
+-- Feast of Winter Veil Fixes
+
+UPDATE `creature_template` SET `ScriptName` = 'npc_winter_reveler' WHERE `entry`='15760';
+UPDATE `creature_template` SET `ScriptName` = 'npc_metzen', `npcflag` = '1' WHERE entry = '15664';

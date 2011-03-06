@@ -44,5 +44,8 @@ class MANGOS_DLL_DECL ScriptedInstance : public InstanceData
 
         // Get a Player from map
         Player* GetPlayerInMap(bool bOnlyAlive = false, bool bCanBeGamemaster = true);
+
+		// destroys an item from all players in this instance (encounters like Vashj, Najentus....)
+		void DestroyItemFromAllPlayers(uint32 uiItemId);
 };
 #endif

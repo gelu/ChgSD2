@@ -49,6 +49,8 @@ npc_tabard_vendor        50%    allow recovering quest related tabards, achievem
 npc_locksmith            75%    list of keys needs to be confirmed
 npc_death_knight_gargoyle       AI for summoned gargoyle of deathknights
 npc_training_dummy		100%	AI for training dummies
+npc_winter_reveler		100%	Winterveil event
+npc_metzen				100%	Winterveil event
 EndContentData */
 
 /*########
@@ -2615,6 +2617,277 @@ CreatureAI* GetAI_npc_training_dummy(Creature* pCreature)
     return new npc_training_dummyAI(pCreature);
 }
 
+/*######
+## npc_winter_reveler
+######*/
+
+enum
+{
+    AURA_MISTLETOE			= 26004,
+    ITEM_SNOWFLAKES			= 34191,
+    ITEM_MISTLETOE			= 21519,
+    
+    // display id's
+    DISPLAY_DWARF_M			= 15746,
+    DISPLAY_DWARF_W			= 15747,
+    DISPLAY_HUMAN_M			= 15744,
+    DISPLAY_HUMAN_W			= 15745,
+    DISPLAY_ORC_M			= 15756,
+    DISPLAY_ORC_W			= 15751,
+    DISPLAY_TAUREN_M		= 15759,
+    DISPLAY_TAUREN_W		= 15754
+};
+
+struct MANGOS_DLL_DECL npc_winter_revelerAI : public ScriptedAI
+{
+    npc_winter_revelerAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    void ReceiveEmote(Player* pPlayer, uint32 uiEmote)
+    {
+        if (uiEmote == TEXTEMOTE_KISS)
+        {
+            // dwarf
+            if ( (pPlayer->GetTeam() == ALLIANCE) && (pPlayer->getGender() == 1) && (m_creature->GetDisplayId() == DISPLAY_DWARF_M) )
+            {
+                if (!pPlayer->HasAura(AURA_MISTLETOE))
+                {
+                    if (rand()%2 == 0)
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    else
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+                }
+            }
+            else if ( (pPlayer->GetTeam() == ALLIANCE) && (pPlayer->getGender() == 0) && (m_creature->GetDisplayId() == DISPLAY_DWARF_W) )		
+            {
+                if (rand()%2 == 0)
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                    if (msg == EQUIP_ERR_OK)
+                        pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                    else
+                        pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                else
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                    if (msg == EQUIP_ERR_OK)
+                        pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                    else
+                        pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+            }
+            // human
+            if ( (pPlayer->GetTeam() == ALLIANCE) && (pPlayer->getGender() == 1) && (m_creature->GetDisplayId() == DISPLAY_HUMAN_M) )
+            {
+                if (!pPlayer->HasAura(AURA_MISTLETOE))
+                {
+                    if (rand()%2 == 0)
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    else
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+                }
+            }
+            else if ( (pPlayer->GetTeam() == ALLIANCE) && (pPlayer->getGender() == 0) && (m_creature->GetDisplayId() == DISPLAY_HUMAN_W) )		
+            {
+                if (rand()%2 == 0)
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                    if (msg == EQUIP_ERR_OK)
+                        pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                    else
+                        pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                else
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                    if (msg == EQUIP_ERR_OK)
+                        pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                    else
+                        pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+            }
+            // orc
+            if ( (pPlayer->GetTeam() == HORDE) && (pPlayer->getGender() == 1) && (m_creature->GetDisplayId() == DISPLAY_ORC_M) )
+            {
+                if (!pPlayer->HasAura(AURA_MISTLETOE))
+                {
+                    if (rand()%2 == 0)
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    else
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+                }
+            }
+            else if ( (pPlayer->GetTeam() == HORDE) && (pPlayer->getGender() == 0) && (m_creature->GetDisplayId() == DISPLAY_ORC_W) )		
+            {
+                    if (rand()%2 == 0)
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    else
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+            }
+            // tauren
+            if ( (pPlayer->GetTeam() == HORDE) && (pPlayer->getGender() == 1) && (m_creature->GetDisplayId() == DISPLAY_TAUREN_M) )
+            {
+                if (!pPlayer->HasAura(AURA_MISTLETOE))
+                {
+                    if (rand()%2 == 0)
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    else
+                    {
+                        ItemPosCountVec dest;
+                        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                    }
+                    m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+                }
+            }
+            else if ( (pPlayer->GetTeam() == HORDE) && (pPlayer->getGender() == 0) && (m_creature->GetDisplayId() == DISPLAY_TAUREN_W) )		
+            {
+                if (rand()%2 == 0)
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_SNOWFLAKES, 1, false);
+                        if (msg == EQUIP_ERR_OK)
+                            pPlayer->StoreNewItem(dest, ITEM_SNOWFLAKES, true);
+                        else
+                            pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                else
+                {
+                    ItemPosCountVec dest;
+                    uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_MISTLETOE, 1, false);
+                    if (msg == EQUIP_ERR_OK)
+                        pPlayer->StoreNewItem(dest, ITEM_MISTLETOE, true);
+                    else
+                        pPlayer->SendEquipError(msg,NULL,NULL);
+                }
+                m_creature->CastSpell(pPlayer, AURA_MISTLETOE, false);
+            }
+        }
+    }
+
+
+    void Reset()
+    {
+    }
+};
+
+CreatureAI* GetAI_npc_winter_reveler(Creature* pCreature)
+{
+    return new npc_winter_revelerAI(pCreature);
+}
+
+/*######
+## npc_metzen
+######*/
+
+#define GOSSIP_TEXT_METZEN			"Berieselt Metzten mit etwas Rentierstaub"
+
+enum
+{
+    QUEST_METZEN_ALLIANCE			= 8762,
+    QUEST_METZEN_HORDE				= 8746,
+    NPC_METZEN_KILL_CREDIT			= 15664,
+    SPELL_REINDEER_DUST				= 25952
+};
+
+bool GossipHello_npc_metzen(Player* pPlayer, Creature* pCreature)
+{
+    pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_TEXT_METZEN, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF);
+    pPlayer->SEND_GOSSIP_MENU(8076, pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_metzen(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if(uiSender != GOSSIP_SENDER_MAIN) return true;
+
+    if(uiAction == GOSSIP_ACTION_INFO_DEF)
+    {
+        if( (pPlayer->GetQuestStatus(QUEST_METZEN_ALLIANCE) == QUEST_STATUS_INCOMPLETE) || (pPlayer->GetQuestStatus(QUEST_METZEN_HORDE) == QUEST_STATUS_INCOMPLETE) )
+        {
+            pPlayer->KilledMonsterCredit(NPC_METZEN_KILL_CREDIT);
+            pCreature->CastSpell(pCreature, SPELL_REINDEER_DUST, true);
+        }
+    }
+    return true;
+}
+
 void AddSC_npcs_special()
 {
     Script* newscript;
@@ -2763,5 +3036,16 @@ void AddSC_npcs_special()
     newscript = new Script;
     newscript->Name = "npc_training_dummy";
     newscript->GetAI = &GetAI_npc_training_dummy;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_winter_reveler";
+    newscript->GetAI = &GetAI_npc_winter_reveler;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "npc_metzen";
+    newscript->pGossipHello = &GossipHello_npc_metzen;
+    newscript->pGossipSelect = &GossipSelect_npc_metzen;
     newscript->RegisterSelf();
 }
