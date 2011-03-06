@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: boss_eck
-SD%Complete: 80%
-SDComment: Timers need improval, Spring Spells are not clear.
+SD%Complete: 100%
+SDComment:
 SDCategory: Gundrak
 EndScriptData */
 
@@ -25,13 +25,22 @@ EndScriptData */
 #include "gundrak.h"
 
 enum
-{
-    SPELL_ECK_BITE            = 55813,
-    SPELL_ECK_SPIT            = 55814,
-    SPELL_ECK_SPRING          = 55815,
-    SPELL_ECK_BERSERK         = 55816,
-    SPELL_ECK_RESIDUE         = 55817,
-    SPELL_ECK_SPRING_ALT      = 55837,                      // Purpose unknown
+{    
+    SAY_AGGRO                   =    -1533021,
+    SAY_DEATH					=    -1533021,
+    EMOTE_SPITE					=    -1533021,
+    EMOTE_SPRING                =    -1533021,    
+    EMOTE_BIT                   =    -1533021,
+    EMOTE_BERSERK               =    -1533021,
+    
+    SPELL_ECK_RESIDUE_DEBUFF    =    55817, 
+    SPELL_ECK_SPITE             =    55814,
+
+    SPELL_ECK_SPRING_WHERE      =    55837,
+    SPELL_ECK_SPRING            =    55815,
+    
+    SPELL_ECK_BIT               =    55813,
+    SPELL_ECK_BERSERK           =    55816   
 };
 
 /*######
@@ -47,30 +56,36 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
     }
 
     instance_gundrak* m_pInstance;
-    bool m_bIsBerserk;
+    bool m_bIsRegularMode;
+    bool m_bBerserk;
 
-    uint32 m_uiSpitTimer;
-    uint32 m_uiSpringTimer;
-    uint32 m_uiBiteTimer;
-    uint32 m_uiBerserkTimer;
-
+    uint32 m_uiEckSpiteTimer;
+    uint32 m_uiEckSpringTimer;
+    uint32 m_uiEckBitTimer;
+    uint32 m_uiEckBerserkTimer;
+        
     void Reset()
     {
-        m_uiSpitTimer = urand(10000, 20000);
-        m_uiSpringTimer = urand(15000, 25000);
-        m_uiBiteTimer = urand(5000, 15000);
-        m_uiBerserkTimer = urand(60000, 90000);             // Enrange at 20% HP or after 60-90 seconds
-        m_bIsBerserk = false;
-    }
+        m_uiEckSpiteTimer		= 15000;  
+        m_uiEckSpringTimer		= 8000;
+        m_uiEckBitTimer			= 5000;
+        m_uiEckBerserkTimer		= urand(60000, 90000);
+        m_bBerserk = false;
 
+        if (m_creature->HasAura(SPELL_ECK_RESIDUE_DEBUFF))
+             m_creature->RemoveAurasDueToSpell(SPELL_ECK_RESIDUE_DEBUFF);
+    }
     void Aggro(Unit* pWho)
     {
+        DoScriptText(SAY_AGGRO, m_creature);
+
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ECK, IN_PROGRESS);
     }
-
     void JustDied(Unit* pKiller)
     {
+        DoScriptText(SAY_DEATH, m_creature);
+
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ECK, DONE);
     }
@@ -80,59 +95,71 @@ struct MANGOS_DLL_DECL boss_eckAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_ECK, FAIL);
     }
-
-    // As the Eck Spite spell has no dummy or similar effect, applying the residue aura has to be done with spellHitTarget
+ 
     void SpellHitTarget (Unit* pUnit, const SpellEntry* pSpellEntry)
     {
-        if (pSpellEntry->Id == SPELL_ECK_SPIT && pUnit->GetTypeId() == TYPEID_PLAYER && !pUnit->HasAura(SPELL_ECK_RESIDUE))
-            pUnit->CastSpell(pUnit, SPELL_ECK_RESIDUE, true);
+       if (pSpellEntry->Id == SPELL_ECK_SPITE && pUnit->GetTypeId() == TYPEID_PLAYER
+            && !pUnit->HasAura(SPELL_ECK_RESIDUE_DEBUFF))
+            pUnit->CastSpell(pUnit, SPELL_ECK_RESIDUE_DEBUFF, true);
     }
-
+    
     void UpdateAI(const uint32 uiDiff)
-    {
+    {                                
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        if (m_uiSpitTimer < uiDiff)
+        
+        if (m_uiEckSpiteTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, SPELL_ECK_SPIT) == CAST_OK)
-                m_uiSpitTimer = urand(10000, 20000);
+            DoCastSpellIfCan(m_creature, SPELL_ECK_SPITE);             
+            m_uiEckSpiteTimer = 15000;
+        }
+        else 
+            m_uiEckSpiteTimer -= uiDiff;
+
+        if (m_uiEckSpringTimer < uiDiff)
+        {
+            if (Unit* target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0))
+            {
+                DoCastSpellIfCan(target, SPELL_ECK_SPRING);
+                m_creature->DeleteThreatList();
+                m_creature->SetInCombatWith(target);
+                m_creature->AddThreat(target, 1.0f);
+                m_creature->Attack(target, true);
+            }
+            m_uiEckSpringTimer = 8000;
+        }
+        else 
+            m_uiEckSpringTimer -= uiDiff;
+
+        if (m_uiEckBitTimer < uiDiff)
+        {
+            if (Unit* target = m_creature->getVictim())
+                DoCastSpellIfCan(target, SPELL_ECK_BIT);
+            m_uiEckBitTimer = 5000;
         }
         else
-            m_uiSpitTimer -= uiDiff;
+            m_uiEckBitTimer -= uiDiff;
 
-        if (m_uiSpringTimer < uiDiff)
+        if (!m_bBerserk)
         {
-            Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1);
-            if (!pTarget)
-                pTarget = m_creature->getVictim();
-
-            if (DoCastSpellIfCan(pTarget, SPELL_ECK_SPRING) == CAST_OK)
+            if (m_creature->GetHealthPercent() <= 20.0f)
             {
-                DoResetThreat();
-                m_uiSpringTimer = urand(15000, 25000);
+                DoScriptText(EMOTE_BERSERK, m_creature);
+                DoCastSpellIfCan(m_creature, SPELL_ECK_BERSERK);
+                m_bBerserk = true;
             }
         }
-        else
-            m_uiSpringTimer -= uiDiff;
 
-        if (m_uiBiteTimer < uiDiff)
+        if (!m_bBerserk)
         {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_ECK_BITE);
-            m_uiBiteTimer = urand(5000, 15000);
-        }
-        else
-            m_uiBiteTimer -= uiDiff;
-
-        if (!m_bIsBerserk)                                  // Go into Berserk after time, or when below 20% health
-        {
-            if (m_creature->GetHealthPercent() <= 20.0f || m_uiBerserkTimer < uiDiff)
+            if (m_uiEckBerserkTimer < uiDiff)
             {
-                if (DoCastSpellIfCan(m_creature, SPELL_ECK_BERSERK) == CAST_OK)
-                    m_bIsBerserk = true;
+                DoCastSpellIfCan(m_creature, SPELL_ECK_BERSERK);
+                DoScriptText(EMOTE_BERSERK, m_creature);
+                m_bBerserk = true;
             }
-            else
-                m_uiBerserkTimer -= uiDiff;
+            else 
+                m_uiEckBerserkTimer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();
