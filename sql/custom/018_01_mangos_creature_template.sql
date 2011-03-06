@@ -26,3 +26,8 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_colossus_elemental' WHERE `en
 -- Thargold Ironwing
 
 UPDATE `creature_template` SET `ScriptName`='npc_thargold_ironwing' WHERE `entry`='29154';
+
+-- Thirst Unending
+
+UPDATE `creature_template` SET `ScriptName`='npc_mana_wyrm' WHERE `entry`='15274';
+
