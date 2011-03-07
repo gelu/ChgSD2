@@ -35,7 +35,7 @@
 #endif
 
 #ifndef _VERSION
-  #define _VERSION "Revision [" REVISION_ID "] " REVISION_DATE " " REVISION_TIME
+  #define _VERSION "Revision [" REVISION_ID "] " REVISION_DATE " " REVISION_TIME " /dev/rsa branch"
 #endif
 
 // The path to config files
