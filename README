@@ -1,7 +1,7 @@
 @package RSA scripts for ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-@version 0.3a
+@version 0.4a
 @revision (current)
-@copyright (c) 2009-2010 /dev/rsa
+@copyright (c) 2009-2011 /dev/rsa
 @license GNU Public License
 
 This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+Attention please! My project now support only Cmake-way compilation!
+No special VC configs provided.
+
 In this repository you found this custom scripts:
 
 - many scripts from Insider42
 - Ulduar (from Xfurry, partially rewrite by me)
 - Trial of the Champion (by Syntec, big rewrite by me)
 - Violet hold (by ckegg, big rewrite by me)
-- Naxxramas (by ckegg)
 - Ahn'kahet (renewed, by Tassadar with my corrects)
 - Draktaron (by Tassadar)
 - Culling of Stratholme (by MaxXx2021 AKA Mioka)
@@ -35,13 +37,14 @@ In this repository you found this custom scripts:
 - Vault of Archavon (by Insider42)
 - Trial of the Crusader (by me)
 - Icecrown Citadel (by me)
-- Ruby Sanctum (by me, partially from notagain, alphatesting)
+- Ruby Sanctum (by me, partially from notagain)
 - npc_arena_honor by tempura
 - NPC special (partially by me, thanks for all)
-- Eye of Acherus quest (need core support, from traponinet)
-
-Attention please! In my project only correct Linux Makefile provided. 
-If you want compile this branch on Windows, please convert Makefile to your c++ compiler.
+- Eye of Acherus quest (from traponinet and me)
+- Light of Down (basic by ckegg, big rewrite by all)
+- Oculus (originally from TC with MaxXx2021 and my modifications)
+- Eye of Ethernity (originally from Tassadar with PSZ and my modifications)
+- simple scripts from Xfurry
 
 Thanks to:
 - Vladimir Mangos - MaNGOS project;
@@ -54,9 +57,10 @@ Thanks to:
 - Selector - Faction champions base script, testing, bugreports;
 - Boxa - changes for Windows compilers and bugreports;
 - Wowka321 - core support;
-- Dron01, Lordronn - bugreports and valuable advice;
+- Dron01, Lordronn, Vinolentus - bugreports and valuable advice;
 - gladden, ghostart - bugreports;
-- Xfurry - Ulduar instance,
+- Xfurry - Ulduar instance, simple scripts
+- Schmoozerd - instances, scrips code
 - all - testing.
 
 Ladies and gentlemen, and friends! If you want to compile my scripts with a compiler different from the GNU C, then the config files, projects or whatever else you need to create your own! I do only Makefile. 
