@@ -98,7 +98,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_vile_gas_stalker', `AIName`='' 
 UPDATE `creature_template` SET `faction_A` = 14, `faction_H` = 14,  `ScriptName`='', `AIName`='' WHERE `entry`= 36659;
 -- original auras from YTDB
 -- INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `bytes2`, `emote`, `moveflags`, `auras`) VALUES
--- (36659, 0, 0, 1, 0, 0, '69126 0 69152 0 69154 0');
+-- (36659, 0, 0, 1, 0, 0, '69126 69152 69154');
 -- DELETE FROM `creature_template_addon` WHERE `entry` = 36659;
 -- Visual effect mobs from Timmit
 UPDATE `creature` SET `spawnMask` = 15, `modelid` = 11686, `spawntimesecs` = 300 WHERE `id`=37013;
@@ -115,7 +115,7 @@ UPDATE `creature_template` SET `ScriptName`='mob_ooze_puddle',`scale` = '1.0', `
 UPDATE `gameobject_template` SET `faction` = '0', `ScriptName` = 'go_plague_sigil' WHERE `gameobject_template`.`entry` IN (202182);
 -- Abomination
 DELETE FROM `creature_template_addon` WHERE (`entry`=37672);
-INSERT INTO `creature_template_addon` (`entry`, `auras`) VALUES (37672, '70385 0 70405 0');
+INSERT INTO `creature_template_addon` (`entry`, `auras`) VALUES (37672, '70385 70405');
 UPDATE `creature_template` SET `VehicleId`=587 WHERE `entry` in (36678,38431,38585,38586);
 UPDATE `creature_template` SET `VehicleId`=591 WHERE `entry` in (37672,38605,38786,38787);
 DELETE FROM `spell_script_target` WHERE `entry` IN (70360);
@@ -146,18 +146,18 @@ UPDATE `creature_template` SET `ScriptName`='mob_dark_nucleus', `AIName`='',`min
 
 DELETE FROM  `creature_template_addon` WHERE `entry` IN (37972,37973,37970,38401,38784,38785,38399,38769,38770,38400,38771,38772);
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `emote`, `moveflags`, `auras`) VALUES
-(37970, 0, 0, 0, 0, '71598 0 71598 1'),
-(37972, 0, 0, 0, 0, '71598 0 71598 1'),
-(37973, 0, 0, 0, 0, '71598 0 71598 1'),
-(38401, 0, 0, 0, 0, '71598 0 71598 1'),
-(38784, 0, 0, 0, 0, '71598 0 71598 1'),
-(38785, 0, 0, 0, 0, '71598 0 71598 1'),
-(38399, 0, 0, 0, 0, '71598 0 71598 1'),
-(38769, 0, 0, 0, 0, '71598 0 71598 1'),
-(38770, 0, 0, 0, 0, '71598 0 71598 1'),
-(38400, 0, 0, 0, 0, '71598 0 71598 1'),
-(38771, 0, 0, 0, 0, '71598 0 71598 1'),
-(38772, 0, 0, 0, 0, '71598 0 71598 1');
+(37970, 0, 0, 0, 0, '71598'),
+(37972, 0, 0, 0, 0, '71598'),
+(37973, 0, 0, 0, 0, '71598'),
+(38401, 0, 0, 0, 0, '71598'),
+(38784, 0, 0, 0, 0, '71598'),
+(38785, 0, 0, 0, 0, '71598'),
+(38399, 0, 0, 0, 0, '71598'),
+(38769, 0, 0, 0, 0, '71598'),
+(38770, 0, 0, 0, 0, '71598'),
+(38400, 0, 0, 0, 0, '71598'),
+(38771, 0, 0, 0, 0, '71598'),
+(38772, 0, 0, 0, 0, '71598');
 
 -- Loot and deathstate for blood council (correct YTDB bugs, flags - from already killed princes)
 UPDATE `creature_template` SET `unit_flags` = '0' WHERE `entry` IN (37972,37973,37970,38401,38784,38785,38399,38769,38770,38400,38771,38772);
