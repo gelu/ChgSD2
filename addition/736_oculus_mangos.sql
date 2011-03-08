@@ -45,9 +45,9 @@ UPDATE `gameobject` SET `spawnMask` = 2 WHERE `map` = 578 AND `id` = 193603;
 UPDATE `gameobject` SET `spawnMask` = 1 WHERE `map` = 578 AND `id` = 191349;
 
 UPDATE `creature_template` SET `InhabitType` = 3, spell6 = 0 WHERE `entry` IN (27755,27756,27692);
-REPLACE INTO `creature_template_addon` VALUES (27755,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
-REPLACE INTO `creature_template_addon` VALUES (27756,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
-REPLACE INTO `creature_template_addon` VALUES (27692,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
+REPLACE INTO `creature_template_addon` VALUES (27755,0,0,0,0,0,0,'57403');
+REPLACE INTO `creature_template_addon` VALUES (27756,0,0,0,0,0,0,'57403');
+REPLACE INTO `creature_template_addon` VALUES (27692,0,0,0,0,0,0,'57403');
 
 /* hack for broken Nexus Portal */
 UPDATE `gameobject_template` SET `data0` = 49665 WHERE `entry` = 189985;

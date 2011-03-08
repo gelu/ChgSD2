@@ -10,8 +10,8 @@ UPDATE `creature_template` SET `PowerType` = 3, `InhabitType` = 3, `ScriptName`=
 UPDATE `creature_template` SET `PowerType` = 3, `InhabitType` = 3 WHERE entry=31752;
 UPDATE `creature_template` SET `ScriptName`='npc_alexstrasza' WHERE entry=32295;
 
-REPLACE INTO `creature_template_addon` VALUES (30161,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
-REPLACE INTO `creature_template_addon` VALUES (31752,0,0,0,0,0,0,'57403 0 57403 1 57403 2');
+REPLACE INTO `creature_template_addon` VALUES (30161,0,0,0,0,0,0,'57403');
+REPLACE INTO `creature_template_addon` VALUES (31752,0,0,0,0,0,0,'57403');
 
 -- spawn Alexstrasza's Gift and Heart of Magic
 DELETE FROM `gameobject` WHERE id IN (193905, 193967, 194158, 194159);
