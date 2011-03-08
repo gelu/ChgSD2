@@ -138,7 +138,9 @@ enum
     AREATRIGGER_KELTHUZAD       = 4112,
     AREATRIGGER_GOTHIK          = 4116,
 
-    // Achievement related
+    // Achievement-related
+    ACHIEV_START_PATCHWERK_ID   = 10286,
+
     ACHIEV_CRIT_SAFETY_DANCE_N  = 7264,                     // Heigan, achievs 1996, 2139
     ACHIEV_CRIT_SAFETY_DANCE_H  = 7548,
     ACHIEV_CRIT_KNOCK_YOU_OUT_N = 7265,                     // Faerlina, achievs 1997, 2140

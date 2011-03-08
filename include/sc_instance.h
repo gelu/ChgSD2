@@ -44,5 +44,9 @@ class MANGOS_DLL_DECL ScriptedInstance : public InstanceData
 
         // Get a Player from map
         Player* GetPlayerInMap(bool bOnlyAlive = false, bool bCanBeGamemaster = true);
+
+        // starts a timed achievement criteria for all players in instance
+        void DoStartTimedAchievement(AchievementCriteriaTypes tCriteriaType, uint32 uiTimedCriteriaMiscId);
+
 };
 #endif
