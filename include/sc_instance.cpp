@@ -86,3 +86,20 @@ Player* ScriptedInstance::GetPlayerInMap(bool bOnlyAlive /*=false*/, bool bCanBe
 
     return NULL;
 }
+
+void ScriptedInstance::DoStartTimedAchievement(AchievementCriteriaTypes tCriteriaType, uint32 uiTimedCriteriaMiscId)
+{
+    Map::PlayerList const& lPlayers = instance->GetPlayers();
+
+    if (!lPlayers.isEmpty())
+    {
+        for(Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            if (Player* pPlayer = itr->getSource())
+                pPlayer->StartTimedAchievementCriteria(tCriteriaType, uiTimedCriteriaMiscId);
+        }
+    }
+    else
+        debug_log("SD2: DoStartTimedAchievement attempt start achievements but no players in map.");
+
+}

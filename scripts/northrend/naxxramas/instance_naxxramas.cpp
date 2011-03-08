@@ -392,6 +392,8 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_PATCHWERK:
             m_auiEncounter[9] = uiData;
+            if (uiData == IN_PROGRESS)
+                DoStartTimedAchievement(ACHIEVEMENT_CRITERIA_TYPE_KILL_CREATURE, ACHIEV_START_PATCHWERK_ID);
             if (uiData == DONE)
                 DoUseDoorOrButton(m_uiPathExitDoorGUID);
             break;
