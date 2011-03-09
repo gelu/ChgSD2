@@ -6,6 +6,7 @@
 
 //battlegrounds
 extern void AddSC_battleground();
+extern void AddSC_battlegroundSA();
 
 //custom
 extern void AddSC_npc_arena_honor();
@@ -527,6 +528,7 @@ void AddScripts()
 {
     //battlegrounds
     AddSC_battleground();
+	AddSC_battlegroundSA();
 
     //custom
     AddSC_npc_arena_honor();
