@@ -47,4 +47,5 @@ UPDATE `creature_template` SET `ScriptName`='npc_slag' WHERE `entry`='28585';
 -- Instance Ahn'kahet
 
 UPDATE `creature_template` SET `ScriptName`='mob_flame_orb' WHERE `entry`='30702';
+UPDATE `creature_template` SET `ScriptName`='npc_twilight_volunteer' WHERE `entry`='30385';
 
