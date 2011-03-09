@@ -41,6 +41,8 @@ enum
     SPELL_SHOCK_OF_SORROW_H     = 59726,
     SPELL_STORM_OF_GRIEF        = 50752,
     SPELL_STORM_OF_GRIEF_H      = 59772,
+
+    ACHIEV_GOOD_GRIEF           = 1866,
 };
 
 /*######
@@ -58,11 +60,13 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
+    bool m_bIsInTimeAchiev;
 
     uint32 m_uiPartingSorrow_Timer;
     uint32 m_uiPillarWoe_Timer;
     uint32 m_uiShockSorrow_Timer;
     uint32 m_uiStorm_Timer;
+    uint32 m_uiGoodGrief_Timer;
 
     void Reset()
     {
@@ -70,6 +74,9 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         m_uiPillarWoe_Timer = 3000 + rand()%4000;
         m_uiStorm_Timer = 10000 + rand()%5000;
         m_uiShockSorrow_Timer = 20000 + rand()%5000;
+        m_uiGoodGrief_Timer = 60000;
+
+        m_bIsInTimeAchiev = true;
 
         if(m_pInstance)
             m_pInstance->SetData(TYPE_GRIEF, NOT_STARTED);
@@ -100,6 +107,21 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_GRIEF, DONE);
+
+        if (m_bIsInTimeAchiev && !m_bIsRegularMode)
+        {
+            AchievementEntry const *AchievGoodGrief = GetAchievementStore()->LookupEntry(ACHIEV_GOOD_GRIEF);
+            if (AchievGoodGrief)
+            {
+                Map* pMap = m_creature->GetMap();
+                if (pMap && pMap->IsDungeon())
+                {
+                    Map::PlayerList const &players = pMap->GetPlayers();
+                    for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                        itr->getSource()->CompletedAchievement(AchievGoodGrief);
+                }
+            }
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -141,6 +163,13 @@ struct MANGOS_DLL_DECL boss_maiden_of_griefAI : public ScriptedAI
         }
         else
             m_uiShockSorrow_Timer -= uiDiff;
+
+        if (m_uiGoodGrief_Timer < uiDiff)
+        {
+            m_bIsInTimeAchiev = false;
+        }
+        else
+            m_uiGoodGrief_Timer -= uiDiff;
 
         DoMeleeAttackIfReady();
     }
