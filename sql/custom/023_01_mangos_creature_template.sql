@@ -35,3 +35,8 @@ UPDATE `creature_template` SET `ScriptName`='npc_mana_wyrm' WHERE `entry`='15274
 
 UPDATE `creature_template` SET `ScriptName` = 'npc_winter_reveler' WHERE `entry`='15760';
 UPDATE `creature_template` SET `ScriptName` = 'npc_metzen', `npcflag` = '1' WHERE entry = '15664';
+
+-- ScriptName's and Walk Speed for Escort Gryphon (Massacre at Light's Point)
+
+UPDATE `creature_template` SET `speed_walk`='2.7', `speed_run`='2.7', `ScriptName`='npc_scourge_gryphon' WHERE `entry`='28864';
+

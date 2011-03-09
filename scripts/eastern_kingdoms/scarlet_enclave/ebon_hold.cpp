@@ -27,7 +27,7 @@ npc_death_knight_initiate
 npc_unworthy_initiate_anchor
 npc_unworthy_initiate
 go_acherus_soul_prison
-mob_scarlet_ghoul
+npc_scarlet_ghoul
 EndContentData */
 
 #include "precompiled.h"
@@ -3453,6 +3453,92 @@ bool GOUse_inconspicous_mine_car(Player *pPlayer, GameObject* /*pGo*/)
     return true;
 }
 
+/*######
+## npc_scourge_gryphon
+######*/
+
+enum
+{
+    RIDE_VEHICLE_HARDCODED = 46598
+};
+
+struct MANGOS_DLL_DECL npc_scourge_gryphonAI : public npc_escortAI
+{
+    npc_scourge_gryphonAI(Creature* pCreature) : npc_escortAI(pCreature)
+    {
+        //m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        Reset();
+    }
+
+    void Reset()
+    {
+    }
+
+    void MoveInLineOfSight(Unit* /*pUnit*/)
+    {
+        return;
+    }
+
+    void EnterCombat(Unit* /*pUnit*/)
+    {
+        return;
+    }
+
+    void AttackStart(Unit* /*pUnit*/)
+    {
+        return;
+    }
+
+    void SpellHit(Unit* pUnit, const SpellEntry* pSpell)
+    {
+        if (pUnit && pUnit->GetTypeId() == TYPEID_PLAYER)
+        {
+            if (pSpell->Id == RIDE_VEHICLE_HARDCODED)
+            {	
+                FlyToDeathsBreach((Player*)pUnit);
+            }
+        }
+    }
+
+    void FlyToDeathsBreach(Player* pPlayer)
+    {
+        pPlayer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        // Need to be set here. If flag is applied earlier, the Spell Immune Mask 
+        // makes the vehicle mount spell (ID - 46598 Ride Vehicle Hardcoded) disfunctional
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetSplineFlags(SPLINEFLAG_FLYING);
+
+        Start(true, pPlayer->GetGUID());
+    }
+
+    void WaypointReached(uint32 uiWp)
+    {
+        switch(uiWp)
+        {
+            case 1:
+                SetRun();
+                break;
+            case 4:
+                if (m_creature->GetVehicle())
+                    m_creature->GetVehicle()->RemoveAllPassengers();
+
+                if (Player* pPlayer = GetPlayerForEscort())
+                    pPlayer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+                m_creature->ForcedDespawn();
+                    return;
+            default:
+                break;
+        }
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        npc_escortAI::UpdateAI(uiDiff);
+    }
+};
+
 CreatureAI* GetAI_npc_highlord_darion_mograine(Creature* pCreature)
 { 
     return new npc_highlord_darion_mograineAI(pCreature);
@@ -3460,7 +3546,7 @@ CreatureAI* GetAI_npc_highlord_darion_mograine(Creature* pCreature)
 
 CreatureAI* GetAI_npc_the_lich_king_tirion_dawn(Creature* pCreature)
 {
-   return new npc_the_lich_king_tirion_dawnAI(pCreature);
+    return new npc_the_lich_king_tirion_dawnAI(pCreature);
 };
 
 CreatureAI* GetAI_npc_minibosses_dawn_of_light(Creature* pCreature)
@@ -3470,22 +3556,27 @@ CreatureAI* GetAI_npc_minibosses_dawn_of_light(Creature* pCreature)
 
 CreatureAI* GetAI_mob_warrior_of_the_frozen_wastes(Creature* pCreature)
 {
-   return new mob_warrior_of_the_frozen_wastesAI(pCreature);
+    return new mob_warrior_of_the_frozen_wastesAI(pCreature);
 }
 
 CreatureAI* GetAI_mob_acherus_ghoul(Creature* pCreature)
 {
-   return new mob_acherus_ghoulAI(pCreature);
+    return new mob_acherus_ghoulAI(pCreature);
 };
 
 CreatureAI* GetAI_npc_mine_car(Creature* pCreature)
 {
-	return new npc_mine_carAI(pCreature);
+    return new npc_mine_carAI(pCreature);
 };
 
 CreatureAI* GetAI_npc_scarlet_miner(Creature* pCreature)
 {
-	return new npc_scarlet_minerAI(pCreature);
+    return new npc_scarlet_minerAI(pCreature);
+};
+
+CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
+{
+    return new npc_scourge_gryphonAI(pCreature);
 };
 
 void AddSC_ebon_hold()
@@ -3575,5 +3666,10 @@ void AddSC_ebon_hold()
     pNewScript = new Script;
     pNewScript->Name = "go_inconspicous_mine_car";
     pNewScript->pGOUse = &GOUse_inconspicous_mine_car;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_scourge_gryphon";
+    pNewScript->GetAI = &GetAI_npc_scourge_gryphon;
     pNewScript->RegisterSelf();
 }
