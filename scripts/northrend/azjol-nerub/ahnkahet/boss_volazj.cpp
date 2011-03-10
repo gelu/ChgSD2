@@ -458,7 +458,7 @@ struct MANGOS_DLL_DECL boss_volazjAI : public ScriptedAI
             Map::PlayerList const &players = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
             {
-                if(!m_bIsRegularMode && getsAchievement)
+                if(!m_bIsRegularMode && m_bGetsAchievement)
                     itr->getSource()->CompletedAchievement(ACHIEVEMENT_QUICK_DEMISE);
                 DoScriptText(WHISPER_DEATH,m_creature,itr->getSource());
             }
