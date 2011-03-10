@@ -47,5 +47,8 @@ class MANGOS_DLL_DECL ScriptedInstance : public InstanceData
 
 		// destroys an item from all players in this instance (encounters like Vashj, Najentus....)
 		void DestroyItemFromAllPlayers(uint32 uiItemId);
+
+        // starts a timed achievement criteria for all players in instance
+        void DoStartTimedAchievement(AchievementCriteriaTypes tCriteriaType, uint32 uiTimedCriteriaMiscId);
 };
 #endif
