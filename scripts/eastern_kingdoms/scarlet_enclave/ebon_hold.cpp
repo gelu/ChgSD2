@@ -3330,9 +3330,12 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
     {
         pPlayer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        m_uiMineCarGuid = pPlayer->GetVehicle()->GetBase()->GetGUID();
-        m_uiPlayerGuid = pPlayer->GetGUID();
-        Start(false, pPlayer->GetGUID());
+        if(pPlayer->GetVehicle())
+        {
+            m_uiMineCarGuid = pPlayer->GetVehicle()->GetBase()->GetGUID();
+            m_uiPlayerGuid = pPlayer->GetGUID();
+            Start(false, pPlayer->GetGUID());
+        }
     }
 
     void WaypointReached(uint32 uiWp)
@@ -3348,7 +3351,7 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
                 m_uiMonoTimer = 4000;
                 m_uiMonoPhase = 1;
                 break;
-            case 16:
+            case 17:
                 m_bReachedShip = true;
                 break;
             default:
@@ -3402,7 +3405,10 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
                     if (Player *pPlayer = m_creature->GetMap()->GetPlayer(ObjectGuid(m_uiPlayerGuid)))
                     {
                         pPlayer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                        if (pPlayer->GetVehicle())
+                            pPlayer->ExitVehicle();
                     }
+
                     // Say something
 
                     if(npc_mine_carAI* pMineCarAI = dynamic_cast<npc_mine_carAI*>(pMineCar->AI()))
@@ -3572,6 +3578,11 @@ CreatureAI* GetAI_npc_mine_car(Creature* pCreature)
 CreatureAI* GetAI_npc_scarlet_miner(Creature* pCreature)
 {
     return new npc_scarlet_minerAI(pCreature);
+};
+
+CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
+{
+    return new npc_scourge_gryphonAI(pCreature);
 };
 
 CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
