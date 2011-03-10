@@ -33,6 +33,7 @@ EndContentData */
 #include "precompiled.h"
 #include "escort_ai.h"
 #include "ObjectMgr.h"
+#include "TemporarySummon.h"
 
 /*######
 ## npc_a_special_surprise
@@ -3545,6 +3546,87 @@ struct MANGOS_DLL_DECL npc_scourge_gryphonAI : public npc_escortAI
     }
 };
 
+/*######
+## npc_valkyr_battle_maiden
+######*/
+
+enum
+{
+    SPELL_REVIVE	=	51918,
+};
+
+#define REVIVE_WHISPER "It is not yet your time, champion. Rise! Rise and fight once more!"
+
+struct MANGOS_DLL_DECL npc_valkyr_battle_maidenAI : ScriptedAI
+{
+    npc_valkyr_battle_maidenAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
+
+    float x, y, z;
+
+    uint32 m_uiPhase;
+    uint32 m_uiPhaseTimer;
+    uint64 m_uiSummonerGuid;
+
+    void Reset()
+    {
+        m_uiSummonerGuid = 0;
+
+        if (m_uiSummonerGuid = (dynamic_cast<TemporarySummon*>(m_creature))->GetSummonerGuid().GetRawValue())
+            if(Unit* pUnit = m_creature->GetMap()->GetUnit(m_uiSummonerGuid))
+                if(pUnit->GetTypeId() != TYPEID_PLAYER)
+                    m_uiSummonerGuid = 0;
+
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+
+        m_creature->SetVisibility(VISIBILITY_OFF);
+        m_creature->SetSplineFlags(SPLINEFLAG_FLYING);
+        m_uiPhase = 0;
+        m_uiPhaseTimer = 0;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        Player* pPlayer = NULL;
+        if (!(pPlayer = (Player*)m_creature->GetMap()->GetUnit(m_uiSummonerGuid)))
+            m_uiPhase = 3;
+        
+        if (m_uiPhaseTimer <= uiDiff)
+        {
+            switch (m_uiPhase)
+            {
+                case 0:
+                    pPlayer->GetClosePoint(x, y, z, m_creature->GetObjectBoundingRadius());
+                    m_creature->GetMotionMaster()->MovementExpired();
+                    m_creature->GetMap()->CreatureRelocation(m_creature, x-2.0f , y-1.5f, z+2.5f, 0);
+                    m_creature->SetFacingToObject(pPlayer);
+                    m_creature->SetVisibility(VISIBILITY_ON);
+                    m_uiPhase++;
+                    break;
+                case 1:
+                    m_creature->SetUInt64Value(UNIT_FIELD_TARGET, pPlayer->GetGUID());
+                    m_uiPhase++;
+                    break;
+                case 2:
+                    DoCast(pPlayer, SPELL_REVIVE, true);
+                    m_creature->MonsterWhisper(REVIVE_WHISPER, pPlayer);
+                    // cause 51918 has cast time of 2 seconds
+                    m_uiPhaseTimer = 3000;
+                    m_uiPhase++;
+                    break;
+                case 3:
+                    m_creature->ForcedDespawn();
+                default:
+                    break;
+            }
+        }
+        else
+            m_uiPhaseTimer -= uiDiff;
+    }
+};
+
 CreatureAI* GetAI_npc_highlord_darion_mograine(Creature* pCreature)
 { 
     return new npc_highlord_darion_mograineAI(pCreature);
@@ -3583,6 +3665,11 @@ CreatureAI* GetAI_npc_scarlet_miner(Creature* pCreature)
 CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
 {
     return new npc_scourge_gryphonAI(pCreature);
+};
+
+CreatureAI* GetAI_npc_valkyr_battle_maiden(Creature* pCreature)
+{
+    return new npc_valkyr_battle_maidenAI(pCreature);
 };
 
 void AddSC_ebon_hold()
@@ -3677,5 +3764,10 @@ void AddSC_ebon_hold()
     pNewScript = new Script;
     pNewScript->Name = "npc_scourge_gryphon";
     pNewScript->GetAI = &GetAI_npc_scourge_gryphon;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name= "npc_valkyr_battle_maiden";
+    pNewScript->GetAI = &GetAI_npc_valkyr_battle_maiden;
     pNewScript->RegisterSelf();
 }
