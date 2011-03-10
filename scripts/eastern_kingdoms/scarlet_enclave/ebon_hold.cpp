@@ -3330,7 +3330,7 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
     {
         pPlayer->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
 
-        if(pPlayer->GetVehicle())
+        if (pPlayer->GetVehicle())
         {
             m_uiMineCarGuid = pPlayer->GetVehicle()->GetBase()->GetGUID();
             m_uiPlayerGuid = pPlayer->GetGUID();
