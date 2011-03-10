@@ -315,6 +315,9 @@
     <ClCompile Include="..\scripts\battlegrounds\battleground.cpp">
       <Filter>scripts\battlegrounds</Filter>
     </ClCompile>
+	<ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp">
+      <Filter>scripts\battlegrounds</Filter>
+    </ClCompile>
     <ClCompile Include="..\scripts\eastern_kingdoms\alterac_mountains.cpp">
       <Filter>scripts\eastern_kingdoms</Filter>
     </ClCompile>
