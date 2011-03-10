@@ -50,3 +50,7 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_flame_orb' WHERE `entry` = '3
 UPDATE `creature_template` SET `ScriptName` = 'npc_twilight_volunteer' WHERE `entry` = '30385';
 UPDATE `creature_template` SET `ScriptName` = 'mob_volazj_clone' WHERE `entry` IN ('30621', '30622', '30623', '30624', '30625');
 UPDATE `creature_template` SET `ScriptName` = 'boss_volazj' WHERE `entry` = '29311';
+
+-- Instance Naxxramas
+
+UPDATE `creature_template` SET `ScriptName` = 'mob_crypt_guard', `AIName` = '' WHERE `entry` = '16573';
