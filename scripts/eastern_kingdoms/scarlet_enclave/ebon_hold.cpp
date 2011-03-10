@@ -3585,11 +3585,6 @@ CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
     return new npc_scourge_gryphonAI(pCreature);
 };
 
-CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
-{
-    return new npc_scourge_gryphonAI(pCreature);
-};
-
 void AddSC_ebon_hold()
 {
     Script* pNewScript;
