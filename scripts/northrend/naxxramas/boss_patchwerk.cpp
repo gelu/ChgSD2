@@ -113,14 +113,16 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
 
             if (Unit* pTempTarget = m_creature->GetMap()->GetUnit((*iter)->getUnitGuid()))
             {
-                if (pTempTarget->GetHealth() > uiHighestHP && m_creature->CanReachWithMeleeAttack(pTempTarget))
+                if (m_creature->CanReachWithMeleeAttack(pTempTarget))
                 {
-                    uiHighestHP = pTempTarget->GetHealth();
-                    pTarget = pTempTarget;
+                    if (pTempTarget->GetHealth() > uiHighestHP)
+                    {
+                        uiHighestHP = pTempTarget->GetHealth();
+                        pTarget = pTempTarget;
+                    }
+                    --uiTargets;
                 }
             }
-
-            --uiTargets;
         }
 
         if (pTarget)
