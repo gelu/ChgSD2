@@ -54,8 +54,8 @@ UPDATE `creature_template` SET `ScriptName` = 'boss_volazj' WHERE `entry` = '293
 -- Instance Naxxramas
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_crypt_guard', `AIName` = '' WHERE `entry` = '16573';
+UPDATE `creature_template` SET `ScriptName` = 'npc_grobbulus_poison_cloud' WHERE `entry` = '16363';
 
 -- ScriptName for Val'Kyr Resurrection Event in Ebon Hold
 
 UPDATE `creature_template` SET `ScriptName` = 'npc_valkyr_battle_maiden' WHERE `entry` = '28534';
-
