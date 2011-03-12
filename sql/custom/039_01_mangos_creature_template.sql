@@ -59,3 +59,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_grobbulus_poison_cloud' WHERE
 -- ScriptName for Val'Kyr Resurrection Event in Ebon Hold
 
 UPDATE `creature_template` SET `ScriptName` = 'npc_valkyr_battle_maiden' WHERE `entry` = '28534';
+
+-- Death comes from on high (Quest - 12641)
+
+UPDATE `creature_template` SET `spell1` = '52006', `spell2` = '51859', `spell3` = '51904', `spell4` = '52694', `spell5` = '0', `InhabitType` = '3', `ScriptName` = 'npc_eye_of_acherus' WHERE `entry` = '28511';
