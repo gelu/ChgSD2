@@ -744,6 +744,13 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
     {
         if (HasEscortState(STATE_ESCORT_PAUSED))
         {
+            if (m_uiWave <= 4)
+            {
+                // Renew Anti Magic Zone ASAP
+                if (!m_creature->HasAura(SPELL_ANTI_MAGIC_ZONE))
+                    m_creature->CastSpell(m_creature, SPELL_ANTI_MAGIC_ZONE, true);
+            }
+
             if (m_uiWave_Timer < uiDiff)
             {
                 switch(m_uiWave)
