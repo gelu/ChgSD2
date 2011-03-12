@@ -1173,12 +1173,19 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         Reset();
     }
 
-    bool m_isActive;
+	uint32 m_uiStartTimer;
+    bool m_bIsActive;
 
     void Reset()
     {
+		if(Unit* pController = m_creature->GetCharmer())
+			m_creature->SetLevel(pController->getLevel());
+
+		m_creature->CastSpell(m_creature, 51890, true);
         m_creature->SetDisplayId(DISPLAYID_EYE_HUGE);
-        m_isActive = false;
+        
+		m_bIsActive = false;
+		m_uiStartTimer = 2000;
     }
 
     void AttackStart(Unit *)
@@ -1189,12 +1196,13 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
     {
     }
 
-    void JustDied(Unit *)
+    void JustDied(Unit* /*pKiller*/)
     {
         if (Unit* charmer = m_creature->GetCharmer())
             charmer->RemoveAurasDueToSpell(SPELL_EYE_CONTROL);
     }
 
+	/* THIS PART DOESN'T WORK FOR NOW!!! 
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
        if (uiType != POINT_MOTION_TYPE || uiPointId != 0)
@@ -1205,33 +1213,26 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
     }
 
-    void AttackedBy(Unit * attacker)
-    {
-        // called on remove SPELL_AURA_MOD_POSSESS
-        if (!m_creature->isCharmed() && attacker->GetTypeId() == TYPEID_PLAYER)
-        {
-            attacker->RemoveAurasDueToSpell(SPELL_EYE_CONTROL);
-//            m_creature->ForcedDespawn();
-        }
-    }
-
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_creature->isCharmed())
         {
-            if (!m_isActive)
+            if (m_uiStartTimer <=  uiDiff && !m_bIsActive)
             {
                 m_creature->CastSpell(m_creature, SPELL_EYE_PHASEMASK, true);
                 m_creature->CastSpell(m_creature, SPELL_EYE_VISUAL, true);
                 m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
                 DoScriptText(TEXT_EYE_LAUNCHED, m_creature);
-                m_creature->GetMotionMaster()->MovePoint(0,1750.8276f, -5873.788f, 147.2266f);
-                m_isActive = true;
+                m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
+                m_bIsActive = true;
             }
+			else
+				m_uiStartTimer -= uiDiff;
         }
         else
             m_creature->ForcedDespawn();
     }
+	*/
 };
 
 CreatureAI* GetAI_npc_eye_of_acherus(Creature* pCreature)
