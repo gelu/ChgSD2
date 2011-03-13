@@ -16,8 +16,8 @@
 
 /* ScriptData
 SDName: Boss_Heigan
-SD%Complete: 65
-SDComment: Missing traps dance
+SD%Complete: 95
+SDComment:
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -26,9 +26,6 @@ EndScriptData */
 
 enum
 {
-    PHASE_GROUND            = 1,
-    PHASE_PLATFORM          = 2,
-
     SAY_AGGRO1              = -1533109,
     SAY_AGGRO2              = -1533110,
     SAY_AGGRO3              = -1533111,
@@ -49,8 +46,21 @@ enum
     SPELL_DECREPIT_FEVER_H  = 55011,
     SPELL_DISRUPTION        = 29310,
     SPELL_TELEPORT          = 30211,
-    SPELL_PLAGUE_CLOUD      = 29350
+    SPELL_PLAGUE_CLOUD      = 29350,
+
+    ACHIEV_SAFETY_DANCE		= 1996,
+    H_ACHIEV_SAFETY_DANCE	= 2139
 };
+
+#define PLATFORM_X          2793.86f
+#define PLATFORM_Y	        -3707.38f
+#define PLATFORM_Z	        276.627f
+#define PLATFORM_O	        0.593f
+
+#define PLAYER_X            2804.946f
+#define PLAYER_Y            -3678.315f
+#define PLAYER_Z            273.666f
+#define PLAYER_O            4.385f
 
 struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 {
@@ -64,43 +74,140 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
     instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
 
-    uint8 m_uiPhase;
-    uint8 m_uiPhaseEruption;
+    uint32 m_uiEvadeCheckCooldown;
 
-    uint32 m_uiFeverTimer;
-    uint32 m_uiDisruptionTimer;
-    uint32 m_uiEruptionTimer;
-    uint32 m_uiPhaseTimer;
-    uint32 m_uiTauntTimer;
-    uint32 m_uiStartChannelingTimer;
+    std::list<uint64> m_PlagueFissureGUID[4];
 
-    void ResetPhase()
-    {
-        m_uiPhaseEruption = 0;
-        m_uiFeverTimer = 4000;
-        m_uiEruptionTimer = m_uiPhase == PHASE_GROUND ? urand(8000, 12000) : urand(2000, 3000);
-        m_uiDisruptionTimer = 5000;
-        m_uiStartChannelingTimer = 1000;
-        m_uiPhaseTimer = m_uiPhase == PHASE_GROUND ? 90000 : 45000;
-    }
+    uint32 Disruption_Timer;
+    uint32 Feaver_Timer;
+    uint32 Erupt_Timer;
+    uint32 Phase_Timer;
+
+    uint32 m_uiSafeSection;
+    bool   m_bEruptDirection;
+
+    bool   m_bCombatPhase;
+    bool   m_bDelay;
+	bool   m_bIsOpenGate;
+
+	uint32 m_uiDeathCheckTimer;
+	bool   m_bIsPlayerDeath;
 
     void Reset()
     {
-        m_uiPhase = PHASE_GROUND;
-        m_uiTauntTimer = urand(20000,60000);                // TODO, find information
-        ResetPhase();
+        m_uiEvadeCheckCooldown = 2000;
+        Feaver_Timer = 20000;
+        Phase_Timer = 90000;
+        Erupt_Timer = 10000;
+        Disruption_Timer = 0;
+        m_uiSafeSection = 0;
+        m_bEruptDirection = false;
+        m_bCombatPhase = true;
+        m_bDelay = false;
+        SetCombatMovement(true);
+		m_bIsOpenGate = false;
+
+		m_uiDeathCheckTimer = 1000;
+		m_bIsPlayerDeath = false;
+
+        if(m_pInstance)
+		{
+            m_pInstance->SetData(TYPE_HEIGAN, NOT_STARTED);
+
+            if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_PLAG_HEIG_ENTRY_DOOR)))
+                pGate->SetGoState(GO_STATE_ACTIVE);
+		}
+    }
+
+    void MoveInLineOfSight(Unit *pWho) 
+    {
+        if(!pWho)
+            return;
+
+        if(!m_bIsOpenGate && (m_creature->IsWithinDistInMap(pWho, 100.0f)))
+        {
+            if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_PLAG_HEIG_ENTRY_DOOR)))
+                pGate->SetGoState(GO_STATE_ACTIVE);
+        }
+        m_bIsOpenGate = true;
     }
 
     void Aggro(Unit* pWho)
     {
-        switch(urand(0, 2))
+        for (uint8 i = 0; i < 4; ++i)
+            m_PlagueFissureGUID[i].clear();
+        for (uint32 i = 10; i <= 52; ++i)
+            if (GameObject* pPlagueFissure = GetClosestGameObjectWithEntry(m_creature, 181500+i, 100.0f))
+            {
+                if (i != 10 && i != 17 && i != 18 && i != 19 && i != 20 && i != 21 && i != 22 && i != 23 && i != 24 && i != 26)
+                    m_PlagueFissureGUID[0].push_back(pPlagueFissure->GetGUID());
+                if (i != 11 && i != 12 && i != 13 && i != 14 && i != 15 && i != 16 && i != 25 && i != 27 && i != 28 && i != 29 && i != 30 && i != 31)
+                    m_PlagueFissureGUID[1].push_back(pPlagueFissure->GetGUID());
+                if (i != 32 && i != 33 && i != 34 && i != 35 && i != 36 && i != 40 && i != 41 && i != 42 && i != 43 && i != 44 && i != 45)
+                    m_PlagueFissureGUID[2].push_back(pPlagueFissure->GetGUID());
+                if (i != 37 && i != 48 && i != 39 && i != 46 && i != 47 && i != 48 && i != 49 && i != 50 && i != 51 && i != 52)
+                    m_PlagueFissureGUID[3].push_back(pPlagueFissure->GetGUID());
+            }
+
+        std::list<GameObject*> lList;
+        GetGameObjectListWithEntryInGrid(lList, m_creature, 181678, 100.0f);
+        if (!lList.empty())
+            for (std::list<GameObject*>::iterator itr = lList.begin(); itr != lList.end(); ++itr)
+            {
+                m_PlagueFissureGUID[1].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[2].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[3].push_back((*itr)->GetGUID());
+            }
+
+        lList.clear();
+        GetGameObjectListWithEntryInGrid(lList, m_creature, 181676, 100.0f);
+        if (!lList.empty())
+            for (std::list<GameObject*>::iterator itr = lList.begin(); itr != lList.end(); ++itr)
+            {
+                m_PlagueFissureGUID[0].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[2].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[3].push_back((*itr)->GetGUID());
+            }
+
+        lList.clear();
+        GetGameObjectListWithEntryInGrid(lList, m_creature, 181677, 100.0f);
+        if (!lList.empty())
+            for (std::list<GameObject*>::iterator itr = lList.begin(); itr != lList.end(); ++itr)
+            {
+                m_PlagueFissureGUID[0].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[1].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[3].push_back((*itr)->GetGUID());
+            }
+
+        lList.clear();
+        GetGameObjectListWithEntryInGrid(lList, m_creature, 181695, 100.0f);
+        if (!lList.empty())
+            for (std::list<GameObject*>::iterator itr = lList.begin(); itr != lList.end(); ++itr)
+            {
+                m_PlagueFissureGUID[0].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[1].push_back((*itr)->GetGUID());
+                m_PlagueFissureGUID[2].push_back((*itr)->GetGUID());
+            }
+
+        switch (rand()%3)
         {
             case 0: DoScriptText(SAY_AGGRO1, m_creature); break;
             case 1: DoScriptText(SAY_AGGRO2, m_creature); break;
             case 2: DoScriptText(SAY_AGGRO3, m_creature); break;
         }
 
-        if (m_pInstance)
+        // Teleport "cheaters" to center of room
+        Map* map = m_creature->GetMap();
+        if (map->IsDungeon())
+        {
+            Map::PlayerList const &PlayerList = map->GetPlayers();
+
+            if (!PlayerList.isEmpty())
+                for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                    i->getSource()->NearTeleportTo(PLAYER_X, PLAYER_Y, PLAYER_Z, PLAYER_O,false);
+        }
+
+        if(m_pInstance)
             m_pInstance->SetData(TYPE_HEIGAN, IN_PROGRESS);
     }
 
@@ -115,6 +222,17 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_HEIGAN, DONE);
+
+        if (!m_bIsPlayerDeath)
+        {
+            Map* pMap = m_creature->GetMap();
+            if (pMap && pMap->IsDungeon())
+            {
+                Map::PlayerList const &players = pMap->GetPlayers();
+                for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                    itr->getSource()->CompletedAchievement(m_bIsRegularMode ? ACHIEV_SAFETY_DANCE : H_ACHIEV_SAFETY_DANCE);
+            }
+        }
     }
 
     void JustReachedHome()
@@ -128,115 +246,133 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_uiPhase == PHASE_GROUND)
+        if (m_uiDeathCheckTimer < uiDiff)
         {
-            // Teleport to platform
-            if (m_uiPhaseTimer < uiDiff)
-            {
-                if (DoCastSpellIfCan(m_creature, SPELL_TELEPORT) == CAST_OK)
-                {
-                    DoScriptText(EMOTE_TELEPORT, m_creature);
-                    m_creature->GetMotionMaster()->MoveIdle();
+			Map* pMap = m_creature->GetMap();
+			if(pMap)
+			{
+				Map::PlayerList const &lPlayers = pMap->GetPlayers();
+				for (Map::PlayerList::const_iterator iter = lPlayers.begin(); iter != lPlayers.end(); ++iter)
+				{
+					Player* pPlayer = iter->getSource();
 
-                    m_uiPhase = PHASE_PLATFORM;
-                    ResetPhase();
-                    return;
-                }
-            }
-            else
-                m_uiPhaseTimer -= uiDiff;
+					if(!pPlayer->isAlive())
+						m_bIsPlayerDeath = true;
+				}
+			}
+            m_uiDeathCheckTimer = 1000;
+        }else m_uiDeathCheckTimer -= uiDiff;
 
-            // Fever
-            if (m_uiFeverTimer < uiDiff)
-            {
-//                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_DECREPIT_FEVER_N : SPELL_DECREPIT_FEVER_H);
-                m_uiFeverTimer = 21000;
-            }
-            else
-                m_uiFeverTimer -= uiDiff;
+        if (m_uiEvadeCheckCooldown < uiDiff)
+        {
+            if (m_creature->GetDistance2d(2769.68f, -3684.61f) > 48.0f)
+                EnterEvadeMode();
 
-            // Disruption
-            if (m_uiDisruptionTimer < uiDiff)
-            {
-                DoCastSpellIfCan(m_creature, SPELL_DISRUPTION);
-                m_uiDisruptionTimer = 10000;
-            }
-            else
-                m_uiDisruptionTimer -= uiDiff;
+            m_uiEvadeCheckCooldown = 2000;
+        }else m_uiEvadeCheckCooldown -= uiDiff;
+
+        if (m_bDelay)
+        {
+            m_bDelay = false;
+            DoCast(m_creature, SPELL_PLAGUE_CLOUD);
         }
-        else                                                //Platform Phase
+
+        if (Phase_Timer < uiDiff)
         {
-            if (m_uiPhaseTimer <= uiDiff)                   // return to fight
+            if (m_bCombatPhase)
             {
                 m_creature->InterruptNonMeleeSpells(true);
-                DoScriptText(EMOTE_RETURN, m_creature);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-
-                m_uiPhase = PHASE_GROUND;
-                ResetPhase();
-                return;
+                m_creature->StopMoving();
+                m_creature->GetMotionMaster()->Clear(false);
+                m_creature->GetMotionMaster()->MoveIdle();
+                DoScriptText(EMOTE_TELEPORT,m_creature);
+                m_creature->GetMap()->CreatureRelocation(m_creature, PLATFORM_X, PLATFORM_Y, PLATFORM_Z, PLATFORM_O);
+                m_creature->SendMonsterMove(PLATFORM_X, PLATFORM_Y, PLATFORM_Z, SPLINETYPE_NORMAL, SPLINEFLAG_DONE, 0);
+                SetCombatMovement(false);
+                m_bDelay = true;
+                Phase_Timer = 45000;
             }
             else
-                m_uiPhaseTimer -= uiDiff;
-
-            if (m_uiStartChannelingTimer)
             {
-                if (m_uiStartChannelingTimer <=uiDiff)
-                {
-                    DoScriptText(SAY_CHANNELING, m_creature);
-                    DoCastSpellIfCan(m_creature, SPELL_PLAGUE_CLOUD);
-                    m_uiStartChannelingTimer = 0;           // no more
-                }
-                else
-                    m_uiStartChannelingTimer -= uiDiff;
+                DoScriptText(EMOTE_RETURN,m_creature);
+                SetCombatMovement(true);
+                DoStartMovement(m_creature->getVictim());
+                Phase_Timer = 90000;
+                Disruption_Timer = 0;
             }
-        }
 
-        // Taunt
-        if (m_uiTauntTimer < uiDiff)
-        {
-            switch(urand(0, 3))
-            {
-                case 0: DoScriptText(SAY_TAUNT1, m_creature); break;
-                case 1: DoScriptText(SAY_TAUNT2, m_creature); break;
-                case 2: DoScriptText(SAY_TAUNT3, m_creature); break;
-                case 3: DoScriptText(SAY_TAUNT4, m_creature); break;
-            }
-            m_uiTauntTimer = urand(20000, 70000);
+            m_bCombatPhase = !m_bCombatPhase;
+            m_uiSafeSection = 0;
+            Erupt_Timer = 10000;
+            m_bEruptDirection = false;
+
         }
         else
-            m_uiTauntTimer -= uiDiff;
+            Phase_Timer -= uiDiff;
 
-        DoMeleeAttackIfReady();
-
-        // Handling of the erruptions, this is not related to melee attack or spell-casting
-        if (!m_pInstance)
-            return;
-
-        // Eruption
-        if (m_uiEruptionTimer <= uiDiff)
+        if (Erupt_Timer < uiDiff)
         {
-            static int const m_auiMaxHeiganTraps[MAX_HEIGAN_TRAP_AREAS] =
+            for (std::list<uint64>::iterator itr = m_PlagueFissureGUID[m_uiSafeSection].begin(); itr != m_PlagueFissureGUID[m_uiSafeSection].end(); ++itr)
             {
-                m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_1), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_2), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_3), m_pInstance->GetData(TYPE_MAX_HEIGAN_TRAPS_4)
-            };
-
-            for (uint8 uiArea = 0; uiArea < MAX_HEIGAN_TRAP_AREAS; ++uiArea)
-            {
-                if (uiArea == (m_uiPhaseEruption % 6) || uiArea == 6 - (m_uiPhaseEruption % 6))
-                    continue;
-                for (uint8 i = 0; i < m_auiMaxHeiganTraps[uiArea]; i++)
-                {
-                    if (GameObject* pGo = m_creature->GetMap()->GetGameObject(m_pInstance->GetHeiganTrapData64(uiArea, i)))
-                        pGo->Use(m_creature);
-                }
+                if (GameObject* pGo = m_creature->GetMap()->GetGameObject(*itr))
+                    if (pGo)
+                    {
+                        WorldPacket data(SMSG_GAMEOBJECT_CUSTOM_ANIM,8+4);
+                        data << pGo->GetGUID();
+                        data << 0;
+                        pGo->SendMessageToSet(&data,true);
+                        if (Creature* pTemp = m_creature->SummonCreature(14667, pGo->GetPositionX(), pGo->GetPositionY(), pGo->GetPositionZ(), 0, TEMPSUMMON_TIMED_DESPAWN, 100))
+                        {
+                            pTemp->SetLevel(80);
+                            pTemp->CastSpell(pTemp, SPELL_ERUPTION, true);
+                        }
+                    }
             }
 
-            m_uiEruptionTimer = m_uiPhase == PHASE_GROUND ? urand(8000, 12000) : urand(2000, 3000);
-            ++m_uiPhaseEruption;
+            if (m_uiSafeSection == 0 || m_uiSafeSection == 3)
+                m_bEruptDirection = !m_bEruptDirection;
+
+
+            m_bEruptDirection ? ++m_uiSafeSection : --m_uiSafeSection;
+
+            m_bCombatPhase ? Erupt_Timer = 10000 : Erupt_Timer = 3000;
+
+            // Teleport "cheaters" to center of room (until LOS with GOs will be implemented)
+            Map* map = m_creature->GetMap();
+            if (map->IsDungeon())
+            {
+                Map::PlayerList const &PlayerList = map->GetPlayers();
+
+                if (!PlayerList.isEmpty())
+                    for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
+                        if ((i->getSource()->GetDistance2d(2769.68f, -3684.61f) > 48.0f) && (i->getSource()->GetDistance2d(2769.68f, -3684.61f) < 100.0f))
+                            i->getSource()->TeleportTo(533, 2769.68f, -3684.61f, 273.66f, 5.5f);
+            }
         }
         else
-            m_uiEruptionTimer -= uiDiff;
+            Erupt_Timer -= uiDiff; 
+
+        if (m_bCombatPhase)
+        {
+            if (Disruption_Timer < uiDiff)
+            {
+                DoCast(m_creature, SPELL_DISRUPTION);
+                Disruption_Timer = 10000;
+            }
+            else
+                Disruption_Timer -= uiDiff;
+
+            if (Feaver_Timer < uiDiff)
+            {
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                    DoCast(pTarget, m_bIsRegularMode ? SPELL_DECREPIT_FEVER_N : SPELL_DECREPIT_FEVER_H);
+                Feaver_Timer = 20000;
+            }
+            else
+                Feaver_Timer -= uiDiff;
+
+            DoMeleeAttackIfReady();
+        }
     }
 };
 
