@@ -42,7 +42,11 @@ enum
     SPELL_SLIME_SPRAY_H             = 54364,
     SPELL_BERSERK                   = 26662,
 
-    NPC_FALLOUT_SLIME               = 16290
+    NPC_FALLOUT_SLIME               = 16290,
+    NPC_GROBBOLUS_CLOUD             = 16363,
+
+    // spell of grobbolus cloud
+    SPELL_POISON_CLOUD_DAMAGE       = 59116
 };
 
 struct MANGOS_DLL_DECL boss_grobbulusAI : public ScriptedAI
@@ -211,6 +215,44 @@ CreatureAI* GetAI_boss_grobbulus(Creature* pCreature)
     return new boss_grobbulusAI(pCreature);
 }
 
+struct MANGOS_DLL_DECL npc_grobbulus_poison_cloudAI : public Scripted_NoMovementAI
+{
+    npc_grobbulus_poison_cloudAI(Creature* pCreature) : Scripted_NoMovementAI(pCreature)
+    {
+        Reset();
+    }
+
+    uint32 m_uiCloud_Timer;
+    uint32 m_uiDespawn_Timer;
+
+    void Reset()
+    {
+        m_uiCloud_Timer = 1000;
+        m_uiDespawn_Timer = 75000;
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (m_uiCloud_Timer < diff)
+        {
+            DoCast(m_creature, SPELL_POISON_CLOUD_DAMAGE);
+            m_uiCloud_Timer = 10000;
+        }else m_uiCloud_Timer -= diff;
+
+        if (m_uiDespawn_Timer < diff)
+            m_creature->ForcedDespawn();
+        else
+            m_uiDespawn_Timer -= diff;
+    }
+};
+
+CreatureAI* GetAI_npc_grobbulus_poison_cloud(Creature* pCreature)
+{
+    return new npc_grobbulus_poison_cloudAI(pCreature);
+}
+
 void AddSC_boss_grobbulus()
 {
     Script* pNewScript;
@@ -218,5 +260,10 @@ void AddSC_boss_grobbulus()
     pNewScript = new Script;
     pNewScript->Name = "boss_grobbulus";
     pNewScript->GetAI = &GetAI_boss_grobbulus;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_grobbulus_poison_cloud";
+    pNewScript->GetAI = &GetAI_npc_grobbulus_poison_cloud;
     pNewScript->RegisterSelf();
 }

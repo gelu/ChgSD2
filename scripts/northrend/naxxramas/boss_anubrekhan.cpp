@@ -59,6 +59,11 @@ enum
     NPC_CORPSE_SCARAB           = 16698
 };
 
+#define ANUB_SPAWN_X 3307
+#define ANUB_SPAWN_Y -3476.3
+#define ANUB_SPAWN_Z 287.07
+#define ANUB_SPAWN_O 3.097
+
 struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 {
     boss_anubrekhanAI(Creature* pCreature) : ScriptedAI(pCreature)
@@ -89,7 +94,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         //Force the player to spawn corpse scarabs via spell
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
         {
-            pVictim->CastSpell(pVictim, SPELL_SELF_SPAWN_5, true); // this spell is not working at the moment
+            //pVictim->CastSpell(pVictim, SPELL_SELF_SPAWN_5, true); // this spell is not working right
             for(int i=0;i<6;i++)
                 pVictim->SummonCreature(NPC_CORPSE_SCARAB,pVictim->GetPositionX(),pVictim->GetPositionY(),pVictim->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,150000);
         }
@@ -159,7 +164,7 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
                     DoCastSpellIfCan(target, m_bIsRegularMode ? SPELL_IMPALE : SPELL_IMPALE_H);
             }
 
-            m_uiImpaleTimer = 15000;
+            m_uiImpaleTimer = urand(8000,16000);
         }
         else
             m_uiImpaleTimer -= uiDiff;
@@ -176,8 +181,12 @@ struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
         // Summon cryptguard
         if (m_uiSummonGuardTimer < uiDiff)
         {
-            // spawnPosition may not be blizzlike
-            m_creature->SummonCreature(NPC_CRYPT_GUARD,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),0,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,180000);
+            if(Creature* pGuard = m_creature->SummonCreature(NPC_CRYPT_GUARD,ANUB_SPAWN_X,ANUB_SPAWN_Y,ANUB_SPAWN_Z,ANUB_SPAWN_O,TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT,180000))
+            {    
+                pGuard->Attack(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,0),true);
+                if(pGuard->getVictim())
+                    pGuard->GetMotionMaster()->MoveChase(pGuard->getVictim());
+            }
             m_uiSummonGuardTimer = m_bIsRegularMode ? m_uiLocustSwarmTimer+20000 : m_uiLocustSwarmTimer+1000; // spawn additional guards 20sec after locustswarm on 10man or with locustswarm on 25man
         }
         else
@@ -220,7 +229,7 @@ struct MANGOS_DLL_DECL mob_crypt_guardAI : public ScriptedAI
         //Force the player to spawn corpse scarabs via spell
         if (pVictim->GetTypeId() == TYPEID_PLAYER)
         {
-            pVictim->CastSpell(pVictim, SPELL_SELF_SPAWN_5, true); // this spell is not working at the moment
+            //pVictim->CastSpell(pVictim, SPELL_SELF_SPAWN_5, true); // this spell is not working right
             for(int i=0;i<6;i++)
                 pVictim->SummonCreature(NPC_CORPSE_SCARAB,pVictim->GetPositionX(),pVictim->GetPositionY(),pVictim->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,150000);
     
@@ -229,7 +238,7 @@ struct MANGOS_DLL_DECL mob_crypt_guardAI : public ScriptedAI
 
     void JustDied(Unit* Killer)
     {
-        m_creature->CastSpell(m_creature, SPELL_SELF_SPAWN_10, true); // this spell is not working at the moment
+        //m_creature->CastSpell(m_creature, SPELL_SELF_SPAWN_10, true); // this spell is not working right
         for(int i=0;i<11;i++)
             m_creature->SummonCreature(NPC_CORPSE_SCARAB,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),0,TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN,150000);
     }
