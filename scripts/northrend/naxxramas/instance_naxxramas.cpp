@@ -46,6 +46,8 @@ instance_naxxramas::instance_naxxramas(Map* pMap) : ScriptedInstance(pMap),
     m_uiThaddiusGUID(0),
     m_uiStalaggGUID(0),
     m_uiFeugenGUID(0),
+    m_uiTeslaCoilStalaggGUID(0),
+    m_uiTeslaCoilFeugenGUID(0),
 
     m_uiKelthuzadGUID(0),
 
@@ -202,6 +204,12 @@ void instance_naxxramas::OnObjectCreate(GameObject* pGo)
             m_uiThadDoorGUID = pGo->GetGUID();
             if (m_auiEncounter[11] == DONE)
                 pGo->SetGoState(GO_STATE_ACTIVE);
+            break;
+        case GO_TESLA_COIL_FEUGEN:
+            m_uiTeslaCoilFeugenGUID = pGo->GetGUID();
+            break;
+        case GO_TESLA_COIL_STALAGG:
+            m_uiTeslaCoilStalaggGUID = pGo->GetGUID();
             break;
 
         case GO_KELTHUZAD_WATERFALL_DOOR:
@@ -556,6 +564,10 @@ uint64 instance_naxxramas::GetData64(uint32 uiData)
             return m_uiStalaggGUID;
         case NPC_FEUGEN:
             return m_uiFeugenGUID;
+        case GO_TESLA_COIL_FEUGEN:
+            return m_uiTeslaCoilFeugenGUID;
+        case GO_TESLA_COIL_STALAGG:
+            return m_uiTeslaCoilStalaggGUID;
         case NPC_GOTHIK:
             return m_uiGothikGUID;
         case NPC_KELTHUZAD:
