@@ -55,6 +55,9 @@ UPDATE `creature_template` SET `ScriptName` = 'boss_volazj' WHERE `entry` = '293
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_crypt_guard', `AIName` = '' WHERE `entry` = '16573';
 UPDATE `creature_template` SET `ScriptName` = 'npc_grobbulus_poison_cloud' WHERE `entry` = '16363';
+UPDATE `creature_template` SET `ScriptName` = 'boss_stalagg', `AIName` = '' WHERE `entry` = '15929';
+UPDATE `creature_template` SET `ScriptName` = 'boss_feugen', `AIName` = '' WHERE `entry` = '15930';
+UPDATE `creature_template` SET `ScriptName` = 'boss_thaddius', `AIName` = '' WHERE `entry` = '15928';
 
 -- ScriptName for Val'Kyr Resurrection Event in Ebon Hold
 

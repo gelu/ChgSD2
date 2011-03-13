@@ -117,6 +117,8 @@ enum
     GO_CONS_PATH_EXIT_DOOR      = 181123,
     GO_CONS_GLUT_EXIT_DOOR      = 181120,
     GO_CONS_THAD_DOOR           = 181121,                   // Thaddius enc door
+    GO_TESLA_COIL_FEUGEN        = 181477,                   // tesla coil gameobjects for feugen/stalagg fights
+    GO_TESLA_COIL_STALAGG       = 181478,
 
     // Frostwyrm Lair
     GO_KELTHUZAD_WATERFALL_DOOR = 181225,                   // exit, open after sapphiron is dead
@@ -138,7 +140,7 @@ enum
     AREATRIGGER_KELTHUZAD       = 4112,
     AREATRIGGER_GOTHIK          = 4116,
 
-    // Achievement-related
+    // Achievement related
     ACHIEV_START_PATCHWERK_ID   = 10286,
 
     ACHIEV_CRIT_SAFETY_DANCE_N  = 7264,                     // Heigan, achievs 1996, 2139
@@ -238,6 +240,8 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiThaddiusGUID;
         uint64 m_uiStalaggGUID;
         uint64 m_uiFeugenGUID;
+        uint64 m_uiTeslaCoilStalaggGUID;
+        uint64 m_uiTeslaCoilFeugenGUID;
 
         uint64 m_uiKelthuzadGUID;
 
