@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Gothik
 SD%Complete: 60
-SDComment: Only base implemented. Todo: control adds at summon. Handle case of raid not splitted in two sides
+SDComment: Only base implemented. Todo: Handle case of raid not splitted in two sides (?)
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -92,6 +92,8 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
     uint32 m_uiTeleportTimer;
     uint32 m_uiShadowboltTimer;
 
+    std::set<uint64> m_lDeadsideAdds;
+
     void Reset()
     {
         m_uiPhase = PHASE_SPEECH;
@@ -104,6 +106,18 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
 
         m_uiTeleportTimer = 15000;
         m_uiShadowboltTimer = 2500;
+
+        m_lDeadsideAdds.clear();
+
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+    }
+
+    void MoveInLineOfSight(Unit* pWho)
+    {
+        if(pWho->GetDistance(m_creature) < 40)
+        {
+            m_creature->SetInCombatWithZone();
+        }
     }
 
     void Aggro(Unit* pWho)
@@ -208,6 +222,25 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
         }
     }
 
+    void JustSummoned(Creature* pSummoned)
+    {
+        if (!m_pInstance)
+            return;
+
+        if (m_pInstance->IsInRightSideGothArea(pSummoned))
+            pSummoned->AI()->AttackStart(m_creature->getVictim());
+        else
+        {
+            pSummoned->SetInCombatWithZone();
+            m_lDeadsideAdds.insert(pSummoned->GetGUID());
+            // prevent Deadside Adds to enter live side before combat gate is open, kind of hacky :-/
+            if (!HasPlayersInLeftSide())
+            {
+                pSummoned->SetSpeedRate(MOVE_RUN, 0.0001f);
+            }
+        }
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -244,6 +277,7 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
                         DoScriptText(SAY_TELEPORT, m_creature);
                         DoScriptText(EMOTE_TO_FRAY, m_creature);
                         DoCastSpellIfCan(m_creature, SPELL_TELEPORT_RIGHT);
+                        m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                         m_uiPhase = PHASE_GROUND;
                         return;
                     }
@@ -296,6 +330,15 @@ struct MANGOS_DLL_DECL boss_gothikAI : public ScriptedAI
                 {
                     if (m_creature->GetHealthPercent() < 30.0f)
                     {
+                        // reset speed of Deadside Adds upon opening combat gate
+                        for(std::set<uint64>::const_iterator itr = m_lDeadsideAdds.begin(); itr != m_lDeadsideAdds.end(); ++itr)
+                        {
+                            if (Creature* pDeadsideAdds = m_pInstance->instance->GetCreature(*itr))
+                            {
+                                pDeadsideAdds->SetSpeedRate(MOVE_RUN, 1.14f);
+                            }
+                        }
+
                         if (m_pInstance->IsInRightSideGothArea(m_creature))
                         {
                             DoScriptText(EMOTE_GATE, m_creature);
