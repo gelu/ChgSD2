@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Boss_Razuvious
 SD%Complete: 85%
-SDComment: TODO: Timers and sounds need confirmation - orb handling for normal-mode is missing
+SDComment: TODO: Timers and sounds need confirmation
 SDCategory: Naxxramas
 EndScriptData */
 
@@ -41,8 +41,37 @@ enum
     SPELL_DISRUPTING_SHOUT   = 55543,
     SPELL_DISRUPTING_SHOUT_H = 29107,
     SPELL_JAGGED_KNIFE       = 55550,
-    SPELL_HOPELESS           = 29125
+    SPELL_HOPELESS           = 29125,
+    SPELL_FORCE_OBEDIENCE    = 55479,
+
+    NPC_DEATH_KNIGHT_UNDERSTUDY = 16803
 };
+
+bool GossipHello_npc_obedience_crystal(Player* pPlayer, Creature* pCreature)
+{
+    std::list<Creature*> lDeathKnightList;
+    Unit* pTarget = NULL;
+
+    GetCreatureListWithEntryInGrid(lDeathKnightList, pCreature, NPC_DEATH_KNIGHT_UNDERSTUDY, 100.0f);
+
+    if (!lDeathKnightList.empty())
+    {
+        pTarget = *(lDeathKnightList.begin());
+        for (std::list<Creature*>::iterator itr = lDeathKnightList.begin(); itr != lDeathKnightList.end(); ++itr)
+        {
+            if ((*itr)->isDead() || (*itr)->HasAura(SPELL_FORCE_OBEDIENCE))
+                continue;
+
+            if ((pCreature->GetDistance2d(*itr) < pCreature->GetDistance2d(pTarget)) || pTarget->isDead())
+                pTarget = *itr;
+        }
+    }
+
+    if (pTarget && pTarget->isAlive() && !pTarget->HasAura(SPELL_FORCE_OBEDIENCE))
+        pPlayer->CastSpell(pTarget, SPELL_FORCE_OBEDIENCE, true);
+
+    return true;
+}
 
 struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 {
@@ -56,6 +85,8 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
     instance_naxxramas* m_pInstance;
     bool m_bIsRegularMode;
 
+    std::list<Creature*> m_lDeathKnightList;
+
     uint32 m_uiUnbalancingStrikeTimer;
     uint32 m_uiDisruptingShoutTimer;
     uint32 m_uiJaggedKnifeTimer;
@@ -63,21 +94,25 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 
     void Reset()
     {
-        m_uiUnbalancingStrikeTimer = 30000;                 // 30 seconds
-        m_uiDisruptingShoutTimer   = 15000;                 // 15 seconds
-        m_uiJaggedKnifeTimer       = urand(10000, 15000);
-        m_uiCommandSoundTimer      = 40000;                 // 40 seconds
+        m_uiUnbalancingStrikeTimer = urand(7000, 8000);
+        m_uiDisruptingShoutTimer = 15000;
+        m_uiJaggedKnifeTimer = 10000;
+        m_uiCommandSoundTimer = 30000;
+        m_lDeathKnightList.clear();
+        GetCreatureListWithEntryInGrid(m_lDeathKnightList, m_creature, NPC_DEATH_KNIGHT_UNDERSTUDY, 100.0f);
+
+        if (!m_lDeathKnightList.empty())
+            for (std::list<Creature*>::iterator itr = m_lDeathKnightList.begin(); itr != m_lDeathKnightList.end(); ++itr)
+                (*itr)->Respawn();
     }
 
     void KilledUnit(Unit* Victim)
     {
-        if (urand(0, 3))
-            return;
-
-        switch(urand(0, 1))
+        switch(urand(0, 3))
         {
             case 0: DoScriptText(SAY_SLAY1, m_creature); break;
             case 1: DoScriptText(SAY_SLAY2, m_creature); break;
+            default: break;
         }
     }
 
@@ -85,7 +120,13 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
 
-        DoCastSpellIfCan(m_creature, SPELL_HOPELESS, CAST_TRIGGERED);
+        //DoCastSpellIfCan(m_creature, SPELL_HOPELESS, CAST_TRIGGERED);
+        if (!m_lDeathKnightList.empty())
+            for (std::list<Creature*>::iterator itr = m_lDeathKnightList.begin(); itr != m_lDeathKnightList.end(); ++itr)
+            {
+                if ((*itr)->isAlive() && !(*itr)->HasAura(SPELL_FORCE_OBEDIENCE))
+                    (*itr)->CastSpell((*itr),SPELL_HOPELESS,true);
+            }
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_RAZUVIOUS, DONE);
@@ -102,6 +143,17 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_RAZUVIOUS, IN_PROGRESS);
+
+        GetCreatureListWithEntryInGrid(m_lDeathKnightList, m_creature, NPC_DEATH_KNIGHT_UNDERSTUDY, 100.0f);
+        if (!m_lDeathKnightList.empty())
+            for(std::list<Creature*>::iterator itr = m_lDeathKnightList.begin(); itr != m_lDeathKnightList.end(); ++itr)
+            {
+                (*itr)->AI()->AttackStart(pWho);
+                (*itr)->SetPvP(true);
+            }
+
+        m_creature->SetInCombatWithZone();
+		m_creature->CallForHelp(50.0f);
     }
 
     void JustReachedHome()
@@ -118,29 +170,27 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         // Unbalancing Strike
         if (m_uiUnbalancingStrikeTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_UNBALANCING_STRIKE) == CAST_OK)
-                m_uiUnbalancingStrikeTimer = 30000;
+            DoCast(m_creature->getVictim(), SPELL_UNBALANCING_STRIKE);
+            m_uiUnbalancingStrikeTimer = urand(7000, 8000);;
         }
-        else
+        else 
             m_uiUnbalancingStrikeTimer -= uiDiff;
 
         // Disrupting Shout
         if (m_uiDisruptingShoutTimer < uiDiff)
         {
-            if (DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_DISRUPTING_SHOUT : SPELL_DISRUPTING_SHOUT_H) == CAST_OK)
-                m_uiDisruptingShoutTimer = 25000;
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_DISRUPTING_SHOUT : SPELL_DISRUPTING_SHOUT_H);
+            m_uiDisruptingShoutTimer = 15000;
         }
-        else
+        else 
             m_uiDisruptingShoutTimer -= uiDiff;
 
         // Jagged Knife
         if (m_uiJaggedKnifeTimer < uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-            {
-                if (DoCastSpellIfCan(pTarget, SPELL_JAGGED_KNIFE) == CAST_OK)
-                    m_uiJaggedKnifeTimer = 10000;
-            }
+                DoCast(pTarget, SPELL_JAGGED_KNIFE, true);
+            m_uiJaggedKnifeTimer = 10000;
         }
         else
             m_uiJaggedKnifeTimer -= uiDiff;
@@ -164,6 +214,7 @@ struct MANGOS_DLL_DECL boss_razuviousAI : public ScriptedAI
         DoMeleeAttackIfReady();
     }
 };
+
 CreatureAI* GetAI_boss_razuvious(Creature* pCreature)
 {
     return new boss_razuviousAI(pCreature);
@@ -176,5 +227,10 @@ void AddSC_boss_razuvious()
     pNewScript = new Script;
     pNewScript->Name = "boss_razuvious";
     pNewScript->GetAI = &GetAI_boss_razuvious;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_obedience_crystal";
+    pNewScript->pGossipHello = &GossipHello_npc_obedience_crystal;
     pNewScript->RegisterSelf();
 }
