@@ -117,6 +117,15 @@ void instance_naxxramas::OnCreatureCreate(Creature* pCreature)
     }
 }
 
+void instance_naxxramas::OnCreatureDeath(Creature* pCreature)
+{
+    if(pCreature->GetEntry() == NPC_BIGGLESWORTH)
+    {
+        if(Creature* pKel = GetRealOrFakeKel(pCreature))
+            pKel->MonsterYellToZone(SAY_MR_BIGGLESWORTH,LANG_UNIVERSAL,0);
+    }
+}
+
 void instance_naxxramas::OnObjectCreate(GameObject* pGo)
 {
     switch(pGo->GetEntry())
@@ -277,8 +286,9 @@ void instance_naxxramas::OnPlayerDeath(Player* pPlayer)
     if (IsEncounterInProgress())
         SetData(TYPE_UNDYING_FAILED, DONE);
 
-    if (GetData(TYPE_HEIGAN) == IN_PROGRESS)
-        SetSpecialAchievementCriteria(TYPE_ACHIEV_SAFETY_DANCE, false);
+    // not used, achievement handled in heigan script
+    //if (GetData(TYPE_HEIGAN) == IN_PROGRESS)
+    //    SetSpecialAchievementCriteria(TYPE_ACHIEV_SAFETY_DANCE, false);
 }
 
 bool instance_naxxramas::IsEncounterInProgress() const
@@ -342,7 +352,7 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
         case TYPE_HEIGAN:
             m_auiEncounter[4] = uiData;
             DoUseDoorOrButton(m_uiHeigEntryDoorGUID);
-            // uncomment when eruption is implemented
+            // not used, achievement handled by heigan script
             //if (uiData == IN_PROGRESS)
             //    SetSpecialAchievementCriteria(TYPE_ACHIEV_SAFETY_DANCE, true);
             if (uiData == DONE)
@@ -715,7 +725,7 @@ void instance_naxxramas::SetChamberCenterCoords(float fX, float fY, float fZ)
 
 void instance_naxxramas::DoTaunt()
 {
-    Creature* pKelThuzad = instance->GetCreature(m_uiKelthuzadGUID);
+    Creature* pKelThuzad = GetRealOrFakeKel(instance->GetPlayers().begin()->getSource());
 
     if (pKelThuzad && pKelThuzad->isAlive())
     {
@@ -741,6 +751,20 @@ void instance_naxxramas::DoTaunt()
             case 4: DoScriptText(SAY_KELTHUZAD_TAUNT4, pKelThuzad); break;
         }
     }
+}
+
+Creature* instance_naxxramas::GetRealOrFakeKel(Unit* pUnit)
+{
+    Creature* pKel = instance->GetCreature(m_uiKelthuzadGUID);
+    if(!pKel && pUnit)
+        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28,-3434.1,293.89,0,TEMPSUMMON_TIMED_DESPAWN,3000))
+        {
+            pFakeKel->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
+            pFakeKel->setFaction(35);
+            pFakeKel->SetVisibility(VISIBILITY_OFF);
+            pKel = pFakeKel;
+        }
+    return pKel;
 }
 
 InstanceData* GetInstanceData_instance_naxxramas(Map* pMap)
