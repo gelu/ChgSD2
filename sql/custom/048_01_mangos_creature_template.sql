@@ -68,3 +68,13 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_valkyr_battle_maiden' WHERE `
 -- Death comes from on high (Quest - 12641)
 
 UPDATE `creature_template` SET `spell1` = '52006', `spell2` = '51859', `spell3` = '51904', `spell4` = '52694', `spell5` = '0', `InhabitType` = '3', `ScriptName` = 'npc_eye_of_acherus' WHERE `entry` = '28511';
+
+-- Instance Nexus
+
+UPDATE `creature_template` SET `ScriptName` = 'mob_crystal_spike' WHERE `entry` = '27099';
+UPDATE `creature_template` SET `ScriptName` = 'mob_crystalline_tangler' WHERE `entry` = '32665';
+
+-- Instance Utgarde Keep
+
+UPDATE `creature_template` SET `ScriptName` = 'mob_frost_tomb' WHERE `entry` = '23965';
+UPDATE `creature_template` SET `ScriptName` = 'mob_ingvar_throw_dummy' WHERE `entry` = '23997';

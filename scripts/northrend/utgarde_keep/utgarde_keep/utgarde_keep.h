@@ -19,6 +19,7 @@ enum
     NPC_KELESETH                = 23953,
     NPC_SKARVALD                = 24200,
     NPC_DALRONN                 = 24201,
+	NPC_INGVAR                  = 23954,
 
     NPC_FROST_TOMB              = 23965,
 
@@ -61,6 +62,7 @@ class MANGOS_DLL_DECL instance_utgarde_keep : public ScriptedInstance
         uint64 m_uiKelesethGUID;
         uint64 m_uiSkarvaldGUID;
         uint64 m_uiDalronnGUID;
+		uint64 m_uiIngvarGUID;
 
         uint64 m_uiBellow1GUID;
         uint64 m_uiBellow2GUID;
