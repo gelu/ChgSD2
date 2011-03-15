@@ -15,308 +15,372 @@
  */
 
 /* ScriptData
-SDName: Boss_Skarvald_and_Dalronn
-SD%Complete: 60%
-SDComment: TODO: correct timers
+SDName: Boss_Skarvald_Dalronn
+SD%Complete: 95
+SDComment: Needs adjustments to blizzlike timers, Yell Text + Sound to DB
 SDCategory: Utgarde Keep
 EndScriptData */
 
 #include "precompiled.h"
 #include "utgarde_keep.h"
 
-enum
+enum eEnums
 {
-    SAY_SKA_AGGRO                       = -1574011,
-    SAY_SKA_DEATH                       = -1574012,
-    SAY_SKA_DEATH_REAL                  = -1574013,
-    SAY_SKA_KILL                        = -1574014,
-    SAY_SKA_DAL_DIES_REPLY              = -1574015,
+    //signed for 24200, but used by 24200,27390
+    YELL_SKARVALD_AGGRO                         = -1574011,
+    YELL_SKARVALD_DAL_DIED                      = -1574012,
+    YELL_SKARVALD_SKA_DIEDFIRST                 = -1574013,
+    YELL_SKARVALD_KILL                          = -1574014,
+    YELL_SKARVALD_DAL_DIEDFIRST                 = -1574015,
 
-    SAY_DAL_AGGRO_REPLY                 = -1574016,
-    SAY_DAL_DEATH                       = -1574017,
-    SAY_DAL_DEATH_REAL                  = -1574018,
-    SAY_DAL_KILL                        = -1574019,
-    SAY_DAL_SKA_DIES_REPLY              = -1574020,
+    //signed for 24201, but used by 24201,27389
+    YELL_DALRONN_AGGRO                          = -1574016,
+    YELL_DALRONN_SKA_DIED                       = -1574017,
+    YELL_DALRONN_DAL_DIEDFIRST                  = -1574018,
+    YELL_DALRONN_KILL                           = -1574019,
+    YELL_DALRONN_SKA_DIEDFIRST                  = -1574020,
 
-    SPELL_SUMMON_DAL_GHOST              = 48612,
-    SPELL_SUMMON_SKA_GHOST              = 48613,
-
-    NPC_DAL_GHOST                       = 27389,
-    NPC_SKA_GHOST                       = 27390,
-
-    NPC_SKELETAL                        = 28878,            //summoned guardian in heroic
-
-    //skarvald
-    SPELL_CHARGE                        = 43651,
-    SPELL_STONE_STRIKE                  = 48583,
-    SPELL_ENRAGE                        = 48193,
-
-    //dalronn
-    SPELL_SHADOW_BOLT                   = 43649,
-    SPELL_SHADOW_BOLT_H                 = 59575,
-
-    SPELL_DEBILITATE                    = 43650,
-    SPELL_DEBILITATE_H                  = 59577,
-
-    SPELL_SUMMON_SKELETONS              = 52611
+	//Spells of Skarvald and his Ghost
+    MOB_SKARVALD_THE_CONSTRUCTOR                = 24200,
+    SPELL_CHARGE                                = 43651,
+    SPELL_STONE_STRIKE                          = 48583,
+    SPELL_SUMMON_SKARVALD_GHOST                 = 48613,
+    MOB_SKARVALD_GHOST                          = 27390,
+	//Spells of Dalronn and his Ghost
+    MOB_DALRONN_THE_CONTROLLER                  = 24201,
+    SPELL_SHADOW_BOLT                           = 43649,
+    H_SPELL_SHADOW_BOLT                         = 59575,
+    H_SPELL_SUMMON_SKELETONS                    = 52611,
+    SPELL_DEBILITATE                            = 43650,
+    SPELL_SUMMON_DALRONN_GHOST                  = 48612,
+    MOB_DALRONN_GHOST                           = 27389
 };
 
-struct Yell
+struct MANGOS_DLL_DECL boss_skarvald_the_constructorAI : public ScriptedAI
 {
-    int32   m_iTextId;
-    int32   m_iTextReplyId;
-};
-
-Yell m_aYell[] =
-{
-    {SAY_SKA_AGGRO, SAY_DAL_AGGRO_REPLY},
-    {SAY_SKA_DEATH, SAY_DAL_SKA_DIES_REPLY},
-    {SAY_DAL_DEATH, SAY_SKA_DAL_DIES_REPLY}
-};
-
-struct MANGOS_DLL_DECL boss_s_and_d_dummyAI : public ScriptedAI
-{
-    boss_s_and_d_dummyAI(Creature* pCreature) : ScriptedAI(pCreature)
+    boss_skarvald_the_constructorAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
-        m_uiGhostGUID = 0;
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    bool m_bIsRegularMode;
-    uint64 m_uiGhostGUID;
+	bool m_bIsRegularMode;
 
-    Creature* GetBuddy()
-    {
-        if (!m_pInstance)
-            return NULL;
+    bool ghost;
+    uint32 Charge_Timer;
+    uint32 StoneStrike_Timer;
+    uint32 Response_Timer;
+    uint32 Check_Timer;
+    bool Dalronn_isDead;
 
-        return m_pInstance->instance->GetCreature(m_pInstance->GetData64(m_creature->GetEntry() == NPC_DALRONN ? NPC_SKARVALD : NPC_DALRONN));
-    }
-
-    void Reset() { }
-
-    void JustReachedHome()
-    {
-        if (Creature* pBuddy = GetBuddy())
-        {
-            if (pBuddy->isDead())
-                pBuddy->Respawn();
-        }
-
-        if (Creature* pGhost = m_creature->GetMap()->GetCreature(m_uiGhostGUID))
-        {
-            if (pGhost->isAlive())
-                pGhost->ForcedDespawn();
-        }
-    }
-
-    void EnterCombat(Unit* pWho)
-    {
-        if (!pWho)
-            return;
-
-        if (Creature* pBuddy = GetBuddy())
-        {
-            if (!pBuddy->getVictim())
-                pBuddy->AI()->AttackStart(pWho);
-        }
-
-        Aggro(pWho);
-    }
-
-    void JustSummoned(Creature* pSummoned)
-    {
-        // EventAI can probably handle ghosts
-        if (pSummoned->GetEntry() == NPC_DAL_GHOST || pSummoned->GetEntry() == NPC_SKA_GHOST)
-            m_uiGhostGUID = pSummoned->GetGUID();
-
-        Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO,1);
-
-        if (m_creature->getVictim())
-            pSummoned->AI()->AttackStart(pTarget ? pTarget : m_creature->getVictim());
-    }
-
-    void JustDied(Unit* pKiller)
-    {
-        if (Creature* pBuddy = GetBuddy())
-        {
-            if (pBuddy->isAlive())
-            {
-                DoScriptText(m_creature->GetEntry() == NPC_SKARVALD ? m_aYell[1].m_iTextId : m_aYell[2].m_iTextId, m_creature);
-                DoScriptText(m_creature->GetEntry() == NPC_SKARVALD ? m_aYell[1].m_iTextReplyId : m_aYell[2].m_iTextReplyId, pBuddy);
-
-                pBuddy->CastSpell(m_creature, m_creature->GetEntry() == NPC_SKARVALD ? SPELL_SUMMON_SKA_GHOST : SPELL_SUMMON_DAL_GHOST, true);
-
-                m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            }
-            else
-            {
-                if (Creature* pGhost = m_creature->GetMap()->GetCreature(m_uiGhostGUID))
-                    pGhost->ForcedDespawn();
-
-                pBuddy->SetFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
-            }
-        }
-    }
-};
-
-/*######
-## boss_skarvald
-######*/
-
-struct MANGOS_DLL_DECL boss_skarvaldAI : public boss_s_and_d_dummyAI
-{
-    boss_skarvaldAI(Creature* pCreature) : boss_s_and_d_dummyAI(pCreature) { Reset(); }
-
-    uint32 m_uiYellDelayTimer;
-    uint32 m_uiChargeTimer;
-    uint32 m_uiEnrageTimer;
-    uint32 m_uiStoneStrikeTimer;
+    Creature* pGhost;
 
     void Reset()
     {
-        m_uiYellDelayTimer = 0;
-        m_uiChargeTimer = urand(2000, 6000);
-        m_uiEnrageTimer = 15000;
-        m_uiStoneStrikeTimer = 8000;
+        Charge_Timer = 5000;
+        StoneStrike_Timer = 10000;
+        Dalronn_isDead = false;
+        Check_Timer = 5000;
+
+        ghost = (m_creature->GetEntry() == MOB_SKARVALD_GHOST);
+        if (!ghost && m_pInstance)
+        {
+            Unit* dalronn = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_DALRONN)));
+            if (dalronn && dalronn->isDead())
+                ((Creature*)dalronn)->Respawn();
+
+            m_pInstance->SetData(TYPE_SKARVALD_DALRONN, NOT_STARTED);
+        }
     }
 
-    void Aggro(Unit* pWho)
+    void EnterCombat(Unit *who)
     {
-        DoScriptText(m_aYell[0].m_iTextId, m_creature);
-        m_uiYellDelayTimer = 5000;
+        if (!ghost && m_pInstance)
+        {
+            DoScriptText(YELL_SKARVALD_AGGRO,m_creature);
+
+            Unit* dalronn = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_DALRONN)));
+            if (dalronn && dalronn->isAlive() && !dalronn->getVictim())
+                dalronn->getThreatManager().addThreat(who,0.0f);
+
+            m_pInstance->SetData(TYPE_SKARVALD_DALRONN, IN_PROGRESS);
+        }
     }
 
-    void KilledUnit(Unit* pVictim)
+    void JustDied(Unit* Killer)
     {
-        DoScriptText(SAY_SKA_KILL, m_creature);
+        if (!ghost && m_pInstance)
+        {
+            Unit* dalronn = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_DALRONN)));
+            if (dalronn)
+            {
+                if (dalronn->isDead())
+                {
+                    DoScriptText(YELL_SKARVALD_DAL_DIED,m_creature);
+
+					m_pInstance->SetData(TYPE_SKARVALD_DALRONN, DONE);
+
+					if(pGhost = GetClosestCreatureWithEntry(m_creature, MOB_DALRONN_GHOST, 1000))
+						pGhost->ForcedDespawn();
+                }
+                else
+                {
+                    DoScriptText(YELL_SKARVALD_SKA_DIEDFIRST,m_creature);
+
+                    m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                    //DoCast(m_creature, SPELL_SUMMON_SKARVALD_GHOST, true);
+                    Creature* temp = m_creature->SummonCreature(MOB_SKARVALD_GHOST,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),0,TEMPSUMMON_CORPSE_DESPAWN,5000);
+                    if (temp)
+                    {
+                        temp->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+                        temp->AI()->AttackStart(Killer);
+                    }
+                }
+            }
+        }
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void KilledUnit(Unit *victim)
     {
+        if (!ghost)
+        {
+            DoScriptText(YELL_SKARVALD_KILL,m_creature);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (ghost)
+        {
+            if (m_pInstance && m_pInstance->GetData(TYPE_SKARVALD_DALRONN) != IN_PROGRESS)
+                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        }
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_uiYellDelayTimer)
+        if (!ghost)
         {
-            if (m_uiYellDelayTimer <= uiDiff)
-            {
-                if (Creature* pBuddy = GetBuddy())
-                    DoScriptText(m_aYell[0].m_iTextReplyId, pBuddy);
+            if (Check_Timer)
+                if (Check_Timer <= diff)
+                {
+                    Check_Timer = 5000;
+                    Unit* dalronn = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance ? m_pInstance->GetData64(NPC_DALRONN) : 0));
+                    if (dalronn && dalronn->isDead())
+                    {
+                        Dalronn_isDead = true;
+                        Response_Timer = 2000;
+                        Check_Timer = 0;
+                    }
+                } else Check_Timer -= diff;
 
-                m_uiYellDelayTimer = 0;
-            }
-            else
-                m_uiYellDelayTimer -= uiDiff;
+            if (Response_Timer)
+                if (Dalronn_isDead)
+                    if (Response_Timer <= diff)
+                    {
+                        DoScriptText(YELL_SKARVALD_DAL_DIEDFIRST,m_creature);
+
+                        Response_Timer = 0;
+                    } else Response_Timer -= diff;
         }
 
-        if (m_uiChargeTimer < uiDiff)
+        if (Charge_Timer <= diff)
         {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1))
-                DoCastSpellIfCan(pTarget, SPELL_CHARGE);
+            DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 1), SPELL_CHARGE);
+            Charge_Timer = 5000+rand()%5000;
+        } else Charge_Timer -= diff;
 
-            m_uiChargeTimer = urand(8000, 16000);
-        }
-        else
-            m_uiChargeTimer -= uiDiff;
-
-        if (m_uiEnrageTimer < uiDiff)
+        if (StoneStrike_Timer <= diff)
         {
-            DoCastSpellIfCan(m_creature, SPELL_ENRAGE);
-            m_uiEnrageTimer = 20000;
-        }
-        else
-            m_uiEnrageTimer -= uiDiff;
-
-        if (m_uiStoneStrikeTimer < uiDiff)
-        {
-            DoCastSpellIfCan(m_creature->getVictim(), SPELL_STONE_STRIKE);
-            m_uiStoneStrikeTimer = urand(5000, 15000);
-        }
-        else
-            m_uiStoneStrikeTimer -= uiDiff;
+            DoCast(m_creature->getVictim(), SPELL_STONE_STRIKE);
+            StoneStrike_Timer = 5000+rand()%5000;
+        } else StoneStrike_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
 
-CreatureAI* GetAI_boss_skarvald(Creature* pCreature)
+CreatureAI* GetAI_boss_skarvald_the_constructor(Creature* pCreature)
 {
-    return new boss_skarvaldAI(pCreature);
+    return new boss_skarvald_the_constructorAI (pCreature);
 }
 
-/*######
-## boss_dalronn
-######*/
-
-struct MANGOS_DLL_DECL boss_dalronnAI : public boss_s_and_d_dummyAI
+struct MANGOS_DLL_DECL boss_dalronn_the_controllerAI : public ScriptedAI
 {
-    boss_dalronnAI(Creature* pCreature) : boss_s_and_d_dummyAI(pCreature) { Reset(); }
+    boss_dalronn_the_controllerAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+        Reset();
+    }
 
-    uint32 m_uiDebilitateTimer;
-    uint32 m_uiShadowBoltTimer;
-    uint32 m_uiSkeletonTimer;
+    ScriptedInstance* m_pInstance;
+	bool m_bIsRegularMode;
+
+    bool ghost;
+    uint32 ShadowBolt_Timer;
+    uint32 Debilitate_Timer;
+    uint32 Summon_Timer;
+
+    uint32 Response_Timer;
+    uint32 Check_Timer;
+    uint32 AggroYell_Timer;
+    bool Skarvald_isDead;
+
+	Creature* pGhost;
 
     void Reset()
     {
-        m_uiDebilitateTimer = urand(5000, 10000);
-        m_uiShadowBoltTimer = urand(2500, 6000);
-        m_uiSkeletonTimer = urand(25000, 35000);
+        ShadowBolt_Timer = 1000;
+        Debilitate_Timer = 5000;
+        Summon_Timer = 10000;
+        Check_Timer = 5000;
+        Skarvald_isDead = false;
+        AggroYell_Timer = 0;
+
+        ghost = m_creature->GetEntry() == MOB_DALRONN_GHOST;
+        if (!ghost && m_pInstance)
+        {
+            Unit* skarvald = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_SKARVALD)));
+            if (skarvald && skarvald->isDead())
+               ((Creature*)skarvald)->Respawn();
+
+            m_pInstance->SetData(TYPE_SKARVALD_DALRONN, NOT_STARTED);
+        }
     }
 
-    void KilledUnit(Unit* pVictim)
+    void EnterCombat(Unit *who)
     {
-        DoScriptText(SAY_DAL_KILL, m_creature);
+        if (!ghost && m_pInstance)
+        {
+            Unit* skarvald = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_SKARVALD)));
+            if (skarvald && skarvald->isAlive() && !skarvald->getVictim())
+                skarvald->getThreatManager().addThreat(who,0.0f);
+
+            AggroYell_Timer = 5000;
+
+            if (m_pInstance)
+                m_pInstance->SetData(TYPE_SKARVALD_DALRONN, IN_PROGRESS);
+        }
     }
 
-    void UpdateAI(const uint32 uiDiff)
+    void JustDied(Unit* Killer)
     {
+        if (!ghost && m_pInstance)
+        {
+            Unit* skarvald = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance->GetData64(NPC_SKARVALD)));
+            if (skarvald)
+                if (skarvald->isDead())
+                {
+                    DoScriptText(YELL_DALRONN_SKA_DIED,m_creature);
+
+                    m_pInstance->SetData(TYPE_SKARVALD_DALRONN, DONE);
+					
+					if(pGhost = GetClosestCreatureWithEntry(m_creature, MOB_SKARVALD_GHOST, 1000))
+						pGhost->ForcedDespawn();
+                }
+                else
+                {
+                    DoScriptText(YELL_DALRONN_DAL_DIEDFIRST,m_creature);
+
+                    m_creature->RemoveFlag(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_LOOTABLE);
+                    //DoCast(m_creature, SPELL_SUMMON_DALRONN_GHOST, true);
+                    Creature* temp = m_creature->SummonCreature(MOB_DALRONN_GHOST,m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),0,TEMPSUMMON_CORPSE_DESPAWN,5000);
+                    if (temp)
+                    {
+                        temp->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NON_ATTACKABLE);
+                        temp->AI()->AttackStart(Killer);
+                    }
+                }
+        }
+    }
+
+    void KilledUnit(Unit *victim)
+    {
+        if (!ghost)
+        {
+            DoScriptText(YELL_DALRONN_KILL,m_creature);
+        }
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+        if (ghost)
+        {
+            if (m_pInstance && m_pInstance->GetData(TYPE_SKARVALD_DALRONN) != IN_PROGRESS)
+                m_creature->DealDamage(m_creature, m_creature->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+        }
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (m_uiDebilitateTimer < uiDiff)
+        if (AggroYell_Timer)
+            if (AggroYell_Timer <= diff)
+            {
+                DoScriptText(YELL_DALRONN_AGGRO,m_creature);
+
+                AggroYell_Timer = 0;
+            } else AggroYell_Timer -= diff;
+
+        if (!ghost)
         {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_DEBILITATE : SPELL_DEBILITATE_H);
+            if (Check_Timer)
+                if (Check_Timer <= diff)
+                {
+                    Check_Timer = 5000;
+                    Unit* skarvald = m_creature->GetMap()->GetUnit(ObjectGuid(m_pInstance ? m_pInstance->GetData64(NPC_SKARVALD) : 0));
+                    if (skarvald && skarvald->isDead())
+                    {
+                        Skarvald_isDead = true;
+                        Response_Timer = 2000;
+                        Check_Timer = 0;
+                    }
+                } else Check_Timer -= diff;
 
-            m_uiDebilitateTimer = urand(12000, 20000);
+            if (Response_Timer)
+                if (Skarvald_isDead)
+                    if (Response_Timer <= diff)
+                    {
+                        DoScriptText(YELL_DALRONN_SKA_DIEDFIRST,m_creature);
+
+                        Response_Timer = 0;
+                    } else Response_Timer -= diff;
         }
-        else
-            m_uiDebilitateTimer -= uiDiff;
 
-        if (m_uiShadowBoltTimer < uiDiff)
+        if (ShadowBolt_Timer <= diff)
         {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCastSpellIfCan(pTarget, m_bIsRegularMode ? SPELL_SHADOW_BOLT : SPELL_SHADOW_BOLT_H);
+            if (!m_creature->IsNonMeleeSpellCasted(false))
+            {
+				DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0), m_bIsRegularMode ? SPELL_SHADOW_BOLT : H_SPELL_SHADOW_BOLT);
+                ShadowBolt_Timer = 1000;
+            }
+        } else ShadowBolt_Timer -= diff;
 
-            m_uiShadowBoltTimer = urand(3000, 6000);
-        }
-        else
-            m_uiShadowBoltTimer -= uiDiff;
+        if (Debilitate_Timer <= diff)
+        {
+            if (!m_creature->IsNonMeleeSpellCasted(false))
+             {
+                DoCast(m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0), SPELL_DEBILITATE);
+                Debilitate_Timer = 5000+rand()%5000;
+            }
+        } else Debilitate_Timer -= diff;
 
         if (!m_bIsRegularMode)
-        {
-            if (m_uiSkeletonTimer < uiDiff)
+            if (Summon_Timer <= diff)
             {
-                if (!m_creature->FindGuardianWithEntry(NPC_SKELETAL))
-                    DoCastSpellIfCan(m_creature, SPELL_SUMMON_SKELETONS);
-
-                m_uiSkeletonTimer = 30000;
-            }
-            else
-                m_uiSkeletonTimer -= uiDiff;
-        }
+                DoCast(m_creature, H_SPELL_SUMMON_SKELETONS);
+                Summon_Timer = (rand()%10000) + 20000;
+            } else Summon_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
 
-CreatureAI* GetAI_boss_dalronn(Creature* pCreature)
+CreatureAI* GetAI_boss_dalronn_the_controller(Creature* pCreature)
 {
-    return new boss_dalronnAI(pCreature);
+    return new boss_dalronn_the_controllerAI (pCreature);
 }
 
 void AddSC_boss_skarvald_and_dalronn()
@@ -325,11 +389,11 @@ void AddSC_boss_skarvald_and_dalronn()
 
     newscript = new Script;
     newscript->Name = "boss_skarvald";
-    newscript->GetAI = &GetAI_boss_skarvald;
+    newscript->GetAI = &GetAI_boss_skarvald_the_constructor;
     newscript->RegisterSelf();
 
     newscript = new Script;
     newscript->Name = "boss_dalronn";
-    newscript->GetAI = &GetAI_boss_dalronn;
+    newscript->GetAI = &GetAI_boss_dalronn_the_controller;
     newscript->RegisterSelf();
 }
