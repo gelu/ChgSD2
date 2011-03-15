@@ -59,6 +59,7 @@ UPDATE `creature_template` SET `ScriptName` = 'boss_stalagg', `AIName` = '' WHER
 UPDATE `creature_template` SET `ScriptName` = 'boss_feugen', `AIName` = '' WHERE `entry` = '15930';
 UPDATE `creature_template` SET `ScriptName` = 'boss_thaddius', `AIName` = '' WHERE `entry` = '15928';
 UPDATE `creature_template` SET `ScriptName` = 'npc_obedience_crystal' WHERE `entry` = '29912';
+UPDATE `creature_template` SET `ScriptName` = 'mob_void_zone_naxx' WHERE `entry` = '16697';
 
 -- ScriptName for Val'Kyr Resurrection Event in Ebon Hold
 
