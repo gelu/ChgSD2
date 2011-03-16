@@ -1163,11 +1163,11 @@ enum eEyeOfAcherus
     DISPLAYID_EYE_HUGE      = 26320,
     DISPLAYID_EYE_SMALL     = 25499,
 
-    SPELL_EYE_PHASEMASK     = 70889,
+    //SPELL_EYE_PHASEMASK     = 70889,
     SPELL_EYE_VISUAL        = 51892,
     //SPELL_EYE_FL_BOOST_RUN  = 51923,
     SPELL_EYE_FL_BOOST_FLY  = 51890,
-    SPELL_EYE_CONTROL       = 51852,
+    //SPELL_EYE_CONTROL       = 51852,
 
     TEXT_EYE_UNDER_CONTROL  = -1666452,
     TEXT_EYE_LAUNCHED       = -1666451,
@@ -1180,70 +1180,81 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         Reset();
     }
 
-	uint32 m_uiStartTimer;
-    bool m_bIsActive;
+    uint32  ControlInformTimer, FlyStartTimer;
+    bool    ControlInform, FlyStart;
 
     void Reset()
     {
 		if(Unit* pController = m_creature->GetCharmer())
 			m_creature->SetLevel(pController->getLevel());
 
-		m_creature->CastSpell(m_creature, 51890, true);
+        // I think those morphs are not blizzlike...
         m_creature->SetDisplayId(DISPLAYID_EYE_HUGE);
-        
-		m_bIsActive = false;
-		m_uiStartTimer = 2000;
+
+		ControlInformTimer  = 2000;
+        FlyStartTimer       = 3000;
+
+        ControlInform       = true;
+        FlyStart            = true;
+
+        // the visual summon effect + remove player control for now
+        m_creature->CastSpell(m_creature, SPELL_EYE_VISUAL, true);
+        ((Player*)(m_creature->GetCharmer()))->SetClientControl(m_creature, 0);
     }
 
-    void AttackStart(Unit *)
-    {
-    }
+    void AttackStart(Unit *) {}
+    void MoveInLineOfSight(Unit *) {}
 
-    void MoveInLineOfSight(Unit *)
-    {
-    }
-
-    void JustDied(Unit* /*pKiller*/)
-    {
-        if (Unit* charmer = m_creature->GetCharmer())
-            charmer->RemoveAurasDueToSpell(SPELL_EYE_CONTROL);
-    }
-
-	/* THIS PART DOESN'T WORK FOR NOW!!! 
     void MovementInform(uint32 uiType, uint32 uiPointId)
     {
        if (uiType != POINT_MOTION_TYPE || uiPointId != 0)
             return;
 
         DoScriptText(TEXT_EYE_UNDER_CONTROL, m_creature);
+        // I think those morphs are not blizzlike...
         m_creature->SetDisplayId(DISPLAYID_EYE_SMALL);
+
+        // for some reason it does not work when this spell is casted before the waypoint movement
         m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
+        ((Player*)(m_creature->GetCharmer()))->SetClientControl(m_creature, 1);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
-        if (m_creature->isCharmed())
+        if (ControlInform)
         {
-            if (m_uiStartTimer <=  uiDiff && !m_bIsActive)
+            if (ControlInformTimer < uiDiff)
             {
-                m_creature->CastSpell(m_creature, SPELL_EYE_PHASEMASK, true);
-                m_creature->CastSpell(m_creature, SPELL_EYE_VISUAL, true);
-                m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_FLY, true);
                 DoScriptText(TEXT_EYE_LAUNCHED, m_creature);
-                m_creature->GetMotionMaster()->MovePoint(0, 1750.8276f, -5873.788f, 147.2266f);
-                m_bIsActive = true;
+                ControlInform = false;
             }
-			else
-				m_uiStartTimer -= uiDiff;
+            else
+                ControlInformTimer -= uiDiff;
         }
-        else
-            m_creature->ForcedDespawn();
+
+        // fly to start point
+        if (FlyStart)
+        {
+            if (FlyStartTimer < uiDiff)
+            {
+                // workaround for faster flight speed
+                //m_creature->CastSpell(m_creature, SPELL_EYE_FL_BOOST_RUN, true);
+                m_creature->SetSpeedRate(MOVE_FLIGHT , 6.4f,true);
+
+                // start moving
+                m_creature->GetMotionMaster()->MovePoint(0, 1711.0f, -5820.0f, 147.0f);
+                FlyStart = false;
+            }
+		    else FlyStartTimer -= uiDiff;
+        }
     }
-	*/
 };
 
 CreatureAI* GetAI_npc_eye_of_acherus(Creature* pCreature)
 {
+    if (!pCreature->IsPossessedSummon())
+        return NULL;
+
     return new npc_eye_of_acherusAI(pCreature);
 }
 
