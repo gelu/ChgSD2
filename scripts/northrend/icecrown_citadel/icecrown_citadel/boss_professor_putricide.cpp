@@ -80,6 +80,7 @@ enum BossSpells
 
     SPELL_BERSERK                 = 47008,
     QUEST_24749                   = 71518,
+    SHADOW_INFUSION_AURA          = 71516,
 //
     VIEW_1                        = 30881,
     VIEW_2                        = 30881,
@@ -136,13 +137,14 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
     void KilledUnit(Unit* pVictim)
     {
-    switch (urand(0,1)) {
-        case 0:
-               DoScriptText(-1631241,m_creature,pVictim);
-               break;
-        case 1:
-               DoScriptText(-1631242,m_creature,pVictim);
-               break;
+        switch (urand(0,1)) 
+        {
+            case 0:
+                DoScriptText(-1631241,m_creature,pVictim);
+                break;
+            case 1:
+                DoScriptText(-1631242,m_creature,pVictim);
+                break;
         }
     }
 
@@ -164,6 +166,9 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
 
         pInstance->SetData(TYPE_PUTRICIDE, IN_PROGRESS);
         DoScriptText(-1631249,m_creature, pWho);
+
+        if (Unit* pTarget = doSelectRandomPlayer(SPELL_SHADOWS_EDGE, true, 100.0f))
+            doAura(SHADOW_INFUSION_AURA,pTarget);
     }
 
     void JustDied(Unit *killer)
@@ -171,14 +176,8 @@ struct MANGOS_DLL_DECL boss_proffesor_putricideAI : public BSWScriptedAI
         if (!pInstance) return;
         pInstance->SetData(TYPE_PUTRICIDE, DONE);
         DoScriptText(-1631243,m_creature, killer);
-        for (uint8 i = 0; i < 5; i++)
-        {
-             if (Unit* pPlayer = doSelectRandomPlayer(SPELL_MUTATED_PLAGUE, true, 100.0f))
-             {
-                 doCast(QUEST_24749, pPlayer);
-                 doRemove(SPELL_MUTATED_PLAGUE, pPlayer);
-             }
-        }
+
+        doCast(QUEST_24749);
     }
 
     void JustSummoned(Creature* summoned)
