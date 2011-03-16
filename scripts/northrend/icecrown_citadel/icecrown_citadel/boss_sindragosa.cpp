@@ -52,6 +52,8 @@ enum BossSpells
 
     SPELL_FLY                = 59553,
     QUEST_24757              = 72289,
+    FROST_IMBUED_BLADE_AURA  = 72290,
+
     SPELL_BERSERK            = 47008,
 
 // Rimefang
@@ -162,6 +164,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
 
         DoScriptText(-1631420,m_creature,who);
         doCast(SPELL_FROST_AURA_1);
+
+        if (Unit* pTarget = doSelectRandomPlayer(SPELL_SHADOWS_EDGE, true, 100.0f))
+            doAura(FROST_IMBUED_BLADE_AURA,pTarget);
     }
 
     void JustDied(Unit *killer)
@@ -171,7 +176,9 @@ struct MANGOS_DLL_DECL boss_sindragosaAI : public BSWScriptedAI
         doRemoveFromAll(SPELL_ICY_TOMB);
         pInstance->SetData(TYPE_SINDRAGOSA, DONE);
         DoScriptText(-1631423,m_creature,killer);
+
         doCast(QUEST_24757);
+
         if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_RIMEFANG)))
             pTemp->SetRespawnDelay(7*DAY);
         if (Creature* pTemp = m_creature->GetMap()->GetCreature(pInstance->GetData64(NPC_SPINESTALKER)))

@@ -146,6 +146,7 @@ enum
     DATA_DIRECTION              = 1001,
     DATA_BLOOD_INVOCATION       = 1002,
     DESPAWN_TIME                = 300000,
+    SPELL_SHADOWS_EDGE          = 71168,
 
 };
 
