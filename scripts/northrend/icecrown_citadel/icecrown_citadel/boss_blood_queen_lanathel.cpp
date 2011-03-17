@@ -22,7 +22,7 @@ SDCategory: Icecrown Citadel
 EndScriptData */
 // Need correct work of spells and timers
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 
 enum BossSpells
 {

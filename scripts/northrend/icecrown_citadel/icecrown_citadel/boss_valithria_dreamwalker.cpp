@@ -22,7 +22,7 @@ SDCategory: Icecrown Citadel
 EndScriptData */
 // Need move emerald dream to phase 32, correct timers and other
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 
 static Locations SpawnLoc[]=
 {
