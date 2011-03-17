@@ -2244,38 +2244,29 @@ CreatureAI* GetAI_npc_explosive_decoy(Creature* pCreature)
     return new npc_explosive_decoyAI(pCreature);
 }
 
+/*########
+# npc_eye_of_kilrogg AI
+#########*/
+
 struct MANGOS_DLL_DECL npc_eye_of_kilrogg : public ScriptedAI
 {
     npc_eye_of_kilrogg(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
 
-    Player* p_owner;
-
     void Reset()
     {
-        p_owner = NULL;
-    }
-
-    void UpdateAI(const uint32 diff)
-    {
-        if (p_owner)
-            return;
-
-        p_owner = (Player*)m_creature->GetCharmerOrOwner();
-
-        if (!p_owner)
-            return;
-
-        if (!m_creature->HasAura(2585))
-            m_creature->CastSpell(m_creature, 2585, true);
-
-        if (p_owner->HasAura(58081))
+        // Glyph of Eye of Kilrogg HACK, TODO: area check!
+        if (m_creature->GetCharmerOrOwner()->HasAura(58081))
             m_creature->CastSpell(m_creature, 58083, true);
-
     }
+
+    void UpdateAI(const uint32 diff) {}
 };
 
 CreatureAI* GetAI_npc_eye_of_kilrogg(Creature* pCreature)
 {
+    if (!pCreature->IsPossessedSummon())
+        return NULL;
+
     return new npc_eye_of_kilrogg(pCreature);
 }
 
