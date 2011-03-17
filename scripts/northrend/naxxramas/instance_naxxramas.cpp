@@ -75,6 +75,8 @@ instance_naxxramas::instance_naxxramas(Map* pMap) : ScriptedInstance(pMap),
     m_uiHeigExitDoorGUID(0),
     m_uiLoathebDoorGUID(0),
 
+    m_uiSapphironBirthGUID(0),
+
     m_uiKelthuzadDoorGUID(0),
     m_uiKelthuzadExitDoorGUID(0),
 
@@ -263,6 +265,9 @@ void instance_naxxramas::OnObjectCreate(GameObject* pGo)
             break;
         case GO_CONS_PORTAL:
             m_uiConsPortalGUID = pGo->GetGUID();
+            break;
+        case GO_SAPPHIRON_BIRTH:
+            m_uiSapphironBirthGUID = pGo->GetGUID();
             break;
     }
 
@@ -582,6 +587,8 @@ uint64 instance_naxxramas::GetData64(uint32 uiData)
             return m_uiGothikGUID;
         case NPC_KELTHUZAD:
             return m_uiKelthuzadGUID;
+        case GO_SAPPHIRON_BIRTH:
+            return m_uiSapphironBirthGUID;
         default:
             return 0;
     }

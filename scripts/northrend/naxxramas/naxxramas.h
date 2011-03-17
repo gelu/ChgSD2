@@ -125,6 +125,7 @@ enum
     // Frostwyrm Lair
     GO_KELTHUZAD_WATERFALL_DOOR = 181225,                   // exit, open after sapphiron is dead
     GO_KELTHUZAD_EXIT_DOOR      = 181228,
+    GO_SAPPHIRON_BIRTH          = 181356,
 
     // Eyes
     GO_ARAC_EYE_RAMP            = 181212,
@@ -276,6 +277,8 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiHeigExitDoorGUID;
         uint64 m_uiLoathebDoorGUID;
         std::vector<uint64> m_avuiHeiganTraps[MAX_HEIGAN_TRAP_AREAS];
+
+        uint64 m_uiSapphironBirthGUID;
 
         uint64 m_uiKelthuzadDoorGUID;
         uint64 m_uiKelthuzadExitDoorGUID;

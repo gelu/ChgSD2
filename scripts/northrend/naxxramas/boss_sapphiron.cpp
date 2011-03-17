@@ -256,7 +256,7 @@ struct MANGOS_DLL_DECL boss_sapphironAI : public ScriptedAI
 
         if (m_bLandingDelay)
         {
-            if (m_uim_bLandingDelay_Timer < diaff)
+            if (m_uim_bLandingDelay_Timer < diff)
             {
                 m_bLandPhase = true;
                 m_creature->MonsterTextEmote("Sapphiron resumes his attacks!", NULL, true);
