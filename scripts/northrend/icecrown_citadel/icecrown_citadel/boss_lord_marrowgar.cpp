@@ -21,7 +21,7 @@ SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 enum
 {
         //common
@@ -131,7 +131,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public BSWScriptedAI
         {
             case 0: 
                     if (timedQuery(SPELL_BONE_STRIKE, diff))
-                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BONE_STRIKE_IMPALE, false, 60.0f))
+                        if (Unit* pTarget = doSelectRandomPlayer(SPELL_BONE_STRIKE_IMPALE, false, 60.0f, isHeroic()))
                             if (doCast(SPELL_BONE_STRIKE, pTarget) == CAST_OK)
                             {
                                 doSummonSpike(pTarget);

@@ -784,7 +784,7 @@ CanCastResult BSWScriptedAI::_DoCastSpellIfCan(Unit* pTarget, uint32 uiSpell, ui
 
 // Not threat-based select random player function
 
-Unit* BSWScriptedAI::_doSelect(uint32 SpellID, bool spellsearchtype, float range)
+Unit* BSWScriptedAI::_doSelect(uint32 SpellID, bool spellsearchtype, float range, bool includeVictim)
 {
     Map* pMap = m_creature->GetMap();
     Map::PlayerList const &pList = pMap->GetPlayers();
@@ -799,6 +799,8 @@ Unit* BSWScriptedAI::_doSelect(uint32 SpellID, bool spellsearchtype, float range
             if (player->isGameMaster()) continue;
 
             if (!player->IsInMap(m_creature)) continue;
+
+            if (player == m_creature->getVictim() && !includeVictim) continue;
 
             if (player->isAlive()
                 && player->IsWithinDistInMap(m_creature, range)

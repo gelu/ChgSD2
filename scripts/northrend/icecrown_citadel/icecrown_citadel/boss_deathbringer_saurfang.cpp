@@ -21,7 +21,7 @@ SDComment: by /dev/rsa
 SDCategory: Icecrown Citadel
 EndScriptData */
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 
 enum
 {
