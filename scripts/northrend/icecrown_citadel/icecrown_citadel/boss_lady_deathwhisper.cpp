@@ -22,7 +22,7 @@ SDCategory: Icecrown Citadel
 EndScriptData */
 // Need correct spells on adds and timers
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 enum BossSpells
 {
         //common
@@ -70,9 +70,9 @@ static Locations SpawnLoc[]=
     {-578.495728f, 2149.211182f, 50.848679f},  // 4 Left Door 1
     {-598.636353f, 2149.211182f, 50.848679f},  // 5 Left Door 2
     {-620.197449f, 2149.211182f, 50.848679f},  // 6 Left Door 3
-    {-517.652466f, 2216.611328f, 62.823681f},  // 7 Upper marsh 1
-    {-517.652466f, 2211.611328f, 62.823681f},  // 8 Upper marsh 2
-    {-517.652466f, 2206.611328f, 62.823681f},  // 9 Upper marsh 3
+    {-525.652466f, 2216.611328f, 62.823681f},  // 7 Upper marsh 1
+    {-525.652466f, 2211.611328f, 62.823681f},  // 8 Upper marsh 2
+    {-525.652466f, 2206.611328f, 62.823681f},  // 9 Upper marsh 3
 };
 
 struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI

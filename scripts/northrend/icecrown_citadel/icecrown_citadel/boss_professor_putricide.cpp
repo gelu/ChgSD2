@@ -23,7 +23,7 @@ EndScriptData */
 // Need implement model (aura?) for phase 2 and visual effects
 // I don't know how do mutated_abomination :(
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 
 enum BossSpells
 {
