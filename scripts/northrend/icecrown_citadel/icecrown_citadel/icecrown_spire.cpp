@@ -22,7 +22,7 @@ SDCategory: Icecrown Citadel - mobs
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_spire.h"
+#include "icecrown_citadel.h"
 enum
 {
         SPELL_BERSERK                           = 47008,
