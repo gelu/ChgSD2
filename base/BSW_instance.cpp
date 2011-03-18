@@ -12,7 +12,8 @@ BSWScriptedInstance::BSWScriptedInstance(Map* pMap) : ScriptedInstance(pMap)
     m_auiEventTimer = 0;
     m_auiCreatureID = 0;
     m_auiEventLock  = false;
-    m_pMap = pMap;
+    m_pMap          = pMap;
+    m_objectGuidMap.clear();
 };
 
 BSWScriptedInstance::~BSWScriptedInstance()
@@ -100,4 +101,33 @@ bool BSWScriptedInstance::GetEventTimer(uint32 creatureID, const uint32 diff)
         m_auiEventTimer -= diff;
         return false;
     }
+}
+
+void BSWScriptedInstance::SetObject(Object* object)
+{
+    if (!object)
+        return;
+
+    m_objectGuidMap.insert(std::make_pair(object->GetEntry(), object->GetObjectGuid()));
+
+}
+
+ObjectGuid const& BSWScriptedInstance::GetInstanceObjectGuid(uint32 entry)
+{
+    std::map<uint32, ObjectGuid>::const_iterator itr = m_objectGuidMap.find(entry);
+
+    if (itr != m_objectGuidMap.end())
+        return itr->second;
+    else 
+        return ObjectGuid();
+
+}
+
+uint64 BSWScriptedInstance::GetInstanceObjectGUID(uint32 entry)
+{
+    ObjectGuid guid = GetInstanceObjectGuid(entry);
+    if (guid.IsEmpty())
+        return 0;
+    else
+        return guid.GetRawValue();
 }
