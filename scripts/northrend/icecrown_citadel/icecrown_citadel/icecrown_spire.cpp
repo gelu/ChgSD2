@@ -33,6 +33,8 @@ enum
 
         SPELL_STOMP                             = 64652,
         SPELL_DEATH_PLAGUE                      = 72865,
+//        SPELL_DEATH_PLAGUE                      = 72879,
+
 };
 
 struct MANGOS_DLL_DECL mob_spire_frostwyrmAI : public BSWScriptedAI

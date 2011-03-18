@@ -315,7 +315,7 @@
     <ClCompile Include="..\scripts\battlegrounds\battleground.cpp">
       <Filter>scripts\battlegrounds</Filter>
     </ClCompile>
-	<ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp">
+    <ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp">
       <Filter>scripts\battlegrounds</Filter>
     </ClCompile>
     <ClCompile Include="..\scripts\eastern_kingdoms\alterac_mountains.cpp">
@@ -1984,6 +1984,9 @@
     <ClCompile Include="..\scripts\northrend\nexus\eye_of_eternity\instance_eye_of_eternity.cpp">
       <Filter>scripts\northrend\nexus\eye_of_eternity</Filter>
     </ClCompile>
+    <ClCompile Include="..\scripts\eastern_kingdoms\scarlet_enclave\ebon_hold.cpp">
+      <Filter>scripts\eastern_kingdoms\scarlet_enclave</Filter>
+    </ClCompile>
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\blood_prince_council.cpp">
       <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
     </ClCompile>
@@ -2028,12 +2031,6 @@
     </ClCompile>
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_citadel.cpp">
       <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_spire.cpp">
-      <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scripts\eastern_kingdoms\scarlet_enclave\ebon_hold.cpp">
-      <Filter>scripts\eastern_kingdoms\scarlet_enclave</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2317,9 +2314,6 @@
     </ClInclude>
     <ClInclude Include="..\scripts\northrend\nexus\eye_of_eternity\eye_of_eternity.h">
       <Filter>scripts\northrend\nexus\eye_of_eternity</Filter>
-    </ClInclude>
-    <ClInclude Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\def_spire.h">
-      <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
     </ClInclude>
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_citadel.h">
       <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
