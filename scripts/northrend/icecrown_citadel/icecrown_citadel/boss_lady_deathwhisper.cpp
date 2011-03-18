@@ -365,7 +365,8 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public BSWScriptedAI
                 DoScriptText(-1631031,m_creature);
                 };
 
-         DoMeleeAttackIfReady();
+         if (!hasAura(SPELL_MANA_BARRIER, m_creature)) 
+             DoMeleeAttackIfReady();
     }
 };
 
