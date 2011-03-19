@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,9 +35,13 @@ EndScriptData */
 // battleground spiritguides - this script handles gossipHello
 // and JustDied also it let autocast the channel-spell
 
+/***
+** Spirit guide_battleground
+***/
+
 enum
 {
-    SPELL_SPIRIT_HEAL_CHANNEL       = 22011,                // Spirit Heal Channel
+    SPELL_SPIRIT_HEAL_CHANNEL1       = 22011,                // Spirit Heal Channel
 
     SPELL_SPIRIT_HEAL               = 22012,                // Spirit Heal
     SPELL_SPIRIT_HEAL_MANA          = 44535,                // in battlegrounds player get this no-mana-cost-buff
@@ -59,7 +63,7 @@ struct MANGOS_DLL_DECL npc_spirit_guideAI : public ScriptedAI
         if (!m_creature->GetCurrentSpell(CURRENT_CHANNELED_SPELL))
         {
             m_creature->CastSpell(m_creature, SPELL_SPIRIT_HEAL, true);
-            m_creature->CastSpell(m_creature, SPELL_SPIRIT_HEAL_CHANNEL, false);
+            m_creature->CastSpell(m_creature, SPELL_SPIRIT_HEAL_CHANNEL1, false);
         }
     }
 
@@ -103,6 +107,55 @@ CreatureAI* GetAI_npc_spirit_guide(Creature* pCreature)
     return new npc_spirit_guideAI(pCreature);
 }
 
+/****
+** Battle_ground_vehicle
+***/
+
+struct MANGOS_DLL_DECL npc_battleground_vehicleAI : public ScriptedAI
+{
+    npc_battleground_vehicleAI(Creature* pCreature) : ScriptedAI(pCreature) 
+    {
+        SetCombatMovement(false);
+        Reset();
+    }
+
+    void Reset()
+    {
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PASSIVE);
+    }
+
+    void EnterCombat(Unit *pEnemy)
+    {
+        if (!m_creature->isCharmed())
+            m_creature->CombatStop();
+    }
+
+    void Aggro(Unit* who)
+    {
+        // Theorically, we should never be here...
+        if (!m_creature->isCharmed())
+            m_creature->CombatStop(); 
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        if (!m_creature->isCharmed())
+            if (m_creature->isInCombat()) // And theorically, this should never happen... but it happens
+                m_creature->CombatStop();
+    }
+
+    void HealBy(Unit* pHealer, uint32 uiAmountHealed)
+    {
+        // Some spells like chain heals can heal vehicles, this prevents it:
+        m_creature->DealDamage(m_creature, uiAmountHealed, NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
+    }
+};
+
+CreatureAI* GetAI_npc_battleground_vehicle(Creature* pCreature)
+{
+    return new npc_battleground_vehicleAI(pCreature);
+}
+
 void AddSC_battleground()
 {
     Script* newscript;
@@ -112,4 +165,10 @@ void AddSC_battleground()
     newscript->GetAI = &GetAI_npc_spirit_guide;
     newscript->pGossipHello = &GossipHello_npc_spirit_guide;
     newscript->RegisterSelf();
+	
+    newscript = new Script;
+    newscript->Name = "npc_battleground_vehicle";
+    newscript->GetAI = &GetAI_npc_battleground_vehicle;
+    newscript->RegisterSelf();
+
 }
