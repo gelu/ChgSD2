@@ -2570,7 +2570,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\def_spire.h"
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_citadel.h"
 							>
 						</File>
 						<File
@@ -2586,7 +2586,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_spire.cpp"
+							RelativePath="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_citadel.cpp"
 							>
 						</File>
 					</Filter>
@@ -3185,10 +3185,6 @@
 				</File>
 				<File
 					RelativePath="..\scripts\world\npcs_special.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\scripts\world\pet_scripts.cpp"
 					>
 				</File>
 				<File

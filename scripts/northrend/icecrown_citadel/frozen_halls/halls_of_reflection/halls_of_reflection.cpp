@@ -952,7 +952,7 @@ struct MANGOS_DLL_DECL npc_jaina_and_sylvana_HRextroAI : public npc_escortAI
          }
          else
          {
-             if (HoldTimer <= diff)
+             if (HoldTimer <= (int)diff)
                  HoldTimer = 0;
              else
                  HoldTimer -= diff;
