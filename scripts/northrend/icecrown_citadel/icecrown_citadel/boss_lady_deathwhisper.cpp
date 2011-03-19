@@ -385,20 +385,31 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public BSWScriptedAI
 
     ScriptedInstance *m_pInstance;
 
+    bool m_bVictimSelected;
+
     void Reset()
     {
         m_creature->SetRespawnDelay(DAY);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         m_creature->SetInCombatWithZone();
-        if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0) ) {
-                m_creature->AddThreat(pTarget, 1000.0f);
-                m_creature->GetMotionMaster()->MoveChase(pTarget);
-                m_creature->SetSpeedRate(MOVE_RUN, 0.5);
-                }
-        doCast(SPELL_VENGEFUL_BLAST);
+        m_creature->SetSpeedRate(MOVE_RUN, 0.5);
+
+        m_bVictimSelected = false;
     }
 
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if (uiType != POINT_MOTION_TYPE)
+            return;
+
+        if (m_creature->IsWithinDist(m_creature->getVictim(), 1.0f, false))
+        {
+            doCast(SPELL_VENGEFUL_BLAST_0);
+        }
+        
+        m_creature->ForcedDespawn();
+    }
 
     void UpdateAI(const uint32 uiDiff)
     {
@@ -408,21 +419,19 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public BSWScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (timedQuery(SPELL_VENGEFUL_BLAST_0, uiDiff))
+        if (!m_bVictimSelected)
         {
-            if (m_creature->IsWithinDist(m_creature->getVictim(), 1.0f, false))
-            {
-                doCast(SPELL_VENGEFUL_BLAST_0);
-                m_creature->ForcedDespawn();
-            }
-            else
-            {
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_creature->SetSpeedRate(MOVE_RUN, 0.5);
-            }
+            doCast(SPELL_VENGEFUL_BLAST);
+
+            m_creature->GetMotionMaster()->MovePoint(0, 
+                m_creature->getVictim()->GetPositionX(),
+                m_creature->getVictim()->GetPositionY(),
+                m_creature->getVictim()->GetPositionZ(),
+                true);
+
+            m_bVictimSelected = true;
         }
     }
-
 };
 
 CreatureAI* GetAI_mob_vengeful_shade(Creature* pCreature)
@@ -459,6 +468,13 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public BSWScriptedAI
     {
         if (!pInstance || pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
+
+        // Visual improvement
+        if (m_creature->HasAura(SPELL_SHORUD_OF_THE_OCCULUT) && m_creature->GetEntry() == 37949)
+            m_creature->UpdateEntry(38136);
+
+        if (!m_creature->HasAura(SPELL_SHORUD_OF_THE_OCCULUT) && m_creature->GetEntry() == 38136)
+            m_creature->UpdateEntry(37949);
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
