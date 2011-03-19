@@ -131,3 +131,42 @@ uint64 BSWScriptedInstance::GetInstanceObjectGUID(uint32 entry)
     else
         return guid.GetRawValue();
 }
+
+void BSWScriptedInstance::SetAchievementState(uint32 achievementId, bool state, Player* player)
+{
+    if (!achievementId)
+        return;
+
+    if (player && state)
+        m_personalAchievementMap.insert(std::make_pair(achievementId, player->GetObjectGuid()));
+    else
+        m_groupAchievementMap.insert(std::make_pair(achievementId, state));
+
+}
+
+bool BSWScriptedInstance::GetAchievementState(uint32 achievementId, Player* player)
+{
+    if (!achievementId)
+        return false;
+
+    std::map<uint32, bool>::const_iterator itr = m_groupAchievementMap.find(achievementId);
+
+    if (itr != m_groupAchievementMap.end())
+        if (itr->second)
+            return true;
+
+    if (player)
+    {
+        std::pair<std::multimap<uint32, ObjectGuid>::const_iterator, std::multimap<uint32, ObjectGuid>::const_iterator> bounds =
+            m_personalAchievementMap.equal_range(achievementId);
+
+        for(std::multimap<uint32, ObjectGuid>::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
+        {
+            if (itr->second == player->GetObjectGuid())
+                return true;
+        }
+
+    }
+
+    return false;
+}
