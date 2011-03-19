@@ -27,7 +27,7 @@ class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
         void SetInstanceCreature(Creature* creature) { if (creature) SetObject((Object*)creature); };
 
         void SetAchievementState(uint32 achievementId, bool state = true, Player* player = NULL);
-        bool GetAchievementState(uint32 achievementId, Player* player = NULL);
+        bool GetAchievementState(uint32 achievementId, Player const* player = NULL);
 
         void   SetNextEvent(uint32 EventNum, uint32 creatureID, uint32 timer = 1000);
         uint32 GetEvent(uint32 creatureID);

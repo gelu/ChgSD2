@@ -184,8 +184,8 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
               if (m_creature->isAlive())
                   m_creature->GetMotionMaster()->MoveTargetedHome();
               m_creature->SetLootRecipient(NULL);
-              pInstance->CloseDoor(GetDoor(currentDoor));
-              pInstance->CloseDoor(GetDoor(currentDoor2));
+              pInstance->DoCloseDoor(GetDoor(currentDoor));
+              pInstance->DoCloseDoor(GetDoor(currentDoor2));
               Reset();
     }
 
@@ -368,19 +368,19 @@ struct MANGOS_DLL_DECL boss_valithria_dreamwalkerAI : public BSWScriptedAI
                 speedK = speedK+10;
                 if (currentDifficulty == RAID_DIFFICULTY_25MAN_NORMAL 
                    || currentDifficulty == RAID_DIFFICULTY_25MAN_HEROIC) {
-                                                        pInstance->CloseDoor(GetDoor(currentDoor2));
+                                                        pInstance->DoCloseDoor(GetDoor(currentDoor2));
                                                         currentDoor2 = urand(1,2);
-                                                        pInstance->OpenDoor(GetDoor(currentDoor2));
+                                                        pInstance->DoOpenDoor(GetDoor(currentDoor2));
                                                         CallMobs(currentDoor2);
 
-                                                        pInstance->CloseDoor(GetDoor(currentDoor));
+                                                        pInstance->DoCloseDoor(GetDoor(currentDoor));
                                                         currentDoor = urand(3,4);
-                                                        pInstance->OpenDoor(GetDoor(currentDoor));
+                                                        pInstance->DoOpenDoor(GetDoor(currentDoor));
                                                         CallMobs(currentDoor);
                                                         } else {
-                                                        pInstance->CloseDoor(GetDoor(currentDoor));
+                                                        pInstance->DoCloseDoor(GetDoor(currentDoor));
                                                         currentDoor = urand(1,4);
-                                                        pInstance->OpenDoor(GetDoor(currentDoor));
+                                                        pInstance->DoOpenDoor(GetDoor(currentDoor));
                                                         CallMobs(currentDoor);
                                                         }
                                                         };

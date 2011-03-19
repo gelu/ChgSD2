@@ -144,7 +144,7 @@ void BSWScriptedInstance::SetAchievementState(uint32 achievementId, bool state, 
 
 }
 
-bool BSWScriptedInstance::GetAchievementState(uint32 achievementId, Player* player)
+bool BSWScriptedInstance::GetAchievementState(uint32 achievementId, Player const* player)
 {
     if (!achievementId)
         return false;

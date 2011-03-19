@@ -4,6 +4,7 @@
 
 #ifndef DEF_ICECROWN_SPIRE_H
 #define DEF_ICECROWN_SPIRE_H
+#include "BSW_instance.h"
 #include "BSW_ai.h"
 
 enum
@@ -157,7 +158,7 @@ enum
 
 };
 
-class MANGOS_DLL_DECL instance_icecrown_spire : public ScriptedInstance
+class MANGOS_DLL_DECL instance_icecrown_spire : public BSWScriptedInstance
 {
 public:
     instance_icecrown_spire(Map* pMap);
@@ -168,8 +169,6 @@ public:
     void OnObjectCreate(GameObject* pGo);
     void OnCreatureCreate(Creature* pCreature);
 
-    void OpenDoor(uint64 guid);
-    void CloseDoor(uint64 guid);
     void OpenAllDoors();
     void OnPlayerEnter(Player* pPlayer);
     bool IsEncounterInProgress();
@@ -181,6 +180,7 @@ public:
 
     const char* Save() { return strSaveData.c_str(); }
     void Load(const char* chrIn);
+    bool CheckAchievementCriteriaMeet(uint32 criteria_id, Player const* /*source*/, Unit const* /*target*/, uint32 /*miscvalue1*/);
 
 private:
 
@@ -280,6 +280,41 @@ private:
     uint32 m_uiStinkystate;
     uint32 m_uiPreciousstate;
 
+};
+
+enum AchievementCriteriaIds
+{
+    // Lord Marrowgar
+    CRITERIA_BONED_10N                  = 12775,
+    CRITERIA_BONED_25N                  = 12962,
+    CRITERIA_BONED_10H                  = 13393,
+    CRITERIA_BONED_25H                  = 13394,
+
+    // Rotface
+    CRITERIA_DANCES_WITH_OOZES_10N      = 12984,
+    CRITERIA_DANCES_WITH_OOZES_25N      = 12966,
+    CRITERIA_DANCES_WITH_OOZES_10H      = 12985,
+    CRITERIA_DANCES_WITH_OOZES_25H      = 12983,
+
+    // Professor Putricide
+    CRITERIA_NAUSEA_10N                 = 12987,
+    CRITERIA_NAUSEA_25N                 = 12968,
+    CRITERIA_NAUSEA_10H                 = 12988,
+    CRITERIA_NAUSEA_25H                 = 12981,
+
+    // Blood Prince Council
+    CRITERIA_ORB_WHISPERER_10N          = 13033,
+    CRITERIA_ORB_WHISPERER_25N          = 12969,
+    CRITERIA_ORB_WHISPERER_10H          = 13034,
+    CRITERIA_ORB_WHISPERER_25H          = 13032,
+
+    // Blood-Queen Lana'thel
+    CRITERIA_KILL_LANA_THEL_10M         = 13340,
+    CRITERIA_KILL_LANA_THEL_25M         = 13360,
+    CRITERIA_ONCE_BITTEN_TWICE_SHY_10N  = 12780,
+    CRITERIA_ONCE_BITTEN_TWICE_SHY_25N  = 13012,
+    CRITERIA_ONCE_BITTEN_TWICE_SHY_10V  = 13011,
+    CRITERIA_ONCE_BITTEN_TWICE_SHY_25V  = 13013,
 };
 
 #endif
