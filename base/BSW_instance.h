@@ -4,7 +4,7 @@
 
 #ifndef BSW_INSTANCE_H
 #define BSW_INSTANCE_H
-#define BSW_INSTANCE_VERSION 0.6.19
+#define BSW_INSTANCE_VERSION 0.6.20
 #include "sc_instance.h"
 
 class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
@@ -26,8 +26,8 @@ class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
         void SetInstanceUnit(Unit* unit) { if (unit) SetObject((Object*)unit); };
         void SetInstanceCreature(Creature* creature) { if (creature) SetObject((Object*)creature); };
 
-        void SetAchievementState(uint32 achievementId, bool state = true, Player* player = NULL);
-        bool GetAchievementState(uint32 achievementId, Player const* player = NULL);
+        void SetCriteriaState(uint32 criteria_id, bool state = true, Player* player = NULL);
+        bool GetCriteriaState(uint32 criteria_id, Player const* player = NULL);
 
         void   SetNextEvent(uint32 EventNum, uint32 creatureID, uint32 timer = 1000);
         uint32 GetEvent(uint32 creatureID);
@@ -40,8 +40,8 @@ class MANGOS_DLL_DECL BSWScriptedInstance : public ScriptedInstance
         bool   m_auiEventLock;
         Map*   m_pMap;
         std::map<uint32, ObjectGuid> m_objectGuidMap;
-        std::map<uint32, bool>            m_groupAchievementMap;
-        std::multimap<uint32, ObjectGuid> m_personalAchievementMap;
+        std::map<uint32, bool>            m_groupCriteriaMap;
+        std::multimap<uint32, ObjectGuid> m_personalCriteriaMap;
 
 };
 #endif

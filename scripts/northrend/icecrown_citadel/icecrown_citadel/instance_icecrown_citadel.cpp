@@ -846,7 +846,7 @@ static Locations SpawnLoc[]=
 
     bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 criteria_id, Player const* player, Unit const* /*target*/, uint32 /*miscvalue1*/)
     {
-        GetAchievementState(criteria_id, player);
+        GetCriteriaState(criteria_id, player);
     }
 
 InstanceData* GetInstanceData_instance_icecrown_spire(Map* pMap)

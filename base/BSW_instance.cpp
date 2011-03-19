@@ -132,33 +132,33 @@ uint64 BSWScriptedInstance::GetInstanceObjectGUID(uint32 entry)
         return guid.GetRawValue();
 }
 
-void BSWScriptedInstance::SetAchievementState(uint32 achievementId, bool state, Player* player)
+void BSWScriptedInstance::SetCriteriaState(uint32 criteria_id, bool state, Player* player)
 {
-    if (!achievementId)
+    if (!criteria_id)
         return;
 
     if (player && state)
-        m_personalAchievementMap.insert(std::make_pair(achievementId, player->GetObjectGuid()));
+        m_personalCriteriaMap.insert(std::make_pair(criteria_id, player->GetObjectGuid()));
     else
-        m_groupAchievementMap.insert(std::make_pair(achievementId, state));
+        m_groupCriteriaMap.insert(std::make_pair(criteria_id, state));
 
 }
 
-bool BSWScriptedInstance::GetAchievementState(uint32 achievementId, Player const* player)
+bool BSWScriptedInstance::GetCriteriaState(uint32 criteria_id, Player const* player)
 {
-    if (!achievementId)
+    if (!criteria_id)
         return false;
 
-    std::map<uint32, bool>::const_iterator itr = m_groupAchievementMap.find(achievementId);
+    std::map<uint32, bool>::const_iterator itr = m_groupCriteriaMap.find(criteria_id);
 
-    if (itr != m_groupAchievementMap.end())
+    if (itr != m_groupCriteriaMap.end())
         if (itr->second)
             return true;
 
     if (player)
     {
         std::pair<std::multimap<uint32, ObjectGuid>::const_iterator, std::multimap<uint32, ObjectGuid>::const_iterator> bounds =
-            m_personalAchievementMap.equal_range(achievementId);
+            m_personalCriteriaMap.equal_range(criteria_id);
 
         for(std::multimap<uint32, ObjectGuid>::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
         {
