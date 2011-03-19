@@ -217,7 +217,7 @@
     <ClCompile Include="..\base\guard_ai.cpp" />
     <ClCompile Include="..\base\pet_ai.cpp" />
     <ClCompile Include="..\scripts\battlegrounds\battleground.cpp" />
-	<ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp" />
+    <ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp" />
     <ClCompile Include="..\scripts\custom\npc_arena_honor.cpp" />
     <ClCompile Include="..\scripts\custom\teleguy.cpp" />
     <ClCompile Include="..\scripts\eastern_kingdoms\alterac_mountains.cpp" />
@@ -538,7 +538,6 @@
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_spire.cpp" />
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_teleport.cpp" />
     <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_citadel.cpp" />
-    <ClCompile Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\instance_icecrown_spire.cpp" />
     <ClCompile Include="..\scripts\northrend\naxxramas\boss_anubrekhan.cpp" />
     <ClCompile Include="..\scripts\northrend\naxxramas\boss_faerlina.cpp" />
     <ClCompile Include="..\scripts\northrend\naxxramas\boss_four_horsemen.cpp" />
@@ -785,7 +784,6 @@
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\forge_of_souls.h" />
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\frozen_halls\halls_of_reflection\halls_of_reflection.h" />
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\frozen_halls\pit_of_saron\pit_of_saron.h" />
-    <ClInclude Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\def_spire.h" />
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_citadel.h" />
     <ClInclude Include="..\scripts\northrend\naxxramas\naxxramas.h" />
     <ClInclude Include="..\scripts\northrend\nexus\eye_of_eternity\eye_of_eternity.h" />
