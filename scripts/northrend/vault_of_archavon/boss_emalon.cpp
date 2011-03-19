@@ -90,7 +90,10 @@ struct MANGOS_DLL_DECL npc_tempest_minionAI : public ScriptedAI
 
     void Aggro(Unit* pWho)
     {
-        m_creature->CallForHelp(80.0f);
+        m_creature->SetInCombatWithZone();
+
+        if (Creature* pEmalon = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_EMALON)))
+            pEmalon->AI()->AttackStart(pWho);
     }
 
     void FakeDeath()
@@ -239,7 +242,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
 
         for (uint8 i=0; i<4; ++i)
         {
-            Creature* pMinion = m_creature->GetMap()->GetCreature( m_auiTempestMinionGUID[i]);
+            Creature* pMinion = m_creature->GetMap()->GetCreature(m_auiTempestMinionGUID[i]);
             if (pMinion && pMinion->isDead())
                 pMinion->Respawn();
         }
@@ -258,7 +261,14 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
             m_auiTempestMinionGUID[3] = m_pInstance->GetData64(DATA_TEMPEST_MINION_4);
         }
 
-        m_creature->CallForHelp(80.0f);
+        m_creature->SetInCombatWithZone();
+
+        for (uint8 i=0; i<4; ++i)
+        {
+            Creature* pMinion = m_creature->GetMap()->GetCreature(m_auiTempestMinionGUID[i]);
+            if (pMinion)
+                pMinion->AI()->AttackStart(pWho);
+        }
 
         if (m_pInstance)
             m_pInstance->SetData(TYPE_EMALON, IN_PROGRESS);
@@ -270,7 +280,7 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
             m_pInstance->SetData(TYPE_EMALON, DONE);
         for (uint8 i=0; i<4; ++i)
         {
-            Creature *pMinion = m_creature->GetMap()->GetCreature( m_auiTempestMinionGUID[i]);
+            Creature *pMinion = m_creature->GetMap()->GetCreature(m_auiTempestMinionGUID[i]);
             if (pMinion)
                 pMinion->DealDamage(pMinion, pMinion->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
         }
@@ -285,7 +295,6 @@ struct MANGOS_DLL_DECL boss_emalonAI : public ScriptedAI
         {
             if (m_creature->GetDistance2d(-219.119f, -289.037f) > 80.0f)
                 EnterEvadeMode();
-            m_creature->CallForHelp(80.0f);
             m_uiEvadeCheckCooldown = 2000;
         }
         else
