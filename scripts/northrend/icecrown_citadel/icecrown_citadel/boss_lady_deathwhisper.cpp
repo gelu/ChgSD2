@@ -468,6 +468,13 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public BSWScriptedAI
         if (!pInstance || pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
 
+        // Visual improvement
+        if (m_creature->HasAura(SPELL_SHORUD_OF_THE_OCCULUT) && m_creature->GetEntry() == 37949)
+            m_creature->UpdateEntry(38136);
+
+        if (!m_creature->HasAura(SPELL_SHORUD_OF_THE_OCCULUT) && m_creature->GetEntry() == 38136)
+            m_creature->UpdateEntry(37949);
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
