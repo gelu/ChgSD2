@@ -319,12 +319,12 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
-                case 2:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_N);
                     break;
-                case 1:
-                case 3:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_H);
                     break;
                 }
@@ -337,19 +337,19 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     CallGuard(urand(0,1));
                     m_uiSummonGuardsTimer = MINUTE*IN_MILLISECONDS;
                     break;
-                case 1:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
                     CallGuard(urand(0,1));
                     m_uiSummonGuardsTimer = 40*IN_MILLISECONDS;
                     break;
-                case 2:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     CallGuard(urand(0,1));
                     m_uiSummonGuardsTimer = MINUTE*IN_MILLISECONDS;
                     break;
-                case 3:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     CallGuard(urand(0,1));
                     m_uiSummonGuardsTimer = 40*IN_MILLISECONDS;
                     break;
@@ -367,12 +367,12 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_FROSTBOLT_10_N);
                     break;
-                case 1:
-                case 2:
-                case 3:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_FROSTBOLT_25);
                     break;
                 default:
@@ -387,14 +387,14 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_FROSTBOLT_VOLLEY_10_N);
                     break;
-                case 1:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_FROSTBOLT_VOLLEY_25_N);
                     break;
-                case 2:
-                case 3:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_FROSTBOLT_VOLLEY_H);
                     break;
                 default:
@@ -425,15 +425,15 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     break;
-                case 1:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
                     break;
-                case 2:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     CallGuard(2);
                     m_uiSummonGuardsTimer = 45*IN_MILLISECONDS;
                     break;
-                case 3:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     CallGuard(0);
                     CallGuard(2);
                     m_uiSummonGuardsTimer = 60*IN_MILLISECONDS;
@@ -456,14 +456,14 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 {
                     switch (m_uiMode)
                     {
-                    case 0:
-                    case 2:
+                    case RAID_DIFFICULTY_10MAN_NORMAL:
+                    case RAID_DIFFICULTY_10MAN_HEROIC:
                         DoCast(pTarget, SPELL_DEATH_AND_DECAY_10);
                         break;
-                    case 1:
+                    case RAID_DIFFICULTY_25MAN_NORMAL:
                         DoCast(pTarget, SPELL_DEATH_AND_DECAY_25_N);
                         break;
-                    case 3:
+                    case RAID_DIFFICULTY_25MAN_HEROIC:
                         DoCast(pTarget, SPELL_DEATH_AND_DECAY_25_H);
                         break;
                     default:
@@ -547,14 +547,14 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_10_N);
                     break;
-                case 1:
-                case 3:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_H);
                     break;
-                case 2:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_25_N);
                     break;
                 default:
@@ -701,12 +701,12 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
         {
             switch (m_uiMode)
             {
-            case 0:
+            case RAID_DIFFICULTY_10MAN_NORMAL:
                 DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_10_N);
                 break;
-            case 1:
-            case 2:
-            case 3:
+            case RAID_DIFFICULTY_25MAN_NORMAL:
+            case RAID_DIFFICULTY_10MAN_HEROIC:
+            case RAID_DIFFICULTY_25MAN_HEROIC:
                 DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_25);
                 break;
             default:
@@ -723,16 +723,16 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_N);
                     break;
-                case 1:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
                     DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_N);
                     break;
-                case 2:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_H);
                     break;
-                case 3:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_H);
                     break;
                 default:
@@ -750,13 +750,13 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
-                case 2:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_N);
                     m_creature->SetHealthPercent(100.0f);
                     break;
-                case 1:
-                case 3:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_H);
                     m_creature->SetHealthPercent(100.0f);
                     break;
@@ -840,14 +840,14 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
         {
             switch (m_uiMode)
             {
-            case 0:
+            case RAID_DIFFICULTY_10MAN_NORMAL:
                 DoCast(m_creature->getVictim(), SPELL_NECROTIC_STRIKE_10_N);
                 break;
-            case 1:
-            case 3:
+            case RAID_DIFFICULTY_25MAN_NORMAL:
+            case RAID_DIFFICULTY_25MAN_HEROIC:
                 DoCast(m_creature->getVictim(), SPELL_NECROTIC_STRIKE_25);
                 break;
-            case 2:
+            case RAID_DIFFICULTY_10MAN_HEROIC:
                 DoCast(m_creature->getVictim(), SPELL_NECROTIC_STRIKE_10_H);
                 break;
             default:
@@ -862,14 +862,14 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
         {
             switch (m_uiMode)
             {
-            case 1:
+            case RAID_DIFFICULTY_10MAN_NORMAL:
                 DoCast(m_creature->getVictim(), SPELL_SHADOW_CLEAVE_10_N);
                 break;
-            case 2:
+            case RAID_DIFFICULTY_25MAN_NORMAL:
                 DoCast(m_creature->getVictim(), SPELL_SHADOW_CLEAVE_25_N);
                 break;
-            case 3:
-            case 4:
+            case RAID_DIFFICULTY_10MAN_HEROIC:
+            case RAID_DIFFICULTY_25MAN_HEROIC:
                 DoCast(m_creature->getVictim(), SPELL_SHADOW_CLEAVE_H);
                 break;
             default:
@@ -897,13 +897,13 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
             {
                 switch (m_uiMode)
                 {
-                case 0:
-                case 2:
+                case RAID_DIFFICULTY_10MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_N);
                     m_creature->SetHealthPercent(100.0f);
                     break;
-                case 1:
-                case 3:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_H);
                     m_creature->SetHealthPercent(100.0f);
                     break;
