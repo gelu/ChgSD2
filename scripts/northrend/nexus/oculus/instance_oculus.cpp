@@ -1,4 +1,4 @@
-/* Copyright (C) 2008 - 2010 TrinityCore <http://www.trinitycore.org>
+/* Copyright (C) 2008 - 2011 ScriptDev2 & TrinityCore <http://www.trinitycore.org>
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +18,7 @@
 SDName: instance_oculus
 SD%Complete: 70%
 SDComment:
-SDAuthor: originally from TC, reworked by MaxXx2021 Aka Mioka, corrected by /dev/rsa
+SDAuthor: originally from TC, reworked by MaxXx2021 Aka Mioka, corrected by /dev/rsa && FallenAngelX
 SDCategory: Oculus
 EndScriptData */
 
@@ -38,16 +38,17 @@ enum
 
 struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
 {
-    instance_oculus(Map* pMap) : ScriptedInstance(pMap) 
+    instance_oculus(Map* pMap) : ScriptedInstance(pMap)
     {
         m_bIsRegularMode = pMap->IsRegularDifficulty();
         Initialize();
     };
 
-    uint64 uiDrakos;
+    uint64 m_uiDrakosGUID;
     uint64 m_uiVarosGUID;
     uint64 m_uiUromGUID;
     uint64 m_uiEregosGUID;
+    std::list<uint64> m_uiCageDoorList;
     uint64 uiProect;
     uint64 uiCacheEregosGUID;
     uint64 uiCacheEregosHGUID;
@@ -66,9 +67,11 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
         uiCacheEregosGUID = 0;
         m_uiSpotLightGUID = 0;
         uiProect = 0;
+        m_uiDrakosGUID = 0;
         m_uiVarosGUID = 0;
         m_uiUromGUID = 0;
         m_uiEregosGUID = 0;
+        m_uiCageDoorList.clear();
         m_auiEncounter[TYPE_ROBOTS] = 10;
         m_auiEncounter[TYPE_UROM_PHASE] = 0;
     }
@@ -77,6 +80,9 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
     {
         switch(pGO->GetEntry())
         {
+            case GO_DRAGON_CAGE_DOOR:
+                m_uiCageDoorList.push_back(pGO->GetGUID());
+                break;
             case GO_EREGOS_CACHE:
                 uiCacheEregosGUID = pGO->GetGUID();
                 break;
@@ -89,12 +95,25 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
         }
     }
 
+    void OpenCageDoors()
+    {
+        if(m_uiCageDoorList.empty())
+            return;
+
+        for(std::list<uint64>::const_iterator itr = m_uiCageDoorList.begin(); itr != m_uiCageDoorList.end(); ++itr)
+        {
+            GameObject* pDoor = instance->GetGameObject(*itr);
+            if(pDoor)
+               DoUseDoorOrButton(*itr);
+        }
+    }
+
     void OnCreatureCreate(Creature* pCreature)
     {
         switch(pCreature->GetEntry())
         {
             case NPC_DRAKOS:
-                uiDrakos = pCreature->GetGUID();
+                m_uiDrakosGUID = pCreature->GetGUID();
                 break;
             case NPC_VAROS:
                 m_uiVarosGUID = pCreature->GetGUID();
@@ -116,6 +135,10 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
         switch(type)
         {
             case TYPE_DRAKOS:
+                m_auiEncounter[type] = data;
+                if (data == DONE)
+                OpenCageDoors();
+                break;
             case TYPE_VAROS:
             case TYPE_UROM:
                 m_auiEncounter[type] = data;
@@ -185,7 +208,7 @@ struct MANGOS_DLL_DECL instance_oculus : public ScriptedInstance
     {
         switch(identifier)
         {
-            case DATA_DRAKOS:                 return uiDrakos;
+            case DATA_DRAKOS:                 return m_uiDrakosGUID;
             case NPC_VAROS:                   return m_uiVarosGUID;
             case NPC_UROM:                    return m_uiUromGUID;
             case NPC_EREGOS:                  return m_uiEregosGUID;
@@ -230,11 +253,31 @@ InstanceData* GetInstanceData_instance_oculus(Map* pMap)
     return new instance_oculus(pMap);
 }
 
+bool GOUse_go_oculus_portal(Player* pPlayer, GameObject* pGo)
+{
+	switch(pGo->GetEntry())
+	{
+	case GO_ORB_OF_NEXUS:
+		pPlayer->TeleportTo(571,3876.159912f,6984.439941f,106.32f,6.279f);
+		return true;
+	case GO_NEXUS_PORTAL:
+		pPlayer->NearTeleportTo(1001.3419f,1051.692f,359.476776f,3.189315f);
+		return true;
+	}
+
+	return false;
+}
+
 void AddSC_instance_oculus()
 {
     Script *newscript;
     newscript = new Script;
     newscript->Name = "instance_oculus";
     newscript->GetInstanceData = &GetInstanceData_instance_oculus;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "go_oculus_portal";
+    newscript->pGOUse = GOUse_go_oculus_portal;
     newscript->RegisterSelf();
 }

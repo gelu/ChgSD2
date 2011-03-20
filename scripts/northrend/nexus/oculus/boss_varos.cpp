@@ -127,7 +127,7 @@ struct MANGOS_DLL_DECL boss_varosAI : public ScriptedAI
               m_creature->InterruptNonMeleeSpells(false);
               m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
            }
-           else 
+           else
            {
               m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
               DoCast(m_creature, SPELL_ARCANE_SHIELD);
@@ -371,7 +371,7 @@ struct MANGOS_DLL_DECL boss_varosAI : public ScriptedAI
               m_bIsCastChain = true;
               SelectFourOrb();
               m_uiCoreTimer = 5000;
-           } else m_uiOrbCast -= uiDiff; 
+           } else m_uiOrbCast -= uiDiff;
         }
         else
         {
@@ -381,7 +381,7 @@ struct MANGOS_DLL_DECL boss_varosAI : public ScriptedAI
               m_bIsCastChain = false;
               CastEnergy();
               m_uiOrbCast = 1000;
-           } else m_uiCoreTimer -= uiDiff; 
+           } else m_uiCoreTimer -= uiDiff;
         }
 
         DoMeleeAttackIfReady();
@@ -390,7 +390,7 @@ struct MANGOS_DLL_DECL boss_varosAI : public ScriptedAI
 
 struct MANGOS_DLL_DECL npc_varos_orbAI : public ScriptedAI
 {
-    npc_varos_orbAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    npc_varos_orbAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
        Reset();
     }
@@ -414,7 +414,7 @@ struct MANGOS_DLL_DECL npc_varos_orbAI : public ScriptedAI
 
 struct MANGOS_DLL_DECL npc_varos_beam_targetAI : public ScriptedAI
 {
-    npc_varos_beam_targetAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    npc_varos_beam_targetAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
        Reset();
     }

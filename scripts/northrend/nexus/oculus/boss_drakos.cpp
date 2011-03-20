@@ -1,81 +1,112 @@
-/* Copyright (C) 2008 - 2010 TrinityCore <http://www.trinitycore.org>
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 
 /* ScriptData
-SDName: Boss_Drakos
-SD%Complete: 80%
-SDComment:
-SDAuthor: originally from TC, reworked by MaxXx2021 Aka Mioka, corrected by /dev/rsa
-SDCategory: Oculus
+SDName: oculus
+SD%Complete: 90%
+SDComment: // dev //FallenAngelX
+SDCategory: Drakos the Interrogator
+ToDo:: last thing spheres need to cause damge to players when they explode & Thunder Stomp needs core support for ensnare effect ( 35% movement reduction ) and he's finished
+& implent achievement 18153 kill eregos within 20 mins of drakos death  as well as finishing touches on texts
 EndScriptData */
 
 #include "precompiled.h"
 #include "oculus.h"
 
+/*###
+#Drakos
+####*/
+
 enum
 {
-    SAY_AGGRO                                     = -1578000,
-    SAY_KILL_1                                    = -1578001,
-    SAY_KILL_2                                    = -1578002,
-    SAY_KILL_3                                    = -1578003,
-    SAY_DEATH                                     = -1578004,
-    SAY_PULL_1                                    = -1578005,
-    SAY_PULL_2                                    = -1578006,
-    SAY_PULL_3                                    = -1578007,
-    SAY_PULL_4                                    = -1578008,
-    SAY_STOMP_1                                   = -1578009,
-    SAY_STOMP_2                                   = -1578010,
-    SAY_STOMP_3                                   = -1578011,
+	SPELL_MAGIC_PULL                = 50770,
+	SPELL_THUNDERING_STOMP          = 50774,
+	H_SPELL_THUNDERING_STOMP        = 59370,
 
-    SPELL_MAGIC_PULL                              = 51336,
-    SPELL_MAGIC_PULL_EFFECT                       = 50770,
-    SPELL_THUNDERING_STOMP_N                      = 50774,
-    SPELL_THUNDERING_STOMP_H                      = 59370,
-    SPELL_UNSTABLE_SPHERE_PASSIVE                 = 50756,
-    SPELL_UNSTABLE_SPHERE_PULSE                   = 50757,
-    SPELL_UNSTABLE_SPHERE_TIMER                   = 50758,
-    SPELL_UNSTABLE_SPHERE_EXPLODE                 = 50759,
-
-    NPC_UNSTABLE_SPHERE                           = 28166
+	SAY_INTRO                  = -1000006,
+	SAY_AGGRO                  = -1578000,
+	SAY_SLAY_1                 = -1578001,
+	SAY_SLAY_2                 = -1578002,
+	SAY_SLAY_3                 = -1578003,
+	SAY_STOMP_1                = -1578009,
+	SAY_STOMP_2                = -1578010,
+	SAY_STOMP_3                = -1578011,
+	SAY_DEATH                  = -1578004,
+	EMOTE_MAGIC_PULL           = -1000012
 };
-
-#define CENTER_X                960.120f
-#define CENTER_Y                1049.413f
 
 struct MANGOS_DLL_DECL boss_drakosAI : public ScriptedAI
 {
-    boss_drakosAI(Creature *pCreature) : ScriptedAI(pCreature)
+        boss_drakosAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
+    bool m_bIsRegularMode;
 
-    uint32 m_uiMagicPullTimer ;
-    uint32 m_uiStompTimer ;
-    uint32 m_uiBombSummonTimer ;
+    // variables
+    // timers
+    uint32 ThunderingStomp_Timer;
+    uint32 Bomb_Timer;
+    uint32 Global_Cooldown_Timer;
+    uint32 Teleport_Timer;
+    // booleans
+    bool MagicPull80;
+    bool MagicPull60;
+    bool MagicPull40;
+    bool MagicPull20;
+    bool Intro;
 
-    void Reset()
+    void Reset() // initialization
     {
-        m_uiMagicPullTimer = urand(12000, 15000);
-        m_uiStompTimer = urand(3000, 6000);
-        m_uiBombSummonTimer = 7000;
-        if (m_pInstance && m_creature->isAlive())
-            m_pInstance->SetData(TYPE_DRAKOS, NOT_STARTED);
+        ThunderingStomp_Timer = 20000;
+        Bomb_Timer = 3000;
+        Teleport_Timer = 8000;
+        Global_Cooldown_Timer = 0;
+        MagicPull80 = false;
+        MagicPull60 = false;
+        MagicPull40 = false;
+        MagicPull20 = false;
+        Intro = false;
+        m_creature->SetVisibility(VISIBILITY_ON);
+    }
+
+    void MoveInLineOfSight(Unit *who)
+    {
+        if (!m_creature->getVictim() && who->isTargetableForAttack() && (m_creature->IsHostileTo(who)) && who->isInAccessablePlaceFor(m_creature))
+        {
+            if (!Intro && m_creature->IsWithinDistInMap(who, 100))
+            {
+               DoScriptText(SAY_INTRO, m_creature);
+                                Intro = true;
+            }
+
+            if (!m_creature->CanFly() && m_creature->GetDistanceZ(who) > CREATURE_Z_ATTACK_RANGE)
+                return;
+
+            float attackRadius = m_creature->GetAttackDistance(who);
+            if (m_creature->IsWithinDistInMap(who, attackRadius) && m_creature->IsWithinLOSInMap(who))
+            {
+                who->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+                AttackStart(who);
+            }
+        }
     }
 
     void Aggro(Unit* who)
@@ -86,129 +117,235 @@ struct MANGOS_DLL_DECL boss_drakosAI : public ScriptedAI
             m_pInstance->SetData(TYPE_DRAKOS, IN_PROGRESS);
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* Killer)
     {
         DoScriptText(SAY_DEATH, m_creature);
-
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_DRAKOS, DONE);
+		if(m_pInstance)
+			m_pInstance->SetData(TYPE_DRAKOS,DONE);
     }
 
-    void KilledUnit(Unit *victim)
+    void KilledUnit(Unit* victim)
     {
-        switch (urand(0, 2))
+        switch(urand(0, 2))
         {
-            case 0: DoScriptText(SAY_KILL_1, m_creature); break;
-            case 1: DoScriptText(SAY_KILL_2, m_creature); break;
-            case 2: DoScriptText(SAY_KILL_3, m_creature); break;
+            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
+            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            case 2: DoScriptText(SAY_SLAY_3, m_creature); break;
         }
     }
 
-    void SpellHitTarget(Unit *target, const SpellEntry *spell)
+    void TeleportPlayers() // teleport the entire group to the bosses position.
     {
-        if (spell->Id == SPELL_MAGIC_PULL)
-            if (target->GetTypeId() == TYPEID_PLAYER)
-                DoCast(target, SPELL_MAGIC_PULL_EFFECT, true);
+                float x = m_creature->GetPositionX();
+                float y = m_creature->GetPositionY();
+                float z = m_creature->GetPositionZ();
+                int i;
+
+                for (i = 0; i <= 4; i++)
+                {
+                        Unit* Player = NULL;
+                        Player = m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, i);
+                        if (Player)
+                        {
+                                Player->NearTeleportTo(x, y, z, 1);
+                        }else return;
+                }
     }
 
     void UpdateAI(const uint32 diff)
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())  // any valid target?
             return;
 
-        if (m_uiBombSummonTimer < diff)
-        {
-            m_creature->SummonCreature(NPC_UNSTABLE_SPHERE, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000);
-            m_creature->SummonCreature(NPC_UNSTABLE_SPHERE, m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 0, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 1000);
-            m_uiBombSummonTimer = 3000;
-        }
-        else
-            m_uiBombSummonTimer -= diff;
+                if (Teleport_Timer < diff)
+                {
+                        TeleportPlayers();
+                        Teleport_Timer = 8000;
+                }
+                else
+                {
+                        if (Teleport_Timer != 8000)
+                        {
+                                Teleport_Timer -= diff;
+                        }
+                }
 
-        if (m_uiMagicPullTimer < diff)
-        {
-            DoCast(m_creature, SPELL_MAGIC_PULL);
-            m_uiMagicPullTimer = urand(15000, 25000);
-            switch (urand(0, 3))
-            {
-               case 0: DoScriptText(SAY_PULL_1, m_creature); break;
-               case 1: DoScriptText(SAY_PULL_2, m_creature); break;
-               case 2: DoScriptText(SAY_PULL_3, m_creature); break;
-               case 3: DoScriptText(SAY_PULL_4, m_creature); break;
-            }
-        }
-        else
-            m_uiMagicPullTimer -= diff;
+                if(Bomb_Timer < diff)
+                {
+						uint32 BombCount = urand(1,m_bIsRegularMode?4:6);
+						for(uint32 i = 0; i < BombCount; i++)
+							DoSpawnCreature(28166, 0, 0, 0, 0, TEMPSUMMON_DEAD_DESPAWN, 0); // spawn an unstable sphere, improvisation :P
+						Bomb_Timer = urand(5000, 6000);
+                }else Bomb_Timer -= diff;
 
-        if (m_uiStompTimer < diff)
-        {
-            DoCast(m_creature, SPELL_THUNDERING_STOMP_N);
-            m_uiStompTimer = urand(11000, 18000);
-            switch (urand(0, 2))
-            {
-               case 0: DoScriptText(SAY_STOMP_1, m_creature); break;
-               case 1: DoScriptText(SAY_STOMP_2, m_creature); break;
-               case 2: DoScriptText(SAY_STOMP_3, m_creature); break;
-            }
-        }
-        else
-            m_uiStompTimer -= diff ;
-
-        DoMeleeAttackIfReady();
+                if (Global_Cooldown_Timer < diff)
+                {
+                        if (!MagicPull80 && m_creature->GetHealthPercent() < 80.0f) // 80% hp
+                        {
+                                DoScriptText(EMOTE_MAGIC_PULL, m_creature);
+                                DoCastSpellIfCan(m_creature, SPELL_MAGIC_PULL);
+                                Teleport_Timer = 1999;
+                                MagicPull80 = true;
+                                Global_Cooldown_Timer = 2001;
+                                return;
+                        }
+                        if (!MagicPull60 && m_creature->GetHealthPercent() < 60.0f) // 60% hp
+                        {
+                                DoScriptText(EMOTE_MAGIC_PULL, m_creature);
+                                DoCastSpellIfCan(m_creature, SPELL_MAGIC_PULL);
+                                Teleport_Timer = 1999;
+                                MagicPull60 = true;
+                                Global_Cooldown_Timer = 2001;
+                                return;
+                        }
+                        if (!MagicPull40 && m_creature->GetHealthPercent() < 40.0f) // 40% hp
+                        {
+                                DoScriptText(EMOTE_MAGIC_PULL, m_creature);
+                                DoCastSpellIfCan(m_creature, SPELL_MAGIC_PULL);
+                                Teleport_Timer = 1999;
+                                MagicPull40 = true;
+                                Global_Cooldown_Timer = 2001;
+                                return;
+                        }
+                        if (!MagicPull20 && m_creature->GetHealthPercent() < 20.0f) // 20% hp
+                        {
+                                DoScriptText(EMOTE_MAGIC_PULL, m_creature);
+                                DoCastSpellIfCan(m_creature, SPELL_MAGIC_PULL);
+                                Teleport_Timer = 1999;
+                                MagicPull20 = true;
+                                Global_Cooldown_Timer = 2001;
+                                return;
+                        }
+                        if (ThunderingStomp_Timer < diff) // Thundering Stomp about every 20 sec
+                        {
+                                DoCastSpellIfCan(m_creature, m_bIsRegularMode ? SPELL_THUNDERING_STOMP : H_SPELL_THUNDERING_STOMP);
+                                switch(urand(0, 2))
+                                {
+                                        case 0: DoScriptText(SAY_STOMP_1, m_creature); break;
+                                        case 1: DoScriptText(SAY_STOMP_2, m_creature); break;
+                                        case 2: DoScriptText(SAY_STOMP_3, m_creature); break;
+                                }
+                                ThunderingStomp_Timer = 20000;
+                                Global_Cooldown_Timer = 2001;
+                        }else ThunderingStomp_Timer -= diff;
+                }
+                else
+                {
+                        Global_Cooldown_Timer -= diff;
+                }
+                DoMeleeAttackIfReady();
     }
 };
 
 CreatureAI* GetAI_boss_drakos(Creature* pCreature)
 {
-    return new boss_drakosAI (pCreature);
+    return new boss_drakosAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL npc_unstable_sphereAI : public ScriptedAI
+/*###
+#UnStable_Sphere
+####*/
+enum
 {
-    npc_unstable_sphereAI(Creature *pCreature) : ScriptedAI(pCreature) 
+	BOMB_SPELL_ARCANE_EXPLOSION            = 50757,
+	H_BOMB_SPELL_ARCANE_EXPLOSION          = 50757,
+	BOMB_SPELL_VISUAL                      = 50756,
+	SPELL_UNSTABLE_BOOM                    = 50759,  // might be wrong  need spell that cause players damge from core exploding
+	BOMB_SPELL_TIMER                       = 50758
+};
+
+#define X               960
+#define Y               1050
+#define Z               360
+#define PI              3.14
+
+struct MANGOS_DLL_DECL mob_unstable_sphereAI : public ScriptedAI
+{
+    mob_unstable_sphereAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+        m_bIsRegularMode = pCreature->GetMap()->IsRegularDifficulty();
+		m_creature->SetDisplayId(16946);
+		DetonateTimer = 16000;
+		ArcaneExplosion_Timer = 60000;
+		explosion = false;
+		visibilityOff = false;
+		VisibilityOff_Timer = 16500;
         Reset();
     }
 
     ScriptedInstance* m_pInstance;
-    uint32 m_uiPulseTimer;
+    bool m_bIsRegularMode;
+
+    uint32 ArcaneExplosion_Timer;
+    uint32 VisibilityOff_Timer;
+    uint32 AnotherMovePoint;
+	uint32 DetonateTimer;
+    bool explosion;
+    bool visibilityOff;
+
+	void MoveToPointInCircle(uint32 id)
+    {
+        float x, y, z, r, angle;
+        angle = urand(0, 36000) / 100;
+        r = urand(20, 320) / 10;
+        (angle <= PI) ? y = Y + (sin(angle) * r) : y = Y - (sin(angle) * r);
+        (angle >= (PI / 2) && angle <= (PI * 3 / 2)) ? x = X - (cos(angle) * r) : x = X + (cos(angle) * r);
+        z = Z;
+        m_creature->GetMotionMaster()->MovePoint(id, x, y, z);
+    }
+
+    void MovementInform(uint32 type, uint32 id)
+    {
+		m_creature->GetMotionMaster()->MoveIdle();
+		if(!explosion)
+			ArcaneExplosion_Timer = 900;
+		explosion = true;
+    }
 
     void Reset()
     {
-        m_creature->AddSplineFlag(SPLINEFLAG_FLYING);
-        m_creature->GetMotionMaster()->MovePoint(0, (CENTER_X-35)+rand()%70, (CENTER_Y-35)+rand()%70, m_creature->GetPositionZ());
-        m_creature->SetSpeedRate(MOVE_RUN, 2, true);
-        m_creature->setFaction(14);
-        DoCast(m_creature, SPELL_UNSTABLE_SPHERE_PASSIVE, true);
-        DoCast(m_creature, SPELL_UNSTABLE_SPHERE_TIMER, true);
-        m_uiPulseTimer = 3000;
-        m_creature->ForcedDespawn(19000);
+        m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
+        m_creature->SetVisibility(VISIBILITY_ON);
+		m_creature->CastSpell(m_creature,BOMB_SPELL_VISUAL,true);
+		m_creature->CastSpell(m_creature,41232,true);
+        MoveToPointInCircle(1);
     }
 
-    void AttackStart(Unit* pWho)
-    {
-    }
+	void AttackStart(Unit*)
+	{
+		return;
+	}
 
     void UpdateAI(const uint32 diff)
     {
-
-        if (m_pInstance && m_pInstance->GetData(TYPE_DRAKOS) != IN_PROGRESS)
-            m_creature->ForcedDespawn();
-
-        if (m_uiPulseTimer < diff)
+        if (ArcaneExplosion_Timer < diff)
         {
-            DoCast(m_creature, SPELL_UNSTABLE_SPHERE_PULSE, true);
-            m_uiPulseTimer = 3000;
-        }
-        else
-            m_uiPulseTimer -= diff;
+            m_creature->CastSpell(m_creature, BOMB_SPELL_ARCANE_EXPLOSION, true);
+			ArcaneExplosion_Timer = 900;
+		} else ArcaneExplosion_Timer -= diff;
+
+		if(DetonateTimer <= diff)
+		{
+			m_creature->CastSpell(m_creature,SPELL_UNSTABLE_BOOM,true);
+			DetonateTimer = 99999;
+		} else DetonateTimer -= diff;
+
+		if (!visibilityOff)
+		{
+			if (VisibilityOff_Timer < diff)
+			{
+				m_creature->SetVisibility(VISIBILITY_OFF);
+				m_creature->DealDamage(m_creature, m_creature->GetHealth(), 0, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, 0, false);
+				visibilityOff = true;
+			}else VisibilityOff_Timer -= diff;
+		}
     }
 };
 
-CreatureAI* GetAI_npc_unstable_sphere(Creature* pCreature)
+CreatureAI* GetAI_mob_unstable_sphere(Creature* pCreature)
 {
-    return new npc_unstable_sphereAI (pCreature);
+	return new mob_unstable_sphereAI(pCreature);
 }
 
 void AddSC_boss_drakos()
@@ -222,6 +359,6 @@ void AddSC_boss_drakos()
 
     newscript = new Script;
     newscript->Name = "npc_unstable_sphere";
-    newscript->GetAI = &GetAI_npc_unstable_sphere;
+    newscript->GetAI = &GetAI_mob_unstable_sphere;
     newscript->RegisterSelf();
 }

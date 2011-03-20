@@ -210,6 +210,42 @@ CreatureAI* GetAI_npc_belgar_image(Creature* pCreature)
     return new npc_belgar_imageAI (pCreature);
 }
 
+/*######
+## npc_dragonbel_giver
+######
+
+#define GOSSIP_ITEM_BEL   "Take the Amber Essence if you want to fly on the wings of the Bronze Flight."
+
+bool GossipHello_npc_dragonbel_giver(Player* pPlayer, Creature* pCreature)
+{
+    ScriptedInstance* m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
+
+	if(!m_pInstance)
+		return false;
+	if(m_pInstance->GetData(TYPE_DRAKOS) != DONE)
+		return false;
+
+	if(pPlayer->GetItemCount(37815) > 0 || pPlayer->GetItemCount(37859) > 0 || pPlayer->GetItemCount(37860) > 0)
+		return false;
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT,GOSSIP_ITEM_BEL,GOSSIP_SENDER_MAIN,GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+
+    return true;
+}
+
+bool GossipSelect_npc_dragonbel_giver(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        if (Item* pItem = pPlayer->StoreNewItemInInventorySlot(37859, 1))
+            pPlayer->SendNewItem(pItem, 1, true, false);
+
+        pPlayer->CLOSE_GOSSIP_MENU();
+    }
+    return true;
+}*/
+
 void AddSC_oculus()
 {
     Script *newscript;
@@ -228,5 +264,11 @@ void AddSC_oculus()
     newscript->Name = "npc_belgar_image";
     newscript->GetAI = &GetAI_npc_belgar_image;
     newscript->RegisterSelf();
+	
+	/*newscript = new Script;
+	newscript->Name = "npc_dragonbel_giver";
+	newscript->pGossipHello = &GossipHello_npc_dragonbel_giver;
+	newscript->pGossipSelect = &GossipSelect_npc_dragonbel_giver;
+	newscript->RegisterSelf();*/
 
 }

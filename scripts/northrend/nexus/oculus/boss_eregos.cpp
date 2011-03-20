@@ -85,7 +85,7 @@ struct MANGOS_DLL_DECL boss_eregosAI : public ScriptedAI
            {
               m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
            }
-           else 
+           else
            {
               m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
            }
@@ -143,7 +143,7 @@ struct MANGOS_DLL_DECL boss_eregosAI : public ScriptedAI
             m_pInstance->SetData(TYPE_EREGOS, DONE);
     }
 
-    void DamageTaken(Unit *done_by, uint32 &damage) 
+    void DamageTaken(Unit *done_by, uint32 &damage)
     {
         if(m_creature->HasAura(SPELL_PLANAR_SHIFT))
            damage = 0;
@@ -258,7 +258,7 @@ struct MANGOS_DLL_DECL boss_eregosAI : public ScriptedAI
 
 struct MANGOS_DLL_DECL npc_planar_anomalyAI : public ScriptedAI
 {
-    npc_planar_anomalyAI(Creature *pCreature) : ScriptedAI(pCreature) 
+    npc_planar_anomalyAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
        Reset();
     }
