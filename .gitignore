@@ -1,5 +1,12 @@
+VC100/*
+VC90/*
+*.ncb
 *.sdf
 *.suo
 *.opensdf
 revision.h
 ipch/*
+
+# needed
+100ScriptDev2*
+90ScriptDev2*
