@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -76,12 +76,6 @@ struct MANGOS_DLL_DECL boss_nerubenkanAI : public ScriptedAI
         Summoned = DoSpawnCreature(10876, RandX, RandY, 0, 0, TEMPSUMMON_TIMED_OR_CORPSE_DESPAWN, 180000);
         if (Summoned)
             Summoned->AI()->AttackStart(victim);
-    }
-
-    void JustDied(Unit* Killer)
-    {
-        if (m_pInstance)
-            m_pInstance->SetData(TYPE_NERUB, DONE);
     }
 
     void UpdateAI(const uint32 diff)

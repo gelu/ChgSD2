@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -89,9 +89,9 @@ bool GOHello_go_plague_sigil(Player *player, GameObject* pGo)
     if (pInstance->GetData(TYPE_FESTERGUT) == DONE
         && pInstance->GetData(TYPE_ROTFACE) == DONE)
         {
-            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_ORANGE));
-            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_GREEN));
-            pInstance->OpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_COLLISION));
+            pInstance->DoOpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_ORANGE));
+            pInstance->DoOpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_GREEN));
+            pInstance->DoOpenDoor(pInstance->GetData64(GO_SCIENTIST_DOOR_COLLISION));
         };
     return true;
 }
@@ -102,7 +102,7 @@ bool GOHello_go_bloodwing_sigil(Player *player, GameObject* pGo)
     if(!pInstance) return false;
 
     if (pInstance->GetData(TYPE_SAURFANG) == DONE)
-            pInstance->OpenDoor(pInstance->GetData64(GO_BLOODWING_DOOR));
+            pInstance->DoOpenDoor(pInstance->GetData64(GO_BLOODWING_DOOR));
 
     return true;
 }
@@ -113,7 +113,7 @@ bool GOHello_go_frostwing_sigil(Player *player, GameObject* pGo)
     if(!pInstance) return false;
 
     if (pInstance->GetData(TYPE_SAURFANG) == DONE)
-        pInstance->OpenDoor(pInstance->GetData64(GO_FROSTWING_DOOR));
+        pInstance->DoOpenDoor(pInstance->GetData64(GO_FROSTWING_DOOR));
 
     return true;
 }
