@@ -254,7 +254,7 @@ struct MANGOS_DLL_DECL boss_baltharusAI : public BSWScriptedAI
                  break;
         }
 
-//        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
+        timedCast(SPELL_BLADE_TEMPEST, uiDiff);
         timedCast(SPELL_ENERVATING_BRAND, uiDiff);
         timedCast(SPELL_SABER_LASH, uiDiff);
 
