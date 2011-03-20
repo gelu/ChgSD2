@@ -386,18 +386,21 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
             if (m_uiShadowBoltTimer <= uiDiff)
             {
-                switch (m_uiMode)
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 {
-                case RAID_DIFFICULTY_10MAN_NORMAL:
-                case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_N);
-                    break;
-                case RAID_DIFFICULTY_25MAN_NORMAL:
-                case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_H);
-                    break;
+                    switch (m_uiMode)
+                    {
+                    case RAID_DIFFICULTY_10MAN_NORMAL:
+                    case RAID_DIFFICULTY_10MAN_HEROIC:
+                        DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_N);
+                        break;
+                    case RAID_DIFFICULTY_25MAN_NORMAL:
+                    case RAID_DIFFICULTY_25MAN_HEROIC:
+                        DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_H);
+                        break;
+                    }
+                    m_uiShadowBoltTimer = urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
                 }
-                m_uiShadowBoltTimer = urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
             }
             else
                 m_uiShadowBoltTimer -= uiDiff;
