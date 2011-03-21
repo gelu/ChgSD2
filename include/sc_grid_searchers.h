@@ -37,6 +37,7 @@ struct ObjectDistanceOrderReversed : public std::binary_function<const WorldObje
     }
 };
 
+Unit* GetClosestAttackableUnit(Unit* pSource, float fMaxSearchRange);
 GameObject* GetClosestGameObjectWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 Creature* GetClosestCreatureWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange);
 

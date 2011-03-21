@@ -4,6 +4,19 @@
 
 #include "precompiled.h"
 
+//return closest attackable Unit in grid, with range from pSource
+Unit* GetClosestAttackableUnit(Unit* pSource, float fMaxSearchRange)
+{
+    Unit* pTarget = NULL;
+
+    MaNGOS::NearestAttackableUnitInObjectRangeCheck unit_check(pSource, pSource, fMaxSearchRange);
+    MaNGOS::UnitLastSearcher<MaNGOS::NearestAttackableUnitInObjectRangeCheck> searcher(pTarget, unit_check);
+
+    Cell::VisitAllObjects(pSource, searcher, fMaxSearchRange);
+
+    return pTarget;
+}
+
 //return closest GO in grid, with range from pSource
 GameObject* GetClosestGameObjectWithEntry(WorldObject* pSource, uint32 uiEntry, float fMaxSearchRange)
 {
