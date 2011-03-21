@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -870,18 +870,21 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                     m_uiTimer -= uiDiff;
             }
 
-            if (m_uiSubPhase != SUBPHASE_DEEP_BREATH && m_uiShellTimer <= uiDiff)
+            if (m_uiShellTimer <= uiDiff)
             {
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->StopMoving();
+                if (m_uiSubPhase != SUBPHASE_DEEP_BREATH)
+                {
+                    m_creature->GetMotionMaster()->Clear();
+                    m_creature->StopMoving();
 
-                if (!urand(0, 3))
-                    DoScriptText(SAY_ARCANE_OVERLOAD, m_creature);
+                    if (!urand(0, 3))
+                        DoScriptText(SAY_ARCANE_OVERLOAD, m_creature);
 
-                AntiMagicShell();
-                m_uiShellTimer = urand(15000, 17000);
-                m_bReadyForWPMove = true;
-                m_uiTimer = 2000;
+                    AntiMagicShell();
+                    m_uiShellTimer = urand(15000, 17000);
+                    m_bReadyForWPMove = true;
+                    m_uiTimer = 2000;
+                }
             }
             else
                 m_uiShellTimer -= uiDiff;

@@ -544,7 +544,7 @@ void AddSC_boss_auriaya()
 
     NewScript = new Script;
     NewScript->Name = "boss_auriaya";
-    NewScript->GetAI = GetAI_boss_auriaya;
+    NewScript->GetAI = &GetAI_boss_auriaya;
     NewScript->RegisterSelf();
 
     NewScript = new Script;
