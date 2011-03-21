@@ -30,9 +30,11 @@ enum
     SPELL_BONE_SLICE_10                     = 69055,
     SPELL_BONE_SLICE_25                     = 70814,
     SPELL_BONE_SPIKE_GRAVEYARD_10_N         = 69057,
-    SPELL_BONE_SPIKE_GRAVEYARD_10_H         = 72088,
+    SPELL_BONE_SPIKE_GRAVEYARD_10_H_0       = 72088,
+    SPELL_BONE_SPIKE_GRAVEYARD_10_H_1       = 73144,
     SPELL_BONE_SPIKE_GRAVEYARD_25_N         = 70826,
-    SPELL_BONE_SPIKE_GRAVEYARD_25_H         = 72089,
+    SPELL_BONE_SPIKE_GRAVEYARD_25_H_0       = 72089,
+    SPELL_BONE_SPIKE_GRAVEYARD_25_H_1       = 73145,
     SPELL_CALL_COLD_FLAME_N                 = 69138, // not used
     SPELL_CALL_COLD_FLAME_H                 = 71580, // not used
     SPELL_COLD_FLAME_VISUAL                 = 69145,
@@ -81,7 +83,6 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     bool m_bPhase1;
     bool m_bPhase2;
     bool m_bSummon;
-    uint8 m_uiBoneSpikeCount;
     uint32 m_uiBoneSliceTimer;
     uint32 m_uiBoneSpikeGraveyardTimer;
     uint32 m_uiSummonBoneSpikeTimer;
@@ -102,7 +103,6 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         m_bPhase1 = true;
         m_bPhase2 = false;
         m_bSummon = false;
-        m_uiBoneSpikeCount = 0;
         m_uiBoneSliceTimer = urand(10*IN_MILLISECONDS, 25*IN_MILLISECONDS);
         m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
         m_uiSummonBoneSpikeTimer = 3*IN_MILLISECONDS;
@@ -175,7 +175,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         }
     }
 
-    void AttackFarthestTarget(Creature* pCreature)
+    void MoveToFarthestTarget(Creature* pCreature)
     {
         float m_fMaxRange = 1.0f;
         float m_fRange;
@@ -201,7 +201,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         if (!pTarget)
             return;
 
-        pCreature->AI()->AttackStart(pTarget);
+        pCreature->GetMotionMaster()->MovePoint(0, pTarget->GetPositionX(),  pTarget->GetPositionY(),  pTarget->GetPositionZ());
     }
 
     void DoBoneSpikeAttack(Creature* pCreature, uint8 m_uiPlayerMode)
@@ -215,9 +215,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             if (Player* pPlayer = itr->getSource())
                 if (pPlayer->isTargetableForAttack() || !pPlayer->HasAura(SPELL_BONE_STRIKE_IMPALE))
                     if (pPlayer->GetGUID() != pCreature->getVictim()->GetGUID())
-                    {
                         PlayerGuidList.push_back(pPlayer->GetGUID());
-                    }
         }
 
         if (PlayerGuidList.empty())
@@ -282,10 +280,10 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                                 DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_25_N);
                                 break;
                             case RAID_DIFFICULTY_10MAN_HEROIC:
-                                DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_10_H);
+                                DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_10_H_0);
                                 break;
                             case RAID_DIFFICULTY_25MAN_HEROIC:
-                                DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_25_N);
+                                DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_25_H_0);
                                 break;
                             default:
                                 break;
@@ -312,26 +310,22 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                     {
                         if (m_uiSummonBoneSpikeTimer < uiDiff)
                         {
-                            if (!m_uiBoneSpikeCount)
+                            switch (m_uiMode)
                             {
-                                switch (m_uiMode)
-                                {
-                                    case RAID_DIFFICULTY_10MAN_NORMAL:
-                                    case RAID_DIFFICULTY_10MAN_HEROIC:
-                                        DoBoneSpikeAttack(m_creature, 10);
-                                        m_bSummon = false;
-                                        m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
-                                        break;
-                                    case RAID_DIFFICULTY_25MAN_NORMAL:
-                                    case RAID_DIFFICULTY_25MAN_HEROIC:
-                                        DoSummonSpike(pTarget);
-                                        DoBoneSpikeAttack(m_creature, 25);
-                                        m_bSummon = false;
-                                        m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                case RAID_DIFFICULTY_10MAN_NORMAL:
+                                case RAID_DIFFICULTY_10MAN_HEROIC:
+                                    DoBoneSpikeAttack(m_creature, 10);
+                                    m_bSummon = false;
+                                    m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
+                                    break;
+                                case RAID_DIFFICULTY_25MAN_NORMAL:
+                                case RAID_DIFFICULTY_25MAN_HEROIC:
+                                    DoBoneSpikeAttack(m_creature, 25);
+                                    m_bSummon = false;
+                                    m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
+                                    break;
+                                default:
+                                    break;
                             }
                         }
                         else
@@ -365,12 +359,9 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
             if (m_uiColdFlameTimer < uiDiff)
             {
-                if (m_creature->IsWithinDistInMap(m_creature->getVictim(), 3.0f))
-                {
-                    float m_fPosX, m_fPosY, m_fPosZ;
-                    m_creature->GetPosition(m_fPosX, m_fPosY, m_fPosZ);
-                    m_creature->SummonCreature(NPC_COLD_FLAME, m_fPosX, m_fPosY, m_fPosZ, 0.0f, TEMPSUMMON_TIMED_DESPAWN, m_uiColdFlameDespawnDelay);
-                }
+                float m_fPosX, m_fPosY, m_fPosZ;
+                m_creature->GetPosition(m_fPosX, m_fPosY, m_fPosZ);
+                m_creature->SummonCreature(NPC_COLD_FLAME, m_fPosX, m_fPosY, m_fPosZ, 0.0f, TEMPSUMMON_TIMED_DESPAWN, m_uiColdFlameDespawnDelay);
 
                 m_uiColdFlameTimer = 10*IN_MILLISECONDS;
             }
@@ -383,16 +374,17 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
                 DoCast(m_creature, SPELL_BONE_STORM);
                 DoResetThreat();
-                m_creature->RemoveSplineFlag(SPLINEFLAG_WALKMODE);
+                SetCombatMovement(false);
                 m_creature->SetSpeedRate(MOVE_RUN, 3);
                 m_creature->SetSpeedRate(MOVE_WALK, 3);
 
-                m_uiBoneStormTimer = 20*IN_MILLISECONDS;
-                m_uiTargetSwitchTimer = 1*IN_MILLISECONDS;
+                m_uiBoneStormTimer = 23*IN_MILLISECONDS;
+                m_uiTargetSwitchTimer = 3*IN_MILLISECONDS;
                 m_bPhase1 = false;
                 m_bPhase2 = true;
 
                 DoScriptText(SAY_BONESTORM, m_creature);
+                return;
             }
             else
                 m_uiBoneStormTimer -= uiDiff;
@@ -409,25 +401,36 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                 m_bPhase1 = true;
                 m_bPhase2 = false;
 
-                m_creature->SetSpeedRate(MOVE_RUN, 1);
-                m_creature->SetSpeedRate(MOVE_WALK, 1);
+                SetCombatMovement(true);
+                m_creature->SetSpeedRate(MOVE_RUN, 1.5);
+                m_creature->SetSpeedRate(MOVE_WALK, 1.5);
                 m_pInstance->SetData(DATA_DIRECTION, 0);
 
                 m_uiBoneSliceTimer = urand(10*IN_MILLISECONDS, 25*IN_MILLISECONDS);
-                m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
                 m_uiBoneStormTimer = 50*IN_MILLISECONDS;
                 m_uiColdFlameTimer = 10*IN_MILLISECONDS;
 
+                switch (m_uiMode)
+                {
+                    case RAID_DIFFICULTY_10MAN_NORMAL:
+                    case RAID_DIFFICULTY_25MAN_NORMAL:
+                        m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
+                        break;
+                    default:
+                        break;
+                }
+
                 DoResetThreat();
+
+                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->AI()->AttackStart(m_creature->getVictim());
+                return;
             }
             else
                 m_uiBoneStormTimer -= uiDiff;
 
             switch (m_uiMode)
             {
-                case RAID_DIFFICULTY_10MAN_NORMAL:
-                case RAID_DIFFICULTY_25MAN_NORMAL:
-                    break;
                 case RAID_DIFFICULTY_10MAN_HEROIC:
                 case RAID_DIFFICULTY_25MAN_HEROIC:
                     if (m_uiBoneSpikeGraveyardTimer < uiDiff)
@@ -442,10 +445,10 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                                 switch (m_uiMode)
                                 {
                                     case RAID_DIFFICULTY_10MAN_HEROIC:
-                                        DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_10_H);
+                                        //DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_10_H_1);
                                         break;
                                     case RAID_DIFFICULTY_25MAN_HEROIC:
-                                        DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_25_N);
+                                        //DoCast(pTarget, SPELL_BONE_SPIKE_GRAVEYARD_25_H_1);
                                         break;
                                     default:
                                         break;
@@ -465,31 +468,27 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
                                 }
 
                                 m_bSummon = true;
-                                m_uiSummonBoneSpikeTimer = 3*IN_MILLISECONDS;
+                                m_uiSummonBoneSpikeTimer = 1*IN_MILLISECONDS;
                             }
 
                             if (m_bSummon)
                             {
                                 if (m_uiSummonBoneSpikeTimer < uiDiff)
                                 {
-                                    if (!m_uiBoneSpikeCount)
+                                    switch (m_uiMode)
                                     {
-                                        switch (m_uiMode)
-                                        {
-                                            case RAID_DIFFICULTY_10MAN_HEROIC:
-                                                DoBoneSpikeAttack(m_creature, 10);
-                                                m_bSummon = false;
-                                                m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
-                                                break;
-                                            case RAID_DIFFICULTY_25MAN_HEROIC:
-                                                DoSummonSpike(pTarget);
-                                                DoBoneSpikeAttack(m_creature, 25);
-                                                m_bSummon = false;
-                                                m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
-                                                break;
-                                            default:
-                                                break;
-                                        }
+                                        case RAID_DIFFICULTY_10MAN_HEROIC:
+                                            DoBoneSpikeAttack(m_creature, 10);
+                                            m_bSummon = false;
+                                            m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
+                                            break;
+                                        case RAID_DIFFICULTY_25MAN_HEROIC:
+                                            DoBoneSpikeAttack(m_creature, 25);
+                                            m_bSummon = false;
+                                            m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
+                                            break;
+                                        default:
+                                            break;
                                     }
                                 }
                                 else
@@ -506,18 +505,13 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
 
             if (m_uiTargetSwitchTimer < uiDiff)
             {
-                DoResetThreat();
-
-                if (m_creature->IsWithinDistInMap(m_creature->getVictim(), 3.0f))
-                {
-                    m_pInstance->SetData(DATA_DIRECTION, (uint32)(1000*2.0f*M_PI_F*((float)urand(1,16)/16.0f)));
-                    float m_fPosX, m_fPosY, m_fPosZ;
-                    m_creature->GetPosition(m_fPosX, m_fPosY, m_fPosZ);
-                    m_creature->SummonCreature(NPC_COLD_FLAME, m_fPosX, m_fPosY, m_fPosZ, 0.0f, TEMPSUMMON_TIMED_DESPAWN, m_uiColdFlameDespawnDelay);
-                }
+                m_pInstance->SetData(DATA_DIRECTION, (uint32)(1000*2.0f*M_PI_F*((float)urand(1,16)/16.0f)));
+                float m_fPosX, m_fPosY, m_fPosZ;
+                m_creature->GetPosition(m_fPosX, m_fPosY, m_fPosZ);
+                m_creature->SummonCreature(NPC_COLD_FLAME, m_fPosX, m_fPosY, m_fPosZ, 0.0f, TEMPSUMMON_TIMED_DESPAWN, m_uiColdFlameDespawnDelay);
 
                 DoResetThreat();
-                AttackFarthestTarget(m_creature);
+                MoveToFarthestTarget(m_creature);
 
                 m_uiTargetSwitchTimer = 5*IN_MILLISECONDS;
             }
