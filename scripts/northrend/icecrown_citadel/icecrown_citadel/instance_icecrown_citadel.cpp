@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 2 of the License, or
@@ -31,32 +31,18 @@ static Locations SpawnLoc[]=
     {-428.140503f, 2421.336914f, 191.233078f},  // 1 Alliance ship enter
 };
 
-    instance_icecrown_spire::instance_icecrown_spire(Map* pMap) : ScriptedInstance(pMap) 
+    instance_icecrown_spire::instance_icecrown_spire(Map* pMap) : BSWScriptedInstance(pMap) 
     {
         Difficulty = pMap->GetDifficulty();
         Initialize();
     }
 
-    void instance_icecrown_spire::OpenDoor(uint64 guid)
-    {
-        if(!guid) return;
-        GameObject* pGo = instance->GetGameObject(guid);
-        if(pGo) pGo->SetGoState(GO_STATE_ACTIVE_ALTERNATIVE);
-    }
-
-    void instance_icecrown_spire::CloseDoor(uint64 guid)
-    {
-        if(!guid) return;
-        GameObject* pGo = instance->GetGameObject(guid);
-        if(pGo) pGo->SetGoState(GO_STATE_READY);
-    }
-
     void instance_icecrown_spire::OpenAllDoors()
     {
         if (m_auiEncounter[1] == DONE) {
-                                        OpenDoor(m_uiIcewall1GUID);
-                                        OpenDoor(m_uiIcewall2GUID);
-                                        OpenDoor( m_uiOratoryDoorGUID);
+                                        DoOpenDoor(m_uiIcewall1GUID);
+                                        DoOpenDoor(m_uiIcewall2GUID);
+                                        DoOpenDoor( m_uiOratoryDoorGUID);
                                         };
         if (m_auiEncounter[2] == DONE) {
                         if (GameObject* pGO = instance->GetGameObject(m_uiDeathWhisperElevatorGUID))
@@ -66,22 +52,22 @@ static Locations SpawnLoc[]=
                             }
                                        };
         if (m_auiEncounter[4] == DONE) {
-                                        OpenDoor(m_uiSaurfangDoorGUID);
-                                        OpenDoor(m_uiBloodwingDoorGUID);
-                                        OpenDoor(m_uiFrostwingDoorGUID);
+                                        DoOpenDoor(m_uiSaurfangDoorGUID);
+                                        DoOpenDoor(m_uiBloodwingDoorGUID);
+                                        DoOpenDoor(m_uiFrostwingDoorGUID);
                                         };
-        if (m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorOrangeGUID);
-        if (m_auiEncounter[6] == DONE) OpenDoor(m_uiSDoorGreenGUID);
-        if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) OpenDoor(m_uiSDoorCollisionGUID);
+        if (m_auiEncounter[5] == DONE) DoOpenDoor(m_uiSDoorOrangeGUID);
+        if (m_auiEncounter[6] == DONE) DoOpenDoor(m_uiSDoorGreenGUID);
+        if (m_auiEncounter[6] == DONE && m_auiEncounter[5] == DONE) DoOpenDoor(m_uiSDoorCollisionGUID);
         if (m_auiEncounter[8] == DONE) {
-                                        OpenDoor(m_uiCounsilDoor1GUID);
-                                        OpenDoor(m_uiCounsilDoor2GUID);
+                                        DoOpenDoor(m_uiCounsilDoor1GUID);
+                                        DoOpenDoor(m_uiCounsilDoor2GUID);
                                         };
         if (m_auiEncounter[10] == DONE) 
         {
-            OpenDoor(m_uiValithriaDoor2GUID);
-            OpenDoor(m_uiSindragosaDoor2GUID);
-            OpenDoor(m_uiSindragosaDoor1GUID);
+            DoOpenDoor(m_uiValithriaDoor2GUID);
+            DoOpenDoor(m_uiSindragosaDoor2GUID);
+            DoOpenDoor(m_uiSindragosaDoor1GUID);
         };
 
     }
@@ -142,20 +128,6 @@ static Locations SpawnLoc[]=
             if (m_auiEncounter[i] == IN_PROGRESS) return true;
 
         return false;
-    }
-
-    uint32 instance_icecrown_spire::GetCompletedEncounters(bool /*type*/)
-    {
-        uint32 count = 0;
-        uint32 mask = 1;
-        for(uint8 i = 1; i < MAX_ENCOUNTERS-2 ; ++i)
-        {
-            if (m_auiEncounter[i] == DONE)
-                count += mask;
-            mask = mask << 1;
-        }
-
-        return count;
     }
 
     void instance_icecrown_spire::OnPlayerEnter(Player *pPlayer)
@@ -452,21 +424,21 @@ static Locations SpawnLoc[]=
             case TYPE_MARROWGAR:
                 m_auiEncounter[TYPE_MARROWGAR] = uiData;
                 if (uiData == IN_PROGRESS) 
-                    CloseDoor(m_uiMarrogarDoor);
-                else OpenDoor(m_uiMarrogarDoor);
+                    DoCloseDoor(m_uiMarrogarDoor);
+                else DoOpenDoor(m_uiMarrogarDoor);
 
                 if (uiData == DONE) 
                 {
-                    OpenDoor(m_uiIcewall1GUID);
-                    OpenDoor(m_uiIcewall2GUID);
-                    OpenDoor(m_uiOratoryDoorGUID);
+                    DoOpenDoor(m_uiIcewall1GUID);
+                    DoOpenDoor(m_uiIcewall2GUID);
+                    DoOpenDoor(m_uiOratoryDoorGUID);
                 }
                 break;
              case TYPE_DEATHWHISPER:
                 m_auiEncounter[TYPE_DEATHWHISPER] = uiData; 
                 if (uiData == IN_PROGRESS) 
-                    CloseDoor(m_uiOratoryDoorGUID);
-                else OpenDoor(m_uiOratoryDoorGUID);
+                    DoCloseDoor(m_uiOratoryDoorGUID);
+                else DoOpenDoor(m_uiOratoryDoorGUID);
 
                 if (uiData == DONE) 
                 {
@@ -495,9 +467,9 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_SAURFANG] = uiData; 
                 if (uiData == DONE) 
                 {
-                    OpenDoor(m_uiSaurfangDoorGUID);
-                    OpenDoor(m_uiBloodwingDoorGUID);
-                    OpenDoor(m_uiFrostwingDoorGUID);
+                    DoOpenDoor(m_uiSaurfangDoorGUID);
+                    DoOpenDoor(m_uiBloodwingDoorGUID);
+                    DoOpenDoor(m_uiFrostwingDoorGUID);
 
                     if (GameObject* pChest = instance->GetGameObject(m_uiSaurfangCacheGUID))
                         if (pChest && !pChest->isSpawned()) 
@@ -510,41 +482,41 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_FESTERGUT] = uiData;
 
                 if (uiData == IN_PROGRESS) 
-                    CloseDoor(m_uiOrangePlagueGUID);
-                else OpenDoor(m_uiOrangePlagueGUID);
+                    DoCloseDoor(m_uiOrangePlagueGUID);
+                else DoOpenDoor(m_uiOrangePlagueGUID);
 
                 if (uiData == DONE)  
                 {
-                    OpenDoor(m_uiSDoorOrangeGUID);
+                    DoOpenDoor(m_uiSDoorOrangeGUID);
                     if (m_auiEncounter[TYPE_ROTFACE] == DONE) 
                     {
-                        OpenDoor(m_uiSDoorCollisionGUID);
-                        OpenDoor(m_uiGreenPlagueGUID);
+                        DoOpenDoor(m_uiSDoorCollisionGUID);
+                        DoOpenDoor(m_uiGreenPlagueGUID);
                     }
                 }
                 break;
              case TYPE_ROTFACE:
                 m_auiEncounter[TYPE_ROTFACE] = uiData;
                 if (uiData == IN_PROGRESS)
-                    CloseDoor(m_uiGreenPlagueGUID);
+                    DoCloseDoor(m_uiGreenPlagueGUID);
                 else
-                    OpenDoor(m_uiGreenPlagueGUID);
+                    DoOpenDoor(m_uiGreenPlagueGUID);
                 if (uiData == DONE)
                 {
-                    OpenDoor(m_uiSDoorGreenGUID);
+                    DoOpenDoor(m_uiSDoorGreenGUID);
                     if (m_auiEncounter[TYPE_FESTERGUT] == DONE) 
                     {
-                        OpenDoor(m_uiSDoorOrangeGUID);
-                        OpenDoor(m_uiSDoorCollisionGUID);
+                        DoOpenDoor(m_uiSDoorOrangeGUID);
+                        DoOpenDoor(m_uiSDoorCollisionGUID);
                     }
                 }
                 break;
              case TYPE_PUTRICIDE:
                 m_auiEncounter[TYPE_PUTRICIDE] = uiData;
                 if (uiData == IN_PROGRESS) 
-                    CloseDoor(m_uiScientistDoorGUID);
+                    DoCloseDoor(m_uiScientistDoorGUID);
                 else
-                    OpenDoor(m_uiScientistDoorGUID);
+                    DoOpenDoor(m_uiScientistDoorGUID);
                 if (uiData == DONE)
                 {
                     if (m_auiEncounter[TYPE_SINDRAGOSA] == DONE
@@ -556,26 +528,26 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_BLOOD_COUNCIL] = uiData;
 
                 if (uiData == IN_PROGRESS)
-                    CloseDoor(m_uiCrimsonDoorGUID);
+                    DoCloseDoor(m_uiCrimsonDoorGUID);
                 else
-                    OpenDoor(m_uiCrimsonDoorGUID);
+                    DoOpenDoor(m_uiCrimsonDoorGUID);
 
                 if (uiData == DONE) 
                 {
-                    OpenDoor(m_uiCounsilDoor1GUID);
-                    OpenDoor(m_uiCounsilDoor2GUID);
+                    DoOpenDoor(m_uiCounsilDoor1GUID);
+                    DoOpenDoor(m_uiCounsilDoor2GUID);
                 }
                 break;
              case TYPE_LANATHEL:
                 m_auiEncounter[TYPE_LANATHEL] = uiData;
 
                 if (uiData == IN_PROGRESS) 
-                    CloseDoor(m_uiBloodPrinceDoor);
-                else OpenDoor(m_uiBloodPrinceDoor);
+                    DoCloseDoor(m_uiBloodPrinceDoor);
+                else DoOpenDoor(m_uiBloodPrinceDoor);
 
                 if (uiData == DONE)
                 {
-                    OpenDoor(m_uiIceCrownGrate);
+                    DoOpenDoor(m_uiIceCrownGrate);
 
                     if (m_auiEncounter[TYPE_PUTRICIDE] == DONE
                         && m_auiEncounter[TYPE_SINDRAGOSA] == DONE)
@@ -586,15 +558,15 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_VALITHRIA] = uiData;
 
                 if (uiData == IN_PROGRESS)
-                    CloseDoor(m_uiGreenDragonDoor1GUID);
+                    DoCloseDoor(m_uiGreenDragonDoor1GUID);
                 else
-                    OpenDoor(m_uiGreenDragonDoor1GUID);
+                    DoOpenDoor(m_uiGreenDragonDoor1GUID);
 
                 if (uiData == DONE)
                 {
-                    OpenDoor(m_uiGreenDragonDoor2GUID);
-                    OpenDoor(m_uiSindragosaDoor1GUID);
-                    OpenDoor(m_uiSindragosaDoor2GUID);
+                    DoOpenDoor(m_uiGreenDragonDoor2GUID);
+                    DoOpenDoor(m_uiSindragosaDoor1GUID);
+                    DoOpenDoor(m_uiSindragosaDoor2GUID);
                     if (GameObject* pChest = instance->GetGameObject(m_uiValitriaCacheGUID))
                         if (pChest && !pChest->isSpawned()) 
                         {
@@ -606,9 +578,9 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_SINDRAGOSA] = uiData;
 
                 if (uiData == IN_PROGRESS)
-                    CloseDoor(m_uiSindragosaEntrance);
+                    DoCloseDoor(m_uiSindragosaEntrance);
                 else
-                    OpenDoor(m_uiSindragosaEntrance);
+                    DoOpenDoor(m_uiSindragosaEntrance);
 
                 if (uiData == DONE)
                 {
@@ -856,6 +828,11 @@ static Locations SpawnLoc[]=
 
         OUT_LOAD_INST_DATA_COMPLETE;
         OpenAllDoors();
+    }
+
+    bool instance_icecrown_spire::CheckAchievementCriteriaMeet(uint32 criteria_id, Player const* player, Unit const* /*target*/, uint32 /*miscvalue1*/)
+    {
+        return GetCriteriaState(criteria_id, player);
     }
 
 InstanceData* GetInstanceData_instance_icecrown_spire(Map* pMap)
