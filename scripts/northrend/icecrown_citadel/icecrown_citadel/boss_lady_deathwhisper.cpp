@@ -16,49 +16,65 @@
 
 /* ScriptData
 SDName: boss_lady_deathwhisper
-SD%Complete: 80%
+SD%Complete: 90%
 SDComment: by /dev/rsa, IOV
 SDCategory: Icecrown Citadel
 EndScriptData */
-// Need correct spells on adds and timers
+
 #include "precompiled.h"
 #include "icecrown_citadel.h"
 
 enum
 {	
     //common
-    SPELL_BERSERK                           = 47008,
+    SPELL_BERSERK = 47008,
 
     // boss abilities
-    SPELL_MANA_BARRIER                      = 70842,
+    SPELL_MANA_BARRIER = 70842,
         
-    SPELL_SHADOW_BOLT_N                     = 71254,
-    SPELL_SHADOW_BOLT_H				    	= 72503,
+    SPELL_SHADOW_BOLT_N = 71254,
+    SPELL_SHADOW_BOLT_H = 72503,
 
-    SPELL_DEATH_AND_DECAY_10				= 71001,
-    SPELL_DEATH_AND_DECAY_25_N              = 72109,
-    SPELL_DEATH_AND_DECAY_25_H				= 72110,
+    SPELL_DEATH_AND_DECAY_10 = 71001,
+    SPELL_DEATH_AND_DECAY_25_N = 72109,
+    SPELL_DEATH_AND_DECAY_25_H = 72110,
 
-    SPELL_TOUCH_OF_INSIGNIFICANCE			= 71204,
+    SPELL_TOUCH_OF_INSIGNIFICANCE = 71204,
 
-    SPELL_FROSTBOLT_10_N					= 72007,
-    SPELL_FROSTBOLT_10_H					= 72501,
-    SPELL_FROSTBOLT_25						= 72501,
+    SPELL_FROSTBOLT_10_N = 72007,
+    SPELL_FROSTBOLT_10_H = 72501,
+    SPELL_FROSTBOLT_25 = 72501,
 
-    SPELL_FROSTBOLT_VOLLEY_10_N				= 72905,
-    SPELL_FROSTBOLT_VOLLEY_25_N				= 72906,
-    SPELL_FROSTBOLT_VOLLEY_H				= 72907,
+    SPELL_FROSTBOLT_VOLLEY_10_N = 72905,
+    SPELL_FROSTBOLT_VOLLEY_25_N = 72906,
+    SPELL_FROSTBOLT_VOLLEY_H = 72907,
 
-    SPELL_SUMMON_SPIRIT						= 71426,
+    SPELL_SUMMON_SPIRIT = 71426,
 
-    SPELL_DOMINATE_MIND                     = 71289,
+    SPELL_DOMINATE_MIND = 71289,
 
     //summons
-    NPC_VENGEFUL_SHADE                      = 38222,
-    NPC_FANATIC                             = 37890,
-    NPC_REANIMATED_FANATIC                  = 38009,
-    NPC_ADHERENT                            = 37949,
-    NPC_REANIMATED_ADHERENT                 = 38010
+    NPC_VENGEFUL_SHADE = 38222,
+    NPC_FANATIC = 37890,
+    NPC_REANIMATED_FANATIC = 38009,
+    NPC_ADHERENT = 37949,
+    NPC_REANIMATED_ADHERENT = 38010,
+    NPC_EMPOWERED_ADHERENT = 38136,
+
+    // Achievments
+    ACHIEV_FULL_HOUSE_10 = 4535,
+    ACHIEV_FULL_HOUSE_25 = 4611,
+
+    // Script Text
+    SAY_KILLED_01 = -1631029,
+    SAY_KILLED_02 = -1631030,
+    SAY_AGGRO_01 = -1631023,
+    SAY_JUST_DIED_01 = -1631032,
+    SAY_INTRO_01 = -1631020,
+    SAY_INTRO_02 = -1631021,
+    SAY_INTRO_03 = -1631022,
+    SAY_PHASE2_01 = -1631024,
+    SAY_BERSERK_01 = -1631031
 };
 
 static Locations SpawnLoc[]=
@@ -105,6 +121,8 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
     
     uint32 m_uiBerserkTimer;
 
+    uint8 m_uiGuardsNextSpawnPoint;
+
     void Reset()
     {
         if(!m_pInstance)
@@ -119,17 +137,19 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
         m_uiIntroTimer = 5*IN_MILLISECONDS;
 
-        m_uiShadowBoltTimer				= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiDominateMindTimer			= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiDeathAndDecayTimer			= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiTouchOfInsignificanceTimer	= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiFrostboltTimer				= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiFrostboltVolleyTimer		= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
-        m_uiSummonSpiritTimer			= urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+        m_uiShadowBoltTimer	= urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
+        m_uiDominateMindTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+        m_uiDeathAndDecayTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+        m_uiTouchOfInsignificanceTimer = urand(8*IN_MILLISECONDS, 15*IN_MILLISECONDS);
+        m_uiFrostboltTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+        m_uiFrostboltVolleyTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+        m_uiSummonSpiritTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
 
-        m_uiSummonGuardsTimer			= 30*IN_MILLISECONDS;
+        m_uiSummonGuardsTimer = 30*IN_MILLISECONDS;
 
-        m_uiBerserkTimer				= 10*MINUTE*IN_MILLISECONDS;
+        m_uiBerserkTimer = 10*MINUTE*IN_MILLISECONDS;
+
+        m_uiGuardsNextSpawnPoint = 1;
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -147,10 +167,10 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         switch (urand(0,1)) 
         {
             case 0:
-               DoScriptText(-1631029 ,m_creature, pVictim);
+               DoScriptText(SAY_KILLED_01 ,m_creature, pVictim);
                break;
             case 1:
-               DoScriptText(-1631030, m_creature, pVictim);
+               DoScriptText(SAY_KILLED_02, m_creature, pVictim);
                break;
         }
     }
@@ -191,7 +211,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         m_creature->CastSpell(m_creature, SPELL_MANA_BARRIER, true);
         SetCombatMovement(false);
 
-        DoScriptText(-1631023, m_creature);
+        DoScriptText(SAY_AGGRO_01, m_creature);
 
         m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
     }
@@ -201,14 +221,45 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_DEATHWHISPER, DONE);
 
-        DoScriptText(-1631032, m_creature, pKiller);
+        DoScriptText(SAY_JUST_DIED_01, m_creature, pKiller);
+
+        bool bFullHouse = false;
+        if(GetClosestCreatureWithEntry(m_creature, NPC_EMPOWERED_ADHERENT, 1000.0f) 
+            || GetClosestCreatureWithEntry(m_creature, NPC_FANATIC, 1000.0f) 
+            || GetClosestCreatureWithEntry(m_creature, NPC_ADHERENT, 1000.0f)
+            || GetClosestCreatureWithEntry(m_creature, NPC_REANIMATED_FANATIC, 1000.0f) 
+            || GetClosestCreatureWithEntry(m_creature, NPC_REANIMATED_ADHERENT, 1000.0f))
+            bFullHouse = true;
 
         Map *pMap = m_creature->GetMap();
         if(pMap && pMap->IsDungeon())
         {
+            bool is25 = false;
+            switch (m_uiMode)
+            {
+            case RAID_DIFFICULTY_10MAN_NORMAL:
+            case RAID_DIFFICULTY_10MAN_HEROIC:
+                is25 = false;
+                break;
+            case RAID_DIFFICULTY_25MAN_NORMAL:
+            case RAID_DIFFICULTY_25MAN_HEROIC:
+                is25 = true;
+                break;
+            default:
+                break;
+            }
+
+            AchievementEntry const *AchievFullHouse = GetAchievementStore()->LookupEntry(is25 ? ACHIEV_FULL_HOUSE_25 : ACHIEV_FULL_HOUSE_10);
             Map::PlayerList const &lPlayers = pMap->GetPlayers();
             for (Map::PlayerList::const_iterator iter = lPlayers.begin(); iter != lPlayers.end(); ++iter)
+            {
                 iter->getSource()->RemoveAurasDueToSpell(SPELL_TOUCH_OF_INSIGNIFICANCE);
+                
+                if (AchievFullHouse && bFullHouse)
+                {
+                    iter->getSource()->CompletedAchievement(AchievFullHouse);
+                }
+            }
         }
     }
 
@@ -223,14 +274,32 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         }
     }
 
-    void CallGuard(uint8 place)
+    // Stage 3
+    void CallGuards()
     {
-        if (place < 2)
+        switch (m_uiGuardsNextSpawnPoint)
         {
-            m_creature->SummonCreature(roll_chance_i(50) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+1].x, SpawnLoc[3*place+1].y, SpawnLoc[3*place+1].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
-            m_creature->SummonCreature(roll_chance_i(50) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+3].x, SpawnLoc[3*place+3].y, SpawnLoc[3*place+3].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+        // right
+        case 0:
+            m_creature->SummonCreature(NPC_ADHERENT, SpawnLoc[1].x, SpawnLoc[1].y, SpawnLoc[1].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_creature->SummonCreature(NPC_FANATIC, SpawnLoc[2].x, SpawnLoc[2].y, SpawnLoc[2].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_creature->SummonCreature(NPC_ADHERENT, SpawnLoc[3].x, SpawnLoc[3].y, SpawnLoc[3].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_uiGuardsNextSpawnPoint = 1;
+            break;
+        // left
+        case 1:
+            m_creature->SummonCreature(NPC_FANATIC, SpawnLoc[4].x, SpawnLoc[4].y, SpawnLoc[4].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_creature->SummonCreature(NPC_ADHERENT, SpawnLoc[5].x, SpawnLoc[5].y, SpawnLoc[5].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_creature->SummonCreature(NPC_FANATIC, SpawnLoc[6].x, SpawnLoc[6].y, SpawnLoc[6].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+            m_uiGuardsNextSpawnPoint = 0;
+            break;
         }
-        m_creature->SummonCreature(roll_chance_i(50) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[3*place+2].x, SpawnLoc[3*place+2].y, SpawnLoc[3*place+2].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
+    }
+
+    // Stage 4
+    void CallGuard()
+    {
+        m_creature->SummonCreature(roll_chance_i(50) ? NPC_FANATIC : NPC_ADHERENT, SpawnLoc[8].x, SpawnLoc[8].y, SpawnLoc[8].z, 0.0f, TEMPSUMMON_CORPSE_DESPAWN, 10000);
     }
 
     void CallSpirit()
@@ -268,17 +337,17 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             switch (m_uiStage)
             {
             case 0:
-                DoScriptText(-1631020, m_creature);
+                DoScriptText(SAY_INTRO_01, m_creature);
                 m_uiStage = 1;
                 m_uiIntroTimer = 5*IN_MILLISECONDS;
                 break;
             case 1:
-                DoScriptText(-1631021, m_creature);
+                DoScriptText(SAY_INTRO_02, m_creature);
                 m_uiStage = 2;
                 m_uiIntroTimer = 5*IN_MILLISECONDS;
                 break;
             case 2:
-                DoScriptText(-1631022, m_creature);
+                DoScriptText(SAY_INTRO_03, m_creature);
                 m_uiStage = 3;
                 m_bIntro = false;
                 break;
@@ -317,18 +386,21 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
             if (m_uiShadowBoltTimer <= uiDiff)
             {
-                switch (m_uiMode)
+                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                 {
-                case RAID_DIFFICULTY_10MAN_NORMAL:
-                case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_N);
-                    break;
-                case RAID_DIFFICULTY_25MAN_NORMAL:
-                case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_SHADOW_BOLT_H);
-                    break;
+                    switch (m_uiMode)
+                    {
+                    case RAID_DIFFICULTY_10MAN_NORMAL:
+                    case RAID_DIFFICULTY_10MAN_HEROIC:
+                        DoCast(pTarget, SPELL_SHADOW_BOLT_N);
+                        break;
+                    case RAID_DIFFICULTY_25MAN_NORMAL:
+                    case RAID_DIFFICULTY_25MAN_HEROIC:
+                        DoCast(pTarget, SPELL_SHADOW_BOLT_H);
+                        break;
+                    }
+                    m_uiShadowBoltTimer = urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
                 }
-                m_uiShadowBoltTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
             }
             else
                 m_uiShadowBoltTimer -= uiDiff;
@@ -338,19 +410,19 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 switch (m_uiMode)
                 {
                 case RAID_DIFFICULTY_10MAN_NORMAL:
-                    CallGuard(urand(0,1));
+                    CallGuards();
                     m_uiSummonGuardsTimer = MINUTE*IN_MILLISECONDS;
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
-                    CallGuard(urand(0,1));
+                    CallGuards();
                     m_uiSummonGuardsTimer = 40*IN_MILLISECONDS;
                     break;
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    CallGuard(urand(0,1));
+                    CallGuards();
                     m_uiSummonGuardsTimer = MINUTE*IN_MILLISECONDS;
                     break;
                 case RAID_DIFFICULTY_25MAN_HEROIC:
-                    CallGuard(urand(0,1));
+                    CallGuards();
                     m_uiSummonGuardsTimer = 40*IN_MILLISECONDS;
                     break;
                 default:
@@ -416,7 +488,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
             if (m_uiSummonSpiritTimer <= uiDiff)
             {
                 CallSpirit();
-                m_uiSummonSpiritTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
+                m_uiSummonSpiritTimer = urand(8*IN_MILLISECONDS, 15*IN_MILLISECONDS);
             }
             else
                 m_uiSummonSpiritTimer -= uiDiff;
@@ -430,12 +502,11 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 case RAID_DIFFICULTY_25MAN_NORMAL:
                     break;
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    CallGuard(2);
+                    CallGuard();
                     m_uiSummonGuardsTimer = 45*IN_MILLISECONDS;
                     break;
                 case RAID_DIFFICULTY_25MAN_HEROIC:
-                    CallGuard(0);
-                    CallGuard(2);
+                    CallGuards();
                     m_uiSummonGuardsTimer = 60*IN_MILLISECONDS;
                     break;
                 default:
@@ -479,7 +550,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         if(!m_creature->HasAura(SPELL_MANA_BARRIER) && m_uiStage == 3)
         {
             m_uiStage = 4;
-            DoScriptText(-1631024, m_creature);
+            DoScriptText(SAY_PHASE2_01, m_creature);
             SetCombatMovement(false);
             m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
@@ -487,7 +558,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         if(m_uiBerserkTimer <= uiDiff)
         {
             DoCast(m_creature, SPELL_BERSERK);
-            DoScriptText(-1631031, m_creature);
+            DoScriptText(SAY_BERSERK_01, m_creature);
         };
 
         if (m_uiStage == 4)
@@ -502,10 +573,10 @@ CreatureAI* GetAI_boss_lady_deathwhisper(Creature* pCreature)
 
 enum
 {
-    // vengeful spirit
-    SPELL_VENGEFUL_BLAST_10_N				= 72010,
-    SPELL_VENGEFUL_BLAST_25_N				= 71544,
-    SPELL_VENGEFUL_BLAST_H					= 72012		
+    // vengeful shade
+    SPELL_VENGEFUL_BLAST_10_N = 72010,
+    SPELL_VENGEFUL_BLAST_25_N = 71544,
+    SPELL_VENGEFUL_BLAST_H = 72012		
 };
 
 struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
@@ -535,7 +606,7 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
 
         m_bVictimSelected = false;
 
-        m_uiFollowTargetTimer = 15*IN_MILLISECONDS;
+        m_uiFollowTargetTimer = 30*IN_MILLISECONDS;
         m_uiTargetGuid = 0;
     }
 
@@ -543,19 +614,19 @@ struct MANGOS_DLL_DECL mob_vengeful_shadeAI : public ScriptedAI
     {
         if (pWho->GetGUID() == m_uiTargetGuid)
         {
-            if (m_creature->IsWithinDist(pWho, 1.0f, false))
+            if (m_creature->IsWithinDist(pWho, 1.25f, true))
             {
                 switch (m_uiMode)
                 {
                 case RAID_DIFFICULTY_10MAN_NORMAL:
-                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_10_N);
+                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_10_N, true);
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
-                case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_H);
+                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_25_N, true);
                     break;
+                case RAID_DIFFICULTY_25MAN_HEROIC:
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_25_N);
+                    DoCast(m_creature->getVictim(), SPELL_VENGEFUL_BLAST_H, true);
                     break;
                 default:
                     break;
@@ -605,23 +676,23 @@ CreatureAI* GetAI_mob_vengeful_shade(Creature* pCreature)
 enum
 {
     // clut adherent
-    SPELL_DARK_EMPOWERMENT_N				= 70901,
+    SPELL_DARK_EMPOWERMENT = 70901,
 
-    SPELL_DARK_MARTYRIUM_ADHERENT_N			= 70903,
-    SPELL_DARK_MARTYRIUM_ADHERENT_H			= 72496,
+    SPELL_DARK_MARTYRIUM_ADHERENT_N = 70903,
+    SPELL_DARK_MARTYRIUM_ADHERENT_H = 72496,
         
-    SPELL_CURSE_OF_TORPOR					= 71237,
+    SPELL_CURSE_OF_TORPOR = 71237,
 
-    SPELL_DEATHCHILL_BOLT_10_N				= 70594,
-    SPELL_DEATHCHILL_BOLT_10_H				= 72488,
-    SPELL_DEATHCHILL_BOLT_25				= 72488,
+    SPELL_DEATHCHILL_BOLT_10_N = 70594,
+    SPELL_DEATHCHILL_BOLT_10_H = 72488,
+    SPELL_DEATHCHILL_BOLT_25 = 72488,
 
-    SPELL_DEATHCHILL_BLAST_10_N				= 70906,
-    SPELL_DEATHCHILL_BLAST_10_H				= 72486,
-    SPELL_DEATHCHILL_BLAST_25_N				= 72485,
-    SPELL_DEATHCHILL_BLAST_25_H				= 72488,
+    SPELL_DEATHCHILL_BLAST_10_N = 70906,
+    SPELL_DEATHCHILL_BLAST_10_H = 72486,
+    SPELL_DEATHCHILL_BLAST_25_N = 72485,
+    SPELL_DEATHCHILL_BLAST_25_H = 72488,
 
-    SPELL_SHROUD_OF_THE_OCCULT				= 70768
+    SPELL_SHROUD_OF_THE_OCCULT = 70768
 };
 
 struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
@@ -688,7 +759,67 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
             else
                 m_uiShroudOfTheOccultTimer -= uiDiff;
         }
-        
+
+        if (!m_creature->HasAura(SPELL_DARK_EMPOWERMENT))
+        {
+            if (m_uiDeathchillBoltTimer <= uiDiff)
+            {
+                switch (m_uiMode)
+                {
+                case RAID_DIFFICULTY_10MAN_NORMAL:
+                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_10_N);
+                    break;
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
+                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_25);
+                    break;
+                default:
+                    break;
+                }
+                m_uiDeathchillBoltTimer = urand(5*IN_MILLISECONDS, 15*IN_MILLISECONDS);
+            }
+            else
+                m_uiDeathchillBoltTimer -= uiDiff;
+        }
+        else
+        {
+            if (m_uiDeathchillBlastTimer <= uiDiff)
+            {
+                if (m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT))
+                {
+                    switch (m_uiMode)
+                    {
+                    case RAID_DIFFICULTY_10MAN_NORMAL:
+                        DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_N);
+                        break;
+                    case RAID_DIFFICULTY_25MAN_NORMAL:
+                        DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_N);
+                        break;
+                    case RAID_DIFFICULTY_10MAN_HEROIC:
+                        DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_H);
+                        break;
+                    case RAID_DIFFICULTY_25MAN_HEROIC:
+                        DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_H);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                m_uiDeathchillBlastTimer = urand(10*IN_MILLISECONDS, 15*IN_MILLISECONDS);
+            }
+            else
+                m_uiDeathchillBlastTimer -= uiDiff;
+
+            if (m_uiDarkEmpowermentTimer <= uiDiff)
+            {
+                DoCast(m_creature, SPELL_DARK_EMPOWERMENT);
+                m_uiDarkEmpowermentTimer = urand(15*IN_MILLISECONDS, 25*IN_MILLISECONDS);
+            }
+            else
+                m_uiDarkEmpowermentTimer -= uiDiff;
+        }
+
         if (m_uiCurseOfTorporTimer <= uiDiff)
         {
             DoCast(m_creature->getVictim(), SPELL_CURSE_OF_TORPOR);
@@ -697,53 +828,7 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
         else
             m_uiCurseOfTorporTimer -= uiDiff;
 
-        if (m_uiDeathchillBoltTimer <= uiDiff)
-        {
-            switch (m_uiMode)
-            {
-            case RAID_DIFFICULTY_10MAN_NORMAL:
-                DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_10_N);
-                break;
-            case RAID_DIFFICULTY_25MAN_NORMAL:
-            case RAID_DIFFICULTY_10MAN_HEROIC:
-            case RAID_DIFFICULTY_25MAN_HEROIC:
-                DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BOLT_25);
-                break;
-            default:
-                break;
-            }
-            m_uiDeathchillBoltTimer = urand(5*IN_MILLISECONDS, 15*IN_MILLISECONDS);
-        }
-        else
-            m_uiDeathchillBoltTimer -= uiDiff;
-
-        if (m_uiDeathchillBlastTimer <= uiDiff)
-        {
-            if (m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT))
-            {
-                switch (m_uiMode)
-                {
-                case RAID_DIFFICULTY_10MAN_NORMAL:
-                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_N);
-                    break;
-                case RAID_DIFFICULTY_25MAN_NORMAL:
-                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_N);
-                    break;
-                case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_10_H);
-                    break;
-                case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature->getVictim(), SPELL_DEATHCHILL_BLAST_25_H);
-                    break;
-                default:
-                    break;
-                }
-            }
-            m_uiDeathchillBlastTimer = urand(10*IN_MILLISECONDS, 15*IN_MILLISECONDS);
-        }
-        else
-            m_uiDeathchillBlastTimer -= uiDiff;
-
+        // spell needs some love in core
         if (m_creature->GetHealthPercent() < 15.0f && !bone)
         {
             if (roll_chance_i(50))  //50%
@@ -752,18 +837,26 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
                 {
                 case RAID_DIFFICULTY_10MAN_NORMAL:
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_N);
-                    m_creature->SetHealthPercent(100.0f);
+                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_N) == CAST_OK)
+                    {
+                        m_creature->SetHealthPercent(100.0f);
+                        m_creature->UpdateEntry(NPC_REANIMATED_ADHERENT);
+                    }
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
                 case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_H);
-                    m_creature->SetHealthPercent(100.0f);
+                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_ADHERENT_H) == CAST_OK)
+                    {
+                        m_creature->SetHealthPercent(100.0f);
+                        m_creature->UpdateEntry(NPC_REANIMATED_ADHERENT);
+                    }
                     break;
                 }
                 bone = true;
             }
         }
+
+        DoMeleeAttackIfReady();
     }
 };
 
@@ -775,20 +868,20 @@ CreatureAI* GetAI_mob_cult_adherent(Creature* pCreature)
 enum
 {
     // clut fanatic
-    SPELL_DARK_TRANSFORMATION				= 70900,
+    SPELL_DARK_TRANSFORMATION = 70900,
 
-    SPELL_DARK_MARTYRIUM_FANATIC_N			= 71236,
-    SPELL_DARK_MARTYRIUM_FANATIC_H			= 72496,
+    SPELL_DARK_MARTYRIUM_FANATIC_N = 71236,
+    SPELL_DARK_MARTYRIUM_FANATIC_H = 72496,
 
-    SPELL_NECROTIC_STRIKE_10_N				= 70659,
-    SPELL_NECROTIC_STRIKE_10_H				= 72491,
-    SPELL_NECROTIC_STRIKE_25				= 72491,
+    SPELL_NECROTIC_STRIKE_10_N = 70659,
+    SPELL_NECROTIC_STRIKE_10_H = 72491,
+    SPELL_NECROTIC_STRIKE_25 = 72491,
 
-    SPELL_SHADOW_CLEAVE_10_N				= 70670,
-    SPELL_SHADOW_CLEAVE_25_N				= 72006,
-    SPELL_SHADOW_CLEAVE_H					= 72493,
+    SPELL_SHADOW_CLEAVE_10_N = 70670,
+    SPELL_SHADOW_CLEAVE_25_N = 72006,
+    SPELL_SHADOW_CLEAVE_H = 72493,
 
-    SPELL_VAMPIRIC_MIGHT					= 70674
+    SPELL_VAMPIRIC_MIGHT = 70674
 };
 
 struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
@@ -891,6 +984,7 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
         else
             m_uiDarkTransformationTimer -= uiDiff;
 
+        // spell needs some love in core
         if (m_creature->GetHealthPercent() < 15.0f && !bone)
         {
             if (roll_chance_i(50))  //50%
@@ -899,18 +993,26 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
                 {
                 case RAID_DIFFICULTY_10MAN_NORMAL:
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_N);
-                    m_creature->SetHealthPercent(100.0f);
+                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_N) == CAST_OK)
+                    {
+                        m_creature->SetHealthPercent(100.0f);
+                        m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
+                    }
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
                 case RAID_DIFFICULTY_25MAN_HEROIC:
-                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_H);
-                    m_creature->SetHealthPercent(100.0f);
+                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_H) == CAST_OK)
+                    {
+                        m_creature->SetHealthPercent(100.0f);
+                        m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
+                    }
                     break;
                 }
                 bone = true;
             }
         }
+        
+        DoMeleeAttackIfReady();
     }
 };
 

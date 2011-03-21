@@ -131,3 +131,42 @@ uint64 BSWScriptedInstance::GetInstanceObjectGUID(uint32 entry)
     else
         return guid.GetRawValue();
 }
+
+void BSWScriptedInstance::SetCriteriaState(uint32 criteria_id, bool state, Player* player)
+{
+    if (!criteria_id)
+        return;
+
+    if (player && state)
+        m_personalCriteriaMap.insert(std::make_pair(criteria_id, player->GetObjectGuid()));
+    else
+        m_groupCriteriaMap.insert(std::make_pair(criteria_id, state));
+
+}
+
+bool BSWScriptedInstance::GetCriteriaState(uint32 criteria_id, Player const* player)
+{
+    if (!criteria_id)
+        return false;
+
+    std::map<uint32, bool>::const_iterator itr = m_groupCriteriaMap.find(criteria_id);
+
+    if (itr != m_groupCriteriaMap.end())
+        if (itr->second)
+            return true;
+
+    if (player)
+    {
+        std::pair<std::multimap<uint32, ObjectGuid>::const_iterator, std::multimap<uint32, ObjectGuid>::const_iterator> bounds =
+            m_personalCriteriaMap.equal_range(criteria_id);
+
+        for(std::multimap<uint32, ObjectGuid>::const_iterator itr = bounds.first; itr != bounds.second; ++itr)
+        {
+            if (itr->second == player->GetObjectGuid())
+                return true;
+        }
+
+    }
+
+    return false;
+}
