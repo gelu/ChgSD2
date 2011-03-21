@@ -59,10 +59,10 @@ enum
     NPC_CORPSE_SCARAB           = 16698
 };
 
-#define ANUB_SPAWN_X 3307
-#define ANUB_SPAWN_Y -3476.3
-#define ANUB_SPAWN_Z 287.07
-#define ANUB_SPAWN_O 3.097
+#define ANUB_SPAWN_X 3307.00f
+#define ANUB_SPAWN_Y -3476.3f
+#define ANUB_SPAWN_Z 287.07f
+#define ANUB_SPAWN_O 3.097f
 
 struct MANGOS_DLL_DECL boss_anubrekhanAI : public ScriptedAI
 {

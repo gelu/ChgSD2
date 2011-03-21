@@ -146,7 +146,7 @@ struct MANGOS_DLL_DECL boss_forgemaster_garfrostAI : public ScriptedAI
             DoCast(m_creature, SPELL_THUNDERING_STOMP);	
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
             m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MovePoint(0, 654.021, -201.438, 526.699); 
+            m_creature->GetMotionMaster()->MovePoint(0, 654.021f, -201.438f, 526.699f); 
         }
 
         if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 33) && !m_bIsPhase3)
@@ -156,7 +156,7 @@ struct MANGOS_DLL_DECL boss_forgemaster_garfrostAI : public ScriptedAI
             DoCast(m_creature, SPELL_THUNDERING_STOMP);
             m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
             m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MovePoint(0, 718.009, -229.447, 526.847);
+            m_creature->GetMotionMaster()->MovePoint(0, 718.009f, -229.447f, 526.847f);
         }
 
         if (m_bIsPhase2)

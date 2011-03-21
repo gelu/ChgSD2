@@ -764,7 +764,7 @@ Creature* instance_naxxramas::GetRealOrFakeKel(Unit* pUnit)
 {
     Creature* pKel = instance->GetCreature(m_uiKelthuzadGUID);
     if(!pKel && pUnit)
-        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28,-3434.1,293.89,0,TEMPSUMMON_TIMED_DESPAWN,3000))
+        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28f,-3434.1f,293.89f,0,TEMPSUMMON_TIMED_DESPAWN,3000))
         {
             pFakeKel->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
             pFakeKel->setFaction(35);
