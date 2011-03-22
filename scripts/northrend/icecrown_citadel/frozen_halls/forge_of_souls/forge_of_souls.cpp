@@ -23,7 +23,7 @@ SDAuthor: MaxXx2021 aka Mioka
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_forge.h"
+#include "forge_of_souls.h"
 
 enum
 {

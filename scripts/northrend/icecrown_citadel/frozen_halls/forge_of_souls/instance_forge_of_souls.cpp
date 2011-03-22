@@ -22,7 +22,7 @@ SDCategory: The Forge of Souls
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_forge.h"
+#include "forge_of_souls.h"
 
 struct MANGOS_DLL_DECL instance_forge_of_souls : public ScriptedInstance
 {
