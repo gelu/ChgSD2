@@ -22,7 +22,7 @@ SDCategory: The Violet Hold
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_violet_hold.h"
+#include "violet_hold.h"
 
 /* The Violet Hold encounters:
 0 Whole Event

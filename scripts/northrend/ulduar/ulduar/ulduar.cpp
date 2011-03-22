@@ -22,7 +22,7 @@ SDCategory: Ulduar
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_ulduar.h"
+#include "ulduar.h"
 
 #define REQUEST_HELP    "Help me fight Yogg-Saron!"
 #define DENY_HELP       "I don't need your help."
