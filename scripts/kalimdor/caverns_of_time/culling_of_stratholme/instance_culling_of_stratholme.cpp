@@ -23,7 +23,7 @@ SDCategory: Culling of Stratholme
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_culling_of_stratholme.h"
+#include "culling_of_stratholme.h"
 
 struct MANGOS_DLL_DECL instance_culling_of_stratholme : public ScriptedInstance
 {

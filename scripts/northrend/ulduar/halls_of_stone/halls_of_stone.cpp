@@ -23,7 +23,7 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "escort_ai.h"
-#include "def_halls_of_stone.h"
+#include "halls_of_stone.h"
 
 enum
 {
