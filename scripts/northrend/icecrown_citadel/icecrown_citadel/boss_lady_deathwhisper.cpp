@@ -57,6 +57,7 @@ enum
     NPC_VENGEFUL_SHADE = 38222,
     NPC_FANATIC = 37890,
     NPC_REANIMATED_FANATIC = 38009,
+    NPC_DEFORMED_FANATIC = 38135,
     NPC_ADHERENT = 37949,
     NPC_REANIMATED_ADHERENT = 38010,
     NPC_EMPOWERED_ADHERENT = 38136,
@@ -216,6 +217,21 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         m_creature->GetMotionMaster()->MovePoint(1, SpawnLoc[0].x, SpawnLoc[0].y, SpawnLoc[0].z);
     }
 
+    // Achiev Full House
+    bool CreatureInListIsAlive(std::list<Creature*> &lCreatureList)
+    {
+        if(lCreatureList.empty())
+            return false;
+
+        for(std::list<Creature*>::const_iterator iter = lCreatureList.begin(); iter != lCreatureList.end(); ++iter)
+        {
+            if((*iter) && (*iter)->isAlive())
+                return true;
+        }
+
+        return false;
+    }
+
     void JustDied(Unit* pKiller)
     {
         if (m_pInstance)
@@ -223,12 +239,42 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
         DoScriptText(SAY_JUST_DIED_01, m_creature, pKiller);
 
+        // Achiev Full House Checks
         bool bFullHouse = false;
-        if(GetClosestCreatureWithEntry(m_creature, NPC_EMPOWERED_ADHERENT, 1000.0f) 
-            || GetClosestCreatureWithEntry(m_creature, NPC_FANATIC, 1000.0f) 
-            || GetClosestCreatureWithEntry(m_creature, NPC_ADHERENT, 1000.0f)
-            || GetClosestCreatureWithEntry(m_creature, NPC_REANIMATED_FANATIC, 1000.0f) 
-            || GetClosestCreatureWithEntry(m_creature, NPC_REANIMATED_ADHERENT, 1000.0f))
+        uint8 cnt = 0;
+        std::list<Creature*> lCreatures;
+        
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_FANATIC, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_REANIMATED_FANATIC, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_DEFORMED_FANATIC, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_ADHERENT, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_REANIMATED_ADHERENT, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+
+        lCreatures.clear();
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_EMPOWERED_ADHERENT, 1000.0f);
+        if(CreatureInListIsAlive(lCreatures))
+            cnt++;
+        
+        if (cnt >= 5)
             bFullHouse = true;
 
         Map *pMap = m_creature->GetMap();
@@ -714,6 +760,8 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
     uint32 m_uiDeathchillBlastTimer;
     uint32 m_uiShroudOfTheOccultTimer;
 
+    bool m_bMartyrTransformed;
+
     void Reset()
     {
         m_uiDarkEmpowermentTimer = urand(10*IN_MILLISECONDS, 25*IN_MILLISECONDS);
@@ -721,6 +769,8 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
         m_uiDeathchillBoltTimer = urand(5*IN_MILLISECONDS, 15*IN_MILLISECONDS);
         m_uiDeathchillBlastTimer = urand(10*IN_MILLISECONDS, 15*IN_MILLISECONDS);
         m_uiShroudOfTheOccultTimer = urand(10*IN_MILLISECONDS, 30*IN_MILLISECONDS);
+
+        m_bMartyrTransformed = false;
 
         m_creature->SetRespawnDelay(DAY);
         bone = false;
@@ -736,29 +786,42 @@ struct MANGOS_DLL_DECL  mob_cult_adherentAI : public ScriptedAI
         if (!m_pInstance || m_pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
 
-        // Visual improvement
-        if (m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT) && m_creature->GetEntry() == 37949)
-            m_creature->UpdateEntry(38136);
+        if (!m_bMartyrTransformed)
+        {
+            if (m_creature->HasAura(SPELL_DARK_MARTYRIUM_ADHERENT_N) || m_creature->HasAura(SPELL_DARK_MARTYRIUM_ADHERENT_H))
+            {
+                m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
+                m_creature->SetHealth(m_creature->GetMaxHealth());
+                m_bMartyrTransformed = true;
+            }
+        }
 
-        if (!m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT) && m_creature->GetEntry() == 38136)
-            m_creature->UpdateEntry(37949);
+        if (!bone)
+        {
+            // Visual improvement
+            if (m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT) && m_creature->GetEntry() == NPC_ADHERENT)
+                m_creature->UpdateEntry(NPC_EMPOWERED_ADHERENT);
+
+            if (!m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT) && m_creature->GetEntry() == NPC_EMPOWERED_ADHERENT)
+                m_creature->UpdateEntry(NPC_ADHERENT);
+
+            if (!m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT))
+            {
+                if (m_uiShroudOfTheOccultTimer <= uiDiff)
+                {
+                    if(roll_chance_i(50))
+                    {
+                        DoCast(m_creature, SPELL_SHROUD_OF_THE_OCCULT);
+                    }
+                    m_uiShroudOfTheOccultTimer = urand(10*IN_MILLISECONDS, 30*IN_MILLISECONDS);
+                }
+                else
+                    m_uiShroudOfTheOccultTimer -= uiDiff;
+            }
+        }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
-
-        if (!m_creature->HasAura(SPELL_SHROUD_OF_THE_OCCULT))
-        {
-            if (m_uiShroudOfTheOccultTimer <= uiDiff)
-            {
-                if(roll_chance_i(50))
-                {
-                    DoCast(m_creature, SPELL_SHROUD_OF_THE_OCCULT);
-                }
-                m_uiShroudOfTheOccultTimer = urand(10*IN_MILLISECONDS, 30*IN_MILLISECONDS);
-            }
-            else
-                m_uiShroudOfTheOccultTimer -= uiDiff;
-        }
 
         if (!m_creature->HasAura(SPELL_DARK_EMPOWERMENT))
         {
@@ -901,11 +964,15 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
     uint32 m_uiNecroticStrikeTimer;
     uint32 m_uiShadowCleaveTimer;
 
+    bool m_bMartyrTransformed;
+
     void Reset()
     {
         m_uiDarkTransformationTimer = urand(15*IN_MILLISECONDS, 30*IN_MILLISECONDS);
         m_uiNecroticStrikeTimer = urand(5*IN_MILLISECONDS, 10*IN_MILLISECONDS);
         m_uiShadowCleaveTimer = urand(5*IN_MILLISECONDS, 10*IN_MILLISECONDS);
+
+        m_bMartyrTransformed = false;
 
         m_creature->SetRespawnDelay(DAY);
         bone = false;
@@ -916,17 +983,35 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
         DoStartMovement(pWho);
     }
 
+/*	void DamageDeal(Unit* pDoneTo, uint32& uiDamage)
+    {
+
+    }
+    */
     void UpdateAI(const uint32 uiDiff)
     {
         if (!pInstance || pInstance->GetData(TYPE_DEATHWHISPER) != IN_PROGRESS) 
               m_creature->ForcedDespawn();
+        
+        if (m_creature->HasAura(SPELL_DARK_TRANSFORMATION) && m_creature->GetEntry() != NPC_DEFORMED_FANATIC)
+            m_creature->UpdateEntry(NPC_DEFORMED_FANATIC);
+
+        if (!m_bMartyrTransformed)
+        {
+            if (m_creature->HasAura(SPELL_DARK_MARTYRIUM_FANATIC_N) || m_creature->HasAura(SPELL_DARK_MARTYRIUM_FANATIC_H))
+            {
+                m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
+                m_creature->SetHealth(m_creature->GetMaxHealth());
+                m_bMartyrTransformed = true;
+            }
+        }
 
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
         if (m_creature->HasAura(SPELL_DARK_TRANSFORMATION) && !m_creature->HasAura(SPELL_VAMPIRIC_MIGHT))
         {
-            DoCast(m_creature, SPELL_VAMPIRIC_MIGHT);
+            DoCast(m_creature, SPELL_VAMPIRIC_MIGHT, true);
         }
 
         if (m_uiNecroticStrikeTimer <= uiDiff)
@@ -973,16 +1058,19 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
         else
             m_uiShadowCleaveTimer -= uiDiff;
 
-        if (m_uiDarkTransformationTimer <= uiDiff)
+        if (!bone)
         {
-            if (roll_chance_i(50))
+            if (m_uiDarkTransformationTimer <= uiDiff)
             {
-                DoCast(m_creature, SPELL_DARK_TRANSFORMATION);
+                if (roll_chance_i(50))
+                {
+                    DoCast(m_creature, SPELL_DARK_TRANSFORMATION);
+                }
+                m_uiDarkTransformationTimer = urand(15*IN_MILLISECONDS, 30*IN_MILLISECONDS);
             }
-            m_uiDarkTransformationTimer = urand(15*IN_MILLISECONDS, 30*IN_MILLISECONDS);
+            else
+                m_uiDarkTransformationTimer -= uiDiff;
         }
-        else
-            m_uiDarkTransformationTimer -= uiDiff;
 
         // spell needs some love in core
         if (m_creature->GetHealthPercent() < 15.0f && !bone)
@@ -993,19 +1081,11 @@ struct MANGOS_DLL_DECL  mob_cult_fanaticAI : public ScriptedAI
                 {
                 case RAID_DIFFICULTY_10MAN_NORMAL:
                 case RAID_DIFFICULTY_10MAN_HEROIC:
-                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_N) == CAST_OK)
-                    {
-                        m_creature->SetHealthPercent(100.0f);
-                        m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
-                    }
+                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_N);
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
                 case RAID_DIFFICULTY_25MAN_HEROIC:
-                    if(DoCastSpellIfCan(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_H) == CAST_OK)
-                    {
-                        m_creature->SetHealthPercent(100.0f);
-                        m_creature->UpdateEntry(NPC_REANIMATED_FANATIC);
-                    }
+                    DoCast(m_creature, SPELL_DARK_MARTYRIUM_FANATIC_H);
                     break;
                 }
                 bone = true;
