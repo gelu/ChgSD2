@@ -1,5 +1,9 @@
-#ifndef DEF_ICECROWN_FORGE_H
-#define DEF_ICECROWN_FORGE_H
+/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
+ * This program is free software licensed under GPL version 2
+ * Please see the included DOCS/LICENSE.TXT for more information */
+
+#ifndef DEF_FORGE_OF_SOULS_H
+#define DEF_FORGE_OF_SOULS_H
 #include "BSW_ai.h"
 
 enum

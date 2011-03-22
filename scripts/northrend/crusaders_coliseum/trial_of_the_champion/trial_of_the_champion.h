@@ -1,6 +1,6 @@
-/* Copyright (C) 2006 - 2009 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
-* This program is free software licensed under GPL version 2
-* Please see the included DOCS/LICENSE.TXT for more information */
+/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
+ * This program is free software licensed under GPL version 2
+ * Please see the included DOCS/LICENSE.TXT for more information */
 
 #ifndef DEF_TOC_H
 #define DEF_TOC_H
