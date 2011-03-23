@@ -428,7 +428,6 @@ extern void AddSC_boss_lich_king_icc();
 extern void AddSC_instance_forge_of_souls();
 extern void AddSC_boss_devourer_of_souls();
 extern void AddSC_boss_bronjahm();
-extern void AddSC_trash_forge_of_souls();
 extern void AddSC_forge_of_souls();
 
 extern void AddSC_instance_halls_of_reflection();
@@ -937,7 +936,6 @@ void AddScripts()
     AddSC_instance_forge_of_souls();
     AddSC_boss_devourer_of_souls();
     AddSC_boss_bronjahm();
-    AddSC_trash_forge_of_souls();
     AddSC_forge_of_souls();
 
     AddSC_instance_halls_of_reflection();
