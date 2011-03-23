@@ -308,8 +308,8 @@ struct MANGOS_DLL_DECL boss_uromAI: public ScriptedAI
 
 			if(CentralTeleportTimer <= diff)
 			{
-				//DoCastSpellIfCan(m_creature,SPELL_TELEPORT);
-				//m_creature->GetMotionMaster()->MoveIdle();
+				DoCastSpellIfCan(m_creature,SPELL_TELEPORT);
+				m_creature->GetMotionMaster()->MoveIdle();
 				ArcaneExplosionTimer = 2000;
 				CentralTeleportTimer = urand(28000,38000);
 				FrostBombTimer += 10000;
@@ -321,7 +321,7 @@ struct MANGOS_DLL_DECL boss_uromAI: public ScriptedAI
 				if(ArcaneExplosionTimer <= diff)
 				{
 					DoScriptText( urand(0,1)? SAY_EXPL1 : SAY_EXPL2, m_creature);
-					//m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());  -- this make event start over right after text
+					m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
 					DoCastSpellIfCan(m_creature, m_bIsRegularMode? SPELL_ARCANE_EXPLOSION : SPELL_ARCANE_EXPLOSION_H);
 					ArcaneExplosionTimer = 0;
 				} else ArcaneExplosionTimer -= diff;

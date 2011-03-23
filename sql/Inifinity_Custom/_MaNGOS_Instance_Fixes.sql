@@ -113,4 +113,15 @@ UPDATE `creature_template` SET `ScriptName` = 'city_guard' WHERE `entry` IN (308
 UPDATE `creature_template` SET `ScriptName` = 'city_officer' WHERE `entry` IN (2041,2439,14363,14365,14367,14375,14376,14377,14378,14379,14380,14402,14403,14404,14423,14438,14439,14440,14441,14442,18103,21970,21971);
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+--urtgree keep
 
+-- prince kele in urtgree keep  boss needs world boss flag
+UPDATE `creature_template` SET `rank` = 3 WHERE `entry` = 23953;
+
+--ingvar plunder in urtgree keep  boss needs world boss flag
+UPDATE `creature_template` SET `rank` = 3 WHERE `entry` = 23954;
+
+--skarvald the constructor in urtgree keep  boos needs world boss flag
+UPDATE `creature_template` SET `rank` = 3 WHERE `entry` = 23954;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
