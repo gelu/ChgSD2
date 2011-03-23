@@ -22,7 +22,7 @@ SDCategory: Ulduar instance
 EndScriptData */
 
 #include "precompiled.h"
-#include "def_ulduar.h"
+#include "ulduar.h"
 
 enum
 {

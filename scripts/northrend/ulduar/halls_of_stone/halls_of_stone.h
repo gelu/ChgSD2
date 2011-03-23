@@ -50,6 +50,8 @@ enum
     GO_TRIBUNAL_CHEST       = 190586,
     GO_TRIBUNAL_CHEST_H     = 193996,
     GO_TRIBUNAL_SKY_FLOOR   = 191527,
+
+    GO_SJONNIR_CONSOLE      = 193906
 };
 
 #endif
