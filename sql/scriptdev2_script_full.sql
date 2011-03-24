@@ -1012,6 +1012,9 @@ INSERT INTO script_texts (entry,content_default,sound,type,language,emote,commen
 (-1409022,'My flame! Please don\'t take away my flame... ',8042,1,0,0,'ragnaros SAY_ARRIVAL4_MAJ');
 
 -- -1 429 000 DIRE MAUL
+INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
+(-1429000,'The demon is loose! Quickly we must restrain him!',0,6,0,0,'highborne summoner SAY_FREE_IMMOLTHAR'),
+(-1429001,'Who dares disrupt the sanctity of Eldre''Thalas? Face me, cowards!',0,6,0,0,'prince tortheldrin SAY_KILL_IMMOLTHAR');
 
 -- -1 469 000 BLACKWING LAIR
 INSERT INTO script_texts (entry,content_default,sound,type,language,emote,comment) VALUES
@@ -4869,7 +4872,7 @@ INSERT INTO script_waypoint VALUES
 (20129, 25, -8375.42,-4250.41, -205.14,5000, '');
 
 DELETE FROM script_waypoint WHERE entry=20415;
-INSERT INTO script_waypoint VALUES 
+INSERT INTO script_waypoint VALUES
 (20415, 0, 2488.77, 2184.89, 104.64, 0, ""),
 (20415, 1, 2478.72, 2184.77, 98.58, 0, ""),
 (20415, 2, 2473.52, 2184.71, 99.00, 0, ""),
@@ -5454,4 +5457,3 @@ INSERT INTO script_waypoint VALUES
 (3678, 41, -41.114, 204.149, -78.94, 0, '');
 
 -- EOF
-

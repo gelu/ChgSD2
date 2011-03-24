@@ -2668,10 +2668,6 @@
 								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\instance_forge_of_souls.cpp"
 								>
 							</File>
-							<File
-								RelativePath="..\scripts\northrend\icecrown_citadel\frozen_halls\forge_of_souls\trash_forge_of_souls.cpp"
-								>
-							</File>
 						</Filter>
 					</Filter>
 				</Filter>
