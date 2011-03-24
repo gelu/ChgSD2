@@ -151,7 +151,7 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
-    std::list<Creature*> m_lKaddrakGUIDList;
+    std::list<uint64> m_lKaddrakGUIDList;
     //std::list<Creature*> m_lMarnakGUIDList;
     //std::list<Creature*> m_lAbedneumGUIDList;
 
@@ -179,17 +179,20 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
     }
 
     void UpdateFacesList()
-    {
-        GetCreatureListWithEntryInGrid(m_lKaddrakGUIDList, m_creature, NPC_KADDRAK, 50.0f);
+    {   
+        std::list<Creature*> m_lKaddrakList;
+        m_lKaddrakGUIDList.clear();
+        GetCreatureListWithEntryInGrid(m_lKaddrakList, m_creature, NPC_KADDRAK, 50.0f);
         if (!m_lKaddrakGUIDList.empty())
         {
             uint32 uiPositionCounter = 0;
-            for(std::list<Creature*>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
+            for(std::list<Creature*>::iterator itr = m_lKaddrakList.begin(); itr != m_lKaddrakList.end(); ++itr)
             {
                 if (!(*itr)) continue;
 
                 if (Creature* c = (Creature *)(*itr))
                 {
+                    m_lKaddrakGUIDList.push_back((*itr)->GetGUID());
                     if (c->isAlive())
                     {
                         if (uiPositionCounter == 0)
@@ -219,9 +222,10 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
             {
                 if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
                     if (!m_lKaddrakGUIDList.empty())
-                        for(std::list<Creature*>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
-                            if ((*itr)->isAlive())
-                                (*itr)->CastSpell(pTarget, m_bIsRegularMode ? SPELL_GLARE_OF_THE_TRIBUNAL_H : SPELL_GLARE_OF_THE_TRIBUNAL, true);
+                        for(std::list<uint64>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
+                            if (Creature* pCreature = m_creature->GetMap()->GetCreature(*itr))
+                                if (pCreature->isAlive())
+                                    pCreature->CastSpell(pTarget, m_bIsRegularMode ? SPELL_GLARE_OF_THE_TRIBUNAL_H : SPELL_GLARE_OF_THE_TRIBUNAL, true);
 
                 m_uiKaddrak_Encounter_timer = 1500;
             }
