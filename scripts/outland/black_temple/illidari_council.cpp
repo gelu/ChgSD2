@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -137,10 +137,10 @@ struct MANGOS_DLL_DECL mob_blood_elf_council_voice_triggerAI : public ScriptedAI
     {
         if (ScriptedInstance* pInstance = (ScriptedInstance*)m_creature->GetInstanceData())
         {
-            Council[0] = pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
-            Council[1] = pInstance->GetData64(DATA_VERASDARKSHADOW);
-            Council[2] = pInstance->GetData64(DATA_LADYMALANDE);
-            Council[3] = pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
+            Council[0] = pInstance->GetData64(NPC_GATHIOS);
+            Council[1] = pInstance->GetData64(NPC_VERAS);
+            Council[2] = pInstance->GetData64(NPC_LADY_MALANDE);
+            Council[3] = pInstance->GetData64(NPC_ZEREVOR);
         }else error_log(ERROR_INST_DATA);
     }
 
@@ -242,7 +242,7 @@ struct MANGOS_DLL_DECL mob_illidari_councilAI : public ScriptedAI
             if (m_pInstance->GetData(TYPE_COUNCIL) == DONE)
                 return;
 
-            if (Creature* VoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_BLOOD_ELF_COUNCIL_VOICE)))
+            if (Creature* VoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_COUNCIL_VOICE)))
                 VoiceTrigger->AI()->EnterEvadeMode();
 
             m_pInstance->SetData(TYPE_COUNCIL, NOT_STARTED);
@@ -259,13 +259,16 @@ struct MANGOS_DLL_DECL mob_illidari_councilAI : public ScriptedAI
 
         if (target && target->isAlive() && !EventBegun)
         {
-            Council[0] = m_pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
-            Council[1] = m_pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
-            Council[2] = m_pInstance->GetData64(DATA_LADYMALANDE);
-            Council[3] = m_pInstance->GetData64(DATA_VERASDARKSHADOW);
+            // Prevent further handling for next council member aggroing
+            EventBegun = true;
+
+            Council[0] = m_pInstance->GetData64(NPC_GATHIOS);
+            Council[1] = m_pInstance->GetData64(NPC_ZEREVOR);
+            Council[2] = m_pInstance->GetData64(NPC_LADY_MALANDE);
+            Council[3] = m_pInstance->GetData64(NPC_VERAS);
 
             // Start the event for the Voice Trigger
-            if (Creature* pVoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_BLOOD_ELF_COUNCIL_VOICE)))
+            if (Creature* pVoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_COUNCIL_VOICE)))
             {
                 if (mob_blood_elf_council_voice_triggerAI* pVoiceAI = dynamic_cast<mob_blood_elf_council_voice_triggerAI*>(pVoiceTrigger->AI()))
                 {
@@ -279,14 +282,13 @@ struct MANGOS_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                 if (Council[i])
                 {
                     Creature* pMember = m_creature->GetMap()->GetCreature(Council[i]);
-                    if (pMember && pMember->isAlive())
+                    if (pMember && pMember->isAlive() && !pMember->isInCombat())
                         pMember->AI()->AttackStart(target);
                 }
             }
 
+            // All are set into combat now, Set Instance Data
             m_pInstance->SetData(TYPE_COUNCIL, IN_PROGRESS);
-
-            EventBegun = true;
         }
     }
 
@@ -303,7 +305,7 @@ struct MANGOS_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                 {
                     if (m_pInstance)
                     {
-                        if (Creature* VoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_BLOOD_ELF_COUNCIL_VOICE)))
+                        if (Creature* VoiceTrigger = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_COUNCIL_VOICE)))
                             VoiceTrigger->DealDamage(VoiceTrigger, VoiceTrigger->GetHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
 
                         m_pInstance->SetData(TYPE_COUNCIL, DONE);
@@ -346,7 +348,11 @@ struct MANGOS_DLL_DECL mob_illidari_councilAI : public ScriptedAI
                 }
 
                 if (EvadeCheck > 3)
+                {
+                    if (m_pInstance)
+                        m_pInstance->SetData(TYPE_COUNCIL, FAIL);
                     Reset();
+                }
 
                 CheckTimer = 2000;
             }else CheckTimer -= diff;
@@ -376,7 +382,7 @@ struct MANGOS_DLL_DECL boss_illidari_councilAI : public ScriptedAI
     {
         if (m_pInstance)
         {
-            if (Creature* pController = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(DATA_ILLIDARICOUNCIL)))
+            if (Creature* pController = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_ILLIDARI_COUNCIL)))
             {
                 if (mob_illidari_councilAI* pControlAI = dynamic_cast<mob_illidari_councilAI*>(pController->AI()))
                     pControlAI->StartEvent(pWho);
@@ -387,8 +393,6 @@ struct MANGOS_DLL_DECL boss_illidari_councilAI : public ScriptedAI
             error_log(ERROR_INST_DATA);
             EnterEvadeMode();
         }
-
-        m_creature->SetInCombatWithZone();
 
         // Load GUIDs on first aggro because the creature guids are only set as the creatures are created in world-
         // this means that for each creature, it will attempt to LoadGUIDs even though some of the other creatures are
@@ -422,10 +426,10 @@ struct MANGOS_DLL_DECL boss_illidari_councilAI : public ScriptedAI
             return;
         }
 
-        Council[0] = m_pInstance->GetData64(DATA_LADYMALANDE);
-        Council[1] = m_pInstance->GetData64(DATA_HIGHNETHERMANCERZEREVOR);
-        Council[2] = m_pInstance->GetData64(DATA_GATHIOSTHESHATTERER);
-        Council[3] = m_pInstance->GetData64(DATA_VERASDARKSHADOW);
+        Council[0] = m_pInstance->GetData64(NPC_LADY_MALANDE);
+        Council[1] = m_pInstance->GetData64(NPC_ZEREVOR);
+        Council[2] = m_pInstance->GetData64(NPC_GATHIOS);
+        Council[3] = m_pInstance->GetData64(NPC_VERAS);
 
         LoadedGUIDs = true;
     }

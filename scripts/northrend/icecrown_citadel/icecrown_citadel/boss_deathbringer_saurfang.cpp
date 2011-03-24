@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2011 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
+/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,6 +33,10 @@ enum
     SPELL_BLOOD_POWER                       = 72371,
     SPELL_MARK                              = 72293,
     SPELL_MARK_SELF                         = 72256,
+    SPELL_MARK_DAMAGE_10_N                  = 72255,
+    SPELL_MARK_DAMAGE_10_H                  = 72445,
+    SPELL_MARK_DAMAGE_25_N                  = 72444,
+    SPELL_MARK_DAMAGE_25_H                  = 72446,
     SPELL_FRENZY                            = 72737,
     SPELL_BOILING_BLOOD_10_N                = 72385,
     SPELL_BOILING_BLOOD_10_H                = 72442,
@@ -40,7 +44,7 @@ enum
     SPELL_BOILING_BLOOD_25_H                = 72443,
     SPELL_BLOOD_NOVA_10                     = 72380,
     SPELL_BLOOD_NOVA_25                     = 73058,
-    SPELL_RUNE_OF_BLOOD                     = 72408,
+    SPELL_RUNE_OF_BLOOD                     = 72410,
     SPELL_CALL_BLOOD_BEAST_1                = 72172,
     SPELL_CALL_BLOOD_BEAST_2                = 72173,
     SPELL_CALL_BLOOD_BEAST_3                = 72356,
@@ -95,7 +99,9 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     uint32 m_uiBloodNovaTimer;
     uint32 m_uiBloodBeastTimer;
     uint32 m_uiBoilingBloodTimer;
+    uint32 m_uiBoilingBloodDamageTimer;
     uint32 m_uiRuneofBloodTimer;
+    uint64 m_uiBloodBoilTargetGuid;
 
     int32 oldPower;
 
@@ -104,7 +110,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_MARROWGAR, NOT_STARTED);
 
-        m_creature->SetPower(m_creature->getPowerType(), 0);
+        m_creature->SetPower(POWER_ENERGY, 0);
         DoCast(m_creature, SPELL_ZERO_REGEN);
 
         m_bIntro = false;
@@ -114,8 +120,10 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         m_uiBerserkTimer = 6*MINUTE*IN_MILLISECONDS;
         m_uiBloodNovaTimer = 20*IN_MILLISECONDS;
         m_uiBloodBeastTimer = 40*IN_MILLISECONDS;
-        m_uiBoilingBloodTimer = 0;
-        m_uiRuneofBloodTimer = 25*IN_MILLISECONDS;
+        m_uiBoilingBloodTimer = 1*IN_MILLISECONDS;
+        m_uiBoilingBloodDamageTimer = 0;
+        m_uiRuneofBloodTimer = 1*IN_MILLISECONDS;
+        m_uiBloodBoilTargetGuid = 0;
     }
 
     void MoveInLineOfSight(Unit* pWho)
@@ -227,6 +235,27 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         }
     }
 
+    void SpellHitTarget (Unit* pUnit, const SpellEntry* pSpellEntry)
+    {
+        if (pUnit->GetTypeId() != TYPEID_PLAYER)
+           return;
+
+        switch (pSpellEntry->Id)
+        {
+            case SPELL_BLOOD_NOVA_10:
+            case SPELL_BLOOD_NOVA_25:
+                m_creature->SetPower(POWER_ENERGY, m_creature->GetPower(POWER_ENERGY) + 2);
+                break;
+            case SPELL_MARK_DAMAGE_10_N:
+            case SPELL_MARK_DAMAGE_10_H:
+            case SPELL_MARK_DAMAGE_25_N:
+            case SPELL_MARK_DAMAGE_25_H:
+                m_creature->SetPower(POWER_ENERGY, m_creature->GetPower(POWER_ENERGY) + 1);
+            default:
+                break;
+        }
+    }
+
     Unit* BloodNovaTarget()
     {
         std::list<uint64> PlayerGuidList;
@@ -291,10 +320,12 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                 case RAID_DIFFICULTY_10MAN_NORMAL:
                 case RAID_DIFFICULTY_10MAN_HEROIC:
                     DoCast(BloodNovaTarget(), SPELL_BLOOD_NOVA_10);
+                    m_uiBoilingBloodDamageTimer = 3*IN_MILLISECONDS;
                     break;
                 case RAID_DIFFICULTY_25MAN_NORMAL:
                 case RAID_DIFFICULTY_25MAN_HEROIC:
                     DoCast(BloodNovaTarget(), SPELL_BLOOD_NOVA_25);
+                    m_uiBoilingBloodDamageTimer = 3*IN_MILLISECONDS;
                     break;
                 default:
                     break;
@@ -309,6 +340,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
             {
+                m_uiBloodBoilTargetGuid = pTarget->GetGUID();
                 switch (m_uiMode)
                 {
                     case RAID_DIFFICULTY_10MAN_NORMAL:
@@ -328,21 +360,32 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                 }
             }
             
+            m_uiBoilingBloodDamageTimer = 3*IN_MILLISECONDS;
             m_uiBoilingBloodTimer = 15*IN_MILLISECONDS;
         }
         else
             m_uiBoilingBloodTimer -= uiDiff;
 
+        if (m_uiBoilingBloodDamageTimer < uiDiff)
+        {
+            if (m_uiBloodBoilTargetGuid)
+                if (Player* pBloodBoilTarget = m_creature->GetMap()->GetPlayer(m_uiBloodBoilTargetGuid))
+                    if (pBloodBoilTarget->HasAura(SPELL_BOILING_BLOOD_10_N) ||
+                        pBloodBoilTarget->HasAura(SPELL_BOILING_BLOOD_10_H) ||
+                        pBloodBoilTarget->HasAura(SPELL_BOILING_BLOOD_25_N) ||
+                        pBloodBoilTarget->HasAura(SPELL_BOILING_BLOOD_25_H))
+                    {
+                        m_creature->SetPower(POWER_ENERGY, m_creature->GetPower(POWER_ENERGY) + 1);
+                        m_uiBoilingBloodDamageTimer = 3*IN_MILLISECONDS;
+                    }
+        }
+        else
+            m_uiBoilingBloodDamageTimer -= uiDiff;
+
         if (m_uiRuneofBloodTimer < uiDiff)
         {
-            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-            {
-                if (pTarget->isAlive() && !m_creature->IsWithinDistInMap(pTarget, ATTACK_DISTANCE))
-                {
-                    DoCast(pTarget, SPELL_RUNE_OF_BLOOD);
-                    m_uiRuneofBloodTimer = 25*IN_MILLISECONDS;
-                }
-            }
+            DoCast(m_creature->getVictim(), SPELL_RUNE_OF_BLOOD);
+            m_uiRuneofBloodTimer = 25*IN_MILLISECONDS;
         }
         else
             m_uiRuneofBloodTimer -= uiDiff;
@@ -455,6 +498,15 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
         m_uiAggroTimer = 2*IN_MILLISECONDS;
 
         SetCombatMovement(false);
+    }
+
+    void DamageDeal(Unit* pVictim, uint32& uiDamage)
+    {
+        if (pVictim->GetTypeId() != TYPEID_PLAYER)
+            return;
+
+        if (pOwner)
+            pOwner->SetPower(POWER_ENERGY, pOwner->GetPower(POWER_ENERGY) + 2);
     }
 
     void UpdateAI(const uint32 uiDiff)
