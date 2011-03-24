@@ -16,7 +16,7 @@
 
 /* ScriptData
 SDName: boss_lady_deathwhisper
-SD%Complete: 90%
+SD%Complete: 95%
 SDComment: by /dev/rsa, IOV
 SDCategory: Icecrown Citadel
 EndScriptData */
@@ -75,7 +75,26 @@ enum
     SAY_INTRO_02 = -1631021,
     SAY_INTRO_03 = -1631022,
     SAY_PHASE2_01 = -1631024,
-    SAY_BERSERK_01 = -1631031
+    SAY_BERSERK_01 = -1631031,
+
+    // Dominate Mind
+    // Heals
+    // DRUID
+    SPELL_REJUVENATION = 26982,
+    // SHAMAN
+    SPELL_CHAIN_HEAL = 75370,
+    // PALADIN
+    SPELL_FLASH_OF_LIGHT = 19750,
+    // PRIEST
+    SPELL_FLASH_HEAL = 66104,
+    // Casters
+    // MAGE
+    SPELL_ARCANE_MISSILES = 42846,
+    // WARLOCK
+    SPELL_INCINERATE = 47838,
+    // HUNTER
+    SPELL_SHOOT = 3018
+    // rest uses melee attack for now....
 };
 
 static Locations SpawnLoc[]=
@@ -139,7 +158,6 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         m_uiIntroTimer = 5*IN_MILLISECONDS;
 
         m_uiShadowBoltTimer	= urand(5*IN_MILLISECONDS, 8*IN_MILLISECONDS);
-        m_uiDominateMindTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
         m_uiDeathAndDecayTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
         m_uiTouchOfInsignificanceTimer = urand(8*IN_MILLISECONDS, 15*IN_MILLISECONDS);
         m_uiFrostboltTimer = urand(10*IN_MILLISECONDS, 20*IN_MILLISECONDS);
@@ -151,6 +169,22 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         m_uiBerserkTimer = 10*MINUTE*IN_MILLISECONDS;
 
         m_uiGuardsNextSpawnPoint = 1;
+
+        switch (m_uiMode)
+        {
+        case RAID_DIFFICULTY_10MAN_HEROIC:
+        case RAID_DIFFICULTY_25MAN_NORMAL:
+            // only one player can be controlled at same time
+            m_uiDominateMindTimer = urand(12*IN_MILLISECONDS, 15*IN_MILLISECONDS);
+            break;
+        case RAID_DIFFICULTY_25MAN_HEROIC:
+            // three players can be controlled at same time, so timer has to be low
+            m_uiDominateMindTimer = urand(4*IN_MILLISECONDS, 6*IN_MILLISECONDS);
+            break;
+        default:
+            m_uiDominateMindTimer = 0; // init for safety...
+            break;
+        }
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -354,6 +388,215 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
         m_creature->SummonCreature(NPC_VENGEFUL_SHADE, SpawnLoc[pos].x, SpawnLoc[pos].y, SpawnLoc[pos].z, 0.0f, TEMPSUMMON_MANUAL_DESPAWN, 0);
     }
 
+    void DominateMind()
+    {
+        std::list<Creature*> lCreatures;
+        std::list<Player*> lPlayers;
+        
+        // Adds
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_FANATIC, 1000.0f);
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_REANIMATED_FANATIC, 1000.0f);
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_DEFORMED_FANATIC, 1000.0f);
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_ADHERENT, 1000.0f);
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_REANIMATED_ADHERENT, 1000.0f);
+        GetCreatureListWithEntryInGrid(lCreatures, m_creature, NPC_EMPOWERED_ADHERENT, 1000.0f);
+
+        Map::PlayerList const& lMapPlayers = m_creature->GetMap()->GetPlayers();
+        for (Map::PlayerList::const_iterator iter = lMapPlayers.begin(); iter != lMapPlayers.end(); ++iter)
+        {
+            if(Player *pPlayer = iter->getSource())
+            {
+                if(!pPlayer->HasAura(SPELL_DOMINATE_MIND) && pPlayer != m_creature->getVictim() && pPlayer->isTargetableForAttack())
+                {
+                    bool PlayerIsTank = false;
+                    for(std::list<Creature*>::iterator itr = lCreatures.begin(); itr != lCreatures.end(); ++itr)
+                    {
+                        if((*itr)->getVictim() && (*itr)->getVictim() == pPlayer)
+                            PlayerIsTank = true;
+
+                        if(PlayerIsTank)
+                            break;
+                    }
+                    if(!PlayerIsTank)
+                        lPlayers.push_back(pPlayer); // All Players not tanking adds or boss, not mind controlled and attackable
+                }
+            }
+        }
+
+        // only tanks alive...?
+        if(lPlayers.empty())
+            return;
+
+        // shouldn't happen but check
+        if(m_uiMode != RAID_DIFFICULTY_10MAN_NORMAL)
+        {
+            std::list<Player*>::iterator itr = lPlayers.begin();
+            std::advance(itr, urand(0, lPlayers.size() - 1));
+            if (Player* pPlayer = (*itr))
+                DoCast(pPlayer, SPELL_DOMINATE_MIND);
+        }
+    }
+
+    Unit* SelectAttackingTargetForObsessed(Unit* pObsessed)
+    {
+        if(!pObsessed->getVictim())
+        {
+            return m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
+        }
+        else
+            return pObsessed->getVictim();
+    }
+
+    void DoControlObsessedPlayers()
+    {
+        Map::PlayerList const &lPlayers = m_creature->GetMap()->GetPlayers();
+        for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
+        {
+            if(Unit *pObsessed = ((Unit*)itr->getSource()))
+            {
+                if(pObsessed->HasAura(SPELL_DOMINATE_MIND))
+                {
+                    if(!pObsessed->isAlive())
+                        continue;
+
+                    bool heal;
+                    heal = roll_chance_i(20);
+
+                    switch(pObsessed->getClass())
+                    {
+                    // classes witch healing spells
+                    case CLASS_PRIEST:
+                        if (heal)
+                        {
+                            pObsessed->CastSpell(m_creature, SPELL_FLASH_HEAL, false);
+                        }
+                        else
+                        {
+                            if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                            {
+                                if (pObsessed->isAttackReady())
+                                {
+                                    pObsessed->AttackerStateUpdate(pTarget);
+                                    pObsessed->resetAttackTimer();
+                                }
+                                else
+                                    pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                            }
+                        }
+                        break;
+                    case CLASS_DRUID:
+                        if (heal)
+                        {
+                            pObsessed->CastSpell(m_creature, SPELL_REJUVENATION, false);
+                        }
+                        else
+                        {
+                            if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                            {
+                                if (pObsessed->isAttackReady())
+                                {
+                                    pObsessed->AttackerStateUpdate(pTarget);
+                                    pObsessed->resetAttackTimer();
+                                }
+                                else
+                                    pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                            }
+                        }
+                        break;
+                    case CLASS_PALADIN:
+                        if (heal)
+                        {
+                            pObsessed->CastSpell(m_creature, SPELL_FLASH_OF_LIGHT, false);
+                        }
+                        else
+                        {
+                            if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                            {
+                                if (pObsessed->isAttackReady())
+                                {
+                                    pObsessed->AttackerStateUpdate(pTarget);
+                                    pObsessed->resetAttackTimer();
+                                }
+                                else
+                                    pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                            }
+                        }
+                        break;
+                    case CLASS_SHAMAN:
+                        if (heal)
+                        {
+                            pObsessed->CastSpell(m_creature, SPELL_CHAIN_HEAL, false);
+                        }
+                        else
+                        {
+                            if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                            {
+                                if (pObsessed->isAttackReady())
+                                {
+                                    pObsessed->AttackerStateUpdate(pTarget);
+                                    pObsessed->resetAttackTimer();
+                                }
+                                else
+                                    pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                            }
+                        }
+                        break;
+                    case CLASS_MAGE:
+                        if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                        {
+                            pObsessed->CastSpell(pTarget, SPELL_ARCANE_MISSILES, false);
+                            if (pObsessed->isAttackReady())
+                            {
+                                pObsessed->AttackerStateUpdate(pTarget);
+                                pObsessed->resetAttackTimer();
+                            }
+                            else
+                                pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                        }
+                        break;
+                    case CLASS_WARLOCK:
+                        if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                        {
+                            pObsessed->CastSpell(pTarget, SPELL_INCINERATE, false);
+                            if (pObsessed->isAttackReady())
+                            {
+                                pObsessed->AttackerStateUpdate(pTarget);
+                                pObsessed->resetAttackTimer();
+                            }
+                            else
+                                pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                        }
+                        break;
+                    case CLASS_HUNTER:
+                        if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                        {
+                            if (pObsessed->isAttackReady())
+                            {
+                                pObsessed->AttackerStateUpdate(pTarget);
+                                pObsessed->resetAttackTimer();
+                            }
+                            else
+                                pObsessed->GetMotionMaster()->MoveChase(pTarget, 20.0f);
+                        }
+                        break;
+                    default:
+                        if(Unit* pTarget = SelectAttackingTargetForObsessed(pObsessed))
+                        {
+                            if (pObsessed->isAttackReady() && pObsessed->CanReachWithMeleeAttack(pTarget))
+                            {
+                                pObsessed->AttackerStateUpdate(pTarget);
+                                pObsessed->resetAttackTimer();
+                            }
+                            else
+                                pObsessed->GetMotionMaster()->MoveChase(pTarget, 1.0f);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     void DamageTaken(Unit* pDoneBy, uint32 &uiDamage)
     {
         if (!m_creature->isAlive())
@@ -423,6 +666,8 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
         if (m_bMovementStarted)
             return;
+
+        DoControlObsessedPlayers();
 
         switch (m_uiStage)
         {
@@ -563,6 +808,30 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
                 m_uiSummonGuardsTimer -= uiDiff;
 
             break;
+        }
+
+        if (m_uiMode != RAID_DIFFICULTY_10MAN_NORMAL)
+        {
+            if (m_uiDominateMindTimer <= uiDiff)
+            {
+                DominateMind();
+
+                switch (m_uiMode)
+                {
+                case RAID_DIFFICULTY_10MAN_HEROIC:
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                    m_uiDominateMindTimer = urand(12*IN_MILLISECONDS, 15*IN_MILLISECONDS);
+                    break;
+                case RAID_DIFFICULTY_25MAN_HEROIC:
+                    m_uiDominateMindTimer = urand(4*IN_MILLISECONDS, 6*IN_MILLISECONDS);
+                    break;
+                default:
+                    m_uiDominateMindTimer = 0;
+                    break;
+                }
+            }
+            else
+                m_uiDominateMindTimer -= uiDiff;
         }
 
         if (m_uiDeathAndDecayTimer <= uiDiff)
