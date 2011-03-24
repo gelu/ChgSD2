@@ -2334,7 +2334,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_iron_council.cpp"
+							RelativePath="..\scripts\northrend\ulduar\ulduar\assembly_of_iron.cpp"
 							>
 						</File>
 						<File
@@ -2354,11 +2354,11 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_vezax.cpp"
+							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_general_vezax.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_xt002.cpp"
+							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_xt_002.cpp"
 							>
 						</File>
 						<File
@@ -2366,7 +2366,7 @@
 							>
 						</File>
 						<File
-							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_leviathan.cpp"
+							RelativePath="..\scripts\northrend\ulduar\ulduar\boss_flame_leviathan.cpp"
 							>
 						</File>
 						<File
