@@ -24,7 +24,7 @@ UPDATE `creature_template` SET `equipment_id`='1290' where `entry` IN (36990, 37
 -- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_bonecaster' where `entry` IN (36564);
 -- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_animator' where `entry` IN (36516);
 -- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soul_horror' where `entry` IN (36522);
--- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_npc_spectral_warden' where `entry` IN (36666);
+-- UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_spectral_warden' where `entry` IN (36666);
 
 -- Pit of saron
 UPDATE `instance_template` SET `ScriptName`='instance_pit_of_saron' WHERE `map`=658;
