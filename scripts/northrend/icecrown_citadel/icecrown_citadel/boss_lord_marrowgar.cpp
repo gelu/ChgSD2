@@ -65,6 +65,8 @@ enum
     SAY_DEATH                               = -1631009,
 
     // Achievements
+    ACHIEV_BONED_10                         = 4534,
+    ACHIEV_BONED_25                         = 4610,
 };
 
 struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
@@ -83,6 +85,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
     bool m_bPhase1;
     bool m_bPhase2;
     bool m_bSummon;
+    bool m_bAchievFailed;
     uint32 m_uiBoneSliceTimer;
     uint32 m_uiBoneSpikeGraveyardTimer;
     uint32 m_uiSummonBoneSpikeTimer;
@@ -103,6 +106,7 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         m_bPhase1 = true;
         m_bPhase2 = false;
         m_bSummon = false;
+        m_bAchievFailed = false;
         m_uiBoneSliceTimer = urand(10*IN_MILLISECONDS, 25*IN_MILLISECONDS);
         m_uiBoneSpikeGraveyardTimer = 20*IN_MILLISECONDS;
         m_uiSummonBoneSpikeTimer = 3*IN_MILLISECONDS;
@@ -110,6 +114,11 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
         m_uiTargetSwitchTimer = 5*IN_MILLISECONDS;
         m_uiColdFlameTimer = 10*IN_MILLISECONDS;
         m_uiColdFlameDespawnDelay = 10*IN_MILLISECONDS;
+    }
+
+    void AchievFailed()
+    {
+        m_bAchievFailed = true;
     }
 
     void MoveInLineOfSight(Unit* pWho) 
@@ -156,6 +165,36 @@ struct MANGOS_DLL_DECL boss_lord_marrowgarAI : public ScriptedAI
             m_pInstance->SetData(TYPE_MARROWGAR, DONE);
 
         DoScriptText(SAY_DEATH, m_creature);
+
+        if (!m_bAchievFailed)
+        {
+            bool m_bIs10ManMode;
+            switch (m_uiMode)
+            {
+                case RAID_DIFFICULTY_10MAN_NORMAL:
+                case RAID_DIFFICULTY_10MAN_HEROIC:
+                    m_bIs10ManMode = true;
+                    break;
+                case RAID_DIFFICULTY_25MAN_NORMAL:
+                case RAID_DIFFICULTY_25MAN_HEROIC:
+                    m_bIs10ManMode = false;
+                    break;
+                default:
+                    break;
+            }
+
+            AchievementEntry const *AchievBoned = GetAchievementStore()->LookupEntry(m_bIs10ManMode ? ACHIEV_BONED_10 : ACHIEV_BONED_25);
+            if (AchievBoned)
+            {
+                Map* pMap = m_creature->GetMap();
+                if (pMap && pMap->IsDungeon())
+                {
+                    Map::PlayerList const &players = pMap->GetPlayers();
+                    for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                        itr->getSource()->CompletedAchievement(AchievBoned);
+                }
+            }
+        }
     }
 
 
@@ -535,12 +574,16 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
     }
 
     ScriptedInstance* m_pInstance;
+
     ObjectGuid m_uiVictimGuid;
+    uint32 m_uiAchievTimer;
 
     void Reset()
     {
-        SetCombatMovement(false);
         m_uiVictimGuid = ObjectGuid();
+        m_uiAchievTimer = 8*IN_MILLISECONDS;
+
+        SetCombatMovement(false);
         m_creature->SetInCombatWithZone();
     }
 
@@ -598,6 +641,15 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
         }
         else
             m_creature->ForcedDespawn();
+
+        if (m_uiAchievTimer < uiDiff)
+        {
+            if (Creature* pMarrowgar = m_creature->GetMap()->GetCreature(m_pInstance->GetData64(NPC_LORD_MARROWGAR)))
+                if (boss_lord_marrowgarAI* pMarrowgarAI = dynamic_cast<boss_lord_marrowgarAI*>(pMarrowgar->AI()))
+                    pMarrowgarAI->AchievFailed();
+        }
+        else
+            m_uiAchievTimer -= uiDiff; 
     }
 };
 
