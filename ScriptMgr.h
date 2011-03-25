@@ -76,6 +76,9 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget = NULL);
 //DB query
 QueryResult* strSD2Pquery(char*);
 
+// Not registered scripts storage
+Script* GetScriptByName(std::string scriptName);
+
 #if COMPILER == COMPILER_GNU
 #define FUNC_PTR(name,callconvention,returntype,parameters)    typedef returntype(*name)parameters __attribute__ ((callconvention));
 #else
