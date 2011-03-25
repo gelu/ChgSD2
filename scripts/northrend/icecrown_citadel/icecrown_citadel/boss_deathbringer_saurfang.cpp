@@ -50,8 +50,9 @@ enum
     SPELL_CALL_BLOOD_BEAST_3                = 72356,
     SPELL_CALL_BLOOD_BEAST_4                = 72357,
     SPELL_CALL_BLOOD_BEAST_5                = 72358,
-    SPELL_SCENT_OF_BLOOD                    = 72769,
     SPELL_RESISTANT_SKIN                    = 72723,
+    SPELL_SCENT_OF_BLOOD_BUFF               = 72771,
+    SPELL_SCENT_OF_BLOOD_DEBUFF             = 72769,
     SPELL_ZERO_REGEN                        = 72242,
 
     // NPCs
@@ -122,7 +123,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         m_uiBloodBeastTimer = 40*IN_MILLISECONDS;
         m_uiBoilingBloodTimer = 1*IN_MILLISECONDS;
         m_uiBoilingBloodDamageTimer = 0;
-        m_uiRuneofBloodTimer = 1*IN_MILLISECONDS;
+        m_uiRuneofBloodTimer = 0;
         m_uiBloodBoilTargetGuid = 0;
     }
 
@@ -489,6 +490,7 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
     Creature* pOwner;
     bool m_bHasAggro;
     uint32 m_uiAggroTimer;
+    uint32 m_uiScentofBloodTimer;
 
     void Reset()
     {
@@ -496,8 +498,20 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
 
         m_bHasAggro = false;
         m_uiAggroTimer = 2*IN_MILLISECONDS;
+        m_uiScentofBloodTimer = 1*IN_MILLISECONDS;
 
         SetCombatMovement(false);
+    }
+
+    void JustDied(Unit* pKiller)
+    {
+        Map::PlayerList const& players = m_creature->GetMap()->GetPlayers();
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+        {
+            if (Player* pPlayer = itr->getSource())
+                if (pPlayer->HasAura(SPELL_SCENT_OF_BLOOD_DEBUFF))
+                    pPlayer->RemoveAurasDueToSpell(SPELL_SCENT_OF_BLOOD_DEBUFF);
+        }
     }
 
     void DamageDeal(Unit* pVictim, uint32& uiDamage)
@@ -507,6 +521,31 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
 
         if (pOwner)
             pOwner->SetPower(POWER_ENERGY, pOwner->GetPower(POWER_ENERGY) + 2);
+    }
+
+    void ApplyScentofBloodDebuff(Creature* pCreature)
+    {
+        std::list<uint64> PlayerGuidList;
+        std::list<uint64>::iterator itr;
+
+        Map::PlayerList const& players = m_creature->GetMap()->GetPlayers();
+        for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+        {
+            if (Player* pPlayer = itr->getSource())
+                if (pPlayer->isTargetableForAttack())
+                    if (pPlayer->GetDistance(pCreature) <= ATTACK_DISTANCE)
+                        if (!pPlayer->HasAura(SPELL_SCENT_OF_BLOOD_DEBUFF))
+                            PlayerGuidList.push_back(pPlayer->GetGUID());
+        }
+
+        if (PlayerGuidList.empty())
+            return;
+
+        for (std::list<uint64>::iterator itr = PlayerGuidList.begin(); itr != PlayerGuidList.end(); ++itr)
+        {
+            if (Unit* pPlayer = pCreature->GetMap()->GetPlayer(*itr))
+                pPlayer->_AddAura(SPELL_SCENT_OF_BLOOD_DEBUFF);
+        }
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -527,8 +566,18 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
         {
             case RAID_DIFFICULTY_10MAN_HEROIC:
             case RAID_DIFFICULTY_25MAN_HEROIC:
-                if (!m_creature->HasAura(SPELL_SCENT_OF_BLOOD))
-                    DoCast(m_creature, SPELL_SCENT_OF_BLOOD);
+                {
+                    if (!m_creature->HasAura(SPELL_SCENT_OF_BLOOD_BUFF))
+                        m_creature->_AddAura(SPELL_SCENT_OF_BLOOD_BUFF);
+
+                    if (m_uiScentofBloodTimer < uiDiff)
+                    {
+                        ApplyScentofBloodDebuff(m_creature);
+                        m_uiScentofBloodTimer = 1*IN_MILLISECONDS;
+                    }
+                    else
+                        m_uiScentofBloodTimer -= uiDiff;
+                }
                 break;
             default:
                 break;
@@ -539,7 +588,7 @@ struct MANGOS_DLL_DECL  mob_blood_beastAI : public ScriptedAI
             if (m_uiAggroTimer < uiDiff)
             {
                 SetCombatMovement(true);
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
+                m_creature->GetMotionMaster()->MoveChase(m_creature->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0));
                 m_bHasAggro = true;
             }
             else 
