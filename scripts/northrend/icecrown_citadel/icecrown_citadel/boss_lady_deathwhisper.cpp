@@ -439,7 +439,7 @@ struct MANGOS_DLL_DECL boss_lady_deathwhisperAI : public ScriptedAI
 
     Unit* SelectAttackingTargetForObsessed(Unit* pObsessed)
     {
-        if(!pObsessed->getVictim())
+        if(!pObsessed->getVictim() && !pObsessed->IsFriendlyTo(pObsessed->getVictim()))
         {
             return m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0);
         }
