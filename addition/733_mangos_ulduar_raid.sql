@@ -26,6 +26,7 @@ UPDATE creature_template SET ScriptName = 'mob_dark_rune_sentinel' WHERE entry =
 UPDATE creature_template SET ScriptName = 'mob_dark_rune_guardian' WHERE entry = 33388;
 UPDATE creature_template SET ScriptName = 'npc_expedition_commander' WHERE entry = 33210;
 UPDATE creature_template SET ScriptName = 'mob_devouring_flame_target' WHERE entry IN (34189, 34188);
+UPDATE `creature_template` SET `difficulty_entry_1` = 0 WHERE `entry` = 34189;
 
 -- XT002
 UPDATE creature_template SET mechanic_immune_mask=617299803, scriptname='boss_xt002' WHERE entry=33293;
@@ -130,6 +131,7 @@ UPDATE creature_template SET mechanic_immune_mask=617299803, unit_flags = 0, scr
 UPDATE creature_template SET mechanic_immune_mask=652951551, scriptname='boss_right_arm' WHERE entry=32934;
 UPDATE creature_template SET mechanic_immune_mask=652951551, scriptname='boss_left_arm' WHERE entry=32933;
 UPDATE creature_template SET ScriptName = 'mob_ulduar_rubble' WHERE entry IN (33768, 33809, 33908, 33942);
+UPDATE `creature_template` SET `difficulty_entry_1` = 0 WHERE `entry` = (33908, 33942);
 UPDATE `gameobject` SET `position_y` = -35.6824, `position_x` = 1837.59 WHERE `id` IN (195047);
 UPDATE `creature_template` SET `RegenHealth` = 1 WHERE `entry` = 33910;
 UPDATE `creature_template` SET `RegenHealth` = 1 WHERE `entry` = 33911;
@@ -220,6 +222,7 @@ UPDATE `creature_template` SET `modelid_1` = 15880 WHERE `entry` = 33174;
 UPDATE `creature_template` SET `modelid_2` = 28470, ScriptName = 'mob_icicle' WHERE `entry` = 33169;
 -- flash freeze that will lock the npcs IN iceblock
 UPDATE creature_template SET `modelid_1` = 25865, ScriptName = 'mob_npc_flashFreeze' WHERE entry IN (32938, 33353);
+UPDATE `creature_template` SET `difficulty_entry_1` = 0 WHERE `entry` = 32938;
 UPDATE creature SET spawnMask = 3 WHERE id IN (32938);
 UPDATE creature SET spawnMask = 2 WHERE id IN (32901, 32900, 32950, 32946,33333, 33330, 33326);
 UPDATE creature_template SET ScriptName = 'npc_hodir_priest' WHERE entry IN (32897, 33326, 32948, 33330);
@@ -236,7 +239,7 @@ UPDATE creature SET position_x = 2000.9, position_y = -231.232 WHERE guid = 1319
 UPDATE creature SET position_x = 2009.06, position_y = -244.058 WHERE guid = 131933;
 DELETE FROM creature WHERE guid IN (800005);
 INSERT INTO creature VALUES
-(800005, 32897, 603, 3, 128,0,0, 2009.06, -244.058, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0);		-- aly priest 
+(800005, 32897, 603, 3, 128,0,0, 2009.06, -244.058, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0);		-- ally priest 
 -- shaman
 UPDATE creature SET position_x = 1983.75, position_y = -243.358 WHERE id = 33328;
 UPDATE creature SET position_x = 1983.75, position_y = -243.358 WHERE id = 33332;
@@ -258,7 +261,7 @@ INSERT INTO creature VALUES
 -- mage:
 DELETE FROM creature WHERE guid IN (800008, 800010);
 INSERT INTO creature VALUES
-(800008, 33327, 603, 2, 128,0,0, 1978.49, -241.476, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0), -- aly mage
+(800008, 33327, 603, 2, 128,0,0, 1978.49, -241.476, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0), -- ally mage
 (800010, 32938, 603, 2, 1,0,0, 1978.49, -241.476, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0);
 -- priest
 UPDATE creature SET position_x = 1997.88, position_y = -239.394 WHERE id = 33330;
@@ -381,6 +384,7 @@ REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('625
 -- Vezax
 UPDATE creature_template SET unit_flags = 0, ScriptName = 'boss_vezax' WHERE entry = 33271;
 UPDATE creature_template SET MinHealth = 23009250, MaxHealth = 23009250, ScriptName = 'boss_vezax' WHERE entry = 33449;
+UPDATE `creature_template` SET `difficulty_entry_1` = 0 WHERE `entry` = 33449;
 UPDATE `creature_template` SET `mechanic_immune_mask` = 619397115 WHERE `entry` IN (33271, 33449);
 UPDATE creature_template SET ScriptName = 'mob_saronite_animus' WHERE entry = 33524;
 UPDATE creature_template SET ScriptName = 'mob_saronite_vapor', movementType = 1  WHERE entry = 33488;

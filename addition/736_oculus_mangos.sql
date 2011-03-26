@@ -109,7 +109,7 @@ UPDATE `creature_template` SET `ScriptName` = 'npc_planar_anomaly' WHERE entry =
 UPDATE `creature_template` SET `ScriptName` = 'npc_belgar_image' WHERE entry = 28012;
 
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) values
-(61407, 1, 27447),
+--(61407, 1, 27447), needs fixed
 (51024, 1, 28239),
 (51022, 1, 28239),
 (57963, 1, 27656);
