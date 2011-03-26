@@ -61,8 +61,8 @@ static t_Locations PortalLoc[]=
 {-3050005,603, 1498.09f,  -24.246f,  421.267f, 0,     SPELL_TELEPORT_ANTECHAMBER, false,true,TYPE_XT002},        //
 {-3050006,603, 1859.45f,  -24.1f,    449.2f,   0,     SPELL_TELEPORT_WALKWAY,     false,true,TYPE_KOLOGARN},        //
 {-3050007,603, 2086.27f,  -24.3134f, 421.539f, 0,     SPELL_TELEPORT_CONSERVATORY,false,true,TYPE_AURIAYA},         //
-{-3050008,603, 2517.3979f, 2568.89f, 412.99f,  6.17f, SPELL_TELEPORT_SPARK,       false,true,TYPE_FREYA},          //
-{-3050009,603, 1854.782f, -11.3819f, 335.27f,  5.86f, SPELL_TELEPORT_PRISON,      false,true,TYPE_YOGGSARON},           //
+{-3050008,603, 2517.3979f, 2568.89f, 412.99f,  6.17f, SPELL_TELEPORT_SPARK,       false,true,TYPE_MIMIRON_TP},          //
+{-3050009,603, 1854.782f, -11.3819f, 335.27f,  5.86f, SPELL_TELEPORT_PRISON,      false,true,TYPE_VEZAX},           //
 };
 
 

@@ -719,7 +719,7 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             if (uiData == DONE)
             {
                 OpenDoor(m_uiXT002GateGUID);
-                //OpenDoor(m_uiLeviathanGateGUID);
+                OpenDoor(m_uiLeviathanGateGUID);
             }
             break;
         case TYPE_IGNIS:
@@ -845,12 +845,12 @@ struct MANGOS_DLL_DECL instance_ulduar : public ScriptedInstance
             // Prison
         case TYPE_VEZAX:
             m_auiEncounter[11] = uiData;
-            //if (uiData == DONE)
-                //DoUseDoorOrButton(m_uiVezaxGateGUID);
+            if (uiData == DONE)
+                DoUseDoorOrButton(m_uiVezaxGateGUID);
             break;
         case TYPE_YOGGSARON:
             m_auiEncounter[12] = uiData;
-            //DoUseDoorOrButton(m_uiYoggGateGUID);
+            DoUseDoorOrButton(m_uiYoggGateGUID);
             break;
 
             // Celestial Planetarium
