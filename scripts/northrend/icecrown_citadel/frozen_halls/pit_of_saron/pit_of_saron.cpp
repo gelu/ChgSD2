@@ -106,7 +106,7 @@ void AddSC_pit_of_saron()
     newscript->RegisterSelf();
 
     newscript = new Script;
-    newscript->Name="npc_jaina_or_sylvana_POSoutro";
+    newscript->Name="npc_jaina_or_sylvanas_POSoutro";
     newscript->GetAI = &GetAI_npc_jaina_or_sylvanas_POSoutro;
     newscript->RegisterSelf();
 }

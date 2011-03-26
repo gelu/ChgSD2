@@ -1,10 +1,10 @@
 -- Ahnkahet from Tassadar
-UPDATE `instance_template` SET `ScriptName` = 'instance_ahnkahet' WHERE `map`=619;
-UPDATE `creature_template` SET `ScriptName` = 'boss_jedoga', `AIName`='' WHERE `entry`=29310;
-UPDATE `creature_template` SET `ScriptName` = 'boss_nadox', `AIName`='' WHERE `entry`=29309;
-UPDATE `creature_template` SET `ScriptName` = 'boss_taldaram', `AIName`='' WHERE `entry`=29308;
-UPDATE `gameobject_template` SET `ScriptName` = 'go_nerubian_device' WHERE `entry` IN (193093,193094);
-UPDATE `creature_template` SET `ScriptName` = 'boss_volazj', `AIName`='' WHERE `entry`=29311;
+UPDATE instance_template SET ScriptName='instance_ahnkahet' WHERE map=619;
+UPDATE creature_template SET ScriptName='boss_jedoga', AIName='' WHERE entry=29310;
+UPDATE creature_template SET ScriptName= 'boss_nadox', AIName='' WHERE entry=29309;
+UPDATE creature_template ScriptName='boss_taldaram', AIName='' WHERE entry=29308;
+UPDATE gameobject_template SET ScriptName='go_nerubian_device' WHERE entry IN (193093,193094);
+UPDATE creature_template SET ScriptName='boss_volazj', AIName='' WHERE entry=29311;
 
 DELETE FROM `creature_template_addon` WHERE `entry` IN (30385, 31474);
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `b2_0_sheath`, `b2_1_pvp_state`, `emote`, `moveflags`, `auras`) VALUES
@@ -21,9 +21,9 @@ INSERT INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entr
 
 UPDATE `creature_template` SET `unit_flags` = '0' WHERE `entry` IN (30114,31473);
 
-DELETE FROM `creature_addon` WHERE guid=131953;
-DELETE FROM `creature` WHERE guid IN (131953, 115064);
-INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
+DELETE FROM creature_addon WHERE guid=131953;
+DELETE FROM creature WHERE guid IN (131953, 115064);
+INSERT INTO creature (guid, id, map, spawnMask, phaseMask, modelid, equipment_id, position_x, position_y, position_z, orientation, spawntimesecs, spawndist, currentwaypoint, curhealth, curmana, DeathState, MovementType) VALUES
 (131953, 29310, 619, 3, 1, 26777, 0, 357.353, -692.808, -10.7028, 5.56541, 14400, 5, 0, 212700, 0, 0, 1);
 
 DELETE FROM `gameobject` WHERE `guid` = 911321;
@@ -37,10 +37,10 @@ UPDATE `creature_template` SET `ScriptName` ='boss_amanitar', `AIName`='', `mind
 DELETE FROM `creature` WHERE `map` = 619 AND `id` IN (30258,30391);
 
 INSERT INTO `creature` (`id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
-#Amanitar
+-- Amanitar
 (30258, 619, 2, 1, 0, 0, 340.433, -884.8, -74.6965, 6.10105, 9800, 0, 0, 1, 0, 0, 0),
 
-#Mushrooms
+-- Mushrooms
 (30391, 619, 2, 1, 0, 0, 358.386, -885.553, -76.1054, 3.06235, 30, 0, 0, 1, 0, 0, 0),
 (30391, 619, 2, 1, 0, 0, 355.893, -871.712, -76.1473, 2.37356, 30, 0, 0, 1, 0, 0, 0),
 (30391, 619, 2, 1, 0, 0, 350.343, -874.985, -76.7057, 3.40793, 30, 0, 0, 1, 0, 0, 0),
