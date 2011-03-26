@@ -89,10 +89,10 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
         if (m_pInstance)
             m_pInstance->SetData(TYPE_PATCHWERK, DONE);
 
-        if (m_uiEncounterTimer < 180000)        
+        if (m_uiEncounterTimer < 180000)
         {
-           if(m_pInstance)
-               m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? MAKE_QUICK_WERK_OF_HIM : MAKE_QUICK_WERK_OF_HIM_H);        }
+            if(m_pInstance)
+                m_pInstance->DoCompleteAchievement(m_bIsRegularMode ? MAKE_QUICK_WERK_OF_HIM : MAKE_QUICK_WERK_OF_HIM_H);
         }
     }
 
@@ -146,7 +146,7 @@ struct MANGOS_DLL_DECL boss_patchwerkAI : public ScriptedAI
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        // Achiev timer        
+        // Achiev timer
         m_uiEncounterTimer += uiDiff;
 
         // Hateful Strike
