@@ -85,6 +85,7 @@ UPDATE gameobject_template SET ScriptName='go_andorhal_tower' WHERE entry IN (17
 UPDATE gameobject_template SET ScriptName='go_scourge_enclosure' WHERE entry=191548;
 UPDATE gameobject_template SET ScriptName='go_veil_skith_cage' WHERE entry IN (185202,185203,185204,185205);
 UPDATE gameobject_template SET ScriptName='go_lab_work_reagents' WHERE entry IN (190462, 190473, 190478, 190459);
+UPDATE gameobject_template SET ScriptName='go_hand_of_iruxos_crystal' WHERE entry=176581;
 
 /* GUARD */
 UPDATE creature_template SET ScriptName='guard_azuremyst' WHERE entry=18038;
@@ -141,7 +142,7 @@ UPDATE creature_template SET ScriptName='npc_locksmith' WHERE entry IN (29665,29
 -- UPDATE creature_template SET ScriptName='npc_innkeeper' WHERE npcflag=npcflag|65536;
 
 /* SPELL */
-UPDATE creature_template SET ScriptName='spell_dummy_npc' WHERE entry IN (16880,1200,26616,26643,16518,25793,25758,25752,25792,25753,26421,26841,27808,27122,28068,12298,12296,24918,17326,17654,16847,18879,26270,26268,30146,25084,25085,32149,22105,29330,29338,29329,28465,28600);
+UPDATE creature_template SET ScriptName='spell_dummy_npc' WHERE entry IN (16880,1200,26616,26643,16518,25793,25758,25752,25792,25753,26421,26841,27808,27122,28068,12298,12296,24918,17326,17654,16847,18879,26270,26268,30146,25084,25085,32149,22105,29330,29338,29329,28465,28600,29327,29319);
 UPDATE gameobject_template SET ScriptName='spell_dummy_go' WHERE entry IN (181616,186949);
 
 /*  */
@@ -487,6 +488,7 @@ UPDATE gameobject_template SET ScriptName='go_door_lever_dm' WHERE entry=101833;
 
 /* DESOLACE */
 UPDATE creature_template SET ScriptName='npc_aged_dying_ancient_kodo' WHERE entry IN (4700, 4701, 4702, 11627);
+UPDATE creature_template SET ScriptName='npc_dalinda_malem' WHERE entry=5644;
 
 /* DIRE MAUL */
 UPDATE instance_template SET ScriptName='instance_dire_maul' WHERE map=429;
