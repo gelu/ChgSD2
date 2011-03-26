@@ -80,3 +80,6 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_crystalline_tangler' WHERE `e
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_frost_tomb' WHERE `entry` = '23965';
 UPDATE `creature_template` SET `ScriptName` = 'mob_ingvar_throw_dummy' WHERE `entry` = '23997';
+
+-- Instance Halls Of Stone
+UPDATE `creature_template` SET `ScriptName` = 'mob_tribuna_controller' WHERE `entry` = '28234';
