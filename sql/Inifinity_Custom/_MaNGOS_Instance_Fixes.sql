@@ -9,23 +9,23 @@ UPDATE `creature_template` SET scriptname = 'boss_commander_kolurg' where entry 
 UPDATE creature_template SET ScriptName='mob_sunblade_scout' WHERE entry=25372;
 
 -- fixes for boss_felmyst fight
-UPDATE `creature_template` SET `ScriptName`="boss_felmyst", `minhealth`=7300000, `maxhealth`=7300000 WHERE `entry` = 25038;
+UPDATE `creature_template` SET `ScriptName`="boss_felmyst" WHERE `entry` = 25038;
 UPDATE `creature_template` SET `ScriptName`="mob_felmyst_vapor"WHERE `entry`= 25265;
 UPDATE `creature_template` SET `ScriptName`="mob_deathcloud" WHERE `entry`=25703;
 UPDATE `creature_template` SET `unit_flags` = 0x2020002, `faction_A` = '16', `faction_H` = '16', `minlevel` = '73', `maxlevel` = '73', `ScriptName` = 'mob_felmyst_vapor_trail' WHERE `entry` = '25267';
 
 -- fixes for boss_eredar_twins fight
 -- update npc 25165 (Sacrolash) 
-UPDATE `creature_template` SET `ScriptName` = "boss_sacrolash", `minhealth`=3500000, `maxhealth`=3500000 WHERE `entry` = 25165;
+UPDATE `creature_template` SET `ScriptName` = "boss_sacrolash" WHERE `entry` = 25165;
 -- update npc 25166 (Alythess)
-UPDATE `creature_template` SET `ScriptName` = "boss_alythess", `minhealth`=3500000, `maxhealth`=3500000  WHERE `entry` = 25166;
+UPDATE `creature_template` SET `ScriptName` = "boss_alythess" WHERE `entry` = 25166;
 -- update npc 25214 (Shadow Image)
 UPDATE `creature_template` SET `ScriptName` = "npc_shadow_image" WHERE `entry` = 25214;
 -- update go 50439 (The Second Gate)
 
 -- fixes for boss_muru_entropius fight
 
-UPDATE `creature_template` SET `ScriptName` = "boss_muru", `maxhealth`=3500000, `minhealth`=3500000 WHERE `entry` = 25741;
+UPDATE `creature_template` SET `ScriptName` = "boss_muru" WHERE `entry` = 25741;
 -- update npc 25744 (dark fiend)
 UPDATE `creature_template` SET `ScriptName` = "dark_fiend" WHERE `entry` = 25744;
 -- update npc 25772 (void sentinel)
@@ -41,7 +41,7 @@ UPDATE `creature_template` SET `ScriptName` = "mob_kiljaeden_controller" WHERE `
 -- update npc 25588 (hand of the deceiver)
 UPDATE `creature_template` SET `ScriptName` = "mob_deceiver" WHERE `entry`= 25588;
 -- update npc 25315 (boss_kiljaeden)
-UPDATE `creature_template` SET `ScriptName` = "boss_kiljaeden", `minhealth`=13000000, `maxhealth`=13000000 WHERE `entry`= 25315;
+UPDATE `creature_template` SET `ScriptName` = "boss_kiljaeden" WHERE `entry`= 25315;
 -- update npc 25598 (volatile felfire fiend)
 UPDATE `creature_template` SET `ScriptName` = "mob_volatile_felfire_fiend" WHERE `entry` = 25598;
 -- update npc 25735 (armageddon target)
