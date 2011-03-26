@@ -71,6 +71,8 @@ enum
     SAY                                     = -1631109, // not used
 
     // Achievements
+    ACHIEV_GONE_MESS_10                     = 4537,
+    ACHIEV_GONE_MESS_25                     = 4613,
 };
 
 enum Equipment
@@ -96,6 +98,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
     bool m_bIntro;
     bool m_bIsFenzy;
     uint8 m_uiBeastCount;
+    uint8 m_uiMarkCount;
     uint32 m_uiBerserkTimer;
     uint32 m_uiBloodNovaTimer;
     uint32 m_uiBloodBeastTimer;
@@ -118,6 +121,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
         m_bIsFenzy = false;
 
         m_uiBeastCount = 0;
+        m_uiMarkCount = 0;
         m_uiBerserkTimer = 6*MINUTE*IN_MILLISECONDS;
         m_uiBloodNovaTimer = 20*IN_MILLISECONDS;
         m_uiBloodBeastTimer = 40*IN_MILLISECONDS;
@@ -234,6 +238,45 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                 if (pPlayer->HasAura(SPELL_MARK))
                     pPlayer->RemoveAurasDueToSpell(SPELL_MARK);
         }
+
+        bool m_bIs10ManMode;
+        bool m_bAchievFailed;
+        switch (m_uiMode)
+        {
+            case RAID_DIFFICULTY_10MAN_NORMAL:
+            case RAID_DIFFICULTY_10MAN_HEROIC:
+                if (m_uiMarkCount < 3)
+                    m_bAchievFailed = false;
+                else
+                    m_bAchievFailed = true;
+                m_bIs10ManMode = true;
+                break;
+            case RAID_DIFFICULTY_25MAN_NORMAL:
+            case RAID_DIFFICULTY_25MAN_HEROIC:
+                if (m_uiMarkCount < 5)
+                    m_bAchievFailed = false;
+                else 
+                    m_bAchievFailed = true;
+                m_bIs10ManMode = false;
+                break;
+            default:
+                break;
+        }
+
+        if (!m_bAchievFailed)
+        {
+            AchievementEntry const *AchievGoneMess = GetAchievementStore()->LookupEntry(m_bIs10ManMode ? ACHIEV_GONE_MESS_10 : ACHIEV_GONE_MESS_25);
+            if (AchievGoneMess)
+            {
+                Map* pMap = m_creature->GetMap();
+                if (pMap && pMap->IsDungeon())
+                {
+                    Map::PlayerList const &players = pMap->GetPlayers();
+                    for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+                        itr->getSource()->CompletedAchievement(AchievGoneMess);
+                }
+            }
+        }
     }
 
     void SpellHitTarget (Unit* pUnit, const SpellEntry* pSpellEntry)
@@ -310,6 +353,7 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                    DoScriptText(SAY_FALLENCHAMPION, m_creature);
                    m_creature->SetPower(POWER_ENERGY, 0);
                    DoCast(pTarget, SPELL_MARK);
+                   ++m_uiMarkCount;
                }
            }
         }
@@ -400,10 +444,14 @@ struct MANGOS_DLL_DECL boss_deathbringer_saurfangAI : public ScriptedAI
                 switch (m_uiMode)
                 {
                     case RAID_DIFFICULTY_10MAN_NORMAL:
-                    case RAID_DIFFICULTY_10MAN_HEROIC:
                         m_uiBeastCount = 2;
                         break;
+                    case RAID_DIFFICULTY_10MAN_HEROIC:
+                        m_uiBeastCount = 3;
+                        break;
                     case RAID_DIFFICULTY_25MAN_NORMAL:
+                        m_uiBeastCount = 4;
+                        break;
                     case RAID_DIFFICULTY_25MAN_HEROIC:
                         m_uiBeastCount = 5;
                         break;
