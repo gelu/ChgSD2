@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Ebon_Hold
 SD%Complete: 85
-SDComment: Quest support: 12848, 12733, 12739(and 12742 to 12750), 12727, 12698.
+SDComment: Quest support: 12848, 12733, 12739(and 12742 to 12750), 12727, 12698.  ----  need to be updated 
 SDCategory: Ebon Hold
 EndScriptData */
 
@@ -28,12 +28,16 @@ npc_unworthy_initiate_anchor
 npc_unworthy_initiate
 go_acherus_soul_prison
 npc_scarlet_ghoul
+npc_scarlet_miner
+npc_eye_of_acherus
 EndContentData */
 
 #include "precompiled.h"
 #include "escort_ai.h"
 #include "ObjectMgr.h"
 #include "TemporarySummon.h"
+#include "WorldPacket.h"
+//#define LESS_MOB // if you do not have a good server and do not want it to be laggy as hell -- uncomment this if you do
 
 /*######
 ## npc_a_special_surprise
@@ -1314,6 +1318,59 @@ CreatureAI* GetAI_npc_eye_of_acherus(Creature* pCreature)
 }
 
 /*######
+## Mob scarlet miner
+######*/
+enum scarletminer
+{
+    SPELL_GIFT_OF_THE_HARVESTER_MISSILE = 52481,
+    SPELL_SUMMOM_GHOUL					= 52490,
+    SPELL_SUMMON_GHOST					= 52505,
+};
+
+struct MANGOS_DLL_DECL mob_scarlet_minerAI : public ScriptedAI
+{
+    mob_scarlet_minerAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        // hack spell 52481
+        SpellEntry *TempSpell = (SpellEntry*)GetSpellStore()->LookupEntry(SPELL_GIFT_OF_THE_HARVESTER_MISSILE);
+        if (TempSpell && TempSpell->EffectImplicitTargetB[0] != 16)
+        {
+            TempSpell->EffectImplicitTargetB[0] = 16;
+            TempSpell->EffectImplicitTargetB[1] = 87;
+            TempSpell->EffectImplicitTargetB[2] = 16;
+        }
+    }
+
+    void Reset() {}
+
+    void SpellHit(Unit* pCaster, const SpellEntry* pSpell)
+    {
+        if (pCaster->GetTypeId() == TYPEID_PLAYER && m_creature->isAlive() && pSpell->Id == SPELL_GIFT_OF_THE_HARVESTER_MISSILE)
+        {
+            if(((Player*)pCaster)->GetQuestStatus(12698) == QUEST_STATUS_INCOMPLETE)
+            {
+                if (rand()%100 < 35)	//35% chance to summon ghoul
+                {
+                    pCaster->CastSpell(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),SPELL_SUMMOM_GHOUL, true);
+                }
+                else
+                {
+                     pCaster->CastSpell(m_creature->GetPositionX(),m_creature->GetPositionY(),m_creature->GetPositionZ(),SPELL_SUMMON_GHOST, true);
+                }
+
+                      m_creature->SetDeathState(JUST_DIED);
+                      m_creature->RemoveCorpse();
+             }
+        }
+    }
+};
+
+CreatureAI* GetAI_mob_scarlet_miner(Creature* pCreature)
+{
+    return new mob_scarlet_minerAI (pCreature);
+};
+
+/*######
 ## mob_scarlet_ghoul
 ######*/
 
@@ -1398,7 +1455,7 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
     {
         if (!m_bIsSpawned)
         {
-            DoScriptText(SAY_SCARLET_GHOUL_SPAWN1 - urand(0, 5), m_creature);
+            DoScriptText(SAY_SCARLET_GHOUL_SPAWN1 + urand(0, 5), m_creature);
             m_bIsSpawned = true;
         }
 
@@ -1409,7 +1466,7 @@ struct MANGOS_DLL_DECL mob_scarlet_ghoulAI : public ScriptedAI
                 if (Creature* pGothik = m_creature->GetMap()->GetCreature(m_uiHarvesterGUID) )
                 {
                     if (pGothik->AI()->DoCastSpellIfCan(m_creature, roll_chance_i(50) ? 52519 : 52521) == CAST_OK)
-                        DoScriptText(SAY_SCARLET_GOTHIK1 - urand(0, 4), pGothik);
+                        DoScriptText(SAY_SCARLET_GOTHIK1 + urand(0, 4), pGothik);
 
                     m_uiWaitForThrowTimer = 5000;
                     m_creature->KnockBackFrom(pGothik, 15.0, 5.0);
@@ -3786,6 +3843,11 @@ void AddSC_ebon_hold()
     pNewScript = new Script;
     pNewScript->Name = "npc_eye_of_acherus";
     pNewScript->GetAI = &GetAI_npc_eye_of_acherus;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "mob_scarlet_miner";
+    pNewScript->GetAI = &GetAI_mob_scarlet_miner;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
