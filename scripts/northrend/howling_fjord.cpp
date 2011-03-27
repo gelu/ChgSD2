@@ -17,7 +17,7 @@
 /* ScriptData
 SDName: Howling_Fjord
 SD%Complete: ?
-SDComment: Quest support: 11221, 11483, 11300, 11464, 11343
+SDComment: Quest support: 11221, 11483, 11300, 11464, 11343, 11466
 SDCategory: Howling Fjord
 EndScriptData */
 
@@ -29,6 +29,8 @@ npc_deathstalker_razael - TODO, can be moved to database
 npc_dark_ranger_lyana - TODO, can be moved to database
 npc_mcgoyver - TODO, can be moved to database
 npc_silvermoon_harry
+npc_olga 
+npc_jack_adams
 EndContentData */
 
 #include "precompiled.h"
@@ -636,6 +638,222 @@ bool GossipSelect_npc_silvermoon_harry(Player* pPlayer, Creature* pCreature, uin
     return true;
 }
 
+/*######
+## quest_jack_likes_his_drink
+######*/
+
+enum
+{
+    SAY_OLGA_0                  = -1999818, // whisper
+    SAY_OLGA_1                  = -1999817,
+    SAY_JACK_ADAMS_2            = -1999816,
+    SAY_OLGA_3                  = -1999815,
+    SAY_JACK_ADAMS_4            = -1999814,
+    SAY_JACK_ADAMS_5            = -1999813, // faint
+    SAY_JACK_ADAMS_6            = -1999812, // wakeup
+
+    NPC_TEXT_OLGA_1             = 12180,
+    NPC_JACK_ADAMS              = 24788,
+
+    SPELL_VOMIT                 = 41995,
+    ITEM_JACK_ADAMS_DEBT        = 34116,
+    QUEST_JACK_LIKES_HIS_DRINK  = 11466,
+};
+
+float OlgaWaypoints[2][4] = 
+{
+    {0.0f, -91.81f, -3532.70f, 7.71f},  
+    {1.0f, -87.23f, -3544.23f, 7.71f}
+};
+
+#define GOSSIP_ITEM_OLGA_1 "I'd like to buy Jack a drink. Perhaps something... extra strong."
+#define GOSSIP_ITEM_OLGA_2 "Here's a gold, buy yourself something nice." 
+#define GOSSIP_ITEM_OLGA_3 "Do you really want to bribe Olga?"
+#define GOSSIP_ITEM_JACK_ADAMS_1 "<Discreetly search the pirate's pockets for Taruk's payment.>"
+
+struct MANGOS_DLL_DECL npc_olgaAI : public ScriptedAI
+{
+    npc_olgaAI(Creature* pCreature) : ScriptedAI(pCreature) {Reset();}
+
+    bool bEventInProgress;
+    bool bInRightPoint;
+
+    uint8 subevent;
+    uint32 m_uiEventTimer;
+    uint32 m_uiResetJackTimer;
+    uint64 JackAdamsGUID;
+
+    void Reset()
+    {
+        bEventInProgress = false;
+        bInRightPoint = true;
+        subevent = 0;
+        m_uiEventTimer = 5000;
+        m_uiResetJackTimer = 30000;
+        // restore DB flags (GOSSIP)
+        m_creature->SetUInt32Value(UNIT_NPC_FLAGS, m_creature->GetCreatureInfo()->npcflag);
+    }
+
+    void MovementInform(uint32 uiType, uint32 uiPointId)
+    {
+        if (uiType != POINT_MOTION_TYPE)
+            return;
+
+        if (uiPointId == OlgaWaypoints[1][0] || uiPointId == OlgaWaypoints[0][0])
+            bInRightPoint = true;
+    }
+
+    void UpdateAI(const uint32 uiDiff)
+    {
+        // if not event in progress and Jack is unconscous lets awake him after certain amount of time
+        if (!bEventInProgress)
+        {
+            if (m_uiResetJackTimer <= uiDiff)
+            {
+                Creature* pJack = m_creature->GetMap()->GetCreature(JackAdamsGUID);
+                if (pJack && pJack->isAlive() && pJack->GetByteValue(UNIT_FIELD_BYTES_1,0) == UNIT_STAND_STATE_DEAD)
+                    pJack->SetByteValue(UNIT_FIELD_BYTES_1,0,UNIT_STAND_STATE_STAND);
+                m_uiResetJackTimer = 30000;
+            }else m_uiResetJackTimer -= uiDiff;
+        }
+
+        if(bEventInProgress && bInRightPoint)
+        {
+            if (m_uiEventTimer <= uiDiff)
+            {
+                // if there is no Jack around or he is dead there is no point to continue
+                Creature* pJack = m_creature->GetMap()->GetCreature(JackAdamsGUID);
+                if (!pJack || !pJack->isAlive())
+                {
+                    m_creature->AI()->EnterEvadeMode();
+                    return;
+                }
+
+                switch(subevent)
+                {
+                    case 0:
+                        DoScriptText(SAY_OLGA_1,m_creature);
+                        m_creature->GetMotionMaster()->MovePoint(OlgaWaypoints[1][0],OlgaWaypoints[1][1],OlgaWaypoints[1][2],OlgaWaypoints[1][3]);
+                        m_uiEventTimer = 3000;
+                        break;
+                    case 1:
+                        DoScriptText(SAY_JACK_ADAMS_2,pJack,m_creature);
+                        m_uiEventTimer = 1000;
+                        bInRightPoint = false;
+                        break;
+                    case 2:
+                        m_creature->SetFacingToObject(pJack);
+                        m_uiEventTimer = 2000;
+                        break;
+                    case 3:
+                        DoScriptText(SAY_OLGA_3,m_creature,pJack);
+                        m_uiEventTimer = 7000;
+                        break;
+                    case 4:
+                        pJack->SetByteValue(UNIT_FIELD_BYTES_1,0,UNIT_STAND_STATE_KNEEL);
+                        DoScriptText(SAY_JACK_ADAMS_4,pJack,m_creature);
+                        m_uiEventTimer = 5000;
+                        break;
+                    case 5:
+                        pJack->SetByteValue(UNIT_FIELD_BYTES_1,0,UNIT_STAND_STATE_STAND);
+                        m_uiEventTimer = 3000;
+                        break;
+                    case 6:
+                        pJack->CastSpell(pJack,SPELL_VOMIT,false);
+                        m_uiEventTimer = 3000;
+                        break;
+                    case 7:
+                        DoScriptText(SAY_JACK_ADAMS_5,pJack,m_creature);
+                        pJack->SetByteValue(UNIT_FIELD_BYTES_1,0,UNIT_STAND_STATE_DEAD);
+                        pJack->SetUInt32Value(UNIT_NPC_FLAGS, m_creature->GetCreatureInfo()->npcflag);
+                        m_uiEventTimer = 3000;
+                    case 8:
+                        m_creature->GetMotionMaster()->MovePoint(OlgaWaypoints[0][0],OlgaWaypoints[0][1],OlgaWaypoints[0][2],OlgaWaypoints[0][3]);
+                        bInRightPoint = false;
+                        break;
+                    case 9:
+                        m_creature->SetFacingToObject(pJack);
+                        Reset();
+                        return;
+                    default: break;
+                }
+                ++ subevent;
+            }else m_uiEventTimer -= uiDiff;
+        }
+    }
+};
+
+
+bool GossipHello_npc_olga(Player* pPlayer, Creature* pCreature)
+{
+    if (pPlayer->GetQuestStatus(QUEST_JACK_LIKES_HIS_DRINK) == QUEST_STATUS_INCOMPLETE && pPlayer->GetMoney() >= 10000)
+    {
+        Creature* pJack = GetClosestCreatureWithEntry(pCreature,NPC_JACK_ADAMS,20.0f);
+        if (pJack && pJack->isAlive() && pJack->GetByteValue(UNIT_FIELD_BYTES_1,0) == UNIT_STAND_STATE_STAND)
+        {
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_OLGA_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+            ((npc_olgaAI*)pCreature->AI())->JackAdamsGUID = pJack->GetGUID();
+        }
+    }
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_olga(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    switch (uiAction)
+    {
+        case GOSSIP_ACTION_INFO_DEF+1:
+            pPlayer->ADD_GOSSIP_ITEM_EXTENDED(GOSSIP_ICON_CHAT, GOSSIP_ITEM_OLGA_2, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2,GOSSIP_ITEM_OLGA_3, 10000,false);
+            pPlayer->SEND_GOSSIP_MENU(NPC_TEXT_OLGA_1, pCreature->GetGUID());
+            break;
+
+        case GOSSIP_ACTION_INFO_DEF+2:
+            pPlayer->CLOSE_GOSSIP_MENU();
+            DoScriptText(SAY_OLGA_0,pCreature,pPlayer);
+            pCreature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
+            pPlayer->ModifyMoney(-10000);
+            ((npc_olgaAI*)pCreature->AI())->bEventInProgress = true;
+            break;
+    }
+    return true;
+}
+
+bool GossipHello_npc_jack_adams(Player* pPlayer, Creature* pCreature)
+{
+    if (pPlayer->GetQuestStatus(QUEST_JACK_LIKES_HIS_DRINK) == QUEST_STATUS_INCOMPLETE && pPlayer->GetItemCount(ITEM_JACK_ADAMS_DEBT,false) < 1)
+        pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM_JACK_ADAMS_1, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+
+    pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+    return true;
+}
+
+bool GossipSelect_npc_jack_adams(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
+{
+    if (uiAction == GOSSIP_ACTION_INFO_DEF+1)
+    {
+        pPlayer->CLOSE_GOSSIP_MENU();
+        ItemPosCountVec dest;
+        uint8 msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_JACK_ADAMS_DEBT, 1, false);
+        if (msg == EQUIP_ERR_OK)
+            pPlayer->StoreNewItem(dest, ITEM_JACK_ADAMS_DEBT, 1, true);
+        pCreature->SetUInt32Value(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_NONE);
+        // 50% chance that jack standup immediately
+        if (urand(0, 1) == 0)
+        {
+            pCreature->SetByteValue(UNIT_FIELD_BYTES_1,0,UNIT_STAND_STATE_STAND);
+            DoScriptText(SAY_JACK_ADAMS_6,pCreature,pPlayer);
+        }
+    }
+    return true;
+}
+
+CreatureAI* GetAI_npc_olga(Creature* pCreature)
+{
+    return new npc_olgaAI(pCreature);
+}
+
 void AddSC_howling_fjord()
 {
     Script* pNewScript;
@@ -685,5 +903,18 @@ void AddSC_howling_fjord()
     pNewScript->GetAI = &GetAI_npc_silvermoon_harry;
     pNewScript->pGossipHello = &GossipHello_npc_silvermoon_harry;
     pNewScript->pGossipSelect = &GossipSelect_npc_silvermoon_harry;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_olga";
+    pNewScript->GetAI = &GetAI_npc_olga;
+    pNewScript->pGossipHello = &GossipHello_npc_olga;
+    pNewScript->pGossipSelect = &GossipSelect_npc_olga;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "npc_jack_adams";
+    pNewScript->pGossipHello = &GossipHello_npc_jack_adams;
+    pNewScript->pGossipSelect = &GossipSelect_npc_jack_adams;
     pNewScript->RegisterSelf();
 }
