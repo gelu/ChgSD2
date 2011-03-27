@@ -433,7 +433,8 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_THADDIUS:
             m_auiEncounter[12] = uiData;
-            DoUseDoorOrButton(m_uiThadDoorGUID, uiData);
+            if (uiData != SPECIAL)
+                DoUseDoorOrButton(m_uiThadDoorGUID, uiData);
             // Uncomment when Thaddius (and this achievement is implemented)
             //if (uiData == IN_PROGRESS)
             //    SetSpecialAchievementCriteria(TYPE_ACHIEV_SHOCKING, true);
@@ -764,7 +765,7 @@ Creature* instance_naxxramas::GetRealOrFakeKel(Unit* pUnit)
 {
     Creature* pKel = instance->GetCreature(m_uiKelthuzadGUID);
     if(!pKel && pUnit)
-        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28,-3434.1,293.89,0,TEMPSUMMON_TIMED_DESPAWN,3000))
+        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28f,-3434.1f,293.89f,0,TEMPSUMMON_TIMED_DESPAWN,3000))
         {
             pFakeKel->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
             pFakeKel->setFaction(35);

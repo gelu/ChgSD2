@@ -151,10 +151,6 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
     ScriptedInstance* m_pInstance;
     bool m_bIsRegularMode;
 
-    std::list<uint64> m_lKaddrakGUIDList;
-    //std::list<Creature*> m_lMarnakGUIDList;
-    //std::list<Creature*> m_lAbedneumGUIDList;
-
     bool m_bIsActivateKaddrak;
     bool m_bIsActivateMarnak;
     bool m_bIsActivateAbedneum;
@@ -172,76 +168,59 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
         m_uiKaddrak_Encounter_timer = 1500;
         m_uiMarnak_Encounter_timer = 10000;
         m_uiAbedneum_Encounter_timer = 10000;
-
-        m_lKaddrakGUIDList.clear();
-        //m_lMarnakGUIDList.clear();
-        //m_lAbedneumGUIDList.clear();
-    }
-
-    void UpdateFacesList()
-    {   
-        std::list<Creature*> m_lKaddrakList;
-        m_lKaddrakGUIDList.clear();
-        GetCreatureListWithEntryInGrid(m_lKaddrakList, m_creature, NPC_KADDRAK, 50.0f);
-        if (!m_lKaddrakGUIDList.empty())
-        {
-            uint32 uiPositionCounter = 0;
-            for(std::list<Creature*>::iterator itr = m_lKaddrakList.begin(); itr != m_lKaddrakList.end(); ++itr)
-            {
-                if (!(*itr)) continue;
-
-                if (Creature* c = (Creature *)(*itr))
-                {
-                    m_lKaddrakGUIDList.push_back((*itr)->GetGUID());
-                    if (c->isAlive())
-                    {
-                        if (uiPositionCounter == 0)
-                        {
-                            c->GetMap()->CreatureRelocation((*itr), 927.265f, 333.200f, 218.780f, (*itr)->GetOrientation());
-                            c->MonsterMove(927.265f, 333.200f, 218.780f, 1);
-                        }
-                        else
-                        {
-                            c->GetMap()->CreatureRelocation((*itr), 921.745f, 328.076f, 218.780f, (*itr)->GetOrientation());
-                            c->MonsterMove(921.745f, 328.076f, 218.780f, 1);
-                        }
-                    }
-                    ++uiPositionCounter;
-                }
-            }
-        }
-        //GetCreatureListWithEntryInGrid(m_lMarnakGUIDList, m_creature, NPC_MARNAK, 50.0f);
-        //GetCreatureListWithEntryInGrid(m_lAbedneumGUIDList, m_creature, NPC_ABEDNEUM, 50.0f);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
         if (m_bIsActivateKaddrak)
-        {
+        { 
             if (m_uiKaddrak_Encounter_timer < uiDiff)
             {
-                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                    if (!m_lKaddrakGUIDList.empty())
-                        for(std::list<uint64>::iterator itr = m_lKaddrakGUIDList.begin(); itr != m_lKaddrakGUIDList.end(); ++itr)
-                            if (Creature* pCreature = m_creature->GetMap()->GetCreature(*itr))
-                                if (pCreature->isAlive())
-                                    pCreature->CastSpell(pTarget, m_bIsRegularMode ? SPELL_GLARE_OF_THE_TRIBUNAL_H : SPELL_GLARE_OF_THE_TRIBUNAL, true);
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                if (pPlayers.isEmpty())
+                    return;
 
-                m_uiKaddrak_Encounter_timer = 1500;
+                Map::PlayerList::const_iterator itr = pPlayers.begin();
+                for(uint8 i=0;i<rand()%pPlayers.getSize();i++)
+                    ++itr;
+
+                if (Unit* pTarget = itr->getSource())
+                {
+                    std::list<Creature*> m_lKaddrakList;
+                    GetCreatureListWithEntryInGrid(m_lKaddrakList, m_creature, NPC_KADDRAK, 50.0f);
+
+                    if (!m_lKaddrakList.empty())
+                        for(std::list<Creature*>::iterator itr = m_lKaddrakList.begin(); itr != m_lKaddrakList.end(); ++itr)
+                            if ((*itr) && (*itr)->isAlive())
+                                (*itr)->CastSpell(pTarget, m_bIsRegularMode ? SPELL_GLARE_OF_THE_TRIBUNAL : SPELL_GLARE_OF_THE_TRIBUNAL_H, true);
+                    m_uiKaddrak_Encounter_timer = 1500;
+                }
             }
             else
                 m_uiKaddrak_Encounter_timer -= uiDiff;
         }
+
         if (m_bIsActivateMarnak)
         {
             if (m_uiMarnak_Encounter_timer < uiDiff)
             {
-                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                if (pPlayers.isEmpty())
+                    return;
+
+                Map::PlayerList::const_iterator itr = pPlayers.begin();
+                for(uint8 i=0;i<rand()%pPlayers.getSize();i++)
+                    ++itr;
+
+                if (Unit* pTarget = itr->getSource())
                     if (Creature* pTemp = m_creature->SummonCreature(NPC_DARK_MATTER_TARGET, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 1000))
                     {
                         pTemp->SetDisplayId(11686);
+                        pTemp->setFaction(14); 
                         pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        pTemp->CastSpell(pTarget, m_bIsRegularMode ? SPELL_DARK_MATTER_H : SPELL_DARK_MATTER, true);
+                        pTemp->CastSpell(pTemp, m_bIsRegularMode ? SPELL_DARK_MATTER : SPELL_DARK_MATTER_H, true);
                     }
 
                 m_uiMarnak_Encounter_timer = 30000 + rand()%1000;
@@ -253,12 +232,23 @@ struct MANGOS_DLL_DECL mob_tribuna_controllerAI : public ScriptedAI
         {
             if (m_uiAbedneum_Encounter_timer < uiDiff)
             {
-                if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                Map* pMap = m_creature->GetMap();
+                Map::PlayerList const& pPlayers = pMap->GetPlayers();
+                if (pPlayers.isEmpty())
+                    return;
+
+                Map::PlayerList::const_iterator itr = pPlayers.begin();
+                for(uint8 i=0;i<rand()%pPlayers.getSize();i++)
+                    ++itr;
+
+                if (Unit* pTarget = itr->getSource())
                     if (Creature* pTemp = m_creature->SummonCreature(NPC_SEARING_GAZE_TARGET, pTarget->GetPositionX(), pTarget->GetPositionY(), pTarget->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 10000))
                     {
                         pTemp->SetDisplayId(11686);
+                        pTemp->setFaction(14);
+                        pTemp->GetMotionMaster()->MoveIdle();
                         pTemp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        pTemp->CastSpell(pTemp, m_bIsRegularMode ? SPELL_SEARING_GAZE_H : SPELL_SEARING_GAZE, true);
+                        pTemp->CastSpell(pTemp, m_bIsRegularMode ? SPELL_SEARING_GAZE : SPELL_SEARING_GAZE_H, true);
                     }
 
                 m_uiAbedneum_Encounter_timer = 30000 + rand()%1000;
@@ -333,16 +323,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
     {
         switch(uiPointId)
         {
-            case 7:
-                if (Creature* pCreature = GetClosestCreatureWithEntry(m_creature, NPC_TRIBUNAL_OF_THE_AGES, 100.0f))
-                {
-                    if (!pCreature->isAlive())
-                        pCreature->Respawn();
-                    ((mob_tribuna_controllerAI*)pCreature->AI())->UpdateFacesList();
-                    m_uiControllerGUID = pCreature->GetGUID();
-                }
-                break;
-            case 13:
+            case 13: 
                 DoScriptText(SAY_EVENT_INTRO_1, m_creature);
                 SetEscortPaused(true);
                 SetRun(true);
@@ -354,6 +335,12 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
                     m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_GO_TRIBUNAL_CONSOLE));
                 m_creature->SetStandState(UNIT_STAND_STATE_KNEEL);
                 SetEscortPaused(true);
+                if (Creature* pCreature = GetClosestCreatureWithEntry(m_creature, NPC_TRIBUNAL_OF_THE_AGES, 100.0f))
+                {
+                    if (!pCreature->isAlive())
+                        pCreature->Respawn();
+                    m_uiControllerGUID = pCreature->GetGUID();
+                }
                 JumpToNextStep(8500);
                 break;
             case 18:
@@ -437,7 +424,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
             {
                 case 0: // unused
                     break;
-                case 1:
+                case 1: 
                     if (m_pInstance)
                     {
                         if (m_pInstance->GetData(TYPE_BRANN) != NOT_STARTED)
@@ -449,7 +436,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
                     DoScriptText(SAY_ESCORT_START, m_creature);
                     JumpToNextStep(0);
                     break;
-                case 3:
+                case 3: 
                     SetEscortPaused(false);
                     JumpToNextStep(0);
                     break;
@@ -473,7 +460,7 @@ struct MANGOS_DLL_DECL npc_brann_hosAI : public npc_escortAI
                     DoScriptText(SAY_EVENT_A_3, m_creature);
                     if (m_pInstance)
                         m_pInstance->DoUseDoorOrButton(m_pInstance->GetData64(DATA_GO_KADDRAK));
-                    if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_uiControllerGUID))
+                    if (Creature* pTemp = m_creature->GetMap()->GetCreature(m_uiControllerGUID))
                         ((mob_tribuna_controllerAI*)pTemp->AI())->m_bIsActivateKaddrak = true;
                     JumpToNextStep(5000);
                     break;
