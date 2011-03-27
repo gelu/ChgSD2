@@ -29,21 +29,17 @@ EndScriptData */
 // Talent Points Giving Item
 bool ItemUse_custom_item_talentstone(Player* pPlayer, Item* pItem, const SpellCastTargets &pTargets)
 {
-    Config SD2Config;
-    if(!SD2Config.SetSource(_SCRIPTDEV2_CONFIG))
-        error_log("SD2: Unable to open configuration file");
-
-    if ((pPlayer->isInCombat()) || (pPlayer->IsTaxiFlying()) || (pPlayer->isDead()))
-    {
-        pPlayer->SendEquipError(EQUIP_ERR_NOT_IN_COMBAT, pItem, NULL);
-        return false;
-    }
-    else
-    {
-        pPlayer->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
-        pPlayer->SetFreeTalentPoints(pPlayer->GetFreeTalentPoints()+(SD2Config.GetFloatDefault("Item_TalentPointStoneAddTalents",0)));
-        pPlayer->SendTalentsInfoData(false);
-        return true;
+     if ((pPlayer->isInCombat()) || (pPlayer->IsTaxiFlying()) || (pPlayer->isDead()))
+     {
+         pPlayer->SendEquipError(EQUIP_ERR_NOT_IN_COMBAT, pItem, NULL);
+         return false;
+     }
+     pPlayer->RemoveSpellsCausingAura(SPELL_AURA_MOUNTED);
+     {
+          pPlayer->SetFreeTalentPoints(1);
+          pPlayer->SendTalentsInfoData(false);
+          pPlayer->DestroyItemCount(pItem->GetEntry(),1,true);
+          return true;
     }
 }
 

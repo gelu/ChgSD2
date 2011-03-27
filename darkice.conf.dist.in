@@ -94,15 +94,12 @@ ResetMaster.LevelAfterReset = 10
 #												if you'll use non-existent one, server might crash
 #			  .Item_SummonTeleportMasterEntryID # Same as above, only for Teleport Master.
 #
-#			  .Item_TalentPointStoneAddTalents  # Define how much should the Talent Item award the
-#													player witch uses it.
 #			  .Item_CooldownRemoverInfinite		# Define if the Cooldown remover should be infinte
 #													(not destroyable) or should end after one time
 #													usage.
 ################################################################################################
 Item_SummonBankerEntryID = 29530
 Item_SummonTeleportMasterEntryID = 90000
-Item_TalentPointStoneAddTalents = 5
 Item_CooldownRemoverInfinte = 1
 
 ################################################################################################
