@@ -110,7 +110,7 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
         if (m_uiToss_Timer < uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCast(pTarget, m_bIsRegularMode ? SPELL_BOULDER_TOSS_H : SPELL_BOULDER_TOSS);
+                DoCast(pTarget, m_bIsRegularMode ? SPELL_BOULDER_TOSS : SPELL_BOULDER_TOSS_H);
             m_uiToss_Timer = 9000 + rand()%6000;
         }
         else
@@ -127,7 +127,7 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
 
         if (m_uiStomp_Timer < uiDiff)
         {
-            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP_H : SPELL_STOMP);
+            DoCast(m_creature, m_bIsRegularMode ? SPELL_STOMP : SPELL_STOMP_H);
             m_uiStomp_Timer = 20000 + rand()%9000;
         }
         else
@@ -147,7 +147,7 @@ struct MANGOS_DLL_DECL boss_krystallusAI : public ScriptedAI
         {
             if (m_uiShatter_Timer < uiDiff)
             {
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_SHATTER_H : SPELL_SHATTER);
+                DoCast(m_creature, m_bIsRegularMode ? SPELL_SHATTER : SPELL_SHATTER_H);
                 m_bIsSlam = false;
                 m_uiShatter_Timer = 0;
             }
