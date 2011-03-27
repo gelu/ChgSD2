@@ -109,27 +109,27 @@ struct MANGOS_DLL_DECL boss_heiganAI : public ScriptedAI
 
 		m_uiDeathCheckTimer = 1000;
 		m_bIsPlayerDeath = false;
-
+        /*
         if(m_pInstance)
 		{
             m_pInstance->SetData(TYPE_HEIGAN, NOT_STARTED);
 
             if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_PLAG_HEIG_ENTRY_DOOR)))
                 pGate->SetGoState(GO_STATE_ACTIVE);
-		}
+		}*/
     }
 
     void MoveInLineOfSight(Unit *pWho) 
     {
         if(!pWho)
             return;
-
+        /*
         if(!m_bIsOpenGate && (m_creature->IsWithinDistInMap(pWho, 100.0f)))
         {
             if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_PLAG_HEIG_ENTRY_DOOR)))
                 pGate->SetGoState(GO_STATE_ACTIVE);
         }
-        m_bIsOpenGate = true;
+        m_bIsOpenGate = true;*/
     }
 
     void Aggro(Unit* pWho)
