@@ -334,7 +334,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
 
             if (volunteerDeathTimer < uiDiff)
             {
-                if (pChosenVolunteer)
+                if (pChosenVolunteer && !volunteerGUIDList.empty())
                     volunteerGUIDList.remove(pChosenVolunteer->GetGUID());
 
                 if (pChosenVolunteer && pChosenVolunteer->isAlive())
