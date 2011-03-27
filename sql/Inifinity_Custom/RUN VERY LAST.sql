@@ -28,3 +28,33 @@ UPDATE `creature_template` SET `AIName` = 'EventAI', `ScriptName` = '' WHERE `en
 DELETE FROM `creature_ai_scripts` WHERE (`id`='3017611');
 INSERT INTO `creature_ai_scripts` VALUES ('3017611', '30176', '8', '0', '100', '6', '56153', '-1', '0', '0', '28', '0', '56153', '0', '0', '0', '0', '0', '0', '0', '0', '0', '');
 
+-- script name errors 
+UPDATE creature_template SET ScriptName='npc_amanitar_mushroom' WHERE entry IN (30391, 30435);
+UPDATE creature_template SET ScriptName='boss_amanitar' WHERE entry = 30258;
+UPDATE creature_template SET ScriptName='mob_flame_orb' WHERE entry=30702;
+UPDATE creature_template SET ScriptName='npc_twilight_volunteer' WHERE entry=30385;
+UPDATE creature_template SET ScriptName='mob_twisted_visage' WHERE entry=30621;
+UPDATE creature_template SET ScriptName='mob_ancient_void' WHERE entry=30622;
+UPDATE creature_template SET ScriptName='mob_dark_rune_acolyte' WHERE entry=33110;
+UPDATE creature_template SET ScriptName='mob_dark_rune_evoker' WHERE entry=32878;
+UPDATE creature_template SET ScriptName='mob_ancient_void' WHERE entry =30622;
+UPDATE creature_template SET ScriptName='mob_boombot' WHERE entry=33346;
+UPDATE creature_template SET ScriptName='mob_orange_gas_stalker' WHERE entry=36659;
+UPDATE creature_template SET Scriptname='boss_krick' WHERE entry=36477;
+UPDATE creature_template SET ScriptName='boss_ick' WHERE entry=36476;
+UPDATE creature_template SET ScriptName='mob_exploding_orb' WHERE entry=36610;
+UPDATE creature_template SET ScriptName='boss_scourgelord_tyrannus' WHERE entry=36658;
+UPDATE creature_template SET ScriptName = 'mob_assault_bot' WHERE entry = 34057;
+UPDATE creature_template SET ScriptName = 'mob_dark_rune_acolyte' WHERE entry = 33110;
+UPDATE `creature_template` SET `ScriptName`='mob_rimefang_pos', `AIName` ='' WHERE `entry`=36661;
+UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSintro', `AIName` ='' WHERE `entry` IN (36990,36993);
+UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSoutro', `AIName` ='' WHERE `entry` IN (38189,38188);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_watchman' where `entry` IN (36478);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_reaper' where `entry` IN (36499);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_adept' where `entry` IN (36620);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_bonecaster' where `entry` IN (36564);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_animator' where `entry` IN (36516);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soul_horror' where `entry` IN (36522);
+--UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_spectral_warden' where `entry` IN (36666);
+UPDATE creature_template SET ScriptName = 'mob_dark_rune_acolyte' WHERE entry = 33110;
+UPDATE creature_template SET ScriptName='mob_dark_rune_evoker' WHERE entry=32878;
