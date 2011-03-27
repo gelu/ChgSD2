@@ -1,7 +1,7 @@
-UPDATE `creature_template_addon` SET `auras`='64328' WHERE `entry`='28525';
-UPDATE `creature_template_addon` SET `auras`='64328' WHERE `entry`='28542';
-UPDATE `creature_template_addon` SET `auras`='64328' WHERE `entry`='28542';
-UPDATE `creature_template_addon` SET `auras`='64328' WHERE `entry`='28542';
+UPDATE `creature_template_addon` SET `auras`='51859' WHERE `entry`='28525';
+UPDATE `creature_template_addon` SET `auras`='51859' WHERE `entry`='28542';
+UPDATE `creature_template_addon` SET `auras`='51859' WHERE `entry`='28543';
+UPDATE `creature_template_addon` SET `auras`='51859' WHERE `entry`='28544';
 UPDATE `creature_template_addon` SET `auras`='70022' WHERE `entry`='37186';
 
 INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `DeathState`, `MovementType`) VALUES
@@ -19,3 +19,12 @@ INSERT INTO `creature_ai_scripts` VALUES
 
 UPDATE `creature_template` SET `npcflag` = 2 WHERE `entry` = 38160;
 UPDATE `creature_template` SET `npcflag` = 2 WHERE `entry` = 38161;
+
+UPDATE `creature_template` SET `lootid` = 31360 WHERE `entry` = 31360;
+
+DELETE FROM `reference_loot_template` WHERE (`entry`='40630' AND `item`='40630') OR (`entry`='40630' AND `item`='40629') OR (`entry`='40630' AND `item`='40628');
+
+UPDATE `creature_template` SET `AIName` = 'EventAI', `ScriptName` = '' WHERE `entry` = '30176';
+DELETE FROM `creature_ai_scripts` WHERE (`id`='3017611');
+INSERT INTO `creature_ai_scripts` VALUES ('3017611', '30176', '8', '0', '100', '6', '56153', '-1', '0', '0', '28', '0', '56153', '0', '0', '0', '0', '0', '0', '0', '0', '0', '');
+
