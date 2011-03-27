@@ -1245,7 +1245,19 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
         ((Player*)(m_creature->GetCharmer()))->SetClientControl(m_creature, 0);
     }
 
-    void AttackStart(Unit *) {}
+    void AttackStart(Unit *pWho)
+	{
+        if (!pWho)
+			return;
+
+		if (m_creature->Attack(pWho, true))
+		{
+			m_creature->AddThreat(pWho);
+			m_creature->SetInCombatWith(pWho);
+			pWho->SetInCombatWith(m_creature);
+		}
+    }
+
     void MoveInLineOfSight(Unit *) {}
 
     void MovementInform(uint32 uiType, uint32 uiPointId)
@@ -1274,6 +1286,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
             else
                 ControlInformTimer -= uiDiff;
         }
+		DoMeleeAttackIfReady();
 
         // fly to start point
         if (FlyStart)
@@ -1287,8 +1300,7 @@ struct MANGOS_DLL_DECL npc_eye_of_acherusAI : public ScriptedAI
                 // start moving
                 m_creature->GetMotionMaster()->MovePoint(0, 1711.0f, -5820.0f, 147.0f);
                 FlyStart = false;
-            }
-		    else FlyStartTimer -= uiDiff;
+            }else FlyStartTimer -= uiDiff;
         }
     }
 };
