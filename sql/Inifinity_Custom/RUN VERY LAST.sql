@@ -46,7 +46,7 @@ UPDATE creature_template SET ScriptName='mob_exploding_orb' WHERE entry=36610;
 UPDATE creature_template SET ScriptName='boss_scourgelord_tyrannus' WHERE entry=36658;
 UPDATE creature_template SET ScriptName = 'mob_assault_bot' WHERE entry = 34057;
 UPDATE creature_template SET ScriptName = 'mob_dark_rune_acolyte' WHERE entry = 33110;
-UPDATE `creature_template` SET `ScriptName`='mob_rimefang_pos', `AIName` ='' WHERE `entry`=36661;
+UPDATE `creature_template` SET `ScriptName`='mob_rimefang', `AIName` ='' WHERE `entry`=36661;
 UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSintro', `AIName` ='' WHERE `entry` IN (36990,36993);
 UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSoutro', `AIName` ='' WHERE `entry` IN (38189,38188);
 --UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_soulguard_watchman' where `entry` IN (36478);
@@ -58,3 +58,16 @@ UPDATE `creature_template` SET `ScriptName`='npc_jaina_or_sylvanas_POSoutro', `A
 --UPDATE `creature_template` SET `AIName`='', `Scriptname`='npc_spectral_warden' where `entry` IN (36666);
 UPDATE creature_template SET ScriptName = 'mob_dark_rune_acolyte' WHERE entry = 33110;
 UPDATE creature_template SET ScriptName='mob_dark_rune_evoker' WHERE entry=32878;
+UPDATE `creature_template` SET `ScriptName` = 'boss_omor_the_unscarred' WHERE `entry` = 17308;
+UPDATE `creature_template` SET `ScriptName` = 'boss_vazruden' WHERE `entry` = 17537;
+UPDATE `creature_template` SET `ScriptName` = 'boss_watchkeeper_gargolmar' WHERE `entry` = 17306;
+UPDATE `creature_template` SET `ScriptName` = 'boss_grand_warlock_nethekurse' WHERE `entry` = 16807;
+UPDATE `creature_template` SET `ScriptName` = 'boss_warbringer_omrogg' WHERE `entry` = 16809;
+UPDATE `creature_template` SET `ScriptName` = 'boss_warchief_kargath_bladefist' WHERE `entry` = 16808;
+UPDATE `creature_template` SET `ScriptName` = 'boss_arugal' WHERE `entry` = 4275;
+UPDATE `creature_template` SET `ScriptName` = 'mob_shadowmoon_channeler' WHERE `entry` = 17653;
+UPDATE `creature_template` SET `ScriptName` = 'boss_rimefang' WHERE `entry` = 36661;
+
+-- Areatrigger:
+delete from scripted_areatrigger where entry = 5578;
+insert into scripted_areatrigger values (5578, 'at_tyrannus');
