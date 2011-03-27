@@ -518,7 +518,9 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
 
                         m_uiManaDetonationTargetGUID = pTarget->GetGUID();
                         m_uiManaDetonationMana = m_bIsRegularMode ? urand(2500,4000) : urand(3500,5500);
-                        uint32 mana = pTarget->GetPower(POWER_MANA) - m_uiManaDetonationMana;
+                        uint32 newMana = pTarget->GetPower(POWER_MANA) - m_uiManaDetonationMana; 
+                        uint32 mana = newMana < 0 ? 0 : newMana;
+                        m_uiManaDetonationMana *= 1+(urand(2,m_bIsRegularMode?5:9)/10.f); // random increase damage output, not blizzlike
                         pTarget->SetPower(POWER_MANA, mana);
                         
                         m_uiManaDetonationTimer = 20000;
@@ -540,7 +542,7 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                         if (!PlayerList.isEmpty())
                             for (Map::PlayerList::const_iterator i = PlayerList.begin(); i != PlayerList.end(); ++i)
                             {
-                                if(i->getSource()->isDead() || i->getSource() == pTarget) // no dmg on self
+                                if(i->getSource()->isDead() || i->getSource() == pTarget || i->getSource()->isGameMaster()) // no dmg on dead, self and GMs
                                     continue;
                                 if (pTarget->GetDistance2d(i->getSource()) < 15.f)
                                     i->getSource()->DealDamage(i->getSource(), m_uiManaDetonationMana, NULL, SPELL_DIRECT_DAMAGE, SPELL_SCHOOL_MASK_ARCANE, NULL, true);
@@ -578,9 +580,8 @@ struct MANGOS_DLL_DECL boss_kelthuzadAI : public ScriptedAI
                     Map::PlayerList const& pPlayers = m_creature->GetMap()->GetPlayers();
                     if (!pPlayers.isEmpty())
                         for (Map::PlayerList::const_iterator itr = pPlayers.begin(); itr != pPlayers.end(); ++itr)
-                            if(itr->getSource() && (itr->getSource()->GetDistance2d(m_fFissureX,m_fFissureY) < 4.0f))
+                            if(itr->getSource() && !itr->getSource()->isGameMaster() && (itr->getSource()->GetDistance2d(m_fFissureX,m_fFissureY) < 4.0f))
                                 m_creature->DealDamage(itr->getSource(),itr->getSource()->GetHealth(),NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, NULL, false);
-
                     m_bShadowFissureActive = false;
                 }
                 else 
