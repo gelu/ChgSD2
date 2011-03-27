@@ -6,6 +6,8 @@ UPDATE creature_template SET ScriptName='boss_taldaram', AIName='' WHERE entry=2
 UPDATE gameobject_template SET ScriptName='go_nerubian_device' WHERE entry IN (193093,193094);
 UPDATE creature_template SET ScriptName='boss_volazj', AIName='' WHERE entry=29311;
 
+UPDATE `creature_template` SET `minhealth` = 1 WHERE `entry` = 30258;
+
 DELETE FROM `creature_template_addon` WHERE `entry` IN (30385, 31474);
 INSERT INTO `creature_template_addon` (`entry`, `mount`, `bytes1`, `b2_0_sheath`, `b2_1_pvp_state`, `emote`, `moveflags`, `auras`) VALUES
 (30385, 0, 8, 1, 0, 0, 0, '');
@@ -32,6 +34,7 @@ INSERT INTO `gameobject` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `positi
 
 UPDATE `creature_template` SET `unit_flags` = 0, `difficulty_entry_1` = 0 WHERE `entry` IN (30258, 30391, 30435);
 UPDATE `creature_template` SET `ScriptName` ='npc_amanitar_mushroom', `AIName`='' WHERE `entry` IN (30391, 30435);
+UPDATE `creature_template` SET `minhealth` = 1 WHERE `entry` = 30391;
 UPDATE `creature_template` SET `ScriptName` ='boss_amanitar', `AIName`='', `mindmg` = 488, `maxdmg` = 648, `attackpower` = 782, `dmg_multiplier` = 13  WHERE `entry` = 30258;
 
 DELETE FROM `creature` WHERE `map` = 619 AND `id` IN (30258,30391);

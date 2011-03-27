@@ -35,7 +35,7 @@ UPDATE creature_template SET speed_run=0.5, faction_a=1925, faction_h=1925, scri
 UPDATE creature_template SET speed_run=0.5 WHERE entry=33343;
 UPDATE creature_template SET mechanic_immune_mask=652951551, scriptname='mob_xtheart' WHERE entry=33329;
 UPDATE creature_template SET ScriptName = 'mob_voidzone' WHERE entry = 34001;
-UPDATE creature_template SET minhealth = 176400, maxhealth = 176400, minlevel = 80, maxlevel = 80, faction_a = 14, faction_h = 14, ScriptName = 'mob_lifespark' WHERE entry = 34004;
+UPDATE creature_template SET minhealth = 50400, maxhealth = 176400, minlevel = 80, maxlevel = 80, faction_a = 14, faction_h = 14, ScriptName = 'mob_lifespark' WHERE entry = 34004;
 UPDATE creature SET spawnMask = 0 WHERE id IN (34004);
 
 -- THIS IS A WORKAROUND FOR THE HARD MODE LOOT, PLEASE REMOVE IF YOU DON'T WANT TO USE IT!
@@ -263,6 +263,9 @@ DELETE FROM creature WHERE guid IN (800008, 800010);
 INSERT INTO creature VALUES
 (800008, 33327, 603, 2, 128,0,0, 1978.49, -241.476, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0), -- ally mage
 (800010, 32938, 603, 2, 1,0,0, 1978.49, -241.476, 432.687, 1.68485, 7200,0,0, 5647, 0, 0, 0);
+
+UPDATE `creature_template` SET `minhealth` = 5647, `minmana` = 0 WHERE `entry` = 33327;
+
 -- priest
 UPDATE creature SET position_x = 1997.88, position_y = -239.394 WHERE id = 33330;
 DELETE FROM creature WHERE guid IN (800009);
@@ -392,7 +395,7 @@ UPDATE creature_template SET ScriptName = 'mob_saronite_vapor', movementType = 1
 -- Yogg
 UPDATE creature_template SET ScriptName = 'boss_yogg_saron' WHERE entry = 33288;
 UPDATE creature_template SET `RegenHealth`= 0, `flags_extra` = 1,`type_flags` = 108, ScriptName = 'boss_sara' WHERE entry = 33134;
-UPDATE creature SET spawnMask = 3, MovementType = 0 WHERE id = 33134;
+UPDATE creature SET spawnMask = 3 WHERE id = 33134;
 UPDATE creature_template SET `RegenHealth`= 0, ScriptName = 'boss_brain_of_yogg_saron' WHERE entry = 33890;
 UPDATE creature SET `spawntimesecs` = 604800 WHERE `id` = 33134;
 UPDATE creature_template SET ScriptName = 'mob_corruptor_tentacle' WHERE entry = 33985;
@@ -407,6 +410,11 @@ UPDATE creature_template SET scriptname='mob_madness_portal' WHERE `entry`=34072
 UPDATE creature_template SET scriptname='mob_laughing_skull' WHERE `entry`=33990;
 UPDATE creature_template SET scriptname='mob_ominous_cloud' WHERE `entry`=33292;
 UPDATE creature SET spawnMask = 3 WHERE id = 33292;
+
+DELETE FROM `creature` WHERE `id`=33134;
+INSERT INTO `creature` (`guid`,`id`,`map`,`spawnMask`,`phaseMask`,`modelid`,`equipment_id`,`position_x`,`position_y`,`position_z`,`orientation`,`spawntimesecs`,`spawndist`,`currentwaypoint`,`curhealth`,`curmana`,`DeathState`,`MovementType`) VALUES
+(131859, 33134, 603, 3, 1, 0, 0, 1980.28, -25.5868, 329.397, 3.12414, 604800, 0, 0, 199999, 212900, 0, 0);
+
 -- spells
 REPLACE INTO `spell_script_target` (`entry`, `type`, `targetEntry`) VALUES ('63886', '1', '33882');
 -- Keepers
