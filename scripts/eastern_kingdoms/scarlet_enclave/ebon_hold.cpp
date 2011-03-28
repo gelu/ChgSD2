@@ -3603,7 +3603,7 @@ bool GOUse_inconspicous_mine_car(Player *pPlayer, GameObject* /*pGo*/)
 
 /*######
 ## npc_scourge_gryphon
-######*/
+######
 
 enum
 {
@@ -3620,21 +3620,6 @@ struct MANGOS_DLL_DECL npc_scourge_gryphonAI : public npc_escortAI
 
     void Reset()
     {
-    }
-
-    void MoveInLineOfSight(Unit* /*pUnit*/)
-    {
-        return;
-    }
-
-    void EnterCombat(Unit* /*pUnit*/)
-    {
-        return;
-    }
-
-    void AttackStart(Unit* /*pUnit*/)
-    {
-        return;
     }
 
     void SpellHit(Unit* pUnit, const SpellEntry* pSpell)
@@ -3685,7 +3670,7 @@ struct MANGOS_DLL_DECL npc_scourge_gryphonAI : public npc_escortAI
     {
         npc_escortAI::UpdateAI(uiDiff);
     }
-};
+};*/
 
 /*######
 ## npc_valkyr_battle_maiden
@@ -3803,10 +3788,10 @@ CreatureAI* GetAI_npc_scarlet_miner(Creature* pCreature)
     return new npc_scarlet_minerAI(pCreature);
 };
 
-CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
+/*CreatureAI* GetAI_npc_scourge_gryphon(Creature* pCreature)
 {
     return new npc_scourge_gryphonAI(pCreature);
-};
+};*/
 
 CreatureAI* GetAI_npc_valkyr_battle_maiden(Creature* pCreature)
 {
@@ -3907,10 +3892,10 @@ void AddSC_ebon_hold()
     pNewScript->pGOUse = &GOUse_inconspicous_mine_car;
     pNewScript->RegisterSelf();
 
-    pNewScript = new Script;
+    /*pNewScript = new Script;
     pNewScript->Name = "npc_scourge_gryphon";
     pNewScript->GetAI = &GetAI_npc_scourge_gryphon;
-    pNewScript->RegisterSelf();
+    pNewScript->RegisterSelf();*/
 
     pNewScript = new Script;
     pNewScript->Name= "npc_valkyr_battle_maiden";
