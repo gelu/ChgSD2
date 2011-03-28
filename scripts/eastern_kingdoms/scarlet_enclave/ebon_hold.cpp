@@ -3365,6 +3365,7 @@ struct MANGOS_DLL_DECL npc_mine_carAI : public ScriptedAI
 {
     npc_mine_carAI(Creature* pCreature) : ScriptedAI(pCreature)
     {
+        m_creature->SetDisplayId(25703); // use to make dispaly mine cart instead of horse
         m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_OOC_NOT_ATTACKABLE);
         Reset();
     }
@@ -3419,15 +3420,18 @@ struct MANGOS_DLL_DECL npc_mine_carAI : public ScriptedAI
     }
 };
 
+/*######
+## npc_scarlet_miner
+######*/
+
 enum
 {
     SPELL_CAR_DRAG	=	52465,
     SPELL_CAR_CHECK	=	54173
 };
 
-/*######
-## npc_scarlet_miner
-######*/
+#define SAY_SCARLET_MINER1  "Where'd this come from? I better get this down to the ships before the foreman sees it!"
+#define SAY_SCARLET_MINER2  "Now I can have a rest!"
 
 struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
 {
@@ -3499,6 +3503,8 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
             {
                 if (m_uiMonoPhase == 1)
                 {
+                    m_creature->MonsterSay(SAY_SCARLET_MINER1,LANG_UNIVERSAL, NULL);
+					
                     if (Creature *pMineCar = m_creature->GetCreature(*m_creature, m_uiMineCarGuid))
                         DoCast(pMineCar, SPELL_CAR_DRAG);
 
@@ -3531,6 +3537,7 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
                     
                     pMineCar->Relocate(pMineCar->GetPositionX(), pMineCar->GetPositionY(), pMineCar->GetPositionZ() + 1);
                     pMineCar->GetMotionMaster()->MovementExpired();
+                    m_creature->MonsterSay(SAY_SCARLET_MINER2,LANG_UNIVERSAL, NULL);
                     pMineCar->StopMoving();
                     pMineCar->RemoveAurasDueToSpell(SPELL_CAR_DRAG);
 
@@ -3557,6 +3564,10 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
         npc_escortAI::UpdateAI(uiDiff);
     }
 };
+
+/*######
+## GO_inconspicous_mine_car
+######*/
 
 enum
 {
