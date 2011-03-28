@@ -187,7 +187,7 @@ struct MANGOS_DLL_DECL boss_blood_queen_lanathelAI : public BSWScriptedAI
                         if (Unit* pTarget= m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM,1))
                             doCast(SPELL_DELRIOUS_SLASH, pTarget);
 
-                    timedCast(SPELL_PACT_OF_DARKFALLEN, diff);
+//                    timedCast(SPELL_PACT_OF_DARKFALLEN, diff);
 
                     timedCast(SPELL_SWARMING_SHADOWS, diff);
 

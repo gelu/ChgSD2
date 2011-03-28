@@ -26,6 +26,7 @@ TAGS
 INSTALL
 
 !.gitignore
+!.gitattributes
 
 #
 # Build generated files
@@ -55,7 +56,6 @@ Makefile
 *~
 *.bak
 *.orig
-*.patch
 callgrind.out.*
 
 #
