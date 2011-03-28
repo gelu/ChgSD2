@@ -15,35 +15,35 @@
  */
 
 /* ScriptData
-SDName: outdoor_pvp_eastern_kingdoms
+SDName: outdoor_pvp_outland
 SD%Complete: who know?
 SDComment: map script selector by /dev/rsa
 SDCategory: Outdoor PvP
 EndScriptData */
 
 #include "precompiled.h"
-#include "outdoor_pvp_eastern_kingdoms.h"
+#include "outdoor_pvp_outland.h"
 
-struct MANGOS_DLL_DECL outdoor_pvp_eastern_kingdoms : public OutdoorPvP_ZoneSelector
+struct MANGOS_DLL_DECL outdoor_pvp_outland : public OutdoorPvP_ZoneSelector
 {
-    outdoor_pvp_eastern_kingdoms(Map* pMap) : OutdoorPvP_ZoneSelector(pMap)
+    outdoor_pvp_outland(Map* pMap) : OutdoorPvP_ZoneSelector(pMap)
     {
         LoadZoneScripts(pMap, ZoneScriptList);
     };
 };
 
 
-InstanceData* GetInstanceData_outdoor_pvp_eastern_kingdoms(Map* pMap)
+InstanceData* GetInstanceData_outdoor_pvp_outland(Map* pMap)
 {
-    return new outdoor_pvp_eastern_kingdoms(pMap);
+    return new outdoor_pvp_outland(pMap);
 }
 
-void AddSC_outdoor_pvp_eastern_kingdoms()
+void AddSC_outdoor_pvp_outland()
 {
     Script *newscript;
     newscript = new Script;
-    newscript->Name = "outdoor_pvp_eastern_kingdoms";
-    newscript->GetInstanceData = &GetInstanceData_outdoor_pvp_eastern_kingdoms;
+    newscript->Name = "outdoor_pvp_outland";
+    newscript->GetInstanceData = &GetInstanceData_outdoor_pvp_outland;
     newscript->RegisterSelf();
 }
 

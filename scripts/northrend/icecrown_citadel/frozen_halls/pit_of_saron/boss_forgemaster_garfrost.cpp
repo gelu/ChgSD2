@@ -15,53 +15,19 @@
  */
 
 /* ScriptData
-SDName: boss_forgemaster_gafrost
-SD%Complete: 60%
-SDComment: by Tacx
+SDName: boss_forgemaster_garfrost
+SD%Complete: 70
+SDComment: TODO movement to the forges currently workaround (need core support for Jump-MMGen)
 SDCategory: Pit of Saron
 EndScriptData */
 
 #include "precompiled.h"
 #include "pit_of_saron.h"
-enum 
-{
-        //common
-    SPELL_BERSERK                           = 47008,
-        //yells
-    SAY_AGGRO                               = -1658001,
-    SAY_SLAY_1                              = -1658002,
-    SAY_SLAY_2                              = -1658003,
-    SAY_DEATH                               = -1658004,
-    SAY_PHASE2                              = -1658005,
-    SAY_PHASE3                              = -1658006,
-    SAY_DEEPFREZE                           = -1658006,
-    SAY_TYRANNUS_DEATH                      = -1659007,
-        //summons
-        //Abilities
-    SPELL_PERMAFROST                            = 70326,
-    SPELL_PERMAFROST_TRIGGER                    = 68786,
-    SPELL_THROW_SARONITE                        = 68788,
-    SPELL_THUNDERING_STOMP                      = 68771,
-    SPELL_CHILLING_WAVE                         = 68778,
-    SPELL_CHILLING_WAVE_H                       = 70333,
-    SPELL_DEEP_FREEZE                           = 70381,
-    SPELL_DEEP_FREEZE_H                         = 72930,
-    SPELL_FORGE_MACE                            = 68785,
-    SPELL_FORGE_MACE_H                          = 70335,
-    SPELL_FORGE_BLADE                           = 68774,
-    SPELL_FORGE_BLADE_H                         = 70334,
-    EQUIP_ID_SWORD                              = 49345,
-    EQUIP_ID_MACE                               = 49344,
-    ACHIEV_DOESNT_GO_TO_ELEVEN                  = 4524
-
-};
-
-/*
 enum saysSD2
 {
     SAY_AGGRO                           = -1658014,
     SAY_SLAY_1                          = -1658015,
-    SAY_BOULDER_HIT                     = -1658016,
+    SAY_BOULDER_HIT                     = -1658016,         // TODO How must this be handled?
     SAY_DEATH                           = -1658017,
     SAY_FORGE_1                         = -1658018,
     SAY_FORGE_2                         = -1658019,
@@ -70,8 +36,26 @@ enum saysSD2
 
     EMOTE_THROW_SARONITE                = -1658022,
     EMOTE_DEEP_FREEZE                   = -1658023,
+
+    SPELL_PERMAFROST                    = 70326,
+    SPELL_THROW_SARONITE                = 68788,
+    SPELL_THUNDERING_STOMP              = 68771,
+    SPELL_FORGE_FROZEN_BLADE            = 68774,
+    SPELL_CHILLING_WAVE                 = 68778,
+    SPELL_FORGE_FROSTBORN_MACE          = 68785,
+    SPELL_DEEP_FREEZE                   = 70381,
+
+    PHASE_NO_ENCHANTMENT                = 1,
+    PHASE_BLADE_ENCHANTMENT             = 2,
+    PHASE_MACE_ENCHANTMENT              = 3,
+    PHASE_MOVEMENT                      = 4,
 };
-*/
+
+static const float aGarfrostMoveLocs[2][3] =
+{
+    {719.785f, -230.227f, 527.033f},
+    {657.539f, -203.564f, 526.691f},
+};
 
 struct MANGOS_DLL_DECL boss_forgemaster_garfrostAI : public ScriptedAI
 {
@@ -81,163 +65,165 @@ struct MANGOS_DLL_DECL boss_forgemaster_garfrostAI : public ScriptedAI
         Reset();
     }
 
-    ScriptedInstance *m_pInstance;
+    ScriptedInstance* m_pInstance;
 
-
-    bool m_bIsRegularMode;
-    bool m_bIsPhase2;
-    bool m_bIsPhase3;
-    bool m_bIsAchievement;
-
-    uint32 m_uiThrowSaronite_Timer;
-    uint32 m_uiChillingWave_Timer;
-    uint32 m_uiDeepFreeze_Timer;
-    uint32 m_uiBladeReturn_Timer;
-    uint32 m_uiMaceReturn_Timer;
+    uint32 m_uiThrowSaroniteTimer;
+    uint32 m_uiPhase;
+    uint32 m_uiChillingWaveTimer;
+    uint32 m_uiDeepFreezeTimer;
 
     void Reset()
     {
-        m_bIsPhase2 = false;
-        m_bIsPhase3 = false;
-        m_bIsAchievement = true;
-        m_uiThrowSaronite_Timer = 20000;
-        m_uiChillingWave_Timer = 9990000;
-        m_uiDeepFreeze_Timer = 9990000;
-        m_uiBladeReturn_Timer = 4500;
-        m_uiMaceReturn_Timer = 6000;
-
-        if(!m_pInstance) return;
-            m_pInstance->SetData(TYPE_GARFROST, NOT_STARTED);
+        m_uiThrowSaroniteTimer = 13000;
+        m_uiChillingWaveTimer = 10000;
+        m_uiDeepFreezeTimer = 10000;
+        SetCombatMovement(true);
+        m_uiPhase = PHASE_NO_ENCHANTMENT;
     }
 
-    void Aggro(Unit *who) 
+    void Aggro(Unit* pWho)
     {
-        DoScriptText(SAY_AGGRO, m_creature);
-        DoCast(m_creature, SPELL_PERMAFROST);
-        if(!m_pInstance) return;
-            m_pInstance->SetData(TYPE_GARFROST, IN_PROGRESS);
+        DoScriptText(SAY_AGGRO, m_creature, pWho);
+        DoCastSpellIfCan(m_creature, SPELL_PERMAFROST);
     }
 
-    void KilledUnit(Unit* victim)
+    void JustDied(Unit* pKiller)
     {
-        switch (urand(0,1))
+        DoScriptText(SAY_DEATH, m_creature, pKiller);
+    }
+
+    void KilledUnit()
+    {
+        DoScriptText(SAY_SLAY_1, m_creature);
+    }
+
+    void MovementInform(uint32 uiMotionType, uint32 uiPointId)
+    {
+        // TODO Change to jump movement type when proper implemented
+        if (uiMotionType != POINT_MOTION_TYPE)
+            return;
+
+        if (uiPointId != PHASE_BLADE_ENCHANTMENT && uiPointId != PHASE_MACE_ENCHANTMENT)
+            return;
+
+        // Cast and say expected spell
+        DoCastSpellIfCan(m_creature, uiPointId == PHASE_BLADE_ENCHANTMENT ? SPELL_FORGE_FROZEN_BLADE : SPELL_FORGE_FROSTBORN_MACE);
+        DoScriptText(uiPointId == PHASE_BLADE_ENCHANTMENT ? SAY_FORGE_1 : SAY_FORGE_2, m_creature);
+
+        m_uiThrowSaroniteTimer += 5000;                     // Delay next Saronit
+        m_uiPhase = uiPointId;
+        SetCombatMovement(true);
+
+        if (m_creature->getVictim())
         {
-            case 0: DoScriptText(SAY_SLAY_1, m_creature); break;
-            case 1: DoScriptText(SAY_SLAY_2, m_creature); break;
+            m_creature->GetMotionMaster()->Clear();
+            m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
         }
     }
 
-    void JustDied(Unit* pkiller)
-    {
-        DoScriptText(SAY_DEATH, m_creature);
-    if(!m_pInstance) return;
-            m_pInstance->SetData(TYPE_GARFROST, DONE);
-    }
-
-    void UpdateAI(const uint32 diff)
+    void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 66) && !m_bIsPhase2)
-        {
-            m_bIsPhase2 = true;
-            DoScriptText(SAY_PHASE2, m_creature);
-            DoCast(m_creature, SPELL_THUNDERING_STOMP);	
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MovePoint(0, 654.021, -201.438, 526.699); 
-        }
+        // Do nothing more while moving
+        if (m_uiPhase == PHASE_MOVEMENT)
+            return;
 
-        if (((m_creature->GetHealth()*100 / m_creature->GetMaxHealth()) < 33) && !m_bIsPhase3)
+        // Casted in every phase
+        if (m_uiThrowSaroniteTimer < uiDiff)
         {
-            m_bIsPhase3 = true;
-            DoScriptText(SAY_PHASE3, m_creature);
-            DoCast(m_creature, SPELL_THUNDERING_STOMP);
-            m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
-            m_creature->GetMotionMaster()->Clear();
-            m_creature->GetMotionMaster()->MovePoint(0, 718.009, -229.447, 526.847);
-        }
-
-        if (m_bIsPhase2)
-        {
-            if (m_uiBladeReturn_Timer < diff)
+            // TODO - only target players?
+            if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
             {
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_FORGE_BLADE : SPELL_FORGE_BLADE_H);
-                SetEquipmentSlots(false, EQUIP_ID_SWORD, -1, -1);
-                m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
-                m_uiBladeReturn_Timer = 9900000;
+                if (DoCastSpellIfCan(pTarget, SPELL_THROW_SARONITE) == CAST_OK)
+                {
+                    DoScriptText(EMOTE_THROW_SARONITE, m_creature, pTarget);
+                    m_uiThrowSaroniteTimer = 16000;
+                }
             }
-            else
-                m_uiBladeReturn_Timer -= diff;
-
-            m_uiChillingWave_Timer = 10000;
         }
+        else
+            m_uiThrowSaroniteTimer -= uiDiff;
 
-        if (m_bIsPhase3)
+        switch (m_uiPhase)
         {
-            if (m_uiMaceReturn_Timer < diff)
+            case PHASE_NO_ENCHANTMENT:
             {
-                m_creature->RemoveAurasDueToSpell(m_bIsRegularMode ? SPELL_FORGE_BLADE : SPELL_FORGE_BLADE_H);
-                DoCast(m_creature, m_bIsRegularMode ? SPELL_FORGE_MACE : SPELL_FORGE_MACE_H);
-                SetEquipmentSlots(false, EQUIP_ID_MACE, -1, -1);
-                m_creature->SetByteValue(UNIT_FIELD_BYTES_2, 0, SHEATH_STATE_MELEE);
-                m_creature->GetMotionMaster()->Clear();
-                m_creature->GetMotionMaster()->MoveChase(m_creature->getVictim());
-                m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE);
-                m_uiMaceReturn_Timer = 9900000;
+                if (m_creature->GetHealthPercent() < 66.0f)
+                {
+                    DoCastSpellIfCan(m_creature, SPELL_THUNDERING_STOMP, CAST_INTERRUPT_PREVIOUS);
+                    SetCombatMovement(false);
+
+                    // TODO This should actually be jump movement
+                    m_creature->GetMotionMaster()->MovePoint(PHASE_BLADE_ENCHANTMENT, aGarfrostMoveLocs[0][0], aGarfrostMoveLocs[0][1], aGarfrostMoveLocs[0][2]);
+                    m_uiPhase = PHASE_MOVEMENT;
+
+                    // Stop further action
+                    return;
+                }
+                break;
             }
-            else
-                m_uiMaceReturn_Timer -= diff;
-            m_uiChillingWave_Timer = 999000;
-            m_uiDeepFreeze_Timer = 10000;
-        }
+            case PHASE_BLADE_ENCHANTMENT:
+            {
+                if (m_creature->GetHealthPercent() < 33.0f)
+                {
+                    DoCastSpellIfCan(m_creature, SPELL_THUNDERING_STOMP, CAST_INTERRUPT_PREVIOUS);
+                    SetCombatMovement(false);
 
-        if (m_uiThrowSaronite_Timer < diff)
-        {
-            if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCast(Target, SPELL_THROW_SARONITE);
-            m_uiThrowSaronite_Timer = (m_bIsRegularMode ? 20000 : 25000);
-        }
-        else 
-            m_uiThrowSaronite_Timer -= diff;
+                    // TODO This should actually be jump movement
+                    m_creature->GetMotionMaster()->MovePoint(PHASE_MACE_ENCHANTMENT, aGarfrostMoveLocs[1][0], aGarfrostMoveLocs[1][1], aGarfrostMoveLocs[1][2]);
+                    m_uiPhase = PHASE_MOVEMENT;
 
-        if (m_uiChillingWave_Timer < diff)
-        {
-            DoCast(m_creature, SPELL_CHILLING_WAVE);
-            m_uiChillingWave_Timer = (m_bIsRegularMode ? 40000 : 30000);
-        }
-        else 
-            m_uiChillingWave_Timer -= diff;
+                    // Stop further action
+                    return;
+                }
 
-        if (m_uiDeepFreeze_Timer < diff)
-        {
-            if (Unit* Target = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                DoCast(Target, m_bIsRegularMode ? SPELL_DEEP_FREEZE : SPELL_DEEP_FREEZE_H);
-            m_uiDeepFreeze_Timer = (m_bIsRegularMode ? 27500 : 25000);
+                if (m_uiChillingWaveTimer < uiDiff)
+                {
+                    if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CHILLING_WAVE) == CAST_OK)
+                        m_uiChillingWaveTimer = 14000;
+                }
+                else
+                    m_uiChillingWaveTimer -= uiDiff;
+
+                break;
+            }
+            case PHASE_MACE_ENCHANTMENT:
+            {
+                if (m_uiDeepFreezeTimer < uiDiff)
+                {
+                    if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
+                    {
+                        if (DoCastSpellIfCan(pTarget, SPELL_DEEP_FREEZE) == CAST_OK)
+                        {
+                            DoScriptText(EMOTE_DEEP_FREEZE, m_creature, pTarget);
+                            m_uiDeepFreezeTimer = 20000;
+                        }
+                    }
+                }
+                else
+                    m_uiDeepFreezeTimer -= uiDiff;
+
+                break;
+            }
         }
-        else 
-            m_uiDeepFreeze_Timer -= diff;
 
         DoMeleeAttackIfReady();
     }
 };
-
 
 CreatureAI* GetAI_boss_forgemaster_garfrost(Creature* pCreature)
 {
     return new boss_forgemaster_garfrostAI(pCreature);
 }
 
-
 void AddSC_boss_garfrost()
 {
-    Script *newscript;
-    newscript = new Script;
-    newscript->Name = "boss_forgemaster_garfrost";
-    newscript->GetAI = &GetAI_boss_forgemaster_garfrost;
-    newscript->RegisterSelf();
+    Script* pNewScript;
+
+    pNewScript = new Script;
+    pNewScript->Name = "boss_forgemaster_garfrost";
+    pNewScript->GetAI = &GetAI_boss_forgemaster_garfrost;
+    pNewScript->RegisterSelf();
 }
