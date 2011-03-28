@@ -3534,10 +3534,9 @@ struct MANGOS_DLL_DECL npc_scarlet_minerAI : public npc_escortAI
                 if (Creature *pMineCar = m_creature->GetCreature(*m_creature, m_uiMineCarGuid))
                 {
                     m_creature->SetInFront(pMineCar);
-                    
+                    m_creature->MonsterSay(SAY_SCARLET_MINER2,LANG_UNIVERSAL, NULL);
                     pMineCar->Relocate(pMineCar->GetPositionX(), pMineCar->GetPositionY(), pMineCar->GetPositionZ() + 1);
                     pMineCar->GetMotionMaster()->MovementExpired();
-                    m_creature->MonsterSay(SAY_SCARLET_MINER2,LANG_UNIVERSAL, NULL);
                     pMineCar->StopMoving();
                     pMineCar->RemoveAurasDueToSpell(SPELL_CAR_DRAG);
 
