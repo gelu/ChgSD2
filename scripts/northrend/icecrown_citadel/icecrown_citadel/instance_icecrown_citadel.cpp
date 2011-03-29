@@ -52,7 +52,7 @@ static Locations SpawnLoc[]=
                             }
                                        };
         if (m_auiEncounter[4] == DONE) {
-                                        //DoOpenDoor(m_uiSaurfangDoorGUID);
+                                        DoOpenDoor(m_uiSaurfangDoorGUID);
                                         DoOpenDoor(m_uiBloodwingDoorGUID);
                                         DoOpenDoor(m_uiFrostwingDoorGUID);
                                         };
@@ -467,7 +467,7 @@ static Locations SpawnLoc[]=
                 m_auiEncounter[TYPE_SAURFANG] = uiData; 
                 if (uiData == DONE) 
                 {
-                    //DoOpenDoor(m_uiSaurfangDoorGUID);
+                    DoOpenDoor(m_uiSaurfangDoorGUID);
                     DoOpenDoor(m_uiBloodwingDoorGUID);
                     DoOpenDoor(m_uiFrostwingDoorGUID);
 
