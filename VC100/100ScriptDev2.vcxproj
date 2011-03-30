@@ -210,7 +210,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\Infinity_SD\include\sc_outdoor_pvp.cpp" />
+    <ClCompile Include="..\include\sc_outdoor_pvp.cpp" />
     <ClCompile Include="..\base\BSW_ai.cpp" />
     <ClCompile Include="..\base\BSW_instance.cpp" />
     <ClCompile Include="..\base\escort_ai.cpp" />
@@ -743,7 +743,7 @@
     <ClCompile Include="..\ScriptMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Infinity_SD\include\sc_outdoor_pvp.h" />
+    <ClInclude Include="..\include\sc_outdoor_pvp.h" />
     <ClInclude Include="..\base\BSW_ai.h" />
     <ClInclude Include="..\base\BSW_instance.h" />
     <ClInclude Include="..\base\escort_ai.h" />
