@@ -914,10 +914,10 @@ struct MANGOS_DLL_DECL mob_high_inquisitor_valrothAI : public ScriptedAI
         uiValroth_Smite_timer = 2000;
     }
 
-    void Aggro(Unit* who)
+    void Aggro(Unit* pWho)
     {
         DoScriptText(SAY_VALROTH2, m_creature);
-        DoCastSpellIfCan(who, SPELL_VALROTH_SMITE);
+        DoCastSpellIfCan(pWho, SPELL_VALROTH_SMITE);
     }
 
     void UpdateAI(const uint32 diff)
@@ -950,10 +950,10 @@ struct MANGOS_DLL_DECL mob_high_inquisitor_valrothAI : public ScriptedAI
         }
     }
 
-    void JustDied(Unit* killer)
+    void JustDied(Unit* pKiller)
     {
         DoScriptText(SAY_VALROTH6, m_creature);
-        killer->CastSpell(m_creature, SPELL_SUMMON_VALROTH_REMAINS, true);
+        pKiller->CastSpell(m_creature, SPELL_SUMMON_VALROTH_REMAINS, true);
     }
 };
 
