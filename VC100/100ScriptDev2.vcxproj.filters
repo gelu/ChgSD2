@@ -298,6 +298,21 @@
     <Filter Include="scripts\northrend\ruby_sanctum">
       <UniqueIdentifier>{e35abead-2389-4eb9-88bd-70e6fe5636b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scripts\OutdoorPvP">
+      <UniqueIdentifier>{543b2d59-7b84-48d4-96f9-6a9ac39159f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\OutdoorPvP\eastern_kingdoms">
+      <UniqueIdentifier>{0ad7d19f-e8d1-4c8b-8afe-d3c8cd523926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\OutdoorPvP\kalimdor">
+      <UniqueIdentifier>{31eccd78-29d0-44d7-ab07-e64db662c634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\OutdoorPvP\outland">
+      <UniqueIdentifier>{4e046a6f-29e5-4d86-975d-53bb9ccec321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scripts\OutdoorPvP\northrend">
+      <UniqueIdentifier>{bdb6eb2e-7bdf-4b16-bfcb-11f421de5c76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\base\escort_ai.cpp">
@@ -2029,6 +2044,27 @@
     <ClCompile Include="..\scripts\northrend\ulduar\ulduar\boss_xt_002.cpp">
       <Filter>scripts\northrend\ulduar\ulduar</Filter>
     </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_eastern_kingdoms.cpp">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_kalimdor.cpp">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_northrend.cpp">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_outland.cpp">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\eastern_kingdoms\outdoor_pvp_eastern_plaguelands.cpp">
+      <Filter>scripts\OutdoorPvP\eastern_kingdoms</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.cpp">
+      <Filter>scripts\OutdoorPvP\kalimdor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sc_outdoor_pvp.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base\escort_ai.h">
@@ -2314,6 +2350,30 @@
     </ClInclude>
     <ClInclude Include="..\scripts\northrend\icecrown_citadel\icecrown_citadel\icecrown_citadel.h">
       <Filter>scripts\northrend\icecrown_citadel\icecrown_citadel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_eastern_kingdoms.h">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_kalimdor.h">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_northrend.h">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_outland.h">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_zone_selector.h">
+      <Filter>scripts\OutdoorPvP</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\eastern_kingdoms\outdoor_pvp_eastern_plaguelands.h">
+      <Filter>scripts\OutdoorPvP\eastern_kingdoms</Filter>
+    </ClInclude>
+    <ClInclude Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.h">
+      <Filter>scripts\OutdoorPvP\kalimdor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sc_outdoor_pvp.h">
+      <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
