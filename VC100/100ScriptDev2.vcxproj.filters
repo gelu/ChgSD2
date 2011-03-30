@@ -2062,7 +2062,7 @@
     <ClCompile Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.cpp">
       <Filter>scripts\outdoor_pvp\kalimdor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\Infinity_SD\include\sc_outdoor_pvp.cpp">
+    <ClCompile Include="..\include\sc_outdoor_pvp.cpp">
       <Filter>include</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2372,7 +2372,7 @@
     <ClInclude Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.h">
       <Filter>scripts\outdoor_pvp\kalimdor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Infinity_SD\include\sc_outdoor_pvp.h">
+    <ClInclude Include="..\include\sc_outdoor_pvp.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
