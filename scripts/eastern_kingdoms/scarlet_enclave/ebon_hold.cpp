@@ -714,7 +714,7 @@ enum eKoltira
     NPC_KOLTIRA_ALT                 = 28447,
 
     //not sure about this id
-    //NPC_DEATH_KNIGHT_MOUNT          = 29201,
+    NPC_DEATH_KNIGHT_MOUNT          = 29201,
     MODEL_DEATH_KNIGHT_MOUNT        = 25278
 };
 
@@ -748,14 +748,14 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
                 break;
             case 2:
                 m_creature->SetStandState(UNIT_STAND_STATE_STAND);
-                //m_creature->UpdateEntry(NPC_KOLTIRA_ALT); //unclear if we must update or not
-                DoCastSpellIfCan(m_creature, SPELL_KOLTIRA_TRANSFORM);
+                m_creature->UpdateEntry(NPC_KOLTIRA_ALT); //unclear if we must update or not
+                DoCast(m_creature, SPELL_KOLTIRA_TRANSFORM);
                 break;
             case 3:
                 SetEscortPaused(true);
                 m_creature->SetStandState(UNIT_STAND_STATE_KNEEL);
                 DoScriptText(SAY_BREAKOUT2, m_creature);
-                DoCastSpellIfCan(m_creature, SPELL_ANTI_MAGIC_ZONE);  // cast again that makes bubble up
+                DoCast(m_creature, SPELL_ANTI_MAGIC_ZONE, true);  // cast again that makes bubble up
                 break;
             case 4:
                 SetRun(true);
@@ -764,7 +764,7 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
                 m_creature->Mount(MODEL_DEATH_KNIGHT_MOUNT);
                 break;
             case 10:
-                m_creature->Unmount();
+                m_creature->Unmount();  // might just need despawn
                 break;
         }
     }
@@ -791,35 +791,35 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
     {
         if (HasEscortState(STATE_ESCORT_PAUSED))
         {
-            if (m_uiWave <= 4)
-            {
-                // Renew Anti Magic Zone ASAP
-                if (!m_creature->HasAura(SPELL_ANTI_MAGIC_ZONE))
-                    m_creature->CastSpell(m_creature, SPELL_ANTI_MAGIC_ZONE, true);
-            }
+		    if(m_uiWave < 4 && !m_creature->HasAura(SPELL_ANTI_MAGIC_ZONE))
+			    DoCast(m_creature, SPELL_ANTI_MAGIC_ZONE, true);
 
             if (m_uiWave_Timer < uiDiff)
             {
                 switch(m_uiWave)
                 {
                     case 0:
+                        SetCombatMovement(false);
                         DoScriptText(SAY_BREAKOUT3, m_creature);
-                        SummonAcolyte(3);
+                        SummonAcolyte(2);
                         m_uiWave_Timer = 20000;
                         break;
                     case 1:
+                        SetCombatMovement(false);
                         DoScriptText(SAY_BREAKOUT4, m_creature);
                         SummonAcolyte(3);
                         m_uiWave_Timer = 20000;
                         break;
                     case 2:
+                        SetCombatMovement(false);
                         DoScriptText(SAY_BREAKOUT5, m_creature);
                         SummonAcolyte(4);
                         m_uiWave_Timer = 20000;
                         break;
                     case 3:
+                        SetCombatMovement(false);
                         DoScriptText(SAY_BREAKOUT6, m_creature);
-                        m_creature->SummonCreature(NPC_HIGH_INQUISITOR_VALROTH, 1642.329f, -6045.818f, 127.583f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000);
+                        m_creature->SummonCreature(NPC_HIGH_INQUISITOR_VALROTH, 1642.329f, -6045.818f, 127.583f, 0.0f, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 1000000);
                         m_uiWave_Timer = 1000;
                         break;
                     case 4:
@@ -840,6 +840,7 @@ struct MANGOS_DLL_DECL npc_koltira_deathweaverAI : public npc_escortAI
                     }
                     case 5:
                         DoScriptText(SAY_BREAKOUT9, m_creature);
+                        SetCombatMovement(true);
                         m_creature->RemoveAurasDueToSpell(SPELL_ANTI_MAGIC_ZONE);
                         m_uiWave_Timer = 2500;
                         break;
@@ -879,8 +880,90 @@ bool QuestAccept_npc_koltira_deathweaver(Player* pPlayer, Creature* pCreature, c
     return true;
 }
 
+
+
 /*######
-##
+## Mob High Inquisitor Valroth
+######*/
+enum valroth
+{
+    SAY_VALROTH1                      = -1609122,
+    SAY_VALROTH2                      = -1609123,
+    SAY_VALROTH3                      = -1609124,
+    SAY_VALROTH4                      = -1609125,
+    SAY_VALROTH5                      = -1609126,
+    SAY_VALROTH6                      = -1609127,
+    SPELL_INQUISITOR_PENANCE          = 52922,
+    SPELL_VALROTH_SMITE               = 52926,
+    SPELL_SUMMON_VALROTH_REMAINS      = 52929
+};
+
+struct MANGOS_DLL_DECL mob_high_inquisitor_valrothAI : public ScriptedAI
+{
+    mob_high_inquisitor_valrothAI(Creature *pCreature) : ScriptedAI(pCreature)
+    {
+        Reset();
+    }
+
+    uint32 uiInquisitor_Penance_timer;
+    uint32 uiValroth_Smite_timer;
+
+    void Reset()
+    {
+        uiInquisitor_Penance_timer = 3000;
+        uiValroth_Smite_timer = 2000;
+    }
+
+    void Aggro(Unit* who)
+    {
+        DoScriptText(SAY_VALROTH2, m_creature);
+        DoCastSpellIfCan(who, SPELL_VALROTH_SMITE);
+    }
+
+    void UpdateAI(const uint32 diff)
+    {
+
+        if (uiInquisitor_Penance_timer < diff)
+        {
+            Shout();
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_INQUISITOR_PENANCE);
+            uiInquisitor_Penance_timer = 3000 + rand()%5000;
+        }else uiInquisitor_Penance_timer -= diff;
+
+        if (uiValroth_Smite_timer < diff)
+        {
+            Shout();
+            DoCastSpellIfCan(m_creature->getVictim(), SPELL_VALROTH_SMITE);
+            uiValroth_Smite_timer = 2000 + rand()%5000;
+        }else uiValroth_Smite_timer -= diff;
+
+        DoMeleeAttackIfReady();
+    }
+
+    void Shout()
+    {
+        switch(rand()%20)
+        {
+            case 0: DoScriptText(SAY_VALROTH3, m_creature);break;
+            case 1: DoScriptText(SAY_VALROTH4, m_creature);break;
+            case 2: DoScriptText(SAY_VALROTH5, m_creature);break;
+        }
+    }
+
+    void JustDied(Unit* killer)
+    {
+        DoScriptText(SAY_VALROTH6, m_creature);
+        killer->CastSpell(m_creature, SPELL_SUMMON_VALROTH_REMAINS, true);
+    }
+};
+
+CreatureAI* GetAI_mob_high_inquisitor_valroth(Creature* pCreature)
+{
+    return new mob_high_inquisitor_valrothAI (pCreature);
+}
+
+/*######
+## npc_unworthy_initiate_anchor
 ######*/
 
 enum
@@ -4027,6 +4110,11 @@ void AddSC_ebon_hold()
     pNewScript = new Script;
     pNewScript->Name = "npc_crusade_persuaded";
     pNewScript->GetAI = &GetAI_npc_crusade_persuaded;
+    pNewScript->RegisterSelf();
+
+    pNewScript = new Script;
+    pNewScript->Name = "mob_high_inquisitor_valroth";
+    pNewScript->GetAI = &GetAI_mob_high_inquisitor_valroth;
     pNewScript->RegisterSelf();
 
     pNewScript = new Script;
