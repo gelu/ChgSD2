@@ -262,6 +262,7 @@ scripts/guards/high_sorcerer_andromath.cpp \
 scripts/guards/higlord_bolvar_fordragon.cpp \
 scripts/guards/officers.cpp \
 scripts/guards/overlord_saurfang.cpp \
+scripts/infinityAI/infinity_trash.cpp \
 scripts/kalimdor/ashenvale.cpp \
 scripts/kalimdor/azshara.cpp \
 scripts/kalimdor/azuremyst_isle.cpp \
@@ -645,7 +646,6 @@ scripts/world/item_scripts.cpp \
 scripts/world/mob_generic_creature.cpp \
 scripts/world/npc_professions.cpp \
 scripts/world/npcs_special.cpp \
-scripts/world/pet_scripts.cpp \
 scripts/world/spell_scripts.cpp \
 system/MangosdRev.cpp \
 system/ScriptLoader.cpp \
