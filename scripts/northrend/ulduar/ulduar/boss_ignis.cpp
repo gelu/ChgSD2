@@ -209,8 +209,11 @@ struct MANGOS_DLL_DECL mob_iron_constructAI : public ScriptedAI
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
         if (m_creature->HasAura(SPELL_FREEZE_ANIM, EFFECT_INDEX_0))
-            m_creature->RemoveAurasDueToSpell(SPELL_FREEZE_ANIM);
+        m_creature->RemoveAurasDueToSpell(SPELL_FREEZE_ANIM);
         m_bIsInCombat = true;
+
+        if (!m_pInstance) 
+            return;
 
         if (Creature* pTemp = m_creature->GetMap()->GetCreature( m_pInstance->GetData64(NPC_IGNIS)))
         {
