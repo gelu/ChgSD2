@@ -226,7 +226,13 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
 
     void MoveVolunteer()
     {
-        if (Creature* pVolunteer = SelectRandomCreatureOfEntryInRange(NPC_VOLUNTEER, 100.0f))
+        if (volunteerGUIDList.empty())
+            return;
+
+        std::list<uint64>::iterator itr = volunteerGUIDList.begin();
+        std::advance(itr, urand(0, volunteerGUIDList.size() - 1));
+
+        if (Creature* pVolunteer = m_creature->GetMap()->GetCreature(*itr))
         {
             if (pVolunteer->isAlive())
             {
@@ -256,20 +262,6 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                     pVisualTrigger->ForcedDespawn();
             }
         }
-    }
-
-    Creature* SelectRandomCreatureOfEntryInRange(uint32 uiEntry, float fRange)
-    {
-        std::list<Creature* > lCreatureList;
-        GetCreatureListWithEntryInGrid(lCreatureList, m_creature, uiEntry, fRange);
-
-        if (lCreatureList.empty())
-            return NULL;
-
-        std::list<Creature* >::iterator iter = lCreatureList.begin();
-        advance(iter, urand(0, lCreatureList.size()-1));
-
-        return *iter;
     }
 
     void MovementInform(uint32 mtype, uint32 id)
@@ -360,6 +352,7 @@ struct MANGOS_DLL_DECL boss_jedogaAI : public ScriptedAI
                 
                 victimCounter++;
                 volunteerPhase = false;
+                pChosenVolunteer = NULL;
                 volunteerDeathTimer = 9999999;
             }else volunteerDeathTimer -= uiDiff;
         }

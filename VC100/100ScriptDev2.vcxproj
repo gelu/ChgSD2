@@ -216,6 +216,7 @@
     <ClCompile Include="..\base\follower_ai.cpp" />
     <ClCompile Include="..\base\guard_ai.cpp" />
     <ClCompile Include="..\base\pet_ai.cpp" />
+    <ClCompile Include="..\include\sc_outdoor_pvp.cpp" />
     <ClCompile Include="..\scripts\battlegrounds\battleground.cpp" />
     <ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp" />
     <ClCompile Include="..\scripts\custom\npc_arena_honor.cpp" />
@@ -628,6 +629,12 @@
     <ClCompile Include="..\scripts\northrend\violet_hold\instance_violet_hold.cpp" />
     <ClCompile Include="..\scripts\northrend\violet_hold\violet_hold.cpp" />
     <ClCompile Include="..\scripts\northrend\zuldrak.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\eastern_kingdoms\outdoor_pvp_eastern_plaguelands.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_eastern_kingdoms.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_kalimdor.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_northrend.cpp" />
+    <ClCompile Include="..\scripts\outdoor_pvp\outdoor_pvp_outland.cpp" />
     <ClCompile Include="..\scripts\outland\blades_edge_mountains.cpp" />
     <ClCompile Include="..\scripts\outland\boss_doomlord_kazzak.cpp" />
     <ClCompile Include="..\scripts\outland\boss_doomwalker.cpp" />
@@ -742,6 +749,7 @@
     <ClInclude Include="..\base\follower_ai.h" />
     <ClInclude Include="..\base\guard_ai.h" />
     <ClInclude Include="..\base\pet_ai.h" />
+    <ClInclude Include="..\include\sc_outdoor_pvp.h" />
     <ClInclude Include="..\scripts\eastern_kingdoms\blackrock_depths\blackrock_depths.h" />
     <ClInclude Include="..\scripts\eastern_kingdoms\blackrock_spire\blackrock_spire.h" />
     <ClInclude Include="..\scripts\eastern_kingdoms\blackwing_lair\blackwing_lair.h" />
@@ -797,6 +805,13 @@
     <ClInclude Include="..\scripts\northrend\utgarde_keep\utgarde_pinnacle\utgarde_pinnacle.h" />
     <ClInclude Include="..\scripts\northrend\vault_of_archavon\vault_of_archavon.h" />
     <ClInclude Include="..\scripts\northrend\violet_hold\violet_hold.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\eastern_kingdoms\outdoor_pvp_eastern_plaguelands.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\kalimdor\outdoor_pvp_silithus.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_eastern_kingdoms.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_kalimdor.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_northrend.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_outland.h" />
+    <ClInclude Include="..\scripts\outdoor_pvp\outdoor_pvp_zone_selector.h" />
     <ClInclude Include="..\scripts\outland\auchindoun\sethekk_halls\sethekk_halls.h" />
     <ClInclude Include="..\scripts\outland\auchindoun\shadow_labyrinth\shadow_labyrinth.h" />
     <ClInclude Include="..\scripts\outland\black_temple\black_temple.h" />
