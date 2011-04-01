@@ -1,4 +1,4 @@
-/* Copyright (C) 2006 - 2011 ScriptDev2 <http://www.scriptdev2.com/>
+/* Copyright (C) 2006 - 2010 ScriptDev2 <https://scriptdev2.svn.sourceforge.net/>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,6 +33,7 @@ struct MANGOS_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
     uint64 m_uiMograineGUID;
     uint64 m_uiWhitemaneGUID;
     uint64 m_uiVorrelGUID;
+    uint64 m_uiHeadlessHorsemanGUID;
     uint64 m_uiDoorHighInquisitorGUID;
 
     void Initialize()
@@ -42,6 +43,7 @@ struct MANGOS_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
         m_uiMograineGUID = 0;
         m_uiWhitemaneGUID = 0;
         m_uiVorrelGUID = 0;
+        m_uiHeadlessHorsemanGUID = 0;
         m_uiDoorHighInquisitorGUID = 0;
     }
 
@@ -73,29 +75,50 @@ struct MANGOS_DLL_DECL instance_scarlet_monastery : public ScriptedInstance
                 return m_uiVorrelGUID;
             case DATA_DOOR_WHITEMANE:
                 return m_uiDoorHighInquisitorGUID;
+            case DATA_HEADLESS_HORSEMAN:
+                return m_uiHeadlessHorsemanGUID;
         }
 
         return 0;
     }
+    void SetData64(uint32 data, uint64 guid)
+    {
+       switch(data)
+       {
+          case DATA_HEADLESS_HORSEMAN:
+              m_uiHeadlessHorsemanGUID = guid;
+              break;
+       }
+    }
+
 
     void SetData(uint32 uiType, uint32 uiData)
     {
-        if (uiType == TYPE_MOGRAINE_AND_WHITE_EVENT)
+        switch(uiType)
         {
-            if (uiData == IN_PROGRESS)
-                DoUseDoorOrButton(m_uiDoorHighInquisitorGUID);
-            if (uiData == FAIL)
-                DoUseDoorOrButton(m_uiDoorHighInquisitorGUID);
+            case TYPE_MOGRAINE_AND_WHITE_EVENT:
+                if (uiData == IN_PROGRESS)
+                    DoUseDoorOrButton(m_uiDoorHighInquisitorGUID);
+                if (uiData == FAIL)
+                    DoUseDoorOrButton(m_uiDoorHighInquisitorGUID);
 
-            m_auiEncounter[0] = uiData;
+                m_auiEncounter[0] = uiData;
+                break;
+            case TYPE_HALLOWSEND_EVENT:
+                m_auiEncounter[1] = uiData;
+                break;
         }
     }
 
-    uint32 GetData(uint32 uiData)
+    uint32 GetData(uint32 uiType)
     {
-        if (uiData == TYPE_MOGRAINE_AND_WHITE_EVENT)
-            return m_auiEncounter[0];
-
+        switch(uiType)
+        {
+            case TYPE_MOGRAINE_AND_WHITE_EVENT:
+                return m_auiEncounter[0];
+            case TYPE_HALLOWSEND_EVENT:
+                return m_auiEncounter[1];
+        }
         return 0;
     }
 };
