@@ -805,11 +805,6 @@ static Locations SpawnLoc[]=
         }
         return 0;
     }
- 
-    const char* instance_icecrown_spire::Save()
-    {
-        return strSaveData.c_str();
-    }
 
     void instance_icecrown_spire::Load(const char* chrIn)
     {
