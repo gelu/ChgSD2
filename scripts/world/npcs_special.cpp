@@ -3156,7 +3156,7 @@ void AddSC_npcs_special()
     newscript = new Script;
     newscript->Name = "pet_simple_guardian";
     newscript->GetAI = &GetAI_pet_simple_guardian;
-    newscript->RegisterSelf();
+    newscript->RegisterSelf(false);                      // false disables false error reading in start up
 
     newscript = new Script;
     newscript->Name = "pet_dk_ghoul";
