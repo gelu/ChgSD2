@@ -565,9 +565,9 @@ CreatureAI* GetAI_boss_lord_marrowgar(Creature* pCreature)
     return new boss_lord_marrowgarAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
+struct MANGOS_DLL_DECL mob_bone_spikeAI : public ScriptedAI
 {
-    mob_bone_spikeAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    mob_bone_spikeAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
         Reset();
@@ -657,9 +657,9 @@ CreatureAI* GetAI_mob_bone_spike(Creature* pCreature)
     return new mob_bone_spikeAI(pCreature);
 }
 
-struct MANGOS_DLL_DECL mob_coldflameAI : public BSWScriptedAI
+struct MANGOS_DLL_DECL mob_coldflameAI : public ScriptedAI
 {
-    mob_coldflameAI(Creature *pCreature) : BSWScriptedAI(pCreature)
+    mob_coldflameAI(Creature *pCreature) : ScriptedAI(pCreature)
     {
         m_pInstance = ((ScriptedInstance*)pCreature->GetInstanceData());
         m_uiMode = pCreature->GetMap()->GetDifficulty();
