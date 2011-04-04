@@ -609,14 +609,13 @@ struct MANGOS_DLL_DECL mob_bone_spikeAI : public BSWScriptedAI
     {
     }
 
-    void KilledUnit(Unit* _Victim)
+    void KilledUnit(Unit* pVictim)
     {
         if (Player* pVictim = m_creature->GetMap()->GetPlayer(m_uiVictimGuid))
-            if (pVictim->GetObjectGuid() == m_uiVictimGuid)
-                pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
+            pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
     }
 
-    void JustDied(Unit* Killer)
+    void JustDied(Unit* pKiller)
     {
         if (Player* pVictim = m_creature->GetMap()->GetPlayer(m_uiVictimGuid))
             pVictim->RemoveAurasDueToSpell(SPELL_BONE_STRIKE_IMPALE);
