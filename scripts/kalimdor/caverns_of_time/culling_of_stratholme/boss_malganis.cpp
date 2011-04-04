@@ -46,7 +46,10 @@ enum
     SPELL_MIND_BLAST_H                     = 58850,
     SPELL_SLEEP_N                          = 52721,
     SPELL_SLEEP_H                          = 58849,
-    SPELL_VAMPIRE                          = 52723
+    SPELL_VAMPIRE                          = 52723,
+    
+    ACHIEV_COS_N             = 479,
+    ACHIEV_COS_H             = 500,
 };
 
 struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
@@ -102,10 +105,15 @@ struct MANGOS_DLL_DECL boss_malganisAI : public ScriptedAI
          Map::PlayerList const& players = map->GetPlayers();
          if (!players.isEmpty() && map->IsDungeon())
          {
+           AchievementEntry const *AchievCOS = GetAchievementStore()->LookupEntry(m_bIsHeroic ? ACHIEV_COS_H : ACHIEV_COS_N);           
            for(Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
            {
-             if(Player* pPlayer = itr->getSource()) 
+             if(Player* pPlayer = itr->getSource())
+             {
+               if (AchievCOS)
+                   pPlayer->CompletedAchievement(AchievCOS);
                pPlayer->KilledMonsterCredit(31006, m_creature->GetGUID());
+             }
            }
          }
    }
