@@ -155,6 +155,7 @@ struct MANGOS_DLL_DECL boss_colossusAI : public ScriptedAI
             {
                 m_bSecondEmerge = true;
                 m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+                m_bSummonElemental = true;
                 DoCast(m_creature, SPELL_EMERGE);
             }
         }

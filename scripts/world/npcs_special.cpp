@@ -32,6 +32,18 @@ EndScriptData
 #include "Totem.h"
 
 /* ContentData
+mob_risen_ghoul          ??%    AOTD DK Correct Ghoul
+pet_greater_fire_elemental ??%  ????????????????????????????????????????????????????
+pet_greater_earth_elemental ??% ????????????????????????????????????????????????????
+pet_dk_ghoul             ??%    ????????????????????????????????????????????????????
+pet_simple_guardian      ??%    ????????????????????????????????????????????????????
+npc_eye_of_kilrogg       ??%    ????????????????????????????????????????????????????
+npc_explosive_decoy      ??%    ????????????????????????????????????????????????????
+npc_risen_ally           ??%    ????????????????????????????????????????????????????
+npc_death_knight_gargoyle ??%   ????????????????????????????????????????????????????
+npc_runeblade            ??%    ????????????????????????????????????????????????????
+npc_snake_trap_serpents  ??%    ????????????????????????????????????????????????????
+npc_mirror_image         ??%    ????????????????????????????????????????????????????
 npc_air_force_bots       80%    support for misc (invisible) guard bots in areas where player allowed to fly. Summon guards after a preset time if tagged by spell
 npc_chicken_cluck       100%    support for quest 3861 (Cluck!)
 npc_dancing_flames      100%    midsummer event NPC
@@ -2342,6 +2354,7 @@ struct MANGOS_DLL_DECL pet_dk_ghoulAI : public pet_simple_guardianAI
         }
     }
 };
+
 CreatureAI* GetAI_pet_dk_ghoul(Creature* pCreature)
 {
     if (pCreature->IsPet())
@@ -2349,6 +2362,185 @@ CreatureAI* GetAI_pet_dk_ghoul(Creature* pCreature)
     else
         return NULL;
 }
+
+/*######
+## Risen Ghoul, Army of the Dead Ghoul
+######*/
+
+enum
+{
+    ENTRY_AOTD_GHOUL    = 24207,
+    SPELL_CLAW          = 47468,
+    //SPELL_LEAP          = 47482, enumed defined aboved
+    SPELL_AURA_TAUNT    = 43264
+};
+
+struct MANGOS_DLL_DECL mob_risen_ghoulAI : public ScriptedAI
+{
+    mob_risen_ghoulAI(Creature* pCreature) : ScriptedAI(pCreature)
+    {
+        m_bIsReady = false;
+        m_bIsSpawned = false;
+        fDist = (m_creature->GetEntry() == ENTRY_AOTD_GHOUL) ? float(urand(1, 5) ) : PET_FOLLOW_DIST;
+        fAngle = PET_FOLLOW_ANGLE;
+        m_uiCreatorGUID = m_creature->GetCreatorGuid().GetRawValue();
+        if (Unit* pOwner = m_creature->GetMap()->GetUnit(m_uiCreatorGUID) )
+            fAngle = m_creature->GetAngle(pOwner);
+
+        Reset();
+    }
+
+    Unit* pTarget;
+
+    uint64 m_uiCreatorGUID;
+    uint64 m_uiTargetGUID;
+
+    uint32 m_uiReadyTimer;
+    uint32 m_uiClawTimer;
+    uint32 m_uiLeapTimer;
+
+    bool m_bIsReady;
+    bool m_bIsSpawned;
+
+    float fDist;
+    float fAngle;
+
+
+    void Reset()
+    {
+        pTarget         = NULL;
+        m_uiTargetGUID  = 0;
+        m_uiReadyTimer  = 4000;
+        m_uiClawTimer   = urand(3000, 5000);
+        m_uiLeapTimer   = urand(1000, 5000);
+    }
+
+    void MoveInLineOfSight(Unit *pWho)
+    {
+        if (!m_bIsReady)
+            return;
+
+        ScriptedAI::MoveInLineOfSight(pWho);
+    }
+
+    void AttackStart(Unit *pWho)
+    {
+        if (!m_bIsReady)
+            return;
+
+        ScriptedAI::AttackStart(pWho);
+    }
+/*  this needs further research
+    void ReceiveEmote(Player* pPlayer, uint32 emote)
+    {
+        if (m_creature->GetEntry() == ENTRY_AOTD_GHOUL)
+            return;
+
+        switch(emote)
+        {
+            case TEXTEMOTE_GLARE:
+                m_creature->HandleEmote(EMOTE_ONESHOT_COWER);
+                break;
+            case TEXTEMOTE_COWER:
+                m_creature->HandleEmote(EMOTE_ONESHOT_OMNICAST_GHOUL);
+                break;
+        }
+    }
+*/
+    void UpdateAI(uint32 const uiDiff)
+    {
+        if (!m_bIsReady)
+        {
+            if (!m_bIsSpawned)
+            {
+                m_creature->HandleEmoteCommand(EMOTE_ONESHOT_EMERGE);
+                m_bIsSpawned = true;
+            }
+
+            if (m_uiReadyTimer <= uiDiff)
+            {
+                m_bIsReady = true;
+                if (m_creature->GetEntry() == ENTRY_AOTD_GHOUL)
+                    DoCastSpellIfCan(m_creature, SPELL_AURA_TAUNT, CAST_TRIGGERED);
+            }
+            else m_uiReadyTimer -= uiDiff;
+
+            return;
+        }
+
+        Unit* pOwner = m_creature->GetMap()->GetUnit(m_uiCreatorGUID);
+        if (!pOwner || !pOwner->IsInWorld())
+        {
+            m_creature->DealDamage(m_creature, m_creature->GetMaxHealth(), NULL, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, NULL, false);
+            return;
+        }
+
+        // check if current target still exists and is atatckable
+        if (m_creature->getVictim() )
+            m_uiTargetGUID = m_creature->getVictim()->GetGUID();
+
+        pTarget = m_creature->GetMap()->GetUnit(m_uiTargetGUID);
+
+        if (!pTarget || !m_creature->CanInitiateAttack() || !pTarget->isTargetableForAttack() ||
+        !m_creature->IsHostileTo(pTarget) || !pTarget->isInAccessablePlaceFor(m_creature))
+        {
+            // we have no target, so look for the new one
+            if (Unit *pTmp = m_creature->SelectRandomUnfriendlyTarget(0, 30.0f) )
+                m_uiTargetGUID = pTmp->GetGUID();
+
+            pTarget = m_creature->GetMap()->GetUnit(m_uiTargetGUID);
+
+            // now check again. if no target found then there is nothing to attack - start following the owner
+            if (!pTarget || !m_creature->CanInitiateAttack() || !pTarget->isTargetableForAttack() ||
+            !m_creature->IsHostileTo(pTarget) || !pTarget->isInAccessablePlaceFor(m_creature))
+            {
+                if (m_creature->GetMotionMaster()->GetCurrentMovementGeneratorType() != FOLLOW_MOTION_TYPE)
+                {
+                    m_creature->InterruptNonMeleeSpells(false);
+                    m_creature->GetMotionMaster()->Clear();
+                    m_creature->GetMotionMaster()->MoveFollow(pOwner, fDist, fAngle);
+                    Reset();
+                }
+                return;
+            }
+            if (pTarget)
+                m_creature->AI()->AttackStart(pTarget);
+        }
+
+        // Claw
+        if (m_uiClawTimer <= uiDiff)
+        {
+            DoCastSpellIfCan(pTarget, SPELL_CLAW);
+            m_uiClawTimer = urand(3000, 5000);
+        }
+        else m_uiClawTimer -= uiDiff;
+
+        // Leap
+        if (m_uiLeapTimer <= uiDiff)
+        {
+            if (Unit *pLeapTarget = m_creature->SelectRandomUnfriendlyTarget(m_creature->getVictim(), 30.0f) )
+            {
+                if (pLeapTarget != pTarget)
+                {
+                    DoCastSpellIfCan(pLeapTarget, SPELL_LEAP, CAST_TRIGGERED);
+                    m_uiLeapTimer = 20000;
+                    m_uiTargetGUID = pLeapTarget->GetGUID();
+                    m_creature->AI()->AttackStart(pLeapTarget);
+                    return;
+                }
+            }
+        }
+        else m_uiLeapTimer -= uiDiff;
+
+        DoMeleeAttackIfReady();
+    }
+};
+ 
+CreatureAI* GetAI_mob_risen_ghoul(Creature* pCreature)
+{
+    return new mob_risen_ghoulAI (pCreature);
+};
+
 /*######
 ## pet_greater_earth_elemental
 ######*/
@@ -2420,7 +2612,6 @@ CreatureAI* GetAI_pet_greater_earth_elemental(Creature* pCreature)
     else
         return NULL;
 }
-
 
 /*######
 ## pet_greater_fire_elemental
@@ -2965,11 +3156,16 @@ void AddSC_npcs_special()
     newscript = new Script;
     newscript->Name = "pet_simple_guardian";
     newscript->GetAI = &GetAI_pet_simple_guardian;
-    newscript->RegisterSelf();
+    newscript->RegisterSelf(false);                      // false disables false error reading in start up
 
     newscript = new Script;
     newscript->Name = "pet_dk_ghoul";
     newscript->GetAI = &GetAI_pet_dk_ghoul;
+    newscript->RegisterSelf();
+
+    newscript = new Script;
+    newscript->Name = "mob_risen_ghoul";
+    newscript->GetAI = &GetAI_mob_risen_ghoul;
     newscript->RegisterSelf();
 
     newscript = new Script;
