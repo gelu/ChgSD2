@@ -13,6 +13,7 @@
 #include "../system/system.h"
 #include "../../../game/ScriptMgr.h"
 #include "World.h"
+#include "sd2_projects.h"
 
 int num_sc_scripts;
 Script *m_scripts[MAX_SCRIPTS];
@@ -67,6 +68,7 @@ void LoadDatabase()
         pSystemMgr.LoadScriptTextsCustom();
         pSystemMgr.LoadScriptGossipTexts();
         pSystemMgr.LoadScriptWaypoints();
+		SD2P_NAMESPACE::LoadDatabase();
     }
     else
     {
@@ -140,6 +142,7 @@ void InitScriptLibrary()
     FillSpellSummary();
 
     AddScripts();
+	SD2P_NAMESPACE::LoadScripts();
 
     outstring_log(">> Loaded %i C++ Scripts.", num_sc_scripts);
 }
@@ -492,6 +495,17 @@ bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
         return false;
 
     return tmpscript->pItemUse(pPlayer, pItem, targets);
+}
+
+MANGOS_DLL_EXPORT
+bool GossipSelectItem(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, SpellCastTargets const& targets)
+{
+    Script *tmpscript = m_scripts[pItem->GetProto()->ScriptId];
+
+    if (!tmpscript || !tmpscript->pItemUse)
+        return false;
+
+    return tmpscript->pGossipSelectItem(pPlayer, pItem, sender, action, targets);
 }
 
 MANGOS_DLL_EXPORT

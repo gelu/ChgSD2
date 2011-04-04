@@ -2065,6 +2065,39 @@
     <ClCompile Include="..\include\sc_outdoor_pvp.cpp">
       <Filter>include</Filter>
     </ClCompile>
+    <ClCompile Include="..\include\sd2_projects.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sd2p_sc_npc_guild_guard.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sd2p_sc_npc_recompense.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sd2p_sc_npc_teleport.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sd2p_sc_object_teleport.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\sd2p_util.cpp">
+      <Filter>include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\custom\sd2p_npc_guild_guard.cpp">
+      <Filter>scripts\custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\custom\sd2p_npc_recompense.cpp">
+      <Filter>scripts\custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\custom\sd2p_npc_resurrect.cpp">
+      <Filter>scripts\custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\custom\sd2p_npc_teleport.cpp">
+      <Filter>scripts\custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\custom\sd2p_object_teleport.cpp">
+      <Filter>scripts\custom</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\base\escort_ai.h">
@@ -2373,6 +2406,27 @@
       <Filter>scripts\outdoor_pvp\kalimdor</Filter>
     </ClInclude>
     <ClInclude Include="..\include\sc_outdoor_pvp.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2_projects.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_sc_npc_guild_guard.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_sc_npc_recompense.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_sc_npc_teleport.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_sc_object_teleport.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_util.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\sd2p_util.hpp">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
