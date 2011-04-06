@@ -318,6 +318,7 @@ bool EffectDummyCreature_boss_ionar(Unit* pCaster, uint32 uiSpellId, SpellEffect
             pCreatureTarget->CastSpell(pCreatureTarget, SPELL_SUMMON_SPARK, true);
 
         pCreatureTarget->AttackStop();
+        pCreatureTarget->RemoveAllAuras();
         pCreatureTarget->SetVisibility(VISIBILITY_OFF);
 
         if (pCreatureTarget->GetMotionMaster()->GetCurrentMovementGeneratorType() == CHASE_MOTION_TYPE)
