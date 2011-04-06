@@ -16,7 +16,6 @@
 #include "sd2_projects.h"
 #include "sd2p_util.h"
 
-
 void nsSD2P::LoadDatabase(void)
 {
     outstring_log("");
@@ -25,7 +24,7 @@ void nsSD2P::LoadDatabase(void)
     outstring_log("\\___ \\| | | |__) | | |_) | '__/ _ \\| |/ _ \\/ __| __/ __|");
     outstring_log(" ___) | |_| / __/  |  __/| | | (_) | |  __/ (__| |_\\__ \\  ");
     outstring_log("|____/|____/_____| |_|   |_|  \\___// |\\___|\\___|\\__|___/");
-    outstring_log("                                 |__/                       ");
+    outstring_log("                                 |__/   DB by Chglove       ");
     outstring_log("                                        Auteur: Wilibald09  ");
     outstring_log("");
     outstring_log("");

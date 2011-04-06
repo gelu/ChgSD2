@@ -223,6 +223,10 @@
     <ClCompile Include="..\include\sd2p_sc_object_teleport.cpp" />
     <ClCompile Include="..\include\sd2p_util.cpp" />
     <ClCompile Include="..\include\sd2_projects.cpp" />
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_balinda.cpp" />
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_drekthar.cpp" />
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_galvangar.cpp" />
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_vanndar.cpp" />
     <ClCompile Include="..\scripts\battlegrounds\battleground.cpp" />
     <ClCompile Include="..\scripts\battlegrounds\battlegroundSA.cpp" />
     <ClCompile Include="..\scripts\custom\npc_arena_honor.cpp" />

@@ -313,6 +313,9 @@
     <Filter Include="scripts\outdoor_pvp\outland">
       <UniqueIdentifier>{a11cafe1-dbd5-4e83-bcb5-f8c7335ec0de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scripts\battlegrounds\alterac_valley">
+      <UniqueIdentifier>{6655c370-d43a-4b39-8bb2-a12615cbc5aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\base\escort_ai.cpp">
@@ -2097,6 +2100,18 @@
     </ClCompile>
     <ClCompile Include="..\scripts\custom\sd2p_object_teleport.cpp">
       <Filter>scripts\custom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_balinda.cpp">
+      <Filter>scripts\battlegrounds\alterac_valley</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_drekthar.cpp">
+      <Filter>scripts\battlegrounds\alterac_valley</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_galvangar.cpp">
+      <Filter>scripts\battlegrounds\alterac_valley</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scripts\battlegrounds\alterac_valley\boss_vanndar.cpp">
+      <Filter>scripts\battlegrounds\alterac_valley</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

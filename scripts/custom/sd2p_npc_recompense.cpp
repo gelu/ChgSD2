@@ -17,9 +17,9 @@
 #include "sd2p_sc_npc_recompense.h"
 #include <sstream>
 
-#define NEXT_PAGE  "-> Page suivante"
-#define PREV_PAGE  "<- Page precedente"
-#define MAIN_MENU  "<= [Menu Principal]"
+#define NEXT_PAGE  "[下一页] "
+#define PREV_PAGE  "[上一页] "
+#define MAIN_MENU  "[返回] "
 
 using namespace std;
 using namespace SD2P_NAMESPACE;
@@ -196,8 +196,8 @@ namespace
         }
         if (pPlayer->HasItemCount(pRec->m_Entry, pItem->GetMaxStackCount(), true))
         {
-            oss << "Vous possedez deja " << GetItemName(pRec->m_Entry) << ".";
-            pCreature->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
+            oss << "　你已经拥有该物品　[" << GetItemName(pRec->m_Entry) << "]　";
+            pCreature ->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
             return;
         }
 
@@ -206,7 +206,7 @@ namespace
         {
             if (!pPlayer->HasItemCount(It->m_Entry, It->m_Count))
             {
-                oss << "Vous n'avez pas assez de " << GetItemName(It->m_Entry) << ".";
+                oss << "　你没有足够的兑换物品　[" << GetItemName(It->m_Entry) << "]　";
                 pCreature->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
                 return;
             }
@@ -218,17 +218,16 @@ namespace
         {
             if (!AddItem(pPlayer, pRec->m_Entry, 1))
             {
-                pCreature->MonsterSay("Vous n'avez pas assez de place dans votre inventaire.", pPlayer->GetGUID());
+                pCreature->MonsterSay("　你已经不能再拿更多的这种物品了!　", pPlayer->GetGUID());
                 return;
             }
 
-            oss << "Felicitation ! Vous venez de recevoir " << GetItemName(pRec->m_Entry) << ".";
+			oss << "　恭喜你获得了物品　[" << GetItemName(pRec->m_Entry) << "]　";
             pCreature->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
         }
         else
         {
-            pCreature->MonsterSay("C'etait un risque a prendre. Vous avez perdu. Desole.",
-                                      pPlayer->GetGUID());
+            pCreature->MonsterSay("　非常遗憾的告诉您，您输掉了！但请别灰心，加油合成，总有一天会成功的~~~!　", pPlayer->GetGUID());
         }
 
         // Retrait des items servant d'echange.
@@ -271,15 +270,14 @@ namespace
 
         // Affichage de la proposition.
         ostringstream oss;
-        oss << "Oui je desire recevoir " << GetItemName(pRec->m_Entry);
-        if (pRec->m_SuccesProbability < 100)
-             oss << " (" << uint32(pRec->m_SuccesProbability) << "% de chance)";
-        oss << " contre:\n";
+		oss << "[兑换物品] \n" << GetItemName(pRec->m_Entry) ;
+        oss << "[" << uint32(pRec->m_SuccesProbability) << "% 成功率]\n ";
+		oss << "\n[需求] \n";
         for (ExtendedCost::VCost_t::const_iterator It = pExtCost->m_VCost.begin(); It != pExtCost->m_VCost.end(); ++It)
-            oss << "  - " << GetItemName(It->m_Entry) << " (x" << uint32(It->m_Count) << ")\n";
+			oss << GetItemName(It->m_Entry) << " [" << uint32(It->m_Count) << "个]\n";
 
         pPlayer->ADD_GOSSIP_ITEM(2, oss.str().c_str() , GOSSIP_ACHAT, id);
-        pPlayer->ADD_GOSSIP_ITEM(2, "Non." , GOSSIP_QUIT, 0);
+        pPlayer->ADD_GOSSIP_ITEM(2, "[退出] " , GOSSIP_QUIT, 0);
         pPlayer->SEND_GOSSIP_MENU(NPC_TEXT_VALID, pCreature->GetGUID());
     }
 }
@@ -293,7 +291,7 @@ bool GossipHello_npc_recompense(Player * pPlayer, Creature * pCreature)
     if (pPlayer->isInCombat())
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->MonsterSay("Vous etes en combat. Revenez plus tard", pPlayer->GetGUID());
+        pCreature->MonsterSay(" 　战斗中不能使用合成功能!", pPlayer->GetGUID());
         return true;
     }
 

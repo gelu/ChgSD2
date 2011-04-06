@@ -105,14 +105,12 @@ void InitScriptLibrary()
 {
     //ScriptDev2 startup
     outstring_log("");
-    outstring_log(" MMM  MMM    MM");
-    outstring_log("M  MM M  M  M  M");
-    outstring_log("MM    M   M   M");
-    outstring_log(" MMM  M   M  M");
-    outstring_log("   MM M   M MMMM");
-    outstring_log("MM  M M  M ");
-    outstring_log(" MMM  MMM  http://www.scriptdev2.com");
-    outstring_log("");
+    outstring_log("===========================================================================");
+    outstring_log("          P   R   O   J   E   C   T - The ChgMangos Project by Chglove     ");
+    outstring_log("                     Wish everyone can enjoy my work!                      ");
+	outstring_log("ChgMangos v1.3.0 beta                                                      ");
+	outstring_log("Mangos 11304,SD2 2016, ChgMangosDB v1.3.0 with ACID 3.0.8 full             ");
+	outstring_log("===========================================================================");
 
     //Get configuration file
     if (!SD2Config.SetSource(_SCRIPTDEV2_CONFIG))
@@ -246,8 +244,8 @@ void Script::RegisterSelf(bool bReportError)
     }
     else
     {
-        if (bReportError)
-            error_db_log("SD2: Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
+        //if (bReportError)
+        //    error_db_log("SD2: Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
 
         m_scriptStorage.insert(std::make_pair(Name.c_str(), this));
     }
@@ -298,7 +296,7 @@ bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 
     if (!tmpscript || !tmpscript->pGossipSelect)
         return false;
 
-//    pPlayer->PlayerTalkClass->ClearMenus();
+    pPlayer->PlayerTalkClass->ClearMenus();
 //    this expression is wrong, where 'return false' from script's GossipSelect
 //    not return menu ID (cleared in this string) and not allow to work with database-based menus
 
@@ -494,6 +492,8 @@ bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
     if (!tmpscript || !tmpscript->pItemUse)
         return false;
 
+	pPlayer->PlayerTalkClass->ClearMenus();
+
     return tmpscript->pItemUse(pPlayer, pItem, targets);
 }
 
@@ -504,6 +504,8 @@ bool GossipSelectItem(Player* pPlayer, Item* pItem, uint32 sender, uint32 action
 
     if (!tmpscript || !tmpscript->pItemUse)
         return false;
+
+	pPlayer->PlayerTalkClass->ClearMenus();
 
     return tmpscript->pGossipSelectItem(pPlayer, pItem, sender, action, targets);
 }
