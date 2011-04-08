@@ -126,6 +126,10 @@ enum
     GO_KELTHUZAD_WATERFALL_DOOR = 181225,                   // exit, open after sapphiron is dead
     GO_KELTHUZAD_EXIT_DOOR      = 181228,
     GO_SAPPHIRON_BIRTH          = 181356,
+    GO_KELTHUZAD_WINDOW_1       = 181402,
+    GO_KELTHUZAD_WINDOW_2       = 181403,
+    GO_KELTHUZAD_WINDOW_3       = 181404,
+    GO_KELTHUZAD_WINDOW_4       = 181405,
 
     // Eyes
     GO_ARAC_EYE_RAMP            = 181212,
@@ -279,9 +283,14 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         std::vector<uint64> m_avuiHeiganTraps[MAX_HEIGAN_TRAP_AREAS];
 
         uint64 m_uiSapphironBirthGUID;
+        uint64 m_uiKelthuzadWindow1GUID;
+        uint64 m_uiKelthuzadWindow2GUID;
+        uint64 m_uiKelthuzadWindow3GUID;
+        uint64 m_uiKelthuzadWindow4GUID;
 
         uint64 m_uiKelthuzadDoorGUID;
         uint64 m_uiKelthuzadExitDoorGUID;
+
 
         float m_fChamberCenterX;
         float m_fChamberCenterY;
