@@ -1481,7 +1481,7 @@ struct MANGOS_DLL_DECL npc_whyrmrest_skytalonAI : public ScriptedAI
     {
         Active = false;
         seated = false;
-        ownerGUID = 0;
+        ownerGUID = ObjectGuid();
         StartTimer = 500;
         SeatTimer = 2000;
         ownerGUID = m_creature->GetCreatorGuid();
