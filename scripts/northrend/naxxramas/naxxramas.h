@@ -9,34 +9,35 @@ enum
 {
     MAX_ENCOUNTER               = 16,
 
+    // A few instance-script related texts
+    SAY_THADDIUS_GREET          = -1533029,
     // Kel'Thuzad's taunts after killing Wing Bosses
     SAY_KELTHUZAD_TAUNT1        = -1533090,
     SAY_KELTHUZAD_TAUNT2        = -1533091,
     SAY_KELTHUZAD_TAUNT3        = -1533092,
     SAY_KELTHUZAD_TAUNT4        = -1533093,
-    SAY_MR_BIGGLESWORTH         = -1533089,
 
-    TYPE_ANUB_REKHAN            = 1,
-    TYPE_FAERLINA               = 2,
-    TYPE_MAEXXNA                = 3,
+    TYPE_ANUB_REKHAN            = 0,
+    TYPE_FAERLINA               = 1,
+    TYPE_MAEXXNA                = 2,
 
-    TYPE_NOTH                   = 4,
-    TYPE_HEIGAN                 = 5,
-    TYPE_LOATHEB                = 6,
+    TYPE_NOTH                   = 3,
+    TYPE_HEIGAN                 = 4,
+    TYPE_LOATHEB                = 5,
 
-    TYPE_RAZUVIOUS              = 7,
-    TYPE_GOTHIK                 = 8,
-    TYPE_FOUR_HORSEMEN          = 9,
+    TYPE_RAZUVIOUS              = 6,
+    TYPE_GOTHIK                 = 7,
+    TYPE_FOUR_HORSEMEN          = 8,
 
-    TYPE_PATCHWERK              = 10,
-    TYPE_GROBBULUS              = 11,
-    TYPE_GLUTH                  = 12,
-    TYPE_THADDIUS               = 13,
+    TYPE_PATCHWERK              = 9,
+    TYPE_GROBBULUS              = 10,
+    TYPE_GLUTH                  = 11,
+    TYPE_THADDIUS               = 12,
 
-    TYPE_SAPPHIRON              = 14,
-    TYPE_KELTHUZAD              = 15,
+    TYPE_SAPPHIRON              = 13,
+    TYPE_KELTHUZAD              = 14,
 
-    TYPE_UNDYING_FAILED         = 16,                       // Achievements Undying and Immortal, needs to be saved to database
+    TYPE_UNDYING_FAILED         = 15,                       // Achievements Undying and Immortal, needs to be saved to database
 
     MAX_HEIGAN_TRAP_AREAS       = 4,
     TYPE_MAX_HEIGAN_TRAPS_1     = 18,
@@ -59,6 +60,7 @@ enum
     NPC_THADDIUS                = 15928,
     NPC_STALAGG                 = 15929,
     NPC_FEUGEN                  = 15930,
+    NPC_TESLA_COIL              = 16218,
 
     NPC_ZELIEK                  = 16063,
     NPC_THANE                   = 16064,
@@ -66,7 +68,6 @@ enum
     NPC_RIVENDARE               = 30549,
 
     NPC_KELTHUZAD               = 15990,
-    NPC_BIGGLESWORTH            = 16998,
 
     // Faerlina
     NPC_NAXXRAMAS_FOLLOWER      = 16505,
@@ -119,13 +120,12 @@ enum
     GO_CONS_PATH_EXIT_DOOR      = 181123,
     GO_CONS_GLUT_EXIT_DOOR      = 181120,
     GO_CONS_THAD_DOOR           = 181121,                   // Thaddius enc door
-    GO_TESLA_COIL_FEUGEN        = 181477,                   // tesla coil gameobjects for feugen/stalagg fights
-    GO_TESLA_COIL_STALAGG       = 181478,
+    GO_CONS_NOX_TESLA_FEUGEN    = 181477,
+    GO_CONS_NOX_TESLA_STALAGG   = 181478,
 
     // Frostwyrm Lair
     GO_KELTHUZAD_WATERFALL_DOOR = 181225,                   // exit, open after sapphiron is dead
     GO_KELTHUZAD_EXIT_DOOR      = 181228,
-    GO_SAPPHIRON_BIRTH          = 181356,
 
     // Eyes
     GO_ARAC_EYE_RAMP            = 181212,
@@ -142,8 +142,9 @@ enum
     AREATRIGGER_FROSTWYRM       = 4120,                     // not needed here, but AT to be scripted
     AREATRIGGER_KELTHUZAD       = 4112,
     AREATRIGGER_GOTHIK          = 4116,
+    AREATRIGGER_THADDIUS_DOOR   = 4113,
 
-    // Achievement related
+    // Achievement-related
     ACHIEV_START_PATCHWERK_ID   = 10286,
 
     ACHIEV_CRIT_SAFETY_DANCE_N  = 7264,                     // Heigan, achievs 1996, 2139
@@ -190,7 +191,7 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
         void OnCreatureCreate(Creature* pCreature);
         void OnObjectCreate(GameObject* pGo);
-        void OnCreatureDeath(Creature* pCreature);
+
         void OnPlayerDeath(Player* pPlayer);
 
         void SetData(uint32 uiType, uint32 uiData);
@@ -212,11 +213,13 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         // Heigan
         uint64 GetHeiganTrapData64(uint8 uiAreaIndex, uint32 uiIndex);
 
+        // thaddius
+        void GetThadTeslaCreatures(std::list<uint64> &lList){ lList = m_lThadTeslaCoilList; };
+
         // kel
         void SetChamberCenterCoords(float fX, float fY, float fZ);
         void GetChamberCenterCoords(float &fX, float &fY, float &fZ) { fX = m_fChamberCenterX; fY = m_fChamberCenterY; fZ = m_fChamberCenterZ; }
         void DoTaunt();
-        Creature* GetRealOrFakeKel(Unit* pUnit);
 
     protected:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
@@ -244,14 +247,16 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiThaddiusGUID;
         uint64 m_uiStalaggGUID;
         uint64 m_uiFeugenGUID;
-        uint64 m_uiTeslaCoilStalaggGUID;
-        uint64 m_uiTeslaCoilFeugenGUID;
 
         uint64 m_uiKelthuzadGUID;
 
         uint64 m_uiPathExitDoorGUID;
         uint64 m_uiGlutExitDoorGUID;
+
         uint64 m_uiThadDoorGUID;
+        std::list<uint64> m_lThadTeslaCoilList;
+        uint64 m_uiThadNoxTeslaFeugenGUID;
+        uint64 m_uiThadNoxTeslaStalaggGUID;
 
         uint64 m_uiAnubDoorGUID;
         uint64 m_uiAnubGateGUID;
@@ -277,8 +282,6 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiHeigExitDoorGUID;
         uint64 m_uiLoathebDoorGUID;
         std::vector<uint64> m_avuiHeiganTraps[MAX_HEIGAN_TRAP_AREAS];
-
-        uint64 m_uiSapphironBirthGUID;
 
         uint64 m_uiKelthuzadDoorGUID;
         uint64 m_uiKelthuzadExitDoorGUID;

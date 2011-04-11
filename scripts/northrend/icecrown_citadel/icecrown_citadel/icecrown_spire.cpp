@@ -110,7 +110,7 @@ struct MANGOS_DLL_DECL mob_frost_giantAI : public BSWScriptedAI
     void JustDied(Unit *killer)
     {
         if(!pInstance) return;
-        if (killer->GetTypeId() == TYPEID_PLAYER)
+        if (killer->GetTypeId() == TYPEID_PLAYER || killer->GetCharmerOrOwner()->GetTypeId() == TYPEID_PLAYER )
               pInstance->SetData(TYPE_FLIGHT_WAR, DONE);
     }
 
