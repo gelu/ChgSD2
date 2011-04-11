@@ -142,14 +142,14 @@ struct MANGOS_DLL_DECL npc_air_force_botsAI : public ScriptedAI
         }
 
         if (!m_pSpawnAssoc)
-            error_db_log("SD2: Creature template entry %u has ScriptName npc_air_force_bots, but it's not handled by that script", pCreature->GetEntry());
+            error_db_log("½Å±¾¿â£º Creature template entry %u has ScriptName npc_air_force_bots, but it's not handled by that script", pCreature->GetEntry());
         else
         {
             CreatureInfo const* spawnedTemplate = GetCreatureTemplateStore(m_pSpawnAssoc->m_uiSpawnedCreatureEntry);
 
             if (!spawnedTemplate)
             {
-                error_db_log("SD2: Creature template entry %u does not exist in DB, which is required by npc_air_force_bots", m_pSpawnAssoc->m_uiSpawnedCreatureEntry);
+                error_db_log("½Å±¾¿â£º Creature template entry %u does not exist in DB, which is required by npc_air_force_bots", m_pSpawnAssoc->m_uiSpawnedCreatureEntry);
                 m_pSpawnAssoc = NULL;
                 return;
             }
@@ -169,7 +169,7 @@ struct MANGOS_DLL_DECL npc_air_force_botsAI : public ScriptedAI
             m_uiSpawnedGUID = pSummoned->GetGUID();
         else
         {
-            error_db_log("SD2: npc_air_force_bots: wasn't able to spawn creature %u", m_pSpawnAssoc->m_uiSpawnedCreatureEntry);
+            error_db_log("½Å±¾¿â£º npc_air_force_bots: wasn't able to spawn creature %u", m_pSpawnAssoc->m_uiSpawnedCreatureEntry);
             m_pSpawnAssoc = NULL;
         }
 
@@ -771,7 +771,7 @@ void npc_doctorAI::UpdateAI(const uint32 diff)
                 case DOCTOR_ALLIANCE: patientEntry = AllianceSoldierId[urand(0, 2)]; break;
                 case DOCTOR_HORDE:    patientEntry = HordeSoldierId[urand(0, 2)]; break;
                 default:
-                    error_log("SD2: Invalid entry for Triage doctor. Please check your database");
+                    error_log("½Å±¾¿â£º Invalid entry for Triage doctor. Please check your database");
                     return;
             }
 

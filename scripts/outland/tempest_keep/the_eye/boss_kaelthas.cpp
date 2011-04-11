@@ -379,7 +379,7 @@ struct MANGOS_DLL_DECL boss_kaelthasAI : public ScriptedAI
 
         if (!m_auiAdvisorGuid[0] || !m_auiAdvisorGuid[1] || !m_auiAdvisorGuid[2] || !m_auiAdvisorGuid[3])
         {
-            error_log("SD2: Kael'Thas One or more advisors missing, Skipping Phases 1-3");
+            error_log("½Å±¾¿â£º Kael'Thas One or more advisors missing, Skipping Phases 1-3");
 
             DoScriptText(SAY_PHASE4_INTRO2, m_creature);
 
@@ -721,7 +721,7 @@ struct MANGOS_DLL_DECL boss_kaelthasAI : public ScriptedAI
                         Creature* pAdvisor = m_creature->GetMap()->GetCreature(m_auiAdvisorGuid[i]);
 
                         if (!pAdvisor)
-                            error_log("SD2: Kael'Thas Advisor %u does not exist. Possibly despawned? Incorrectly Killed?", i);
+                            error_log("½Å±¾¿â£º Kael'Thas Advisor %u does not exist. Possibly despawned? Incorrectly Killed?", i);
                         else
                         {
                             if (advisorbase_ai* pAdvisorAI = dynamic_cast<advisorbase_ai*>(pAdvisor->AI()))
@@ -818,7 +818,7 @@ struct MANGOS_DLL_DECL boss_kaelthasAI : public ScriptedAI
                         if (m_creature->getThreatManager().getThreatList().size() >= 2)
                             for (uint32 i = 0; i < 3; ++i)
                         {
-                            debug_log("SD2: Kael'Thas mind control not supported.");
+                            debug_log("½Å±¾¿â£º Kael'Thas mind control not supported.");
                             //DoCastSpellIfCan(pUnit, SPELL_MIND_CONTROL);
                         }
 

@@ -147,17 +147,17 @@ bool instance_black_temple::CanPreMotherDoorOpen()
 {
     if (m_auiEncounter[TYPE_SHADE] == DONE && m_auiEncounter[TYPE_GOREFIEND] == DONE && m_auiEncounter[TYPE_BLOODBOIL] == DONE && m_auiEncounter[TYPE_RELIQUIARY] == DONE)
     {
-        debug_log("SD2: Black Temple: door to Mother Shahraz can open");
+        debug_log("½Å±¾¿â£º Black Temple: door to Mother Shahraz can open");
         return true;
     }
 
-    debug_log("SD2: Black Temple: Door data to Mother Shahraz requested, cannot open yet (Encounter data: %u %u %u %u)",m_auiEncounter[2],m_auiEncounter[3],m_auiEncounter[4],m_auiEncounter[5]);
+    debug_log("½Å±¾¿â£º Black Temple: Door data to Mother Shahraz requested, cannot open yet (Encounter data: %u %u %u %u)",m_auiEncounter[2],m_auiEncounter[3],m_auiEncounter[4],m_auiEncounter[5]);
     return false;
 }
 
 void instance_black_temple::SetData(uint32 uiType, uint32 uiData)
 {
-    debug_log("SD2: Instance Black Temple: SetData received for type %u with data %u",uiType,uiData);
+    debug_log("½Å±¾¿â£º Instance Black Temple: SetData received for type %u with data %u",uiType,uiData);
 
     switch(uiType)
     {
@@ -202,7 +202,7 @@ void instance_black_temple::SetData(uint32 uiType, uint32 uiData)
             break;
         case TYPE_ILLIDAN:    m_auiEncounter[uiType] = uiData; break;
         default:
-            error_log("SD2: Instance Black Temple: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
+            error_log("½Å±¾¿â£º Instance Black Temple: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             break;
     }
 

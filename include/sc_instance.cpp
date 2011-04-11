@@ -20,7 +20,7 @@ void ScriptedInstance::DoUseDoorOrButton(uint64 uiGuid, uint32 uiWithRestoreTime
                 pGo->ResetDoorOrButton();
         }
         else
-            error_log("SD2: Script call DoUseDoorOrButton, but gameobject entry %u is type %u.",pGo->GetEntry(),pGo->GetGoType());
+            error_log("½Å±¾¿â£º Script call DoUseDoorOrButton, but gameobject entry %u is type %u.",pGo->GetEntry(),pGo->GetGoType());
     }
 }
 
@@ -54,7 +54,7 @@ void ScriptedInstance::DoUpdateWorldState(uint32 uiStateId, uint32 uiStateData)
         }
     }
     else
-        debug_log("SD2: DoUpdateWorldState attempt send data but no players in map.");
+        debug_log("½Å±¾¿â£º DoUpdateWorldState attempt send data but no players in map.");
 }
 
 void ScriptedInstance::DestroyItemFromAllPlayers(uint32 uiItemId)
@@ -71,7 +71,7 @@ void ScriptedInstance::DestroyItemFromAllPlayers(uint32 uiItemId)
         }
 	}
 	else
-		error_log("SD2: DestroyItemFromAllPlayers attempt to remove item: %u but no players in map.", uiItemId);
+		error_log("½Å±¾¿â£º DestroyItemFromAllPlayers attempt to remove item: %u but no players in map.", uiItemId);
 }
 
 void ScriptedInstance::DoCompleteAchievement(uint32 uiAchievmentId)
@@ -87,7 +87,7 @@ void ScriptedInstance::DoCompleteAchievement(uint32 uiAchievmentId)
         }
     }
     else
-        debug_log("SD2: DoCompleteAchievement attempt set data but no players in map.");
+        debug_log("½Å±¾¿â£º DoCompleteAchievement attempt set data but no players in map.");
 }
 
 Player* ScriptedInstance::GetPlayerInMap(bool bOnlyAlive /*=false*/, bool bCanBeGamemaster /*=true*/)
@@ -117,6 +117,6 @@ void ScriptedInstance::DoStartTimedAchievement(AchievementCriteriaTypes tCriteri
         }
     }
     else
-        debug_log("SD2: DoStartTimedAchievement attempt start achievements but no players in map.");
+        debug_log("½Å±¾¿â£º DoStartTimedAchievement attempt start achievements but no players in map.");
 
 }

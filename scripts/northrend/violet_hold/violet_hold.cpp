@@ -272,7 +272,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
                     }
                 break;
             default:
-                debug_log("SD2: The Violet Hold: Unhandled dragon entry %u!", m_creature->GetEntry());
+                debug_log("½Å±¾¿â£º The Violet Hold: Unhandled dragon entry %u!", m_creature->GetEntry());
                 break;
         }
     }
@@ -342,7 +342,7 @@ struct MANGOS_DLL_DECL mob_vh_dragonsAI : public ScriptedAI
             case NPC_AZURE_SPELLBREAKER:
                 break;
             default:
-                debug_log("SD2: The Violet Hold: Unhandled dragon entry %u!", m_creature->GetEntry());
+                debug_log("½Å±¾¿â£º The Violet Hold: Unhandled dragon entry %u!", m_creature->GetEntry());
                 break;
         }
         DoMeleeAttackIfReady();
@@ -563,7 +563,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                 if (!m_creature->IsNonMeleeSpellCasted(false))
                 {
                     m_uiNextPortal_Timer = 5000;
-                    debug_log("SD2: npc_time_rift: not casting anylonger, i need to die.");
+                    debug_log("½Å±¾¿â£º npc_time_rift: not casting anylonger, i need to die.");
                     m_creature->ForcedDespawn();
                 }
                 break;
@@ -578,7 +578,7 @@ struct MANGOS_DLL_DECL npc_violet_portalAI : public ScriptedAI
                     if(!IsThereNearElite(150.0f))
                     {
                         m_uiNextPortal_Timer = 5000;
-                        debug_log("SD2: npc_time_rift: No elite, i need to die.");
+                        debug_log("½Å±¾¿â£º npc_time_rift: No elite, i need to die.");
                         m_creature->ForcedDespawn();
                     }
                     Check_Timer = 1000;

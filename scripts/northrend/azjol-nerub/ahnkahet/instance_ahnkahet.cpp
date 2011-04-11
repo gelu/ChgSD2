@@ -87,7 +87,7 @@ struct MANGOS_DLL_DECL instance_ahnkahet : public ScriptedInstance
 
     void SetData(uint32 uiType, uint32 uiData)
     {
-        debug_log("SD2: Instance Ahn'Kahet: SetData received for type %u with data %u",uiType,uiData);
+        debug_log("½Å±¾¿â£º Instance Ahn'Kahet: SetData received for type %u with data %u",uiType,uiData);
 
         switch(uiType)
         {
@@ -122,7 +122,7 @@ struct MANGOS_DLL_DECL instance_ahnkahet : public ScriptedInstance
                 m_auiEncounter[4] = uiData;
                 break;
             default:
-                error_log("SD2: Instance Ahn'Kahet: ERROR SetData = %u for type %u does not exist/not implemented.",uiType,uiData);
+                error_log("½Å±¾¿â£º Instance Ahn'Kahet: ERROR SetData = %u for type %u does not exist/not implemented.",uiType,uiData);
                 break;
         }
 

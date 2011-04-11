@@ -1150,7 +1150,7 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
 
     if (Phase == PHASE_ROMULO)
     {
-        error_log("SD2: boss_julianneAI: cannot take damage in PHASE_ROMULO, why was i here?");
+        error_log("½Å±¾¿â£º boss_julianneAI: cannot take damage in PHASE_ROMULO, why was i here?");
         damage = 0;
         return;
     }
@@ -1189,7 +1189,7 @@ void boss_julianneAI::DamageTaken(Unit* done_by, uint32 &damage)
         }
     }
 
-    error_log("SD2: boss_julianneAI: DamageTaken reach end of code, that should not happen.");
+    error_log("½Å±¾¿â£º boss_julianneAI: DamageTaken reach end of code, that should not happen.");
 }
 
 void boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
@@ -1251,7 +1251,7 @@ void boss_romuloAI::DamageTaken(Unit* done_by, uint32 &damage)
         }
     }
 
-    error_log("SD2: boss_romuloAI: DamageTaken reach end of code, that should not happen.");
+    error_log("½Å±¾¿â£º boss_romuloAI: DamageTaken reach end of code, that should not happen.");
 }
 
 void boss_julianneAI::UpdateAI(const uint32 diff)

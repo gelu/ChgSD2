@@ -53,14 +53,14 @@ void LoadDatabase()
 
     if (strSD2DBinfo.empty())
     {
-        error_log("SD2: Missing Scriptdev2 database info from configuration file. Load database aborted.");
+        error_log("脚本库：无法从配置文件中加载数据库信息，请确认您的配置文件是有效的！ ");
         return;
     }
 
     //Initialize connection to DB
     if (SD2Database.Initialize(strSD2DBinfo.c_str()))
     {
-        outstring_log("SD2: ScriptDev2 database at %s initialized.", strSD2DBinfo.c_str());
+        outstring_log("脚本库： 初始化脚本库 ：%s 。", strSD2DBinfo.c_str());
         outstring_log("");
 
         pSystemMgr.LoadVersion();
@@ -72,7 +72,7 @@ void LoadDatabase()
     }
     else
     {
-        error_log("SD2: Unable to connect to Database. Load database aborted.");
+        error_log("脚本库： 连接数据库失败！ 脚本库加载已终止。 ");
         return;
     }
 
@@ -114,20 +114,20 @@ void InitScriptLibrary()
 
     //Get configuration file
     if (!SD2Config.SetSource(_SCRIPTDEV2_CONFIG))
-        error_log("SD2: Unable to open configuration file. Database will be unaccessible. Configuration values will use default.");
+        error_log("脚本库： 打开配置文件失败，系统将使用默认配置！ ");
     else
-        outstring_log("SD2: Using configuration file %s",_SCRIPTDEV2_CONFIG);
+        outstring_log("脚本库： 使用配置文件 %s",_SCRIPTDEV2_CONFIG);
 
     //Check config file version
     if (SD2Config.GetIntDefault("ConfVersion", 0) != SD2_CONF_VERSION)
-        error_log("SD2: Configuration file version doesn't match expected version. Some config variables may be wrong or missing.");
+        error_log("脚本库： 配置文件版本不正确，可能过期了？一些功能将无法使用或不正常。 ");
 
     outstring_log("");
 
     //Load database (must be called after SD2Config.SetSource).
     LoadDatabase();
 
-    outstring_log("SD2: Loading C++ scripts");
+    outstring_log("脚本库： 加载C++脚本数据 ");
     barGoLink bar(1);
     bar.step();
     outstring_log("");
@@ -142,7 +142,7 @@ void InitScriptLibrary()
     AddScripts();
 	SD2P_NAMESPACE::LoadScripts();
 
-    outstring_log(">> Loaded %i C++ Scripts.", num_sc_scripts);
+    outstring_log(">> 加载了 %i 个脚本数据", num_sc_scripts);
 }
 
 //*********************************
@@ -152,13 +152,13 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
 {
     if (!pSource)
     {
-        error_log("SD2: DoScriptText entry %i, invalid Source pointer.", iTextEntry);
+        error_log("脚本库： DoScriptText entry %i, invalid Source pointer.", iTextEntry);
         return;
     }
 
     if (iTextEntry >= 0)
     {
-        error_log("SD2: DoScriptText with source entry %u (TypeId=%u, guid=%u) attempts to process text entry %i, but text entry must be negative.",
+        error_log("脚本库： DoScriptText with source entry %u (TypeId=%u, guid=%u) attempts to process text entry %i, but text entry must be negative.",
             pSource->GetEntry(), pSource->GetTypeId(), pSource->GetGUIDLow(), iTextEntry);
 
         return;
@@ -168,13 +168,13 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
 
     if (!pData)
     {
-        error_log("SD2: DoScriptText with source entry %u (TypeId=%u, guid=%u) could not find text entry %i.",
+        error_log("脚本库： DoScriptText with source entry %u (TypeId=%u, guid=%u) could not find text entry %i.",
             pSource->GetEntry(), pSource->GetTypeId(), pSource->GetGUIDLow(), iTextEntry);
 
         return;
     }
 
-    debug_log("SD2: DoScriptText: text entry=%i, Sound=%u, Type=%u, Language=%u, Emote=%u",
+    debug_log("脚本库： DoScriptText: text entry=%i, Sound=%u, Type=%u, Language=%u, Emote=%u",
         iTextEntry, pData->uiSoundId, pData->uiType, pData->uiLanguage, pData->uiEmote);
 
     if (pData->uiSoundId)
@@ -182,7 +182,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
         if (GetSoundEntriesStore()->LookupEntry(pData->uiSoundId))
             pSource->PlayDirectSound(pData->uiSoundId);
         else
-            error_log("SD2: DoScriptText entry %i tried to process invalid sound id %u.", iTextEntry, pData->uiSoundId);
+            error_log("脚本库： DoScriptText entry %i tried to process invalid sound id %u.", iTextEntry, pData->uiSoundId);
     }
 
     if (pData->uiEmote)
@@ -190,7 +190,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
         if (pSource->GetTypeId() == TYPEID_UNIT || pSource->GetTypeId() == TYPEID_PLAYER)
             ((Unit*)pSource)->HandleEmote(pData->uiEmote);
         else
-            error_log("SD2: DoScriptText entry %i tried to process emote for invalid TypeId (%u).", iTextEntry, pSource->GetTypeId());
+            error_log("脚本库： DoScriptText entry %i tried to process emote for invalid TypeId (%u).", iTextEntry, pSource->GetTypeId());
     }
 
     switch(pData->uiType)
@@ -212,7 +212,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                 pSource->MonsterWhisper(iTextEntry, pTarget);
             else
-                error_log("SD2: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
+                error_log("脚本库： DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
 
             break;
         }
@@ -221,7 +221,7 @@ void DoScriptText(int32 iTextEntry, WorldObject* pSource, Unit* pTarget)
             if (pTarget && pTarget->GetTypeId() == TYPEID_PLAYER)
                 pSource->MonsterWhisper(iTextEntry, pTarget, true);
             else
-                error_log("SD2: DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
+                error_log("脚本库： DoScriptText entry %i cannot whisper without target unit (TYPEID_PLAYER).", iTextEntry);
 
             break;
         }
@@ -245,7 +245,7 @@ void Script::RegisterSelf(bool bReportError)
     else
     {
         //if (bReportError)
-        //    error_db_log("SD2: Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
+        //    error_db_log("脚本库： Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
 
         m_scriptStorage.insert(std::make_pair(Name.c_str(), this));
     }
@@ -289,7 +289,7 @@ bool GOGossipHello(Player *pPlayer, GameObject *pGo)
 MANGOS_DLL_EXPORT
 bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
-    debug_log("SD2: Gossip selection, sender: %u, action: %u", uiSender, uiAction);
+    //debug_log("脚本库： Gossip selection, sender: %u, action: %u", uiSender, uiAction);
 
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
 
@@ -306,7 +306,7 @@ bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 
 MANGOS_DLL_EXPORT
 bool GOGossipSelect(Player *pPlayer, GameObject *pGo, uint32 sender, uint32 action)
 {
-    debug_log("SD2: GO Gossip selection, sender: %u, action: %u", sender, action);
+    //debug_log("脚本库： GO Gossip selection, sender: %u, action: %u", sender, action);
 
     Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
 
@@ -321,7 +321,7 @@ bool GOGossipSelect(Player *pPlayer, GameObject *pGo, uint32 sender, uint32 acti
 MANGOS_DLL_EXPORT
 bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction, const char* sCode)
 {
-    debug_log("SD2: Gossip selection with code, sender: %u, action: %u", uiSender, uiAction);
+    //debug_log("脚本库： Gossip selection with code, sender: %u, action: %u", uiSender, uiAction);
 
     Script *tmpscript = m_scripts[pCreature->GetScriptId()];
 
@@ -336,7 +336,7 @@ bool GossipSelectWithCode(Player* pPlayer, Creature* pCreature, uint32 uiSender,
 MANGOS_DLL_EXPORT
 bool GOGossipSelectWithCode(Player *pPlayer, GameObject *pGo, uint32 sender, uint32 action, const char* sCode)
 {
-    debug_log("SD2: GO Gossip selection with code, sender: %u, action: %u", sender, action);
+    //debug_log("脚本库： GO Gossip selection with code, sender: %u, action: %u", sender, action);
 
     Script *tmpscript = m_scripts[pGo->GetGOInfo()->ScriptId];
 

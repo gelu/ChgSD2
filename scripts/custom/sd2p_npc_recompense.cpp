@@ -197,7 +197,7 @@ namespace
         if (pPlayer->HasItemCount(pRec->m_Entry, pItem->GetMaxStackCount(), true))
         {
             oss << "　你已经拥有该物品　[" << GetItemName(pRec->m_Entry) << "]　";
-            pCreature ->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
+            pCreature ->MonsterSay(oss.str().c_str(), LANG_UNIVERSAL);
             return;
         }
 
@@ -207,7 +207,7 @@ namespace
             if (!pPlayer->HasItemCount(It->m_Entry, It->m_Count))
             {
                 oss << "　你没有足够的兑换物品　[" << GetItemName(It->m_Entry) << "]　";
-                pCreature->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
+                pCreature->MonsterSay(oss.str().c_str(), LANG_UNIVERSAL);
                 return;
             }
         }
@@ -218,16 +218,16 @@ namespace
         {
             if (!AddItem(pPlayer, pRec->m_Entry, 1))
             {
-                pCreature->MonsterSay("　你已经不能再拿更多的这种物品了!　", pPlayer->GetGUID());
+				pCreature->MonsterSay("　你已经不能再拿更多的这种物品了!　", LANG_UNIVERSAL);
                 return;
             }
 
 			oss << "　恭喜你获得了物品　[" << GetItemName(pRec->m_Entry) << "]　";
-            pCreature->MonsterSay(oss.str().c_str(), pPlayer->GetGUID());
+            pCreature->MonsterSay(oss.str().c_str(), LANG_UNIVERSAL);
         }
         else
         {
-            pCreature->MonsterSay("　非常遗憾的告诉您，您输掉了！但请别灰心，加油合成，总有一天会成功的~~~!　", pPlayer->GetGUID());
+            pCreature->MonsterSay("　非常遗憾的告诉您，您输掉了！但请别灰心，加油合成，总有一天会成功的~~~!　", LANG_UNIVERSAL);
         }
 
         // Retrait des items servant d'echange.
@@ -291,7 +291,7 @@ bool GossipHello_npc_recompense(Player * pPlayer, Creature * pCreature)
     if (pPlayer->isInCombat())
     {
         pPlayer->CLOSE_GOSSIP_MENU();
-        pCreature->MonsterSay(" 　战斗中不能使用合成功能!", pPlayer->GetGUID());
+        pCreature->MonsterSay("　战斗中不能使用合成功能!", LANG_UNIVERSAL);
         return true;
     }
 

@@ -169,7 +169,7 @@ struct MANGOS_DLL_DECL instance_dark_portal : public ScriptedInstance
                 {
                     if (uiData == IN_PROGRESS)
                     {
-                        debug_log("SD2: Instance Dark Portal: Starting event.");
+                        debug_log("½Å±¾¿â£º Instance Dark Portal: Starting event.");
                         InitWorldState();
                         m_auiEncounter[1] = IN_PROGRESS;
                         m_uiNextPortal_Timer = 15000;
@@ -178,7 +178,7 @@ struct MANGOS_DLL_DECL instance_dark_portal : public ScriptedInstance
                     if (uiData == DONE)
                     {
                         // this may be completed further out in the post-event
-                        debug_log("SD2: Instance Dark Portal: Event completed.");
+                        debug_log("½Å±¾¿â£º Instance Dark Portal: Event completed.");
 
                         Map::PlayerList const& players = instance->GetPlayers();
 
@@ -249,12 +249,12 @@ struct MANGOS_DLL_DECL instance_dark_portal : public ScriptedInstance
         // uncomment the following if something doesn't work correctly, otherwise just delete
         // pSource->UpdateAllowedPositionZ(x, y, z);
 
-        debug_log("SD2: Instance Dark Portal: Summoning rift boss uiEntry %u.", uiEntry);
+        debug_log("½Å±¾¿â£º Instance Dark Portal: Summoning rift boss uiEntry %u.", uiEntry);
 
         if (Creature* pSummoned = pSource->SummonCreature(uiEntry, x, y, z, pSource->GetOrientation(), TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 600000))
             return pSummoned;
 
-        debug_log("SD2: Instance Dark Portal: what just happened there? No boss, no loot, no fun...");
+        debug_log("½Å±¾¿â£º Instance Dark Portal: what just happened there? No boss, no loot, no fun...");
         return NULL;
     }
 
@@ -267,7 +267,7 @@ struct MANGOS_DLL_DECL instance_dark_portal : public ScriptedInstance
             if (uiTmp >= m_uiCurrentRiftId)
                 ++uiTmp;
 
-            debug_log("SD2: Instance Dark Portal: Creating Time Rift at locationId %i (old locationId was %u).", uiTmp, m_uiCurrentRiftId);
+            debug_log("½Å±¾¿â£º Instance Dark Portal: Creating Time Rift at locationId %i (old locationId was %u).", uiTmp, m_uiCurrentRiftId);
 
             m_uiCurrentRiftId = uiTmp;
 

@@ -116,7 +116,7 @@ struct MANGOS_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
 
                             if (ChannelerGUID.empty())
                             {
-                                debug_log("SD2: Instance Magtheridon: Channeler GUID list are empty.");
+                                debug_log("½Å±¾¿â£º Instance Magtheridon: Channeler GUID list are empty.");
                                 break;
                             }
 
@@ -231,7 +231,7 @@ struct MANGOS_DLL_DECL instance_magtheridons_lair : public ScriptedInstance
 
         if (!target)
         {
-            debug_log("SD2: Instance Magtheridon: AttackNearestTarget failed. No player.");
+            debug_log("½Å±¾¿â£º Instance Magtheridon: AttackNearestTarget failed. No player.");
             return;
         }
         pCreature->AI()->AttackStart(target);

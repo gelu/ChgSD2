@@ -297,7 +297,7 @@ void LoadDatabase(void)
 
     if (pResult)
     {
-        outstring_log("SD2: ERREUR >> %u objects incorrectement configures...", pResult->GetRowCount());
+        outstring_log("½Å±¾¿â£º ERREUR >> %u objects incorrectement configures...", pResult->GetRowCount());
         do
         {
             Field * pFields = pResult->Fetch();

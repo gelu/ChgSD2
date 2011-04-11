@@ -84,7 +84,7 @@ struct MANGOS_DLL_DECL mob_dragonflayer_forge_masterAI : public ScriptedAI
         if (!lGOList.empty())
         {
             if (lGOList.size() != MAX_FORGE)
-                error_log("SD2: mob_dragonflayer_forge_master expected %u in lGOList, but does not match.", MAX_FORGE);
+                error_log("½Å±¾¿â£º mob_dragonflayer_forge_master expected %u in lGOList, but does not match.", MAX_FORGE);
 
             lGOList.sort(ObjectDistanceOrder(m_creature));
 

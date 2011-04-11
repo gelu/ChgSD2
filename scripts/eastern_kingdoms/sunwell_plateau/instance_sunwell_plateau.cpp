@@ -294,14 +294,14 @@ struct MANGOS_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
 
     void EjectPlayer(Player* pPlayer)
     {
-        debug_log("SD2: Ejecting Player %s from Spectral Realm", pPlayer->GetName());
+        debug_log("½Å±¾¿â£º Ejecting Player %s from Spectral Realm", pPlayer->GetName());
 
         // Put player back in Kalecgos(Dragon)'s threat list
         if (Creature* pKalecgos = instance->GetCreature(m_uiKalecgos_DragonGUID))
         {
             if (pKalecgos->isAlive())
             {
-                debug_log("SD2: Adding %s in Kalecgos' threatlist", pPlayer->GetName());
+                debug_log("½Å±¾¿â£º Adding %s in Kalecgos' threatlist", pPlayer->GetName());
                 pKalecgos->AddThreat(pPlayer);
             }
         }
@@ -312,7 +312,7 @@ struct MANGOS_DLL_DECL instance_sunwell_plateau : public ScriptedInstance
 			if (pSath->isAlive()&&pSath->getVictim()==pPlayer)
             {  
                 pSath->RemoveUnitFromHostileRefManager(pPlayer);
-                debug_log("SD2: Deleting %s from Sathrovarr's threatlist", pPlayer->GetName()); 
+                debug_log("½Å±¾¿â£º Deleting %s from Sathrovarr's threatlist", pPlayer->GetName()); 
             }
         }
 

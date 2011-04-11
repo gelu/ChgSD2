@@ -139,7 +139,7 @@ struct MANGOS_DLL_DECL boss_fathomlord_karathressAI : public ScriptedAI
                 uiSpell = SPELL_POWER_OF_CARIBDIS;
                 break;
             default:
-                error_log("SD2: invalid advisor (id %u) for karathress!", uiAdvisor);
+                error_log("½Å±¾¿â£º invalid advisor (id %u) for karathress!", uiAdvisor);
                 break;
         }
 

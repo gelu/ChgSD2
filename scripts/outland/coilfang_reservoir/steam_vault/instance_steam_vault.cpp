@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL instance_steam_vault : public ScriptedInstance
                             pGo->SetGoState(GO_STATE_ACTIVE);
                     }
 
-                    debug_log("SD2: Instance Steamvault: Access panel used.");
+                    debug_log("½Å±¾¿â£º Instance Steamvault: Access panel used.");
                 }
                 m_auiEncounter[0] = data;
                 break;
@@ -139,7 +139,7 @@ struct MANGOS_DLL_DECL instance_steam_vault : public ScriptedInstance
                             pGo->SetGoState(GO_STATE_ACTIVE);
                     }
 
-                    debug_log("SD2: Instance Steamvault: Access panel used.");
+                    debug_log("½Å±¾¿â£º Instance Steamvault: Access panel used.");
                 }
                 m_auiEncounter[1] = data;
                 break;

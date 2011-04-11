@@ -713,7 +713,7 @@ bool instance_naxxramas::IsInRightSideGothArea(Unit* pUnit)
     if (GameObject* pCombatGate = instance->GetGameObject(m_uiGothCombatGateGUID))
         return (pCombatGate->GetPositionY() >= pUnit->GetPositionY());
 
-    error_log("SD2: left/right side check, Gothik combat area failed.");
+    error_log("½Å±¾¿â£º left/right side check, Gothik combat area failed.");
     return true;
 }
 

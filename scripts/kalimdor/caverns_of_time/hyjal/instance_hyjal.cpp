@@ -172,7 +172,7 @@ struct MANGOS_DLL_DECL instance_mount_hyjal : public ScriptedInstance
                 break;
         }
 
-        debug_log("SD2: Instance Hyjal: Instance data updated for event %u (Data=%u)", uiType, uiData);
+        debug_log("½Å±¾¿â£º Instance Hyjal: Instance data updated for event %u (Data=%u)", uiType, uiData);
 
         if (uiData == DONE)
         {

@@ -314,7 +314,7 @@ struct MANGOS_DLL_DECL npc_time_riftAI : public ScriptedAI
             mRiftWaveCount = 0;
 
         entry = PortalWaves[mWaveId].PortalMob[mRiftWaveCount];
-        debug_log("SD2: npc_time_rift: summoning wave creature (Wave %u, Entry %u).", mRiftWaveCount, entry);
+        debug_log("½Å±¾¿â£º npc_time_rift: summoning wave creature (Wave %u, Entry %u).", mRiftWaveCount, entry);
 
         ++mRiftWaveCount;
 
@@ -343,7 +343,7 @@ struct MANGOS_DLL_DECL npc_time_riftAI : public ScriptedAI
         if (m_creature->IsNonMeleeSpellCasted(false))
             return;
 
-        debug_log("SD2: npc_time_rift: not casting anylonger, i need to die.");
+        debug_log("½Å±¾¿â£º npc_time_rift: not casting anylonger, i need to die.");
         m_creature->SetDeathState(JUST_DIED);
 
         if (m_pInstance->GetData(TYPE_RIFT) == IN_PROGRESS)

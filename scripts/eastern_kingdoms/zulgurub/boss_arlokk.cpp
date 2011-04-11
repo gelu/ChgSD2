@@ -179,7 +179,7 @@ struct MANGOS_DLL_DECL boss_arlokkAI : public ScriptedAI
                         if (m_uiMarkedGUID)
                             m_uiMarkedGUID = 0;
 
-                        error_log("SD2: boss_arlokk could not accuire a new target to mark.");
+                        error_log("½Å±¾¿â£º boss_arlokk could not accuire a new target to mark.");
                     }
                 }
 

@@ -8,11 +8,11 @@
 #include "InstanceData.h"
 #include "Map.h"
 
-#define OUT_SAVE_PVP_DATA             debug_log("SD2: Saving OutdoorPvP Data for Instance %s (Map %d, Instance Id %d)", instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
-#define OUT_SAVE_PVP_DATA_COMPLETE    debug_log("SD2: Saving OutdoorPvP Data for Instance %s (Map %d, Instance Id %d) completed.", instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
-#define OUT_LOAD_PVP_DATA(a)          debug_log("SD2: Loading OutdoorPvP Data for Instance %s (Map %d, Instance Id %d). Input is '%s'", instance->GetMapName(), instance->GetId(), instance->GetInstanceId(), a)
-#define OUT_LOAD_PVP_DATA_COMPLETE    debug_log("SD2: OutdoorPvP Data Load for Instance %s (Map %d, Instance Id: %d) is complete.",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
-#define OUT_LOAD_PVP_DATA_FAIL        error_log("SD2: Unable to load OutdoorPvP Data for Instance %s (Map %d, Instance Id: %d).",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
+#define OUT_SAVE_PVP_DATA             debug_log("½Å±¾¿â£º Saving OutdoorPvP Data for Instance %s (Map %d, Instance Id %d)", instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
+#define OUT_SAVE_PVP_DATA_COMPLETE    debug_log("½Å±¾¿â£º Saving OutdoorPvP Data for Instance %s (Map %d, Instance Id %d) completed.", instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
+#define OUT_LOAD_PVP_DATA(a)          debug_log("½Å±¾¿â£º Loading OutdoorPvP Data for Instance %s (Map %d, Instance Id %d). Input is '%s'", instance->GetMapName(), instance->GetId(), instance->GetInstanceId(), a)
+#define OUT_LOAD_PVP_DATA_COMPLETE    debug_log("½Å±¾¿â£º OutdoorPvP Data Load for Instance %s (Map %d, Instance Id: %d) is complete.",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
+#define OUT_LOAD_PVP_DATA_FAIL        error_log("½Å±¾¿â£º Unable to load OutdoorPvP Data for Instance %s (Map %d, Instance Id: %d).",instance->GetMapName(), instance->GetId(), instance->GetInstanceId())
 
 class MANGOS_DLL_DECL OutdoorPvP : public InstanceData
 {

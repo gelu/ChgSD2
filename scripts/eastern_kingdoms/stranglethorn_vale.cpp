@@ -147,7 +147,7 @@ struct MANGOS_DLL_DECL npc_riggle_bassbaitAI : public ScriptedAI
         // Announce the event max 1 minute after being spawned. But only if Fishing extravaganza is running.
         if (!bEventAnnounced && time(NULL) % 60 == 0 && IsHolidayActive(HOLIDAY_FISHING_EXTRAVAGANZA))
         {
-            debug_log("SD2: npc_riggle_bassbait announce HOLIDAY_FISHING_EXTRAVAGANZA contest");
+            debug_log("½Å±¾¿â£º npc_riggle_bassbait announce HOLIDAY_FISHING_EXTRAVAGANZA contest");
             DoScriptText(SAY_START, m_creature);
             m_creature->SetFlag(UNIT_NPC_FLAGS, UNIT_NPC_FLAG_QUESTGIVER); //Quest&Gossip are now active
             bEventAnnounced = true;
@@ -155,7 +155,7 @@ struct MANGOS_DLL_DECL npc_riggle_bassbaitAI : public ScriptedAI
         // The Event was started (announced) & It was not yet ended & One minute passed & the Fish are gone
         if ( bEventAnnounced && !bEventIsOver && time(NULL) % 60 == 0 && !IsHolidayActive(HOLIDAY_FISHING_EXTRAVAGANZA))
         {
-            debug_log("SD2: npc_riggle_bassbait end HOLIDAY_FISHING_EXTRAVAGANZA contest");
+            debug_log("½Å±¾¿â£º npc_riggle_bassbait end HOLIDAY_FISHING_EXTRAVAGANZA contest");
             DoScriptText(SAY_END, m_creature);
             bEventIsOver = true;
         }

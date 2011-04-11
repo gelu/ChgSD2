@@ -474,7 +474,7 @@ struct MANGOS_DLL_DECL npc_commander_dawnforgeAI : public ScriptedAI
             return true;
         }
 
-        debug_log("SD2: npc_commander_dawnforge event already in progress, need to wait.");
+        debug_log("½Å±¾¿â£º npc_commander_dawnforge event already in progress, need to wait.");
         return false;
     }
 

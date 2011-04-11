@@ -1239,7 +1239,7 @@ struct MANGOS_DLL_DECL npc_unworthy_initiateAI : public ScriptedAI
                         m_creature->CastSpell(m_creature, SPELL_INITIATE_VISUAL, false);
                     }
                     else
-                        error_log("SD2: npc_unworthy_initiate does not have any spell associated with model");
+                        error_log("½Å±¾¿â£º npc_unworthy_initiate does not have any spell associated with model");
 
                     m_uiPhase = PHASE_ACTIVATE;
                 }

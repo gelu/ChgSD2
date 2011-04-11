@@ -70,7 +70,7 @@ void instance_old_hillsbrad::HandleThrallRelocation()
 {
     if (Creature* pThrall = instance->GetCreature(m_uiThrallGUID))
     {
-        debug_log("SD2: Instance Old Hillsbrad: Thrall relocation");
+        debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall relocation");
 
         if (m_auiEncounter[TYPE_THRALL_PART4] == IN_PROGRESS)
         {
@@ -112,7 +112,7 @@ void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
                 ++m_uiBarrelCount;
                 DoUpdateWorldState(WORLD_STATE_OH, m_uiBarrelCount);
 
-                debug_log("SD2: Instance Old Hillsbrad: go_barrel_old_hillsbrad count %u", m_uiBarrelCount);
+                debug_log("½Å±¾¿â£º Instance Old Hillsbrad: go_barrel_old_hillsbrad count %u", m_uiBarrelCount);
 
                 m_auiEncounter[TYPE_BARREL_DIVERSION] = IN_PROGRESS;
 
@@ -123,7 +123,7 @@ void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
                     if (Player* pPlayer = GetPlayerInMap())
                         pPlayer->SummonCreature(NPC_DRAKE, 2128.43f, 71.01f, 64.42f, 1.74f, TEMPSUMMON_TIMED_OR_DEAD_DESPAWN, 1800000);
                     else
-                        debug_log("SD2: Instance Old Hillsbrad: SetData (Type: %u Data %u) cannot find any pPlayer.", uiType, uiData);
+                        debug_log("½Å±¾¿â£º Instance Old Hillsbrad: SetData (Type: %u Data %u) cannot find any pPlayer.", uiType, uiData);
 
                     m_auiEncounter[TYPE_BARREL_DIVERSION] = DONE;
                 }
@@ -141,7 +141,7 @@ void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
                 if (m_uiThrallEventCount <= 20)
                 {
                     ++m_uiThrallEventCount;
-                    debug_log("SD2: Instance Old Hillsbrad: Thrall event failed %u times.", m_uiThrallEventCount);
+                    debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event failed %u times.", m_uiThrallEventCount);
 
                     HandleThrallRelocation();
                 }
@@ -152,30 +152,30 @@ void instance_old_hillsbrad::SetData(uint32 uiType, uint32 uiData)
                     m_auiEncounter[TYPE_THRALL_PART2] = uiData;
                     m_auiEncounter[TYPE_THRALL_PART3] = uiData;
                     m_auiEncounter[TYPE_THRALL_PART4] = uiData;
-                    debug_log("SD2: Instance Old Hillsbrad: Thrall event failed %u times. Reset instance required.", m_uiThrallEventCount);
+                    debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event failed %u times. Reset instance required.", m_uiThrallEventCount);
                 }
             }
             else
                 m_auiEncounter[TYPE_THRALL_EVENT] = uiData;
 
-            debug_log("SD2: Instance Old Hillsbrad: Thrall escort event adjusted to data %u.",uiData);
+            debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall escort event adjusted to data %u.",uiData);
             break;
         }
         case TYPE_THRALL_PART1:
             m_auiEncounter[TYPE_THRALL_PART1] = uiData;
-            debug_log("SD2: Instance Old Hillsbrad: Thrall event part I adjusted to data %u.",uiData);
+            debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event part I adjusted to data %u.",uiData);
             break;
         case TYPE_THRALL_PART2:
             m_auiEncounter[TYPE_THRALL_PART2] = uiData;
-            debug_log("SD2: Instance Old Hillsbrad: Thrall event part II adjusted to data %u.",uiData);
+            debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event part II adjusted to data %u.",uiData);
             break;
         case TYPE_THRALL_PART3:
             m_auiEncounter[TYPE_THRALL_PART3] = uiData;
-            debug_log("SD2: Instance Old Hillsbrad: Thrall event part III adjusted to data %u.",uiData);
+            debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event part III adjusted to data %u.",uiData);
             break;
         case TYPE_THRALL_PART4:
             m_auiEncounter[TYPE_THRALL_PART4] = uiData;
-            debug_log("SD2: Instance Old Hillsbrad: Thrall event part IV adjusted to data %u.",uiData);
+            debug_log("½Å±¾¿â£º Instance Old Hillsbrad: Thrall event part IV adjusted to data %u.",uiData);
             break;
     }
 }

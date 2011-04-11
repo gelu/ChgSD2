@@ -229,7 +229,7 @@ bool GOUse_go_strange_gong(Player* pPlayer, GameObject* pGo)
                 pHarrisonAI->SetHoldState(false);
         }
         else
-            error_log("SD2: Instance Zulaman: go_strange_gong failed");
+            error_log("½Å±¾¿â£º Instance Zulaman: go_strange_gong failed");
 
         pGo->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_UNK1);
         return false;

@@ -412,7 +412,7 @@ struct MANGOS_DLL_DECL npc_khadgars_servantAI : public npc_escortAI
         if (pCreature->GetOwner() && pCreature->GetOwner()->GetTypeId() == TYPEID_PLAYER)
             Start(false, pCreature->GetOwner()->GetGUID());
         else
-            error_log("SD2: npc_khadgars_servant can not obtain owner or owner is not a player.");
+            error_log("½Å±¾¿â£º npc_khadgars_servant can not obtain owner or owner is not a player.");
 
         Reset();
     }

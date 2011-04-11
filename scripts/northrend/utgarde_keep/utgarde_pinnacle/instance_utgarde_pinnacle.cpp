@@ -56,7 +56,7 @@ struct MANGOS_DLL_DECL instance_pinnacle : public ScriptedInstance
 
     void SetData(uint32 uiType, uint32 uiData)
     {
-        debug_log("SD2: Instance Pinnacle: SetData received for type %u with data %u", uiType, uiData);
+        debug_log("½Å±¾¿â£º Instance Pinnacle: SetData received for type %u with data %u", uiType, uiData);
 
         switch(uiType)
         {
@@ -76,7 +76,7 @@ struct MANGOS_DLL_DECL instance_pinnacle : public ScriptedInstance
                 m_auiEncounter[3] = uiData;
                 break;
             default:
-                error_log("SD2: Instance Pinnacle: SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
+                error_log("½Å±¾¿â£º Instance Pinnacle: SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
                 break;
         }
 

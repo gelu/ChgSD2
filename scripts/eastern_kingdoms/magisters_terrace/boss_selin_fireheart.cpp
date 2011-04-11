@@ -64,7 +64,7 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             for(uint8 i = 0; i < size; ++i)
             {
                 uint64 guid = m_pInstance->GetData64(DATA_FEL_CRYSTAL);
-                debug_log("SD2: Selin: Adding Fel Crystal " UI64FMTD " to list", guid);
+                debug_log("½Å±¾¿â£º Selin: Adding Fel Crystal " UI64FMTD " to list", guid);
                 Crystals.push_back(guid);
             }
         }
@@ -213,7 +213,7 @@ struct MANGOS_DLL_DECL boss_selin_fireheartAI : public ScriptedAI
             else
             {
                 // Make an error message in case something weird happened here
-                error_log("SD2: Selin Fireheart unable to drain crystal as the crystal is either dead or despawned");
+                error_log("½Å±¾¿â£º Selin Fireheart unable to drain crystal as the crystal is either dead or despawned");
                 DrainingCrystal = false;
             }
         }

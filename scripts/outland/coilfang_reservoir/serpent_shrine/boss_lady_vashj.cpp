@@ -653,7 +653,7 @@ bool ItemUse_item_tainted_core(Player* pPlayer, Item* pItem, SpellCastTargets co
 
     if (!pInstance)
     {
-        error_log("SD2: Lady Vashj Tainted Core: Instance Script Not Initialized");
+        error_log("½Å±¾¿â£º Lady Vashj Tainted Core: Instance Script Not Initialized");
         return true;
     }
 

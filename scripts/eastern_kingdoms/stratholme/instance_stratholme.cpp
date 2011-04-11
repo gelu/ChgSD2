@@ -75,7 +75,7 @@ bool instance_stratholme::StartSlaugtherSquare()
         m_bIsSlaughterhouseGateOpened = true;
         DoUseDoorOrButton(m_uiPortSlaugtherGUID);
 
-        debug_log("SD2: Instance Stratholme: Open slaugther square.");
+        debug_log("½Å±¾¿â£º Instance Stratholme: Open slaugther square.");
 
         return true;
     }
@@ -178,7 +178,7 @@ void instance_stratholme::SetData(uint32 uiType, uint32 uiData)
                         DoScriptText(SAY_ANNOUNCE_RUN_START, pBaron);
 
                     m_uiBaronRunTimer = 45*MINUTE*IN_MILLISECONDS;
-                    debug_log("SD2: Instance Stratholme: Baron run in progress.");
+                    debug_log("½Å±¾¿â£º Instance Stratholme: Baron run in progress.");
                     break;
                 case FAIL:
                     //may add code to remove aura from players, but in theory the time should be up already and removed.
@@ -243,11 +243,11 @@ void instance_stratholme::SetData(uint32 uiType, uint32 uiData)
                         if (Creature* pRamstein = pBaron->SummonCreature(NPC_RAMSTEIN, sStratholmeLocation[2].m_fX, sStratholmeLocation[2].m_fY, sStratholmeLocation[2].m_fZ, sStratholmeLocation[2].m_fO, TEMPSUMMON_DEAD_DESPAWN, 0))
                             pRamstein->GetMotionMaster()->MovePoint(0, sStratholmeLocation[3].m_fX, sStratholmeLocation[3].m_fY, sStratholmeLocation[3].m_fZ);
 
-                        debug_log("SD2: Instance Stratholme - Slaugther event: Ramstein spawned.");
+                        debug_log("½Å±¾¿â£º Instance Stratholme - Slaugther event: Ramstein spawned.");
                     }
                 }
                 else
-                    debug_log("SD2: Instance Stratholme - Slaugther event: %u Abomnation left to kill.", uiCount);
+                    debug_log("½Å±¾¿â£º Instance Stratholme - Slaugther event: %u Abomnation left to kill.", uiCount);
             }
             // After fail aggroing Ramstein means wipe on Ramstein, so close door again
             if (uiData == IN_PROGRESS && m_auiEncounter[uiType] == FAIL)
@@ -275,7 +275,7 @@ void instance_stratholme::SetData(uint32 uiType, uint32 uiData)
                             m_luiGuardGUIDs.push_back(pTemp->GetGUID());
                     }
 
-                    debug_log("SD2: Instance Stratholme - Slaugther event: Summoned 5 guards.");
+                    debug_log("½Å±¾¿â£º Instance Stratholme - Slaugther event: Summoned 5 guards.");
                 }
             }
             // Open Door again and stop Abomnation
@@ -726,7 +726,7 @@ void instance_stratholme::Update(uint32 uiDiff)
                 DoScriptText(SAY_ANNOUNCE_RUN_FAIL, pBaron);
 
             m_uiBaronRunTimer = 0;
-            debug_log("SD2: Instance Stratholme: Baron run event reached end. Event has state %u.", GetData(TYPE_BARON_RUN));
+            debug_log("½Å±¾¿â£º Instance Stratholme: Baron run event reached end. Event has state %u.", GetData(TYPE_BARON_RUN));
         }
         else
             m_uiBaronRunTimer -= uiDiff;

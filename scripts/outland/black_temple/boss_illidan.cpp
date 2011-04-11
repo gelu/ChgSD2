@@ -507,7 +507,7 @@ struct MANGOS_DLL_DECL npc_akama_illidanAI : public ScriptedAI
         if (!m_pInstance || m_pInstance->GetData(TYPE_COUNCIL) != DONE)
             return;
 
-        debug_log("SD2: Akama - Door event initiated by player %s", pPlayer->GetName());
+        debug_log("½Å±¾¿â£º Akama - Door event initiated by player %s", pPlayer->GetName());
         PlayerGUID = pPlayer->GetGUID();
 
         if (GameObject* pGate = m_pInstance->instance->GetGameObject(m_pInstance->GetData64(GO_ILLIDAN_GATE)))
@@ -752,7 +752,7 @@ struct MANGOS_DLL_DECL npc_akama_illidanAI : public ScriptedAI
                         StartChanneling = false;
                         if (WayPointList.empty())
                         {
-                            error_log("SD2: Akama has no waypoints to start with!");
+                            error_log("½Å±¾¿â£º Akama has no waypoints to start with!");
                             return;
                         }
 
@@ -1344,13 +1344,13 @@ struct MANGOS_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
                 }
                 else
                 {
-                    error_log("SD2: Illidan Stormrage AI: Unable to summon Flame of Azzinoth (entry: 22997), please check your database");
+                    error_log("½Å±¾¿â£º Illidan Stormrage AI: Unable to summon Flame of Azzinoth (entry: 22997), please check your database");
                     EnterEvadeMode();
                 }
             }
             else
             {
-                error_log("SD2: Illidan Stormrage AI: Unable to summon Blade of Azzinoth (entry: 22996), please check your database");
+                error_log("½Å±¾¿â£º Illidan Stormrage AI: Unable to summon Blade of Azzinoth (entry: 22996), please check your database");
             }
         }
         DoResetThreat();                                    // And now reset our threatlist
@@ -1381,8 +1381,8 @@ struct MANGOS_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
         else                                                // If Maiev cannot be summoned, reset the encounter and post some errors to the console.
         {
             EnterEvadeMode();
-            debug_log("SD2: Unable to summon Maiev Shadowsong and enter Phase 4. Resetting Encounter.");
-            error_log("SD2: Unable to summon Maiev Shadowsong (entry: 23197). Check your database to see if you have the proper SQL for Maiev Shadowsong (entry: 23197)");
+            debug_log("½Å±¾¿â£º Unable to summon Maiev Shadowsong and enter Phase 4. Resetting Encounter.");
+            error_log("½Å±¾¿â£º Unable to summon Maiev Shadowsong (entry: 23197). Check your database to see if you have the proper SQL for Maiev Shadowsong (entry: 23197)");
         }
     }
 
@@ -1455,7 +1455,7 @@ struct MANGOS_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 
                         // We are now attackable!
                         m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
-                        debug_log("SD2: Black Temple: Illidan intro complete, players can attack Illidan.");
+                        debug_log("½Å±¾¿â£º Black Temple: Illidan intro complete, players can attack Illidan.");
                         break;
                     case 11:
                         if (MaievGUID)
@@ -1898,7 +1898,7 @@ struct MANGOS_DLL_DECL boss_illidan_stormrageAI : public ScriptedAI
 
 void npc_akama_illidanAI::BeginEvent(uint64 PlayerGUID)
 {
-    debug_log("SD2: Akama - Illidan Introduction started. Illidan event properly begun.");
+    debug_log("½Å±¾¿â£º Akama - Illidan Introduction started. Illidan event properly begun.");
     if (m_pInstance)
     {
         IllidanGUID = m_pInstance->GetData64(NPC_ILLIDAN_STORMRAGE);
@@ -2117,7 +2117,7 @@ bool GOUse_go_cage_trap(Player* pPlayer, GameObject* pGo)
 
     if (!pTrigger)
     {
-        error_log("SD2: Cage Trap- Unable to find trigger. This Cage Trap is now useless");
+        error_log("½Å±¾¿â£º Cage Trap- Unable to find trigger. This Cage Trap is now useless");
         return false;
     }
 

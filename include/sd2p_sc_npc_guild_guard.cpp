@@ -54,7 +54,7 @@ void LoadDatabase(void)
 
             if (!pFields[0].GetUInt32() || !pFields[1].GetUInt32())
             {
-                outstring_log("SD2: ERREUR >> Garde invalide (Entry: %u).", pFields[0].GetUInt32());
+                outstring_log("½Å±¾¿â£º ERREUR >> Garde invalide (Entry: %u).", pFields[0].GetUInt32());
                 continue;
             }
             

@@ -140,7 +140,7 @@ struct MANGOS_DLL_DECL eye_of_cthunAI : public ScriptedAI
 
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         if (!m_pInstance)
-            error_log("SD2: No Instance eye_of_cthunAI");
+            error_log("½Å±¾¿â£º No Instance eye_of_cthunAI");
 
         Reset();
     }
@@ -435,7 +435,7 @@ struct MANGOS_DLL_DECL cthunAI : public ScriptedAI
 
         m_pInstance = (ScriptedInstance*)pCreature->GetInstanceData();
         if (!m_pInstance)
-            error_log("SD2: No Instance eye_of_cthunAI");
+            error_log("½Å±¾¿â£º No Instance eye_of_cthunAI");
 
         Reset();
     }
@@ -1254,7 +1254,7 @@ void flesh_tentacleAI::JustDied(Unit* killer)
 {
     if (!Parent)
     {
-        error_log("SD2: flesh_tentacle: No Parent variable");
+        error_log("½Å±¾¿â£º flesh_tentacle: No Parent variable");
         return;
     }
 
@@ -1264,7 +1264,7 @@ void flesh_tentacleAI::JustDied(Unit* killer)
             pCthunAI->FleshTentcleKilled();
     }
     else
-        error_log("SD2: flesh_tentacle: No Cthun");
+        error_log("½Å±¾¿â£º flesh_tentacle: No Cthun");
 }
 
 //GetAIs

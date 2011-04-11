@@ -123,7 +123,7 @@ struct MANGOS_DLL_DECL instance_deadmines : public ScriptedInstance
                             DoScriptText(INST_SAY_ALARM2,pMrSmite);
                             m_uiDoor_Step = 0;
                             m_uiIronDoor_Timer = 0;
-                            debug_log("SD2: Instance Deadmines: Iron door event reached end.");
+                            debug_log("½Å±¾¿â£º Instance Deadmines: Iron door event reached end.");
                             break;
                     }
                 }

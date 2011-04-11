@@ -252,7 +252,7 @@ void hyjalAI::SummonNextWave()
 
     if (!pWaveData)
     {
-        error_log("SD2: hyjalAI not able to obtain wavedata for SummonNextWave.");
+        error_log("½Å±¾¿â£º hyjalAI not able to obtain wavedata for SummonNextWave.");
         return;
     }
 
@@ -283,7 +283,7 @@ void hyjalAI::SummonNextWave()
         else
         {
             m_uiNextWaveTimer = 15000;
-            debug_log("SD2: HyjalAI: debug mode is enabled. Next Wave in 15 seconds");
+            debug_log("½Å±¾¿â£º HyjalAI: debug mode is enabled. Next Wave in 15 seconds");
         }
     }
     else

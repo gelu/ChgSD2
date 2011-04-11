@@ -185,7 +185,7 @@ struct MANGOS_DLL_DECL instance_blood_furnace : public ScriptedInstance
                 m_auiEncounter[2] = uiData;
                 break;
             default:
-                error_log("SD2: Instance Blood Furnace SetData with Type %u Data %u, but this is not implemented.",uiType,uiData);
+                error_log("½Å±¾¿â£º Instance Blood Furnace SetData with Type %u Data %u, but this is not implemented.",uiType,uiData);
                 break;
         }
 

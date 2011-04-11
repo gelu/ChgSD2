@@ -121,7 +121,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
 
     void SetData(uint32 uiType, uint32 uiData)
     {
-        debug_log("SD2: Instance Zulaman: SetData received for type %u with data %u",uiType,uiData);
+        debug_log("½Å±¾¿â£º Instance Zulaman: SetData received for type %u with data %u",uiType,uiData);
 
         switch(uiType)
         {
@@ -209,7 +209,7 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
                 m_auiRandVendor[1] = uiData;
                 break;
             default:
-                error_log("SD2: Instance Zulaman: ERROR SetData = %u for type %u does not exist/not implemented.",uiType,uiData);
+                error_log("½Å±¾¿â£º Instance Zulaman: ERROR SetData = %u for type %u does not exist/not implemented.",uiType,uiData);
                 break;
         }
 
@@ -332,14 +332,14 @@ struct MANGOS_DLL_DECL instance_zulaman : public ScriptedInstance
             {
                 if (m_uiEventMinuteStep == 0)
                 {
-                    debug_log("SD2: Instance Zulaman: event time reach end, event failed.");
+                    debug_log("½Å±¾¿â£º Instance Zulaman: event time reach end, event failed.");
                     m_auiEncounter[0] = FAIL;
                     return;
                 }
 
                 --m_uiEventMinuteStep;
                 DoUpdateWorldState(WORLD_STATE_COUNTER, m_uiEventMinuteStep);
-                debug_log("SD2: Instance Zulaman: minute decrease to %u.",m_uiEventMinuteStep);
+                debug_log("½Å±¾¿â£º Instance Zulaman: minute decrease to %u.",m_uiEventMinuteStep);
 
                 m_uiEventTimer = MINUTE*IN_MILLISECONDS;
             }

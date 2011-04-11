@@ -210,7 +210,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
 
     void BeginOutro()
     {
-        debug_log("SD2: KALEC: Beginning Outro");
+        debug_log("½Å±¾¿â£º KALEC: Beginning Outro");
 
         if (!m_pInstance)
             return;
@@ -292,7 +292,7 @@ struct MANGOS_DLL_DECL boss_kalecgosAI : public ScriptedAI
         {
             if (m_uiExitTimer <= diff)
             {
-                debug_log("SD2: KALEC: Exiting the arena");
+                debug_log("½Å±¾¿â£º KALEC: Exiting the arena");
 
                 float x, y, z;
                 m_creature->GetRandomPoint(m_creature->GetPositionX(), m_creature->GetPositionY(), m_creature->GetPositionZ(), 30, x, y, z);

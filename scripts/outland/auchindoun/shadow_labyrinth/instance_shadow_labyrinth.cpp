@@ -91,7 +91,7 @@ struct MANGOS_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
                 if (pCreature->isAlive())
                 {
                     ++m_uiFelOverseerCount;
-                    debug_log("SD2: Shadow Labyrinth: counting %u Fel Overseers.", m_uiFelOverseerCount);
+                    debug_log("½Å±¾¿â£º Shadow Labyrinth: counting %u Fel Overseers.", m_uiFelOverseerCount);
                 }
                 break;
         }
@@ -108,7 +108,7 @@ struct MANGOS_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
             case TYPE_OVERSEER:
                 if (uiData != DONE)
                 {
-                    error_log("SD2: Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
+                    error_log("½Å±¾¿â£º Shadow Labyrinth: TYPE_OVERSEER did not expect other data than DONE");
                     return;
                 }
                 if (m_uiFelOverseerCount)
@@ -116,11 +116,11 @@ struct MANGOS_DLL_DECL instance_shadow_labyrinth : public ScriptedInstance
                     --m_uiFelOverseerCount;
 
                     if (m_uiFelOverseerCount)
-                        debug_log("SD2: Shadow Labyrinth: %u Fel Overseers left to kill.", m_uiFelOverseerCount);
+                        debug_log("½Å±¾¿â£º Shadow Labyrinth: %u Fel Overseers left to kill.", m_uiFelOverseerCount);
                     else
                     {
                         m_auiEncounter[1] = DONE;
-                        debug_log("SD2: Shadow Labyrinth: TYPE_OVERSEER == DONE");
+                        debug_log("½Å±¾¿â£º Shadow Labyrinth: TYPE_OVERSEER == DONE");
                     }
                 }
                 break;

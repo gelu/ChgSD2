@@ -186,7 +186,7 @@ void instance_gundrak::Load(const char* chrIn)
 
 void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
 {
-    debug_log("SD2: Instance Gundrak: SetData received for type %u with data %u", uiType, uiData);
+    debug_log("½Å±¾¿â£º Instance Gundrak: SetData received for type %u with data %u", uiType, uiData);
 
     switch(uiType)
     {
@@ -233,7 +233,7 @@ void instance_gundrak::SetData(uint32 uiType, uint32 uiData)
                 DoUseDoorOrButton(m_uiEckUnderwaterDoorGUID);
             break;
         default:
-            error_log("SD2: Instance Gundrak: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
+            error_log("½Å±¾¿â£º Instance Gundrak: ERROR SetData = %u for type %u does not exist/not implemented.", uiType, uiData);
             break;
     }
 
