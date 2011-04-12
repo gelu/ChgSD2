@@ -85,3 +85,7 @@ UPDATE `creature_template` SET `ScriptName` = 'mob_ingvar_throw_dummy' WHERE `en
 
 UPDATE `creature_template` SET `ScriptName` = 'mob_tribuna_controller' WHERE `entry` = '28234';
 
+-- Instance Eye of Eternity
+
+UPDATE `creature_template` SET `AIName` = 'NullAI' WHERE `entry` = '30282';
+
