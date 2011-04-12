@@ -229,4 +229,24 @@ pkgdata_DATA = \
     r1979_scriptdev2.sql \
     r1982_mangos.sql \
     r1984_mangos.sql \
-    r1984_scriptdev2.sql
+    r1984_scriptdev2.sql \
+	r1987_mangos \
+	r1990_mangos \
+    r1990_scriptdev2 \
+    r1992_mangos \
+	r1992_scriptdev2 \
+    r1993_mangos \
+	r1993_scriptdev2 \
+	r2004_mangos \
+	r2008_mangos \
+	r2008_scriptdev2 \
+	r2009_mangos \
+	r2009_scriptdev2 \
+	r2010_mangos \
+	r2013_mangos \
+	r2013_scriptdev2 \
+	r2015_mangos \
+	r2017_mangos \
+	r2018_scriptdev2 \
+	r2020_scriptdev2 \
+	r2021_mangos
