@@ -127,6 +127,12 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
                         pExitPortal->SetPhaseMask(1, true);
                     DoRespawnGameObject(m_uiGiftGUID, HOUR*IN_MILLISECONDS);
                     DoRespawnGameObject(m_uiHeartGUID, HOUR*IN_MILLISECONDS);
+                    //hack to make loot accessible
+                    if (GameObject* pPlatform = instance->GetGameObject(m_uiPlatformGUID))
+                    {
+                        pPlatform->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_DESTROYED);
+                        pPlatform->Respawn();
+                    }
                 }
                 m_auiEncounter[0] = uiData;
                 break;
@@ -190,6 +196,7 @@ struct MANGOS_DLL_DECL instance_eye_of_eternity : public ScriptedInstance
         }
         return 0;
     }
+
 };
 
 InstanceData* GetInstanceData_instance_eye_of_eternity(Map* pMap)

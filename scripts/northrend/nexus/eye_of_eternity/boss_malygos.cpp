@@ -41,6 +41,7 @@ enum
     SPELL_ARCANE_STORM_H            = 61694,
     SPELL_VORTEX                    = 56105,
     SPELL_VORTEX_DMG_AURA           = 56266, // on 10 sec, deal 2000 damage all player around caster
+    SPELL_VORTEX_DMG_TICK           = 56256,
     SPELL_VORTEX_VISUAL             = 55873, // visual effect around platform. summon trigger
     SPELL_VORTEX_CHANNEL            = 56237, // Malygos Channel Effect
     SPELL_POWER_SPARK               = 56152, // if spark reach malygos then buff him
@@ -166,7 +167,10 @@ enum
 
     //hacks
     SPELL_FLIGHT                    = 59553,
-    MODEL_ID_INVISIBLE              = 11686
+    MODEL_ID_INVISIBLE              = 11686,
+
+    ACHIEV_DENYIN_THE_SCION =2148,
+    ACHIEV_DENYIN_THE_SCION_H=2149
 };
 
 struct LocationsXY
@@ -256,6 +260,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     uint32 m_uiSurgeOfPowerTimer;
     uint32 m_uiCheckTimer;
     uint32 m_uiMovingSteps;
+    uint32 m_uiVortexDmgCount;
 
     uint64 m_uiTargetSparkPortalGUID;
     uint8 m_uiWP;
@@ -287,6 +292,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiArcanePulseTimer = 1000;
         m_uiSurgeOfPowerTimer = 8000;
         m_uiCheckTimer = 1000;
+        m_uiVortexDmgCount = 20;
 
         m_uiTargetSparkPortalGUID = 0;
         m_uiWP = 0;
@@ -407,17 +413,6 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         }
     }
 
-    void SummonedCreatureJustDied(Creature* pSummoned)
-    {
-        if (Creature* pDisk = m_creature->getVictim()->SummonCreature(NPC_HOVER_DISK, pSummoned->GetPositionX(), pSummoned->GetPositionY(), pSummoned->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 0))
-        {
-            pDisk->setFaction(35);
-            pDisk->SetByteValue(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_UNK_2);
-            pDisk->CastSpell(pDisk, SPELL_FLIGHT, true);
-            pDisk->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-        }
-    }
-
     bool IsThereAnyAdd()
     {
         if (GetClosestCreatureWithEntry(m_creature, NPC_NEXUS_LORD, 200.0f))
@@ -508,7 +503,6 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             if (m_uiSubPhase == SUBPHASE_TALK)
             {
                 DoScriptText(SAY_AGGRO2, m_creature);
-                m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
                 AntiMagicShell();
                 m_uiShellTimer = urand(15000, 17000);
                 m_uiSubPhase = 0;
@@ -647,13 +641,15 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                             Map::PlayerList const &lPlayers = pMap->GetPlayers();
                             for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
                             {
-                                if (itr->getSource()->isDead())
+                                if (itr->getSource()->isDead() || itr->getSource()->isGameMaster())
                                     continue;
 
                                 //Far sight, should be vehicle but this is enough
                                 //Crash the server in group update far members, dunno why
                                 //I will try to use this again, maybe I have fix...
                                 itr->getSource()->GetCamera().SetView(pVortex);
+                                m_uiVortexDmgCount = 20;
+                                // this one does not work good somehow
                                 itr->getSource()->CastSpell(itr->getSource(), SPELL_VORTEX_DMG_AURA, true);
                             }
                         }
@@ -668,11 +664,21 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         {
                             if (Creature *pVortex = m_creature->SummonCreature(NPC_VORTEX, VortexLoc[m_uiVortexPhase-4].x, VortexLoc[m_uiVortexPhase-4].y, FLOOR_Z+urand(10, 25), 0, TEMPSUMMON_TIMED_DESPAWN, 3000))
                             {
+                                bool bDoVortexDmg = false;
+                                if ((m_uiVortexDmgCount--)%2)
+                                {
+                                    m_creature->MonsterYell("dmg!",LANG_UNIVERSAL,0);
+                                    bDoVortexDmg = true;
+                                }
+
                                 Map::PlayerList const &lPlayers = pMap->GetPlayers();
                                 for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
                                 {
-                                    if (itr->getSource()->isDead())
+                                    if (!itr->getSource() || itr->getSource()->isDead() || itr->getSource()->isGameMaster())
                                         continue;
+
+                                    if (bDoVortexDmg && !itr->getSource()->HasAura(SPELL_VORTEX_DMG_AURA))
+                                        itr->getSource()->CastSpell(itr->getSource(),SPELL_VORTEX_DMG_TICK,true);
 
                                     itr->getSource()->KnockBackFrom(pVortex, -float(pVortex->GetDistance2d(itr->getSource())), 7);
                                 }
@@ -774,6 +780,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 if (m_creature->GetHealthPercent() <= 50.0f)
                 {
                     m_creature->InterruptNonMeleeSpells(true);
+                    m_creature->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                     DoScriptText(SAY_END_PHASE1, m_creature);
                     DespawnCreatures(NPC_POWER_SPARK);
                     m_uiPhase = PHASE_ADDS;
@@ -790,7 +797,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                 m_uiTimer = 2000;
             }
             else
-                m_uiTimer -= uiDiff;  
+                m_uiTimer -= uiDiff;
         }
         else if (m_uiPhase == PHASE_ADDS)
         {
@@ -916,6 +923,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                         pTempCaster->CastSpell(pTempCaster, SPELL_DESTROY_PLATFORM_BOOM, false);
                     }
 
+                    m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NON_ATTACKABLE);
                     m_creature->SetInCombatWithZone();
 
                     m_uiSubPhase = SUBPHASE_DESTROY_PLATFORM_2;
@@ -1164,10 +1172,13 @@ struct MANGOS_DLL_DECL npc_nexus_lordAI : public ScriptedAI
         m_fVehicleOldY = 0.0f;
         m_uiArcaneShockTimer = urand(8000, 9000);
         m_uiHasteTimer = urand(10000, 12000);
+        m_creature->clearUnitState(UNIT_STAT_CAN_NOT_REACT);
     }
 
     void UpdateAI(const uint32 uiDiff)
     {
+
+
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
@@ -1186,7 +1197,14 @@ struct MANGOS_DLL_DECL npc_nexus_lordAI : public ScriptedAI
                 m_fVehicleOldX = fX;
                 m_fVehicleOldY = fY;
 
-                Unit* pTarget = m_creature->getVictim();
+                Unit* pTarget = NULL;
+
+                //We want to attack the Player on the Disc and not the Disc itself
+                if(m_creature->getVictim()->GetEntry() == NPC_HOVER_DISK)
+                    pTarget = m_creature->getVictim()->GetVehicle()->GetPassenger(0);
+                else
+                    pTarget = m_creature->getVictim();
+
                 if (m_creature->IsWithinDistInMap(pTarget, 4.0f))
                 {
                     pDisk->GetMotionMaster()->Clear();
@@ -1231,7 +1249,7 @@ struct MANGOS_DLL_DECL npc_nexus_lordAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
-}; 
+};
 
 /*######
 ## npc_scion_of_eternity
@@ -1253,21 +1271,45 @@ struct MANGOS_DLL_DECL npc_scion_of_eternityAI : public ScriptedAI
         m_uiArcaneBarrageTimer = urand(4000, 12000);
     }
 
+    void JustDied(Unit* killer)
+    {
+        Player* pPlayer = (Player*)killer;
+
+        if(pPlayer->GetVehicle())
+        {
+            AchievementEntry const *DenyinTheSc = GetAchievementStore()->LookupEntry(m_bIsRegularMode ? ACHIEV_DENYIN_THE_SCION : ACHIEV_DENYIN_THE_SCION_H);
+            if(DenyinTheSc)
+            {
+                pPlayer->CompletedAchievement(DenyinTheSc);
+            }
+        }
+
+    }
+
     void UpdateAI(const uint32 uiDiff)
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+        if (VehicleKit* pDiskVehicle = m_creature->GetVehicle())
+        {
+            if (Unit* pDiskUnit = pDiskVehicle->GetBase())
+            {
+                //We want to attack the Player on the Disc and not the Disc itself
+                if(m_creature->getVictim()->GetEntry() == NPC_HOVER_DISK && m_creature->getVictim()->GetVehicle()->GetPassenger(0))
+                    m_creature->Attack(m_creature->getVictim()->GetVehicle()->GetPassenger(0), false);
+            }
+        }
+
         if (m_uiArcaneBarrageTimer <= uiDiff)
         {
             if (Unit* pTarget = m_creature->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
             {
-                if (!pTarget->GetVehicle())
-                {
-                    int32 uiDmg = m_bIsRegularMode ? urand(14138, 15862) : urand(16965, 19035);
-                    m_creature->CastCustomSpell(pTarget, SPELL_ARCANE_BARRAGE, &uiDmg, 0, 0, true);
-                    m_uiArcaneBarrageTimer = urand(4000, 12000);
-                }
+                if (pTarget->GetVehicle())
+                    pTarget = pTarget->GetVehicle()->GetPassenger(0);
+                int32 uiDmg = m_bIsRegularMode ? urand(14138, 15862) : urand(16965, 19035);
+                m_creature->CastCustomSpell(pTarget, SPELL_ARCANE_BARRAGE, &uiDmg, 0, 0, true);
+                m_uiArcaneBarrageTimer = urand(4000, 12000);
             }
         }
         else
@@ -1275,7 +1317,7 @@ struct MANGOS_DLL_DECL npc_scion_of_eternityAI : public ScriptedAI
 
         DoMeleeAttackIfReady();
     }
-}; 
+};
 
 /*######
 ## npc_hover_disk
@@ -1305,6 +1347,11 @@ struct MANGOS_DLL_DECL npc_hover_diskAI : public ScriptedAI
 
     void AttackStart(Unit *pWho)
     {
+    }
+
+    void DamageTaken(Unit *done_by, uint32 &damage)
+    {   // hover disk should not be damaged
+        damage = 0;
     }
 
     void UpdateAI(const uint32 uiDiff)
@@ -1448,17 +1495,17 @@ CreatureAI* GetAI_npc_power_spark(Creature* pCreature)
 CreatureAI* GetAI_npc_nexus_lord(Creature* pCreature)
 {
     return new npc_nexus_lordAI(pCreature);
-} 
+}
 
 CreatureAI* GetAI_npc_scion_of_eternity(Creature* pCreature)
 {
     return new npc_scion_of_eternityAI(pCreature);
-} 
+}
 
 CreatureAI* GetAI_npc_hover_disk(Creature* pCreature)
 {
     return new npc_hover_diskAI(pCreature);
-} 
+}
 
 CreatureAI* GetAI_npc_alexstrasza(Creature* pCreature)
 {
@@ -1484,7 +1531,7 @@ struct MANGOS_DLL_DECL npc_whyrmrest_skytalonAI : public ScriptedAI
     {
         Active = false;
         seated = false;
-        ownerGUID = 0;
+        ownerGUID = ObjectGuid();
         StartTimer = 500;
         SeatTimer = 2000;
         ownerGUID = m_creature->GetCreatorGuid();
