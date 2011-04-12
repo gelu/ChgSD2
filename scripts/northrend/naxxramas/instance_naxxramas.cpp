@@ -76,6 +76,10 @@ instance_naxxramas::instance_naxxramas(Map* pMap) : ScriptedInstance(pMap),
     m_uiLoathebDoorGUID(0),
 
     m_uiSapphironBirthGUID(0),
+    m_uiKelthuzadWindow1GUID(0),
+    m_uiKelthuzadWindow2GUID(0),
+    m_uiKelthuzadWindow3GUID(0),
+    m_uiKelthuzadWindow4GUID(0),
 
     m_uiKelthuzadDoorGUID(0),
     m_uiKelthuzadExitDoorGUID(0),
@@ -269,6 +273,18 @@ void instance_naxxramas::OnObjectCreate(GameObject* pGo)
         case GO_SAPPHIRON_BIRTH:
             m_uiSapphironBirthGUID = pGo->GetGUID();
             break;
+        case GO_KELTHUZAD_WINDOW_1:
+            m_uiKelthuzadWindow1GUID = pGo->GetGUID();
+            break;
+        case GO_KELTHUZAD_WINDOW_2:
+            m_uiKelthuzadWindow2GUID = pGo->GetGUID();
+            break;
+        case GO_KELTHUZAD_WINDOW_3:
+            m_uiKelthuzadWindow3GUID = pGo->GetGUID();
+            break;
+        case GO_KELTHUZAD_WINDOW_4:
+            m_uiKelthuzadWindow4GUID = pGo->GetGUID();
+            break;
     }
 
     // Heigan Traps - many entries, and never used again
@@ -456,6 +472,10 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
         case TYPE_KELTHUZAD:
             m_auiEncounter[14] = uiData;
             DoUseDoorOrButton(m_uiKelthuzadExitDoorGUID);
+            DoUseDoorOrButton(m_uiKelthuzadWindow1GUID);
+            DoUseDoorOrButton(m_uiKelthuzadWindow2GUID);
+            DoUseDoorOrButton(m_uiKelthuzadWindow3GUID);
+            DoUseDoorOrButton(m_uiKelthuzadWindow4GUID);
             if (uiData == IN_PROGRESS)
                 SetSpecialAchievementCriteria(TYPE_ACHIEV_GET_ENOUGH, false);
             break;
