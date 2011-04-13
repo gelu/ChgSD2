@@ -1075,8 +1075,8 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         else
             m_uiSpeedKillTimer -= uiDiff;
 
-
-        DoMeleeAttackIfReady();
+        if (m_uiPhase != PHASE_DRAGONS)
+            DoMeleeAttackIfReady();
     }
 };
 
