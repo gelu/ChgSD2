@@ -13,19 +13,20 @@ enum
     TYPE_TELEPORT               = 0,
     TYPE_MARROWGAR              = 1,
     TYPE_DEATHWHISPER           = 2,
-    TYPE_FLIGHT_WAR             = 3,
-    TYPE_SAURFANG               = 4,
-    TYPE_FESTERGUT              = 5,
-    TYPE_ROTFACE                = 6,
-    TYPE_PUTRICIDE              = 7,
-    TYPE_BLOOD_COUNCIL          = 8,
-    TYPE_LANATHEL               = 9,
-    TYPE_VALITHRIA              = 10,
-    TYPE_SINDRAGOSA             = 11,
-    TYPE_KINGS_OF_ICC           = 12,
-    TYPE_LICH_KING              = 13,
-    TYPE_ICECROWN_QUESTS        = 14,
-    TYPE_COUNT                  = 15,
+	TYPE_GUNSHIP_BATTLE         = 3,
+    TYPE_FLIGHT_WAR             = 4,
+    TYPE_SAURFANG               = 5,
+    TYPE_FESTERGUT              = 6,
+    TYPE_ROTFACE                = 7,
+    TYPE_PUTRICIDE              = 8,
+    TYPE_BLOOD_COUNCIL          = 9,
+    TYPE_LANATHEL               = 10,
+    TYPE_VALITHRIA              = 11,
+    TYPE_SINDRAGOSA             = 12,
+    TYPE_KINGS_OF_ICC           = 13,
+    TYPE_LICH_KING              = 14,
+    TYPE_ICECROWN_QUESTS        = 15,
+    TYPE_COUNT                  = 16,
     MAX_ENCOUNTERS,
 
     TYPE_STINKY,
@@ -126,6 +127,9 @@ enum
     GO_GUNSHIP_ARMORY_H_25      = 202178, //
     GO_GUNSHIP_ARMORY_H_10H     = 202179, //
     GO_GUNSHIP_ARMORY_H_25H     = 202180, //
+
+	GO_GUNSHIP_A                = 201580, // Alliance Gunship
+	GO_GUNSHIP_H                = 201581, // Hord Gunship
 
     GO_DREAMWALKER_CACHE_10      = 201959, //
     GO_DREAMWALKER_CACHE_25      = 202339, //
@@ -264,6 +268,9 @@ private:
 
     uint64 m_uiGunshipArmoryH_ID;
     uint64 m_uiGunshipArmoryA_ID;
+
+	uint64 m_uiGunship_A_ENTRY;
+	uint64 m_uiGunship_H_ENTRY;
 
     uint64 m_uiMarrogarDoor;
     uint64 m_uiBloodPrinceDoor;

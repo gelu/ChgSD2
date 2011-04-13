@@ -428,6 +428,7 @@ extern void AddSC_icecrown_spire();
 extern void AddSC_icecrown_teleporter();
 extern void AddSC_boss_lord_marrowgar();
 extern void AddSC_boss_lady_deathwhisper();
+extern void AddSC_gunship_battle();
 extern void AddSC_boss_deathbringer_saurfang();
 extern void AddSC_boss_rotface();
 extern void AddSC_boss_festergut();
@@ -950,6 +951,7 @@ void AddScripts()
     AddSC_icecrown_teleporter();
     AddSC_boss_lord_marrowgar();
     AddSC_boss_lady_deathwhisper();
+	AddSC_gunship_battle();
     AddSC_boss_deathbringer_saurfang();
     AddSC_boss_rotface();
     AddSC_boss_festergut();

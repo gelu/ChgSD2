@@ -85,6 +85,8 @@ static Locations SpawnLoc[]=
         m_uiSaurfangCacheGUID = 0;
         m_uiGunshipArmoryAGUID = 0;
         m_uiGunshipArmoryHGUID = 0;
+	    m_uiGunship_A_ENTRY = 0;
+	    m_uiGunship_H_ENTRY = 0;
         m_uiIcewall1GUID = 0;
         m_uiIcewall2GUID = 0;
         m_uiSDoorOrangeGUID = 0;
@@ -133,6 +135,26 @@ static Locations SpawnLoc[]=
     void instance_icecrown_spire::OnPlayerEnter(Player *pPlayer)
     {
         OpenAllDoors();
+
+		//for (Map::PlayerList::const_iterator itr = pPlayer->GetMap()->GetPlayers().begin(); itr != pPlayer->GetMap()->GetPlayers().end(); ++itr)
+		//{                    
+		//	if (Player* pPlayer = itr->getSource())         
+		//	{                    
+		//		UpdateData transData;           
+		//		t->BuildCreateUpdateBlockForPlayer(&transData, pPlayer);           
+		//		WorldPacket packet;                    
+		//		transData.BuildPacket(&packet);                 
+		//		pPlayer->SendDirectMessage(&packet);                  
+		//	}             
+		//}
+
+		//sMapMgr.m_Transports.insert(t); 
+
+		//UpdateData transData;
+		//t->BuildCreateUpdateBlockForPlayer(&transData, pPlayer);
+		//WorldPacket packet;         
+		//transData.BuildPacket(&packet);          
+		//pPlayer->GetSession()->SendPacket(&packet);                           
 
     enum PhaseControl
     {
@@ -361,6 +383,12 @@ static Locations SpawnLoc[]=
                                   if(Difficulty == RAID_DIFFICULTY_25MAN_HEROIC)
                                   m_uiGunshipArmoryHGUID = pGo->GetGUID(); 
                                   break;
+			case GO_GUNSHIP_A:
+				                  m_uiGunship_A_ENTRY = 201580;
+				                  break;
+			case GO_GUNSHIP_H:
+				                  m_uiGunship_H_ENTRY = 201581;
+				                  break;
             case GO_DREAMWALKER_CACHE_10:
                                   if(Difficulty == RAID_DIFFICULTY_10MAN_NORMAL)
                                   m_uiValitriaCacheGUID = pGo->GetGUID(); 
@@ -449,6 +477,11 @@ static Locations SpawnLoc[]=
                     }
                 }
                 break;
+			 case TYPE_GUNSHIP_BATTLE:    
+				 m_auiEncounter[TYPE_GUNSHIP_BATTLE] = uiData;         
+				 //if (uiData == DONE)        
+				 //    DoRespawnGameObject(m_uiGunshipArmoryGUID, 30*MINUTE);
+				 break;
              case TYPE_FLIGHT_WAR:
                 if (uiData == DONE && m_auiEncounter[TYPE_FLIGHT_WAR] != DONE  ) {
                                  if (GameObject* pChest = instance->GetGameObject(m_uiGunshipArmoryAGUID))
@@ -634,6 +667,7 @@ static Locations SpawnLoc[]=
              case TYPE_TELEPORT:
              case TYPE_MARROWGAR:
              case TYPE_DEATHWHISPER:
+			 case TYPE_GUNSHIP_BATTLE:
              case TYPE_FLIGHT_WAR:
              case TYPE_SAURFANG:
              case TYPE_FESTERGUT:
@@ -802,6 +836,8 @@ static Locations SpawnLoc[]=
             case GO_BLOODPRINCE_DOOR:         return m_uiBloodPrinceDoor;
             case GO_ICECROWN_GRATE:           return m_uiIceCrownGrate;
             case GO_SINDRAGOSA_ENTRANCE:      return m_uiSindragosaEntrance;
+			case GO_GUNSHIP_A:                return m_uiGunship_A_ENTRY;
+			case GO_GUNSHIP_H:                return m_uiGunship_H_ENTRY;
         }
         return 0;
     }

@@ -16,6 +16,7 @@ enum
     SAY_KELTHUZAD_TAUNT2        = -1533091,
     SAY_KELTHUZAD_TAUNT3        = -1533092,
     SAY_KELTHUZAD_TAUNT4        = -1533093,
+	SAY_MR_BIGGLESWORTH         = -1533089,
 
     TYPE_ANUB_REKHAN            = 0,
     TYPE_FAERLINA               = 1,
@@ -68,6 +69,7 @@ enum
     NPC_RIVENDARE               = 30549,
 
     NPC_KELTHUZAD               = 15990,
+	NPC_BIGGLESWORTH            = 16998,
 
     // Faerlina
     NPC_NAXXRAMAS_FOLLOWER      = 16505,
@@ -126,6 +128,7 @@ enum
     // Frostwyrm Lair
     GO_KELTHUZAD_WATERFALL_DOOR = 181225,                   // exit, open after sapphiron is dead
     GO_KELTHUZAD_EXIT_DOOR      = 181228,
+	GO_SAPPHIRON_BIRTH          = 181356,
 
     // Eyes
     GO_ARAC_EYE_RAMP            = 181212,
@@ -191,6 +194,7 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
 
         void OnCreatureCreate(Creature* pCreature);
         void OnObjectCreate(GameObject* pGo);
+		void OnCreatureDeath(Creature* pCreature);
 
         void OnPlayerDeath(Player* pPlayer);
 
@@ -220,6 +224,7 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         void SetChamberCenterCoords(float fX, float fY, float fZ);
         void GetChamberCenterCoords(float &fX, float &fY, float &fZ) { fX = m_fChamberCenterX; fY = m_fChamberCenterY; fZ = m_fChamberCenterZ; }
         void DoTaunt();
+		Creature* GetRealOrFakeKel(Unit* pUnit);
 
     protected:
         uint32 m_auiEncounter[MAX_ENCOUNTER];
@@ -247,6 +252,8 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiThaddiusGUID;
         uint64 m_uiStalaggGUID;
         uint64 m_uiFeugenGUID;
+		uint64 m_uiTeslaCoilStalaggGUID;
+		uint64 m_uiTeslaCoilFeugenGUID;
 
         uint64 m_uiKelthuzadGUID;
 
@@ -282,6 +289,8 @@ class MANGOS_DLL_DECL instance_naxxramas : public ScriptedInstance
         uint64 m_uiHeigExitDoorGUID;
         uint64 m_uiLoathebDoorGUID;
         std::vector<uint64> m_avuiHeiganTraps[MAX_HEIGAN_TRAP_AREAS];
+
+		uint64 m_uiSapphironBirthGUID;
 
         uint64 m_uiKelthuzadDoorGUID;
         uint64 m_uiKelthuzadExitDoorGUID;

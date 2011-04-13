@@ -244,8 +244,8 @@ void Script::RegisterSelf(bool bReportError)
     }
     else
     {
-        //if (bReportError)
-        //    error_db_log("½Å±¾¿â£º Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
+        if (bReportError)
+            error_db_log("½Å±¾¿â£º Script registering but ScriptName %s is not assigned in database.", (this)->Name.c_str());
 
         m_scriptStorage.insert(std::make_pair(Name.c_str(), this));
     }

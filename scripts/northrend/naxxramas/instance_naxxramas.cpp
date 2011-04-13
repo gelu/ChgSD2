@@ -93,6 +93,17 @@ void instance_naxxramas::Initialize()
         m_abAchievCriteria[i] = false;
 }
 
+void instance_naxxramas::OnCreatureDeath(Creature* pCreature)
+{
+    if(pCreature->GetEntry() == NPC_BIGGLESWORTH)
+    {
+        if(Creature* pKel = GetRealOrFakeKel(pCreature))
+            pKel->MonsterYellToZone(SAY_MR_BIGGLESWORTH,LANG_UNIVERSAL,0);
+    }
+}
+
+
+
 void instance_naxxramas::OnCreatureCreate(Creature* pCreature)
 {
     switch(pCreature->GetEntry())
@@ -636,6 +647,20 @@ Creature* instance_naxxramas::GetClosestAnchorForGoth(Creature* pSource, bool bR
     }
 
     return NULL;
+}
+
+Creature* instance_naxxramas::GetRealOrFakeKel(Unit* pUnit)
+{
+    Creature* pKel = instance->GetCreature(m_uiKelthuzadGUID);
+    if(!pKel && pUnit)
+        if(Creature* pFakeKel = pUnit->SummonCreature(NPC_KELTHUZAD,3004.28f,-3434.1f,293.89f,0,TEMPSUMMON_TIMED_DESPAWN,3000))
+        {
+            pFakeKel->SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_NOT_SELECTABLE);
+            pFakeKel->setFaction(35);
+            pFakeKel->SetVisibility(VISIBILITY_OFF);
+            pKel = pFakeKel;
+        }
+    return pKel;
 }
 
 void instance_naxxramas::GetGothSummonPointCreatures(std::list<Creature*> &lList, bool bRightSide)
