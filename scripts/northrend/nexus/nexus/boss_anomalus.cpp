@@ -140,8 +140,12 @@ struct MANGOS_DLL_DECL boss_anomalusAI : public ScriptedAI
                 }
                 return;
             }
-        } else
+        }
+        else
+        {
             ChaoticRiftGUID = 0;
+            m_creature->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+        }
 
         if ((Phase == 0) && (m_creature->GetHealth() < m_creature->GetMaxHealth() * 0.75))
         {
