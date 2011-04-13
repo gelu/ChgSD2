@@ -666,11 +666,9 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
                             if (Creature *pVortex = m_creature->SummonCreature(NPC_VORTEX, VortexLoc[m_uiVortexPhase-4].x, VortexLoc[m_uiVortexPhase-4].y, FLOOR_Z+urand(10, 25), 0, TEMPSUMMON_TIMED_DESPAWN, 3000))
                             {
                                 bool bDoVortexDmg = false;
+                                
                                 if ((m_uiVortexDmgCount--)%2)
-                                {
-                                    m_creature->MonsterYell("dmg!",LANG_UNIVERSAL,0);
                                     bDoVortexDmg = true;
-                                }
 
                                 Map::PlayerList const &lPlayers = pMap->GetPlayers();
                                 for (Map::PlayerList::const_iterator itr = lPlayers.begin(); itr != lPlayers.end(); ++itr)
