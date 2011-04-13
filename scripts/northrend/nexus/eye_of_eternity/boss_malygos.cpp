@@ -169,8 +169,13 @@ enum
     SPELL_FLIGHT                    = 59553,
     MODEL_ID_INVISIBLE              = 11686,
 
-    ACHIEV_DENYIN_THE_SCION =2148,
-    ACHIEV_DENYIN_THE_SCION_H=2149
+    ACHIEV_DENYIN_THE_SCION           = 2148,
+    ACHIEV_DENYIN_THE_SCION_H         = 2149,
+    ACHIEV_SPELLWEAVERS_DOWNFALL      = 622,
+    ACHIEV_SPELLWEAVERS_DOWNFALL_H    = 623,
+    ACHIEV_YOU_DONT_HAVE_ETERNITY     = 1874, //Speedkill
+    ACHIEV_YOU_DONT_HAVE_ETERNITY_H   = 1875
+
 };
 
 struct LocationsXY
@@ -261,13 +266,14 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     uint32 m_uiCheckTimer;
     uint32 m_uiMovingSteps;
     uint32 m_uiVortexDmgCount;
+    uint32 m_uiSpeedKillTimer;
 
     uint64 m_uiTargetSparkPortalGUID;
     uint8 m_uiWP;
 
     bool m_bReadyForWPMove;
     bool m_bPortalNeedRes;
-
+    bool m_bIsInTimeAchiev;
     float m_fAngle;
 
     void Reset()
@@ -276,6 +282,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiMovingSteps = 0;
         m_bReadyForWPMove = true;
         m_bPortalNeedRes = false;
+        m_bIsInTimeAchiev = true;
         m_uiPortalNeedResTimer = 0;
         m_uiPhase = PHASE_INTRO;
         m_uiSubPhase = 0;
@@ -293,6 +300,7 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
         m_uiSurgeOfPowerTimer = 8000;
         m_uiCheckTimer = 1000;
         m_uiVortexDmgCount = 20;
+        m_uiSpeedKillTimer = 6*MINUTE*IN_MILLISECONDS;
 
         m_uiTargetSparkPortalGUID = 0;
         m_uiWP = 0;
@@ -342,8 +350,20 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
     {
         DoScriptText(SAY_DEATH, m_creature);
         DespawnCreatures(NPC_STATIC_FIELD);
+        Map* pMap = m_creature->GetMap();
+
+        AchievementEntry const* YouDontHaveEternity = GetAchievementStore()->LookupEntry(m_bIsRegularMode?ACHIEV_YOU_DONT_HAVE_ETERNITY:ACHIEV_YOU_DONT_HAVE_ETERNITY_H);
+        AchievementEntry const* SpellweaversDownfall = GetAchievementStore()->LookupEntry(m_bIsRegularMode?ACHIEV_SPELLWEAVERS_DOWNFALL:ACHIEV_SPELLWEAVERS_DOWNFALL_H);
+
+        Map::PlayerList const &players = pMap->GetPlayers();
+        for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
+        {
+            itr->getSource()->CompletedAchievement(SpellweaversDownfall);
+            if(m_bIsInTimeAchiev)
+                itr->getSource()->CompletedAchievement(YouDontHaveEternity);
+        }
         m_creature->SummonCreature(NPC_ALEXSTRASZA, CENTER_X+20.0f, CENTER_Y+20.0f, AIR_Z, 0, TEMPSUMMON_DEAD_DESPAWN, 0);
-        m_creature->GetMap()->CreatureRelocation(m_creature, m_creature->GetPositionX(), m_creature->GetPositionY(), FLOOR_Z-500.0f, 0);
+        pMap->CreatureRelocation(m_creature, m_creature->GetPositionX(), m_creature->GetPositionY(), FLOOR_Z-500.0f, 0);
         m_creature->SendMonsterMove(m_creature->GetPositionX(), m_creature->GetPositionY(), FLOOR_Z-400.0f, SPLINETYPE_NORMAL , m_creature->GetSplineFlags(), 10000);
     }
 
@@ -1050,6 +1070,11 @@ struct MANGOS_DLL_DECL boss_malygosAI : public ScriptedAI
             else
                 m_uiSurgeOfPowerTimer -= uiDiff;
         }
+        if(m_uiSpeedKillTimer < uiDiff)
+            m_bIsInTimeAchiev = false;
+        else
+            m_uiSpeedKillTimer -= uiDiff;
+
 
         DoMeleeAttackIfReady();
     }
