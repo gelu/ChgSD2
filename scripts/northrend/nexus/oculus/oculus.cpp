@@ -52,7 +52,7 @@ struct MANGOS_DLL_DECL mob_oculus_dragonAI : public ScriptedAI
     void Reset()
     {
         Active = false;
-        ownerGUID = 0;
+        ownerGUID = ObjectGuid();
         StartTimer = 2000;
         switch (m_creature->GetEntry())
         {
