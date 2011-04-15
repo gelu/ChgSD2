@@ -79,7 +79,10 @@ enum AI
     AI_RANGED   = 1,
 };
 
-#define GOSSIP_ITEM "　开始战斗!　"
+#define GOSSIP_ITEM "开始战斗!　 "
+
+Transport *Gunship_A = new Transport;
+Transport *Gunship_H = new Transport;
 
 // common parts for npcs
 struct MANGOS_DLL_DECL gunship_battle_soldierAI: public ScriptedAI
@@ -249,34 +252,44 @@ struct MANGOS_DLL_DECL boss_gunship_commanderAI: public gunship_battle_soldierAI
 		DoCast(m_creature, SPELL_TASTE_BLOOD);
 	}
 
-	void StartEvent()
+	void StartEvent(int n)
 	{
+		outstring_log("%i", n);
 		// start gunship battle event here
 		if(m_pInstance)
-			m_pInstance->SetData(TYPE_GUNSHIP_BATTLE, IN_PROGRESS);
+		    m_pInstance->SetData(TYPE_GUNSHIP_BATTLE, IN_PROGRESS);  
+		if ( n == 0)
+		{
+            Transport *t = new Transport;
 
-		Transport *Gunship_A = new Transport;
-		Transport *Gunship_H = new Transport;
-		Transport *t = new Transport;
-		t->StartGunship(Gunship_A, Gunship_H);
-		delete t;
+		    t->StartGunship(Gunship_A, Gunship_H);
+		    delete t;
 
-		Gunship_A->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
-		Gunship_A->SetGoState(GO_STATE_READY);
-		Gunship_A->SetMap( m_creature->GetMap() );
-		Gunship_A->AddToWorld();
+		    Gunship_A->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+		    Gunship_A->SetGoState(GO_STATE_READY);
+	    	Gunship_A->SetMap( m_creature->GetMap() );
+		    Gunship_A->AddToWorld();
+			Gunship_A->BuildStartMovePacket(m_creature->GetMap());
 
-		Gunship_H->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
-		Gunship_H->SetGoState(GO_STATE_READY);
-		Gunship_H->SetMap( m_creature->GetMap() );
-		Gunship_H->AddToWorld();
+		    Gunship_H->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
+		    Gunship_H->SetGoState(GO_STATE_READY);
+		    Gunship_H->SetMap( m_creature->GetMap() );
+		    Gunship_H->AddToWorld();
+			Gunship_H->BuildStartMovePacket(m_creature->GetMap());
 
-		Gunship_A->BuildStopMovePacket(m_creature->GetMap());		
-		//Gunship_A->BuildStartMovePacket(m_creature->GetMap());
-		Gunship_H->BuildStopMovePacket(m_creature->GetMap());		
-		//Gunship_H->BuildStartMovePacket(m_creature->GetMap());
-
-		outstring_log("begin!!!!!!!!!!!!!!!!!!!!!!!!!!1");     
+			outstring_log("begin!!!!!!!!!!!!!!!!!!!!!!!!!!1"); 
+		}
+		else if ( n == 1)
+		{
+		    Gunship_A->BuildStopMovePacket(m_creature->GetMap());		
+		    Gunship_H->BuildStopMovePacket(m_creature->GetMap());
+		}
+		else if ( n == 2)
+		{
+			Gunship_A->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_DAMAGED | GO_FLAG_NODESPAWN);
+			Gunship_A->SetUInt32Value(GAMEOBJECT_BYTES_1,8449);
+			Gunship_H->RemoveFromWorld();
+		}
 	}
 
     void UpdateAI(const uint32 uiDiff)
@@ -309,8 +322,12 @@ bool GossipHello_gunship_commander(Player* pPlayer, Creature* pCreature)
     ScriptedInstance *m_pInstance = (ScriptedInstance *) pCreature->GetInstanceData();
     if(!m_pInstance) return true;
 
-	if(m_pInstance->GetData(TYPE_GUNSHIP_BATTLE) != DONE && m_pInstance->GetData(TYPE_GUNSHIP_BATTLE) != IN_PROGRESS)
+	//if(m_pInstance->GetData(TYPE_GUNSHIP_BATTLE) != DONE && m_pInstance->GetData(TYPE_GUNSHIP_BATTLE) != IN_PROGRESS)
+	//{
         pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, GOSSIP_ITEM, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+1);
+		pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "停止!　", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+2);
+		pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "销毁!　", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF+3);
+	//}
 
     pPlayer->SEND_GOSSIP_MENU(721002, pCreature->GetGUID());
     return true;
@@ -318,12 +335,27 @@ bool GossipHello_gunship_commander(Player* pPlayer, Creature* pCreature)
 
 bool GossipSelect_gunship_commander(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 uiAction)
 {
+	int n = 0;
     switch(uiAction)
     {
     case GOSSIP_ACTION_INFO_DEF+1:
-        ((boss_gunship_commanderAI*)pCreature->AI())->StartEvent();
+		n = 0;
+        ((boss_gunship_commanderAI*)pCreature->AI())->StartEvent(n);
         pPlayer->CLOSE_GOSSIP_MENU();
+		outstring_log("select %i", n);
         break;
+	case GOSSIP_ACTION_INFO_DEF+2:
+		n = 1;
+		((boss_gunship_commanderAI*)pCreature->AI())->StartEvent(n);
+		pPlayer->CLOSE_GOSSIP_MENU();
+		outstring_log("select %i", n);
+		break;
+	case GOSSIP_ACTION_INFO_DEF+3:
+		n = 2;
+		((boss_gunship_commanderAI*)pCreature->AI())->StartEvent(n);
+		pPlayer->CLOSE_GOSSIP_MENU();
+		outstring_log("select %i", n);
+		break;
     }
 
     return true;

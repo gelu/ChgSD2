@@ -134,27 +134,7 @@ static Locations SpawnLoc[]=
 
     void instance_icecrown_spire::OnPlayerEnter(Player *pPlayer)
     {
-        OpenAllDoors();
-
-		//for (Map::PlayerList::const_iterator itr = pPlayer->GetMap()->GetPlayers().begin(); itr != pPlayer->GetMap()->GetPlayers().end(); ++itr)
-		//{                    
-		//	if (Player* pPlayer = itr->getSource())         
-		//	{                    
-		//		UpdateData transData;           
-		//		t->BuildCreateUpdateBlockForPlayer(&transData, pPlayer);           
-		//		WorldPacket packet;                    
-		//		transData.BuildPacket(&packet);                 
-		//		pPlayer->SendDirectMessage(&packet);                  
-		//	}             
-		//}
-
-		//sMapMgr.m_Transports.insert(t); 
-
-		//UpdateData transData;
-		//t->BuildCreateUpdateBlockForPlayer(&transData, pPlayer);
-		//WorldPacket packet;         
-		//transData.BuildPacket(&packet);          
-		//pPlayer->GetSession()->SendPacket(&packet);                           
+        OpenAllDoors();                
 
     enum PhaseControl
     {
